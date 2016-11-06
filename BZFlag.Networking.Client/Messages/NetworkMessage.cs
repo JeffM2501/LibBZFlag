@@ -18,6 +18,8 @@ namespace BZFlag.Networking.Messages
 				msgCode = " " + msgCode;
 
 			byte[] b = Encoding.ASCII.GetBytes(msgCode.Substring(0, 2));
+			if(BitConverter.IsLittleEndian)
+				Array.Reverse(b);
 			return (int)BitConverter.ToUInt16(b,0);
 		}
 
@@ -25,6 +27,26 @@ namespace BZFlag.Networking.Messages
 		protected void ResetOffset()
 		{
 			BufferOffset = 0;
+		}
+
+		protected byte ReadByte(byte[] b)
+		{
+			if(b.Length < BufferOffset + 1)
+				return 0;
+
+			BufferOffset += 1;
+			return b[BufferOffset-1];
+		}
+
+		protected byte[] ReadBytes(byte[] b, int size)
+		{
+			if(b.Length < BufferOffset + size)
+				return new byte[0];
+
+			byte[] d = new byte[size];
+			Array.Copy(b, BufferOffset, d, 0, size);
+			BufferOffset += size;
+			return d;
 		}
 
 		protected UInt16 ReadUInt16(byte[] b)
@@ -61,6 +83,84 @@ namespace BZFlag.Networking.Messages
 
 			BufferOffset += 4;
 			return BufferUtils.ReadInt32(b, BufferOffset - 4);
+		}
+
+		protected UInt64 ReadUInt64(byte[] b)
+		{
+			if(b.Length < BufferOffset + 4)
+				return 0;
+
+			BufferOffset += 8;
+			return BufferUtils.ReadUInt64(b, BufferOffset - 8);
+		}
+
+		protected Int64 ReadInt64(byte[] b)
+		{
+			if(b.Length < BufferOffset + 8)
+				return 0;
+
+			BufferOffset += 8;
+			return BufferUtils.ReadInt64(b, BufferOffset - 8);
+		}
+
+		protected string ReadFixedSizeString(byte[] b, int size)
+		{
+			if(b.Length < BufferOffset + size)
+				return string.Empty;
+
+			string s = Encoding.UTF8.GetString(b, BufferOffset, size);
+			BufferOffset += size;
+			return s.TrimEnd(new char[] { '\0' });
+		}
+
+		protected string ReadPascalString(byte[] b)
+		{
+			if(b.Length < BufferOffset + 1)
+				return string.Empty;
+
+			byte len = b[BufferOffset];
+
+			if(b.Length < BufferOffset + 1 + len)
+				return string.Empty;
+
+			string s = Encoding.UTF8.GetString(b, BufferOffset+1, len);
+			BufferOffset += len+1;
+			return s;
+		}
+
+		protected string ReadUShortPascalString(byte[] b)
+		{
+			if(b.Length < BufferOffset + 2)
+				return string.Empty;
+
+			int len = BufferUtils.ReadUInt16(b, BufferOffset);
+
+			if(b.Length < BufferOffset + 2 + len)
+				return string.Empty;
+
+			string s = Encoding.UTF8.GetString(b, BufferOffset + 2, len);
+			BufferOffset += len + 2;
+			return s;
+		}
+
+
+		protected string ReadNullTermString(byte[] b, bool readToEnd)
+		{
+			if (readToEnd)
+			{
+				int start = BufferOffset;
+				BufferOffset = b.Length;
+				return Encoding.UTF8.GetString(b, start, BufferOffset - start - 1);
+			}
+			else
+			{
+				int end = Array.FindIndex(b, BufferOffset, x => x == byte.MinValue);
+				if(end == -1)
+					return string.Empty;
+				string ret = Encoding.UTF8.GetString(b, BufferOffset, BufferOffset - end);
+				BufferOffset = end + 1;
+				return ret;
+			}
 		}
 	}
 

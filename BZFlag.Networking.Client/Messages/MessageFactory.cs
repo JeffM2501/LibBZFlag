@@ -47,6 +47,15 @@ namespace BZFlag.Networking.Messages
 		{
 			RegisterMessageType(new BZFS.MsgEnter());
 			RegisterMessageType(new BZFS.MsgQueryGame());
+			RegisterMessageType(new BZFS.MsgSuperKill());
+			RegisterMessageType(new BZFS.MsgWantWHash());
+			RegisterMessageType(new BZFS.MsgNegotiateFlags());
+			RegisterMessageType(new BZFS.MsgGameTime());
+			RegisterMessageType(new BZFS.MsgMessage());
+			RegisterMessageType(new BZFS.MsgAccept());
+			RegisterMessageType(new BZFS.MsgReject());
+			RegisterMessageType(new BZFS.MsgSetVars());
+			RegisterMessageType(new BZFS.MsgTeamUpdate());
 		}
 	}
 }

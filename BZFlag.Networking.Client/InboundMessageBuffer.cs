@@ -81,7 +81,7 @@ namespace BZFlag.Networking
 				Array.Copy(buffer, 0, PartialMessage, copyStart, buffer.Length);
 			}
 
-			if (PartialMessage.Length < 4)
+			if (PartialMessage.Length >= 4)
 			{
 
 				int len  = BufferUtils.ReadUInt16(PartialMessage, 0);
@@ -94,17 +94,18 @@ namespace BZFlag.Networking
 					msg.ID = code;
 					msg.Size = len;
 					msg.Data = new byte[len];
-					Array.Copy(buffer, 4, msg.Data, 0, len);
+					Array.Copy(PartialMessage, 4, msg.Data, 0, len);
 
+					string msgCode = Encoding.ASCII.GetString(PartialMessage, 2, 2);
 					PushMessage(msg);
 
-					if(buffer.Length == len + 4)
-						buffer = null;
+					if(PartialMessage.Length == len + 4)
+						PartialMessage = null;
 					else
 					{
-						byte[] remanats = new byte[buffer.Length - (len + 4)];
-						Array.Copy(buffer, (len + 4), remanats, 0, remanats.Length);
-						buffer = remanats;
+						byte[] remanats = new byte[PartialMessage.Length - (len + 4)];
+						Array.Copy(PartialMessage, (len + 4), remanats, 0, remanats.Length);
+						PartialMessage = remanats;
 					}
 				}
 			}	

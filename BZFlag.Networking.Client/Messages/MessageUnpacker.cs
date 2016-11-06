@@ -58,6 +58,7 @@ namespace BZFlag.Networking.Messages
 			Stop();
 
 			Worker = new Thread(new ThreadStart(Process));
+			Worker.Start();
 		}
 
 		public void Stop()
@@ -75,12 +76,11 @@ namespace BZFlag.Networking.Messages
 				InboundMessageBuffer.CompletedMessage buffer = GetNextInbound();
 				while (buffer != null)
 				{
-					// lookup message class
-					buffer = GetNextInbound();
-
 					NetworkMessage msg = MessageFactory.Unpack(buffer.ID, buffer.Data);
 					if(msg != null)
 						CompleteMessage(msg);
+
+					buffer = GetNextInbound();
 
 				}
 				Thread.Sleep(10);

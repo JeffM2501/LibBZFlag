@@ -41,15 +41,29 @@
   <ItemGroup>
     <Compile Include="BufferUtils.cs" />
     <Compile Include="Client.cs" />
+    <Compile Include="DynamicOutputBuffer.cs" />
+    <Compile Include="Flags\FlagType.cs" />
     <Compile Include="InboundMessageBuffer.cs" />
+    <Compile Include="Messages\BZFS\MsgAccept.cs" />
     <Compile Include="Messages\BZFS\MsgEnter.cs" />
+    <Compile Include="Messages\BZFS\MsgGameTime.cs" />
+    <Compile Include="Messages\BZFS\MsgMessage.cs" />
+    <Compile Include="Messages\BZFS\MsgNegotiateFlags.cs" />
     <Compile Include="Messages\BZFS\MsgQueryGame.cs" />
+    <Compile Include="Messages\BZFS\MsgReject.cs" />
+    <Compile Include="Messages\BZFS\MsgSetVars.cs" />
+    <Compile Include="Messages\BZFS\MsgSuperKill.cs" />
+    <Compile Include="Messages\BZFS\MsgTeamUpdate.cs" />
+    <Compile Include="Messages\BZFS\MsgWantWHash.cs" />
+    <Compile Include="Messages\BZFS\NoPackedDataNetworkMessage.cs" />
+    <Compile Include="Messages\BZFS\UDP\MsgUDPLinkRequest.cs" />
     <Compile Include="Messages\MessageFactory.cs" />
     <Compile Include="Messages\MessageUnpacker.cs" />
     <Compile Include="Messages\NetworkMessage.cs" />
     <Compile Include="OutboundMessageBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
