@@ -79,7 +79,9 @@ namespace ConnectionTester
 			Handlers.Add(new MsgSetVars().Code, HandleSetVarsMessage);
 			Handlers.Add(new MsgTeamUpdate().Code, HandleTeamUpdate);
 			Handlers.Add(new MsgUDPLinkRequest().Code, HandleUDPLinkRequest);
-		}
+            Handlers.Add(new MsgUDPLinkEstablished().Code, HandleUDPLinkEstablished);
+            Handlers.Add(new MsgLagPing().Code, HandleLagPing);
+        }
 
 		private static void Client_HostMessageReceived(object sender, Client.HostMessageReceivedEventArgs e)
 		{
@@ -112,13 +114,29 @@ namespace ConnectionTester
 			WriteLine();
 		}
 
-		protected static void SendEnter()
+        protected static bool UDPSendEnabled = false;
+
+        private static bool UDPRequestSent = false;
+        private static bool UDPOutOk = false;
+        private static bool UDPInOk = false;
+
+        protected static void SendTCPMessage(NetworkMessage msg)
+        {
+            client.SendMessage(true, msg);
+        }
+
+        protected static void SendUDPMessage(NetworkMessage msg)
+        {
+            client.SendMessage(!UDPSendEnabled, msg);
+        }
+
+        protected static void SendEnter()
 		{
 			var enter = new MsgEnter();
 			enter.Callsign = "Billy D. Bugger";
 			enter.Email = "Testing 1...2..3.";
 			enter.Token = string.Empty;
-			client.SendMessage(enter);
+            SendTCPMessage(enter);
 		}
 
 		private static void HandleTeamUpdate(NetworkMessage msg)
@@ -171,8 +189,9 @@ namespace ConnectionTester
 
 			PlayerID = accept.PlayerID;
 
-			// start UDP Link
-			client.ConnectToUDP();
+            UDPRequestSent = true;
+            // start UDP Link
+            client.ConnectToUDP();
 			client.SendMessage(false, new MsgUDPLinkRequest(PlayerID));
 		}
 
@@ -182,14 +201,59 @@ namespace ConnectionTester
 
 			if (udp.FromUDP)
 			{
+                WriteLine("UDP Link request via UDP");
+                if (UDPRequestSent)
+                {
+                    UDPInOk = true;
 
+                    if (UDPOutOk)
+                    {
+                        client.SendMessage(false, new MsgUDPLinkEstablished());
+                        WriteLine("UDP handshake complete");
+                        UDPSendEnabled = true;
+                    }
+                }
 			}
 			else
 			{
-			}
+                WriteLine("UDP Link request via TCP ... SHOULD NOT HAPPEN TO CLIENT!");
+            }
 		}
 
-		private static void HandleNegotiateFlags(NetworkMessage msg)
+        private static void HandleUDPLinkEstablished(NetworkMessage msg)
+        {
+            MsgUDPLinkEstablished udp = msg as MsgUDPLinkEstablished;
+
+            if (udp.FromUDP)
+            {
+                WriteLine("UDP Link established via UDP ... SHOULD NOT HAPPEN TO CLIENT!");
+            }
+            else
+            {
+                WriteLine("UDP Link established via TCP");
+                if (UDPRequestSent)
+                {
+                    UDPOutOk = true;
+
+                    if (UDPInOk)
+                    {
+                        client.SendMessage(false, new MsgUDPLinkEstablished());
+                        WriteLine("UDP handshake complete");
+                        UDPSendEnabled = true;
+                    }
+                }
+            }
+        }
+
+        private static void HandleLagPing(NetworkMessage msg)
+        {
+            MsgLagPing ping = msg as MsgLagPing;
+
+            client.SendMessage(ping.FromUDP, ping);
+        }
+
+
+        private static void HandleNegotiateFlags(NetworkMessage msg)
 		{
 			MsgNegotiateFlags flags = msg as MsgNegotiateFlags;
 			if(flags.FlagAbrevs.Count > 0)

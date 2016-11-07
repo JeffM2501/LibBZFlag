@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.Networking.Client", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectionTester", "ConnectionTester\ConnectionTester.csproj", "{2C4D16ED-1019-4332-8F05-31B848D64E76}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.Data", "BZFlag.Data\BZFlag.Data.csproj", "{E20FC2B8-A7D1-4AD7-9B04-7F7D2E1C6056}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2C4D16ED-1019-4332-8F05-31B848D64E76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C4D16ED-1019-4332-8F05-31B848D64E76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C4D16ED-1019-4332-8F05-31B848D64E76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E20FC2B8-A7D1-4AD7-9B04-7F7D2E1C6056}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E20FC2B8-A7D1-4AD7-9B04-7F7D2E1C6056}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E20FC2B8-A7D1-4AD7-9B04-7F7D2E1C6056}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E20FC2B8-A7D1-4AD7-9B04-7F7D2E1C6056}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

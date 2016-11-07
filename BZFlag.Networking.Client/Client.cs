@@ -31,6 +31,8 @@ namespace BZFlag.Networking
 
 		public int MaxMessagesPerCycle = 20;
 
+        public bool ReturnPingsEarly = false;
+
 		protected string HostName = string.Empty;
 		protected int HostPort = -1;
 
@@ -96,7 +98,12 @@ namespace BZFlag.Networking
 				return;
 
 			foreach(var m in buffer.GetMessages())
-				InboundMessageProcessor.Push(m);
+            {
+                if (ReturnPingsEarly && m.ID == 0x7069)
+                    SendDirectMessage(m.UDP,new byte[] { 0, 6, 0x70, 0x69, m.Data[0], m.Data[1] }); // just blast it back with miniumal processing
+                else
+                    InboundMessageProcessor.Push(m);
+            }
 		}
 
 		public void Startup(string server, int port)
@@ -174,7 +181,15 @@ namespace BZFlag.Networking
 				OutboundUDP.Push(msg);
 		}
 
-		public event EventHandler TCPConnected = null;
+        public void SendDirectMessage(bool viaTCP, byte[] msg)
+        {
+            if (viaTCP)
+                OutboundTCP.PushDirectMessage(msg);
+            else
+                OutboundUDP.PushDirectMessage(msg);
+        }
+
+        public event EventHandler TCPConnected = null;
 		public event EventHandler HostHasData = null;
 		public event EventHandler TCPHostDisconnect = null;
 		public event EventHandler HostIsNotBZFS = null;

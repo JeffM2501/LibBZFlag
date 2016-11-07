@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.Data.Types;
+
 namespace BZFlag.Networking.Messages
 {
 	public abstract class NetworkMessage
@@ -104,7 +106,40 @@ namespace BZFlag.Networking.Messages
 			return BufferUtils.ReadInt64(b, BufferOffset - 8);
 		}
 
-		protected string ReadFixedSizeString(byte[] b, int size)
+        protected float ReadFloat(byte[] b)
+        {
+            if (b.Length < BufferOffset + 4)
+                return 0;
+
+            BufferOffset += 4;
+            return BufferUtils.ReadSingle(b, BufferOffset - 4);
+        }
+
+        protected double ReadDouble(byte[] b)
+        {
+            if (b.Length < BufferOffset + 8)
+                return 0;
+
+            BufferOffset += 8;
+            return BufferUtils.ReadDouble(b, BufferOffset - 8);
+        }
+
+        protected Vector4F ReadVector4F(byte[] b)
+        {
+            return new Vector4F(ReadFloat(b), ReadFloat(b), ReadFloat(b), ReadFloat(b));
+        }
+
+        protected Vector3F ReadVector3F(byte[] b)
+        {
+            return new Vector3F(ReadFloat(b), ReadFloat(b), ReadFloat(b));
+        }
+
+        protected Vector2F ReadVector2f(byte[] b)
+        {
+            return new Vector2F(ReadFloat(b), ReadFloat(b));
+        }
+
+        protected string ReadFixedSizeString(byte[] b, int size)
 		{
 			if(b.Length < BufferOffset + size)
 				return string.Empty;
