@@ -56,6 +56,7 @@ namespace BZFlag.Networking.Messages
 			RegisterMessageType(new BZFS.MsgReject());
 			RegisterMessageType(new BZFS.MsgSetVars());
 			RegisterMessageType(new BZFS.MsgTeamUpdate());
+			RegisterMessageType(new BZFS.UDP.MsgUDPLinkRequest());
 		}
 	}
 }

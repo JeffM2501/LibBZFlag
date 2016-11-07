@@ -8,6 +8,7 @@ namespace BZFlag.Networking.Messages
 	public abstract class NetworkMessage
 	{
 		public int Code = int.MinValue;
+		public bool FromUDP = false;
 
 		public abstract void Unpack(byte[] data);
 		public abstract byte[] Pack();

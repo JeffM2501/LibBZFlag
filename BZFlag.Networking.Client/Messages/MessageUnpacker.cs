@@ -78,7 +78,10 @@ namespace BZFlag.Networking.Messages
 				{
 					NetworkMessage msg = MessageFactory.Unpack(buffer.ID, buffer.Data);
 					if(msg != null)
+					{
+						msg.FromUDP = buffer.UDP;
 						CompleteMessage(msg);
+					}
 
 					buffer = GetNextInbound();
 

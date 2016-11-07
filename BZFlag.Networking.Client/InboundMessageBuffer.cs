@@ -12,6 +12,8 @@ namespace BZFlag.Networking
 			public int ID = -1;
 			public int Size = -1;
 			public byte[] Data = new byte[0];
+
+			public bool UDP = false;
 		}
 
 		protected List<CompletedMessage> CompletedMessages = new List<CompletedMessage>();
@@ -19,6 +21,13 @@ namespace BZFlag.Networking
 		protected byte[] PartialMessage = null;
 
 		public event EventHandler CompleteMessageRecived = null;
+
+		protected bool UDP = false;
+
+		public InboundMessageBuffer(bool udp)
+		{
+			UDP = udp;
+		}
 
 		public void Clear()
 		{
@@ -74,20 +83,19 @@ namespace BZFlag.Networking
 			{
 				PartialMessage = buffer;
 			}
-			else
+			else if (!UDP) // UDP can't add packets together
 			{
 				int copyStart = PartialMessage.Length;
 				Array.Resize(ref PartialMessage, copyStart + buffer.Length);
 				Array.Copy(buffer, 0, PartialMessage, copyStart, buffer.Length);
 			}
 
-			if (PartialMessage.Length >= 4)
+			if(PartialMessage.Length >= 4)
 			{
-
-				int len  = BufferUtils.ReadUInt16(PartialMessage, 0);
+				int len = BufferUtils.ReadUInt16(PartialMessage, 0);
 				int code = BufferUtils.ReadUInt16(PartialMessage, 2);
 
-				if (PartialMessage.Length >= (len + 4))
+				if(PartialMessage.Length >= (len + 4))
 				{
 					// message is long enough, parse it
 					CompletedMessage msg = new CompletedMessage();
@@ -99,7 +107,7 @@ namespace BZFlag.Networking
 					string msgCode = Encoding.ASCII.GetString(PartialMessage, 2, 2);
 					PushMessage(msg);
 
-					if(PartialMessage.Length == len + 4)
+					if(UDP || PartialMessage.Length == len + 4) // UDP is one message per packet
 						PartialMessage = null;
 					else
 					{
@@ -108,7 +116,9 @@ namespace BZFlag.Networking
 						PartialMessage = remanats;
 					}
 				}
-			}	
+			}
+			else if(UDP) // UDP is one message per packet
+				PartialMessage = null;
 		}
 	}
 }

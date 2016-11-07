@@ -13,10 +13,17 @@ namespace BZFlag.Networking.Messages.BZFS.UDP
 			Code = CodeFromChars("of");
 		}
 
+		public MsgUDPLinkRequest(int pid)
+		{
+			Code = CodeFromChars("of");
+			PlayerID = pid;
+		}
+
 		public override byte[] Pack()
 		{
 			DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
 			buffer.WriteByte((byte)PlayerID);
+			return buffer.GetMessageBuffer();
 		}
 
 		public override void Unpack(byte[] data)

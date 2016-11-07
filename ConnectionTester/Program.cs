@@ -9,6 +9,7 @@ using BZFlag.Networking.Messages;
 using BZFlag.Networking.Flags;
 
 using BZFlag.Networking.Messages.BZFS;
+using BZFlag.Networking.Messages.BZFS.UDP;
 
 namespace ConnectionTester
 {
@@ -77,6 +78,7 @@ namespace ConnectionTester
 			Handlers.Add(new MsgReject().Code, HandleRejectMessage);
 			Handlers.Add(new MsgSetVars().Code, HandleSetVarsMessage);
 			Handlers.Add(new MsgTeamUpdate().Code, HandleTeamUpdate);
+			Handlers.Add(new MsgUDPLinkRequest().Code, HandleUDPLinkRequest);
 		}
 
 		private static void Client_HostMessageReceived(object sender, Client.HostMessageReceivedEventArgs e)
@@ -170,6 +172,21 @@ namespace ConnectionTester
 			PlayerID = accept.PlayerID;
 
 			// start UDP Link
+			client.ConnectToUDP();
+			client.SendMessage(false, new MsgUDPLinkRequest(PlayerID));
+		}
+
+		private static void HandleUDPLinkRequest(NetworkMessage msg)
+		{
+			MsgUDPLinkRequest udp = msg as MsgUDPLinkRequest;
+
+			if (udp.FromUDP)
+			{
+
+			}
+			else
+			{
+			}
 		}
 
 		private static void HandleNegotiateFlags(NetworkMessage msg)

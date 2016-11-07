@@ -13,8 +13,8 @@ namespace BZFlag.Networking
     {
 		public static readonly byte[] BZFSHail = System.Text.Encoding.ASCII.GetBytes("BZFLAG\r\n\r\n");
 
-		protected InboundMessageBuffer InboundTCP = new InboundMessageBuffer();
-		protected InboundMessageBuffer InboundUDP = new InboundMessageBuffer();
+		protected InboundMessageBuffer InboundTCP = new InboundMessageBuffer(false);
+		protected InboundMessageBuffer InboundUDP = new InboundMessageBuffer(true);
 
 		public MessageUnpacker InboundMessageProcessor = new MessageUnpacker();
 
@@ -22,16 +22,17 @@ namespace BZFlag.Networking
 		protected OutboundMessageBuffer OutboundUDP = new OutboundMessageBuffer();
 
 		protected TcpClient TCP = null;
-
 		protected UdpClient UDP = null;
 
 		protected Thread TCPNetworkPollThread = null;
+		protected Thread UDPNetworkPollThread = null;
 
 		private static readonly bool RaiseDataMessages = false;
 
 		public int MaxMessagesPerCycle = 20;
 
-		protected string H
+		protected string HostName = string.Empty;
+		protected int HostPort = -1;
 
 		public class HostMessageReceivedEventArgs : EventArgs
 		{
@@ -106,6 +107,9 @@ namespace BZFlag.Networking
 
 			OutboundTCP.PushDirectMessage(BZFSHail);
 
+			HostName = server;
+			HostPort = port;
+
 			TCP = new TcpClient(server, port);
 
 			InboundMessageProcessor.Start();
@@ -116,7 +120,13 @@ namespace BZFlag.Networking
 
 		public void ConnectToUDP()
 		{
-			TCP.
+			if(HostName == string.Empty || HostPort < 0)
+				return;
+
+			UDP = new UdpClient(HostName, HostPort);
+
+			UDPNetworkPollThread = new Thread(new ThreadStart(PollUDP));
+			UDPNetworkPollThread.Start();
 		}
 
 		public void Shutdown()
@@ -127,12 +137,22 @@ namespace BZFlag.Networking
 
 			if(TCPNetworkPollThread != null && TCPNetworkPollThread.IsAlive)
 				TCPNetworkPollThread.Abort();
+			if(UDPNetworkPollThread != null && UDPNetworkPollThread.IsAlive)
+				UDPNetworkPollThread.Abort();
 
 			TCPNetworkPollThread = null;
+			UDPNetworkPollThread = null;
+
+			if(UDP != null)
+				UDP.Close();
 
 			if(TCP != null)
 				TCP.Close();
 			TCP = null;
+			UDP = null;
+
+			HostName = string.Empty;
+			HostPort = -1;
 
 			PendingNetworkNotifications.Clear();
 			InboundTCP.Clear();
@@ -217,9 +237,6 @@ namespace BZFlag.Networking
 				while(outbound != null)
 				{
 					stream.Write(outbound, 0, outbound.Length);
-
-					string code = Encoding.ASCII.GetString(outbound, 2, 2);
-					
 					outbound = OutboundTCP.Pop();
 				}
 				stream.Flush();
@@ -259,5 +276,32 @@ namespace BZFlag.Networking
 				Thread.Sleep(10);
 			}
 		}
-    }
+
+		protected void PollUDP()
+		{
+			while(true)
+			{
+				byte[] outbound = OutboundUDP.Pop();
+				while(outbound != null)
+				{
+					UDP.Send(outbound, outbound.Length);
+					outbound = OutboundUDP.Pop();
+				}
+
+				if(!Connected)
+				{
+					if(UDP.Available >= 9)
+					{
+						IPEndPoint from = new IPEndPoint(IPAddress.Any, 0);
+						byte[] data = UDP.Receive(ref from);
+
+						InboundUDP.AddData(data);
+						if(RaiseDataMessages)
+							PushNetworkNotificatioin(NetworkPushMessages.HostHasData);
+					}
+				}
+				Thread.Sleep(10);
+			}
+		}
+	}
 }
