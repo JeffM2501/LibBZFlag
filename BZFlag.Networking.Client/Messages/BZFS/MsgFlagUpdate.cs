@@ -56,7 +56,10 @@ namespace BZFlag.Networking.Messages.BZFS
                 flag.FlightTime = ReadFloat(data);
                 flag.FlightEnd = ReadFloat(data);
                 flag.InitalVelocity = ReadFloat(data);
-            }
+
+				FlagUpdates.Add(flag);
+
+			}
         }
     }
 }

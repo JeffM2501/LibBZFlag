@@ -52,6 +52,14 @@ namespace BZFlag.Networking.Messages
 			return d;
 		}
 
+		protected byte[] ReadRestOfBytes(byte[] b)
+		{
+			byte[] d = new byte[b.Length-BufferOffset];
+			Array.Copy(b, BufferOffset, d, 0, d.Length);
+			BufferOffset = b.Length;
+			return d;
+		}
+
 		protected UInt16 ReadUInt16(byte[] b)
 		{
 			if(b.Length < BufferOffset + 2)

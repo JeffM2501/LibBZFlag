@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.Data.Types;
+
 namespace BZFlag.Networking.Messages.BZFS
 {
 	public class MsgEnter : NetworkMessage
@@ -11,7 +13,7 @@ namespace BZFlag.Networking.Messages.BZFS
 		public Int16 PlayerTeam = -2;
 
 		public string Callsign = string.Empty;
-		public string Email = string.Empty;
+		public string Motto = string.Empty;
 		public string Token = string.Empty;
 		public string Version = "2.4.9";
 
@@ -35,10 +37,10 @@ namespace BZFlag.Networking.Messages.BZFS
 			buffer.WriteUInt16(PlayerType);
 			buffer.WriteInt16(PlayerTeam);
 
-			buffer.WriteFixedSizeString(Callsign, 32);
-			buffer.WriteFixedSizeString(Email, 128);
-			buffer.WriteFixedSizeString(Token, 22);
-			buffer.WriteFixedSizeString(Version, 60);
+			buffer.WriteFixedSizeString(Callsign, Constants.CallsignLen);
+			buffer.WriteFixedSizeString(Motto, Constants.MottoLen);
+			buffer.WriteFixedSizeString(Token, Constants.TokenLen);
+			buffer.WriteFixedSizeString(Version, Constants.VersionLen);
 
 			return buffer.GetMessageBuffer();
 		}

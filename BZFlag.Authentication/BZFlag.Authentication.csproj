@@ -4,18 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2C4D16ED-1019-4332-8F05-31B848D64E76}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{310E93A9-1EC2-4909-B96B-C08F02B34F63}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ConnectionTester</RootNamespace>
-    <AssemblyName>ConnectionTester</AssemblyName>
+    <RootNamespace>BZFlag.Authentication</RootNamespace>
+    <AssemblyName>BZFlag.Authentication</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -25,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -36,31 +33,16 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="ServiceLink.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BZFlag.Authentication\BZFlag.Authentication.csproj">
-      <Project>{310e93a9-1ec2-4909-b96b-c08f02b34f63}</Project>
-      <Name>BZFlag.Authentication</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BZFlag.Data\BZFlag.Data.csproj">
-      <Project>{e20fc2b8-a7d1-4ad7-9b04-7f7d2e1c6056}</Project>
-      <Name>BZFlag.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BZFlag.Networking.Client\BZFlag.Networking.Client.csproj">
-      <Project>{cf984932-7b25-4b21-a9dd-40ba12748bb6}</Project>
-      <Name>BZFlag.Networking.Client</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

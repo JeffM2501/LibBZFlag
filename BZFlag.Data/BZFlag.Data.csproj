@@ -44,6 +44,7 @@
     <Compile Include="Flags\FlagCache.cs" />
     <Compile Include="Flags\FlagType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Types\Constants.cs" />
     <Compile Include="Types\Vector2F.cs" />
     <Compile Include="Types\Vector3F.cs" />
     <Compile Include="Types\Vector4f.cs" />

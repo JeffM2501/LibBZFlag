@@ -6,10 +6,13 @@ using System.Threading;
 
 using BZFlag.Networking;
 using BZFlag.Networking.Messages;
-using BZFlag.Networking.Flags;
 
 using BZFlag.Networking.Messages.BZFS;
 using BZFlag.Networking.Messages.BZFS.UDP;
+using BZFlag.Networking.Messages.BZFS.World;
+
+using BZFlag.Data.Flags;
+using BZFlag.Authentication;
 
 namespace ConnectionTester
 {
@@ -24,20 +27,56 @@ namespace ConnectionTester
 
 		public static StreamWriter sw = new StreamWriter("log.txt");
 
+		private static byte[] WorldData = new byte[0];
+
+		private static string Callsign = "Billy D. Bugger";
+
 		static void Main(string[] args)
 		{
+			Link.RequestCompleted += Link_RequestCompleted;
+			Link.RequestErrored += Link_RequestErrored;
+
+			if(args.Length > 0)
+				Callsign = args[0];
+
+			GetList(Callsign, args.Length > 1 ? args[1] : string.Empty);
+
 			RegisterHandlers();
 
 			client = new Client();
 			client.HostMessageReceived += Client_HostMessageReceived;
 			client.TCPConnected += Client_TCPConnected;
-			client.Startup("trinity.fairserve.net", 5153);
+			client.Startup("bzflag.allejo.io", 5147);
 
 			while(true)
 			{
 				client.Update();
 				Thread.Sleep(100);
 			}
+		}
+
+		static bool GotList = false;
+		private static ServiceLink Link = new ServiceLink();
+
+		private static void GetList(string user, string pass)
+		{
+			Link.GetList(user, pass);
+
+			while(GotList == false)
+				Thread.Sleep(10);
+		}
+
+		private static void Link_RequestErrored(object sender, EventArgs e)
+		{
+			WriteLine("List Request Error " + Link.LastError);
+			GotList = true;
+		}
+
+		private static void Link_RequestCompleted(object sender, EventArgs e)
+		{
+			WriteLine("List Request Completed " + Link.LastToken);
+			WriteLine("List Server Count " + Link.ServerList.Count.ToString());
+			GotList = true;
 		}
 
 		public static void WriteLine(string text)
@@ -47,9 +86,11 @@ namespace ConnectionTester
 			sw.Flush();
 		}
 
-		public static void WriteLine()
+		public static void WriteEmptyLine()
 		{
-			WriteLine(string.Empty);
+			Console.WriteLine();
+			sw.WriteLine();
+			sw.Flush();
 		}
 
 		public static void Write(string text)
@@ -81,7 +122,11 @@ namespace ConnectionTester
 			Handlers.Add(new MsgUDPLinkRequest().Code, HandleUDPLinkRequest);
             Handlers.Add(new MsgUDPLinkEstablished().Code, HandleUDPLinkEstablished);
             Handlers.Add(new MsgLagPing().Code, HandleLagPing);
-        }
+			Handlers.Add(new MsgFlagUpdate().Code, HandleFlagUpdate);
+			Handlers.Add(new MsgAddPlayer().Code, HandleAddPlayer);
+			Handlers.Add(new MsgPlayerInfo().Code, HandlePlayerInfo);
+			Handlers.Add(new MsgGetWorld().Code, HandleGetWorld);
+		}
 
 		private static void Client_HostMessageReceived(object sender, Client.HostMessageReceivedEventArgs e)
 		{
@@ -105,13 +150,13 @@ namespace ConnectionTester
 					{
 						Write(b.ToString() + " ");
 					}
-					WriteLine();
+					WriteEmptyLine();
 				}
 			}
 			else
 				WriteLine("Unknown Message " + e.Message.Code.ToString());
 
-			WriteLine();
+			WriteEmptyLine();
 		}
 
         protected static bool UDPSendEnabled = false;
@@ -133,10 +178,25 @@ namespace ConnectionTester
         protected static void SendEnter()
 		{
 			var enter = new MsgEnter();
-			enter.Callsign = "Billy D. Bugger";
-			enter.Email = "Testing 1...2..3.";
-			enter.Token = string.Empty;
+			enter.Callsign = Callsign;
+			enter.Motto = "Testing 1...2..3.";
+			enter.Token = Link.LastToken;
             SendTCPMessage(enter);
+		}
+
+
+		private static void HandleAddPlayer(NetworkMessage msg)
+		{
+			MsgAddPlayer ap = msg as MsgAddPlayer;
+			WriteLine("Player Added " + ap.Callsign + "(" + ap.PlayerID.ToString() + ")");
+		}
+
+		private static void HandlePlayerInfo(NetworkMessage msg)
+		{
+			MsgPlayerInfo info = msg as MsgPlayerInfo;
+			WriteLine("Players Were Updated ");
+			foreach(var p in info.PlayerUpdates)
+				WriteLine(String.Format("\tID: {0} Attributes: {1} ", p.PlayerID, p.Attributes));
 		}
 
 		private static void HandleTeamUpdate(NetworkMessage msg)
@@ -152,7 +212,28 @@ namespace ConnectionTester
 			MsgWantWHash hash = msg as MsgWantWHash;
 			WriteLine("Received" + (hash.IsRandomMap ? " Random "  : " Normal ") + "WorldHash:" + hash.WorldHash);
 
-			SendEnter();
+			WriteLine("Requesting World");
+			client.SendMessage(new MsgGetWorld(0));
+		}
+
+		private static void HandleGetWorld(NetworkMessage msg)
+		{
+			MsgGetWorld wldChunk = msg as MsgGetWorld;
+
+			WriteLine("World Data Received, " + (wldChunk.Offset / 1024.0).ToString() + "Kb is left");
+					
+			int offset = WorldData.Length;
+			Array.Resize(ref WorldData, WorldData.Length + wldChunk.Data.Length);
+			Array.Copy(wldChunk.Data, 0, WorldData, offset, wldChunk.Data.Length);
+
+			if(wldChunk.Offset > 0)
+				client.SendMessage(new MsgGetWorld((UInt32)WorldData.Length));
+			else
+			{
+				WriteLine("World Data Received, size " + (WorldData.Length / 1024.0).ToString() + "Kb");
+				SendEnter();
+			}
+				
 		}
 
 		private static void HandleGameTime(NetworkMessage msg)
@@ -193,6 +274,7 @@ namespace ConnectionTester
             // start UDP Link
             client.ConnectToUDP();
 			client.SendMessage(false, new MsgUDPLinkRequest(PlayerID));
+			WriteLine("Sent UDP Link request via UDP");
 		}
 
 		private static void HandleUDPLinkRequest(NetworkMessage msg)
@@ -251,9 +333,18 @@ namespace ConnectionTester
 
             client.SendMessage(ping.FromUDP, ping);
         }
+		private static void HandleFlagUpdate(NetworkMessage msg)
+		{
+			MsgFlagUpdate update = msg as MsgFlagUpdate;
 
+			WriteLine("Flag update");
+			foreach(var u in update.FlagUpdates)
+			{
+				WriteLine(String.Format("\tID:{0} ({1}) {2}", u.FlagID, u.Abreviation, u.Status));
+			}
+		}
 
-        private static void HandleNegotiateFlags(NetworkMessage msg)
+		private static void HandleNegotiateFlags(NetworkMessage msg)
 		{
 			MsgNegotiateFlags flags = msg as MsgNegotiateFlags;
 			if(flags.FlagAbrevs.Count > 0)

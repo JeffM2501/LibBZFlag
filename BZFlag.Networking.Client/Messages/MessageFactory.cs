@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.Networking.Messages.BZFS;
+using BZFlag.Networking.Messages.BZFS.UDP;
+using BZFlag.Networking.Messages.BZFS.World;
+
 namespace BZFlag.Networking.Messages
 {
 	public static class MessageFactory
@@ -45,21 +49,24 @@ namespace BZFlag.Networking.Messages
 
 		public static void  RegisterBSFSMessages()
 		{
-			RegisterMessageType(new BZFS.MsgEnter());
-			RegisterMessageType(new BZFS.MsgQueryGame());
-			RegisterMessageType(new BZFS.MsgSuperKill());
-			RegisterMessageType(new BZFS.MsgWantWHash());
-			RegisterMessageType(new BZFS.MsgNegotiateFlags());
-			RegisterMessageType(new BZFS.MsgGameTime());
-			RegisterMessageType(new BZFS.MsgMessage());
-			RegisterMessageType(new BZFS.MsgAccept());
-			RegisterMessageType(new BZFS.MsgReject());
-			RegisterMessageType(new BZFS.MsgSetVars());
-			RegisterMessageType(new BZFS.MsgTeamUpdate());
-			RegisterMessageType(new BZFS.UDP.MsgUDPLinkRequest());
-            RegisterMessageType(new BZFS.UDP.MsgUDPLinkEstablished());
-            RegisterMessageType(new BZFS.MsgLagPing());
-            RegisterMessageType(new BZFS.MsgFlagUpdate());
-        }
+			RegisterMessageType(new MsgEnter());
+			RegisterMessageType(new MsgQueryGame());
+			RegisterMessageType(new MsgSuperKill());
+			RegisterMessageType(new MsgWantWHash());
+			RegisterMessageType(new MsgNegotiateFlags());
+			RegisterMessageType(new MsgGameTime());
+			RegisterMessageType(new MsgMessage());
+			RegisterMessageType(new MsgAccept());
+			RegisterMessageType(new MsgReject());
+			RegisterMessageType(new MsgSetVars());
+			RegisterMessageType(new MsgTeamUpdate());
+			RegisterMessageType(new MsgUDPLinkRequest());
+            RegisterMessageType(new MsgUDPLinkEstablished());
+            RegisterMessageType(new MsgLagPing());
+            RegisterMessageType(new MsgFlagUpdate());
+			RegisterMessageType(new MsgAddPlayer());
+			RegisterMessageType(new MsgPlayerInfo());
+			RegisterMessageType(new MsgGetWorld());
+		}
 	}
 }

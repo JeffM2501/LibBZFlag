@@ -5,21 +5,11 @@ using System.Text;
 
 namespace BZFlag.Networking.Messages.BZFS.UDP
 {
-    public class MsgUDPLinkEstablished : NetworkMessage
+    public class MsgUDPLinkEstablished : NoPackedDataNetworkMessage
     {
         public MsgUDPLinkEstablished()
         {
-            Code = CodeFromChars('og');
-        }
-
-        public override byte[] Pack()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Unpack(byte[] data)
-        {
-            throw new NotImplementedException();
+            Code = CodeFromChars("og");
         }
     }
 }
