@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 
 using BZFlag.Data.Types;
+using BZFlag.Data.Players;
+using BZFlag.Data.Teams;
 
 namespace BZFlag.Networking.Messages.BZFS
 {
 	public class MsgEnter : NetworkMessage
 	{
-		public UInt16 PlayerType = 0;
-		public Int16 PlayerTeam = -2;
+		public PlayerTypes PlayerType = PlayerTypes.TankPlayer;
+		public TeamColors PlayerTeam = TeamColors.ObserverTeam;
 
 		public string Callsign = string.Empty;
 		public string Motto = string.Empty;
@@ -34,8 +36,8 @@ namespace BZFlag.Networking.Messages.BZFS
 		{
 			DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
 
-			buffer.WriteUInt16(PlayerType);
-			buffer.WriteInt16(PlayerTeam);
+			buffer.WriteUInt16((UInt16)PlayerType);
+			buffer.WriteInt16((Int16)PlayerTeam);
 
 			buffer.WriteFixedSizeString(Callsign, Constants.CallsignLen);
 			buffer.WriteFixedSizeString(Motto, Constants.MottoLen);

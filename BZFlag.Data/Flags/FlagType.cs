@@ -3,21 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.Data.Teams;
+using BZFlag.Data.Players;
+
 namespace BZFlag.Data.Flags
 {
-	public enum TeamColors
-	{
-		AutomaticTeam = -2,
-		NoTeam = -1,
-		RogueTeam = 0,
-		RedTeam = 1,
-		GreenTeam = 2,
-		BlueTeam = 3,
-		PurpleTeam = 4,
-		ObserverTeam = 5,
-		RabbitTeam = 6,
-		HunterTeam = 7
-	};
+	
     public enum FlagStatuses
     {
         /// the flag is not present in the world
@@ -49,13 +40,6 @@ namespace BZFlag.Data.Flags
         FlagBad = 1,
         NumQualities
     };
-
-    public enum ShotTypes
-    {
-        NormalShot = 0,
-        SpecialShot = 1
-    };
-
 
 	public class FlagType
 	{

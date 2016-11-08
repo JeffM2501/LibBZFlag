@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.Data.Players;
+using BZFlag.Data.Teams;
+
 namespace BZFlag.Data.Flags
 {
     public static class FlagCache

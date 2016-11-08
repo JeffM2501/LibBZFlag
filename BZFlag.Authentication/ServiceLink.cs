@@ -26,7 +26,112 @@ namespace BZFlag.Authentication
 			public string Version = string.Empty;
 			public string Description = string.Empty;
 			public string DataBits = string.Empty;
-		}
+
+            public int  GameOptions;
+            public int  GameType;
+            public int  MaxShots;
+            public int  ShakeWins;
+            public int  ShakeTimeout;      // 1/10ths of second
+            public int  MaxPlayerScore;
+            public int  MaxTeamScore;
+            public int  MaxTime;       // seconds
+            public int  MaxPlayers;
+            public int  RogueCount;
+            public int  RogueMax;
+            public int  RedCount;
+            public int  RedMax;
+            public int  GreenCount;
+            public int  GreenMax;
+            public int  BlueCount;
+            public int  BlueMax;
+            public int  PurpleCount;
+            public int  PurpleMax;
+            public int  ObserverCount;
+            public int  ObserverMax;
+
+            public int TotalPlayers = 0;
+
+            public string Host = string.Empty;
+            public int Port = -1;
+
+            private static byte[] shortBuffer = new byte[] { 0, 0 };
+            private static byte[] longBuffer = new byte[] { 0, 0, 0, 0 };
+
+            private static int readOffset = 0;
+
+            public ListServerData() { }
+            public ListServerData( string host, int port)
+            {
+                Name = host + ":" + port.ToString();
+                Address = Host;
+                Host = host;
+                Port = port;
+            }
+
+            private static int ReadUInt16(byte[] fromBuffer)
+            {
+                if (fromBuffer.Length < readOffset + 2)
+                    return 0;
+
+                readOffset += 2;
+                Array.Copy(fromBuffer, readOffset+2, shortBuffer, 0, 2);
+                if (BitConverter.IsLittleEndian)
+                    Array.Reverse(shortBuffer);
+
+                return BitConverter.ToUInt16(shortBuffer, 0);
+            }
+
+            private static int ReadByte(byte[] fromBuffer)
+            {
+                if (fromBuffer.Length < readOffset + 1)
+                    return 0;
+
+                readOffset += 1;
+                return fromBuffer[readOffset - 1];
+            }
+
+            public void ProcessDataBits()
+            {
+                readOffset = 0;
+
+                if (DataBits == string.Empty)
+                    return;
+
+                if (Address != string.Empty)
+                {
+                    string[] tmp = Name.Split(":".ToCharArray(), 2);
+                    Host = tmp[0];
+                    int.TryParse(tmp[1], out Port);
+                }
+
+                byte[] buffer = WebUtils.StringToByteArray(DataBits);
+
+                GameOptions = ReadUInt16(buffer);
+                GameType = ReadUInt16(buffer);
+                MaxShots = ReadUInt16(buffer);
+                ShakeWins = ReadUInt16(buffer);
+                ShakeTimeout = ReadUInt16(buffer);
+                MaxPlayerScore = ReadUInt16(buffer);
+                MaxTeamScore = ReadUInt16(buffer);
+                MaxTime = ReadUInt16(buffer);
+
+                MaxPlayers = ReadByte(buffer);
+                RogueCount = ReadByte(buffer);
+                RogueMax = ReadByte(buffer);
+                RedCount = ReadByte(buffer);
+                RedMax = ReadByte(buffer);
+                GreenCount = ReadByte(buffer);
+                GreenMax = ReadByte(buffer);
+                BlueCount = ReadByte(buffer);
+                BlueMax = ReadByte(buffer);
+                PurpleCount = ReadByte(buffer);
+                PurpleMax = ReadByte(buffer);
+                ObserverCount = ReadByte(buffer);
+                ObserverMax = ReadByte(buffer);
+
+                TotalPlayers = RogueCount + RedCount + GreenCount + BlueCount + PurpleCount;
+            }
+        }
 
 		public List<ListServerData> ServerList = new List<ListServerData>();
 
@@ -51,7 +156,18 @@ namespace BZFlag.Authentication
 			Client.UploadStringAsync(new Uri(ListServerURL), p);
 		}
 
-		private void Client_UploadStringCompleted(object sender, UploadStringCompletedEventArgs e)
+        public ListServerData FindServerWithMostPlayers()
+        {
+            ListServerData s = null;
+            foreach(var p in ServerList)
+            {
+                if (s == null || p.TotalPlayers > s.TotalPlayers)
+                    s = p;
+            }
+            return s;
+        }
+
+        private void Client_UploadStringCompleted(object sender, UploadStringCompletedEventArgs e)
 		{
 			LastError = string.Empty;
 			LastToken = string.Empty;
@@ -104,7 +220,9 @@ namespace BZFlag.Authentication
 						if(dataParts.Length > 4)
 							data.Description = dataParts[4];
 
-						ServerList.Add(data);
+                        data.ProcessDataBits();
+
+                        ServerList.Add(data);
 					}
 				}
 			}

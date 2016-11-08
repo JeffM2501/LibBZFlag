@@ -123,6 +123,31 @@ namespace BZFlag.Networking.Messages
             return BufferUtils.ReadSingle(b, BufferOffset - 4);
         }
 
+        protected float ReadSmallDist(byte[] b)
+        {
+            return ((float)ReadInt16(b) * Constants.SmallMaxDist) * Constants.SmallScale;
+        }
+
+        protected float ReadSmallAngle(byte[] b)
+        {
+            return ((float)(ReadInt16(b) * Math.PI)) * Constants.SmallScale;
+        }
+
+        protected float ReadSmallScale(byte[] b)
+        {
+            return ((float)ReadInt16(b) )* Constants.SmallScale;
+        }
+
+        protected float ReadSmallVel(byte[] b)
+        {
+            return ((float)ReadUInt16(b) * Constants.SmallMaxVel) * Constants.SmallScale;
+        }
+
+        protected float ReadSmallAngVel(byte[] b)
+        {
+            return ((float)ReadUInt16(b) * Constants.SmallMaxAngVel) * Constants.SmallScale;
+        }
+
         protected double ReadDouble(byte[] b)
         {
             if (b.Length < BufferOffset + 8)
@@ -142,9 +167,18 @@ namespace BZFlag.Networking.Messages
             return new Vector3F(ReadFloat(b), ReadFloat(b), ReadFloat(b));
         }
 
-        protected Vector2F ReadVector2f(byte[] b)
+        protected Vector2F ReadVector2F(byte[] b)
         {
             return new Vector2F(ReadFloat(b), ReadFloat(b));
+        }
+
+        protected Vector3F ReadSmallVector3F(byte[] b)
+        {
+            return new Vector3F(ReadSmallDist(b), ReadSmallDist(b), ReadSmallDist(b));
+        }
+        protected Vector3F ReadSmallVelVector3F(byte[] b)
+        {
+            return new Vector3F(ReadSmallVel(b), ReadSmallVel(b), ReadSmallVel(b));
         }
 
         protected string ReadFixedSizeString(byte[] b, int size)

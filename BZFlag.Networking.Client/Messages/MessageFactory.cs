@@ -67,6 +67,10 @@ namespace BZFlag.Networking.Messages
 			RegisterMessageType(new MsgAddPlayer());
 			RegisterMessageType(new MsgPlayerInfo());
 			RegisterMessageType(new MsgGetWorld());
+            RegisterMessageType(new MsgPlayerUpdateSmall());
+            RegisterMessageType(new MsgPlayerUpdate());
+            RegisterMessageType(new MsgQueryPlayers());
+            RegisterMessageType(new MsgScore());
 		}
 	}
 }

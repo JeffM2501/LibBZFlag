@@ -11,7 +11,8 @@ using BZFlag.Networking.Messages.BZFS;
 using BZFlag.Networking.Messages.BZFS.UDP;
 using BZFlag.Networking.Messages.BZFS.World;
 
-using BZFlag.Data.Flags;
+using BZFlag.Data.Teams;
+using BZFlag.Data.Types;
 using BZFlag.Authentication;
 
 namespace ConnectionTester
@@ -46,7 +47,12 @@ namespace ConnectionTester
 			client = new Client();
 			client.HostMessageReceived += Client_HostMessageReceived;
 			client.TCPConnected += Client_TCPConnected;
-			client.Startup("bzflag.allejo.io", 5147);
+
+            var server = Link.FindServerWithMostPlayers();
+            if (server == null || true)
+                server = new ServiceLink.ListServerData("bzflag.allejo.io", 5147);
+
+			client.Startup(server.Host,server.Port);
 
 			while(true)
 			{
@@ -126,7 +132,12 @@ namespace ConnectionTester
 			Handlers.Add(new MsgAddPlayer().Code, HandleAddPlayer);
 			Handlers.Add(new MsgPlayerInfo().Code, HandlePlayerInfo);
 			Handlers.Add(new MsgGetWorld().Code, HandleGetWorld);
-		}
+            Handlers.Add(new MsgQueryPlayers().Code, HandleQueryPlayers);
+            Handlers.Add(new MsgPlayerUpdate().Code, HandlePlayerUpdate);
+            Handlers.Add(new MsgPlayerUpdateSmall().Code, HandlePlayerUpdate);
+            Handlers.Add(new MsgScore().Code, HandleScoreUpdate);
+            Handlers.Add(new MsgAlive().Code, HandleAlive);
+        }
 
 		private static void Client_HostMessageReceived(object sender, Client.HostMessageReceivedEventArgs e)
 		{
@@ -198,7 +209,11 @@ namespace ConnectionTester
 			foreach(var p in info.PlayerUpdates)
 				WriteLine(String.Format("\tID: {0} Attributes: {1} ", p.PlayerID, p.Attributes));
 		}
-
+        private static void HandleScoreUpdate(NetworkMessage msg)
+        {
+            MsgScore sc = msg as MsgScore;
+            WriteLine("Player Score was updated" + sc.PlayerID.ToString() + String.Format(" = {0}/{1}/{2}", sc.Wins, sc.Losses, sc.TeamKills));
+        }
 		private static void HandleTeamUpdate(NetworkMessage msg)
 		{
 			MsgTeamUpdate upd = msg as MsgTeamUpdate;
@@ -232,8 +247,7 @@ namespace ConnectionTester
 			{
 				WriteLine("World Data Received, size " + (WorldData.Length / 1024.0).ToString() + "Kb");
 				SendEnter();
-			}
-				
+			}	
 		}
 
 		private static void HandleGameTime(NetworkMessage msg)
@@ -379,5 +393,26 @@ namespace ConnectionTester
 			WriteLine("\tShake Wins " + g.ShakeWins.ToString() + " Shake Timeout " + g.ShakeTimeout.ToString());
 			WriteLine("\tMax Player Score " + g.MaxTeamScore.ToString() + " Max Team Score " + g.MaxTeamScore.ToString());
 		}
-	}
+
+        private static void HandleQueryPlayers(NetworkMessage msg)
+        {
+            MsgQueryPlayers qp = msg as MsgQueryPlayers;
+
+            WriteLine("MsgQueryPlayers "+ String.Format("Teams {0}  Players {1}", qp.NumTeams, qp.NumPlayers));
+        }
+
+        private static void HandleAlive(NetworkMessage msg)
+        {
+            MsgAlive alive = msg as MsgAlive;
+            WriteLine("MsgAlive " + alive.PlayerID.ToString());
+            WriteLine(String.Format("Position = X{0} Y{1} Z{2} Rotation = {3}", alive.Position.X, alive.Position.Y, alive.Position.Z, alive.Azimuth));
+        }
+
+        private static void HandlePlayerUpdate(NetworkMessage msg)
+        {
+            MsgPlayerUpdateBase upd = msg as MsgPlayerUpdateBase;
+            WriteLine("MsgPlayerUpdate " + upd.Code.ToString() + String.Format("From {0} {1}",upd.PlayerID,upd.Status));
+            WriteLine(String.Format("Position = X{0} Y{1} Z{2}", upd.Position.X, upd.Position.Y, upd.Position.Z));
+        }
+    }
 }

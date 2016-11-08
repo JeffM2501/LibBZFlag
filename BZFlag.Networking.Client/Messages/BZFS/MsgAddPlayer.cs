@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BZFlag.Data.Flags;
+using BZFlag.Data.Teams;
 using BZFlag.Data.Types;
 
 namespace BZFlag.Networking.Messages.BZFS

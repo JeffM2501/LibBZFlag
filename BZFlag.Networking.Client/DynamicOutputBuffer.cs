@@ -31,7 +31,6 @@ namespace BZFlag.Networking
 			WriteUInt16(Code, 2);
 		}
 
-
 		public byte[] GetMessageBuffer()
 		{
 			WriteUInt16((UInt16)(BytesUsed-4), 0);
@@ -54,7 +53,12 @@ namespace BZFlag.Networking
 			BytesUsed++;
 		}
 
-		public void WriteBytes(byte[] bytes)
+        public void WriteByte(int b)
+        {
+            WriteByte((byte)b);
+        }
+
+        public void WriteBytes(byte[] bytes)
 		{
 			CheckBuffer(bytes.Length);
 
