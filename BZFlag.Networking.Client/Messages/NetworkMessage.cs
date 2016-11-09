@@ -226,8 +226,23 @@ namespace BZFlag.Networking.Messages
 			return s;
 		}
 
+        protected string ReadULongPascalString(byte[] b)
+        {
+            if (b.Length < BufferOffset + 4)
+                return string.Empty;
 
-		protected string ReadNullTermString(byte[] b, bool readToEnd)
+            int len = (int)BufferUtils.ReadUInt32(b, BufferOffset);
+
+            if (b.Length < BufferOffset + 4 + len)
+                return string.Empty;
+
+            string s = Encoding.UTF8.GetString(b, BufferOffset + 4, len);
+            BufferOffset += len + 4;
+            return s;
+        }
+
+
+        protected string ReadNullTermString(byte[] b, bool readToEnd)
 		{
 			if (readToEnd)
 			{

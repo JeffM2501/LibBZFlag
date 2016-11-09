@@ -46,6 +46,7 @@
     <Compile Include="Messages\BZFS\Flags\MsgCaptureFlag.cs" />
     <Compile Include="Messages\BZFS\Flags\MsgDropFlag.cs" />
     <Compile Include="Messages\BZFS\Flags\MsgGrabFlag.cs" />
+    <Compile Include="Messages\BZFS\Flags\MsgNearFlag.cs" />
     <Compile Include="Messages\BZFS\Flags\MsgTransferFlag.cs" />
     <Compile Include="Messages\BZFS\MsgAccept.cs" />
     <Compile Include="Messages\BZFS\Player\MsgAddPlayer.cs" />

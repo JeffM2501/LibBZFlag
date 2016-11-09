@@ -157,6 +157,7 @@ namespace ConnectionTester
 			Handlers.Add(new MsgKilled().Code, HandleKilled);
  			Handlers.Add(new MsgTeleport().Code, HandleTeleported);
  			Handlers.Add(new MsgCaptureFlag().Code, HandleCaptureFlag);
+ 			Handlers.Add(new MsgNearFlag().Code, HandleNearFlag);
         }
 
 		private static void Client_HostMessageReceived(object sender, Client.HostMessageReceivedEventArgs e)
@@ -510,6 +511,13 @@ namespace ConnectionTester
             WriteLine("MsgTeleport PlayerID" + tp.PlayerID.ToString());
             WriteLine("\tFrom " + tp.FromTPID.ToString());
             WriteLine("\tTo " + tp.ToTPID.ToString());
+        }
+
+        private static void HandleNearFlag(NetworkMessage msg)
+        {
+            MsgNearFlag nf = msg as MsgNearFlag;
+            WriteLine("MsgNearFlag " + nf.FlagName);
+            WriteLine(String.Format("\tPosition = X{0} Y{1} Z{2}", nf.Position.X, nf.Position.Y, nf.Position.Z));
         }
 
         private static void HandleCaptureFlag(NetworkMessage msg)

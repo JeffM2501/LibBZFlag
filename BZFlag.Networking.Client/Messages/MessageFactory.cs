@@ -88,6 +88,7 @@ namespace BZFlag.Networking.Messages
             RegisterMessageType(new MsgKilled());
             RegisterMessageType(new MsgTeleport());
             RegisterMessageType(new MsgCaptureFlag());
+            RegisterMessageType(new MsgNearFlag());
         }
 	}
 }
