@@ -11,6 +11,7 @@ using BZFlag.Networking.Messages.BZFS.Player;
 using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Networking.Messages.BZFS.Shots;
 using BZFlag.Networking.Messages.BZFS.Flags;
+using BZFlag.Networking.Messages.BZFS.Control;
 
 namespace BZFlag.Networking.Messages
 {
@@ -59,6 +60,7 @@ namespace BZFlag.Networking.Messages
             RegisterMessageType(new MsgQueryGame());
 			RegisterMessageType(new MsgSuperKill());
 			RegisterMessageType(new MsgWantWHash());
+            RegisterMessageType(new MsgCacheURL());
 			RegisterMessageType(new MsgNegotiateFlags());
 			RegisterMessageType(new MsgGameTime());
 			RegisterMessageType(new MsgMessage());
@@ -89,6 +91,18 @@ namespace BZFlag.Networking.Messages
             RegisterMessageType(new MsgTeleport());
             RegisterMessageType(new MsgCaptureFlag());
             RegisterMessageType(new MsgNearFlag());
+            RegisterMessageType(new MsgTimeUpdate());
+            RegisterMessageType(new MsgScoreOver());
+            RegisterMessageType(new MsgPause());
+            RegisterMessageType(new MsgAutoPilot());
+            RegisterMessageType(new MsgFlagType());
+            RegisterMessageType(new MsgNewRabbit());
+            RegisterMessageType(new MsgHandicap());
+            RegisterMessageType(new MsgCustomSound());
+            RegisterMessageType(new MsgWantSettings());
+            RegisterMessageType(new MsgGameSettings());
+            RegisterMessageType(new MsgFetchResources());
+            RegisterMessageType(new MsgAdminInfo());
         }
 	}
 }

@@ -15,6 +15,7 @@ using BZFlag.Networking.Messages.BZFS.Player;
 using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Networking.Messages.BZFS.Flags;
 using BZFlag.Networking.Messages.BZFS.Shots;
+using BZFlag.Networking.Messages.BZFS.Control;
 
 using BZFlag.Data.Teams;
 using BZFlag.Data.Types;
@@ -128,8 +129,10 @@ namespace ConnectionTester
 			Handlers.Add(new MsgQueryGame().Code, HandleMsgQueryGame);
 			Handlers.Add(new MsgSuperKill().Code, HandleSuperKill);
 			Handlers.Add(new MsgWantWHash().Code, HandleWorldHash);
-			Handlers.Add(new MsgNegotiateFlags().Code, HandleNegotiateFlags);
-			Handlers.Add(new MsgGameTime().Code, HandleGameTime);
+			Handlers.Add(new MsgCacheURL().Code, HandleWorldCacheURL);
+            Handlers.Add(new MsgNegotiateFlags().Code, HandleNegotiateFlags);
+            Handlers.Add(new MsgFlagType().Code, HandleFlagType);
+            Handlers.Add(new MsgGameTime().Code, HandleGameTime);
 			Handlers.Add(new MsgMessage().Code, HandleChatMessage);
 			Handlers.Add(new MsgAccept().Code, HandleAcceptMessage);
 			Handlers.Add(new MsgReject().Code, HandleRejectMessage);
@@ -139,7 +142,8 @@ namespace ConnectionTester
             Handlers.Add(new MsgUDPLinkEstablished().Code, HandleUDPLinkEstablished);
             Handlers.Add(new MsgLagPing().Code, HandleLagPing);
 			Handlers.Add(new MsgFlagUpdate().Code, HandleFlagUpdate);
-			Handlers.Add(new MsgAddPlayer().Code, HandleAddPlayer);
+			Handlers.Add(new MsgHandicap().Code, HandleHandicap);
+            Handlers.Add(new MsgAddPlayer().Code, HandleAddPlayer);
 			Handlers.Add(new MsgPlayerInfo().Code, HandlePlayerInfo);
 			Handlers.Add(new MsgGetWorld().Code, HandleGetWorld);
             Handlers.Add(new MsgQueryPlayers().Code, HandleQueryPlayers);
@@ -158,6 +162,15 @@ namespace ConnectionTester
  			Handlers.Add(new MsgTeleport().Code, HandleTeleported);
  			Handlers.Add(new MsgCaptureFlag().Code, HandleCaptureFlag);
  			Handlers.Add(new MsgNearFlag().Code, HandleNearFlag);
+ 			Handlers.Add(new MsgTimeUpdate().Code, HandleTimeUpdate);
+ 			Handlers.Add(new MsgScoreOver().Code, HandleScoreOver);
+ 			Handlers.Add(new MsgPause().Code, HandlePause);
+ 			Handlers.Add(new MsgAutoPilot().Code, HandleAutoPilot);
+ 			Handlers.Add(new MsgNewRabbit().Code, HandleNewRabbit);
+ 			Handlers.Add(new MsgCustomSound().Code, HandleCustomSound);
+ 			Handlers.Add(new MsgGameSettings().Code, HandleGameSettings);
+ 			Handlers.Add(new MsgFetchResources().Code, HandleFetchResources);
+  			Handlers.Add(new MsgAdminInfo().Code, HandleAdminInfo);
         }
 
 		private static void Client_HostMessageReceived(object sender, Client.HostMessageReceivedEventArgs e)
@@ -263,8 +276,13 @@ namespace ConnectionTester
 			else
 				SendEnter();
 		}
+        private static void HandleWorldCacheURL(NetworkMessage msg)
+        {
+            MsgCacheURL url = msg as MsgCacheURL;
+            WriteLine("Received Cache URL" + url.URL );
+        }
 
-		private static void HandleGetWorld(NetworkMessage msg)
+        private static void HandleGetWorld(NetworkMessage msg)
 		{
 			MsgGetWorld wldChunk = msg as MsgGetWorld;
 
@@ -380,6 +398,7 @@ namespace ConnectionTester
 
             client.SendMessage(ping.FromUDP, ping);
         }
+
 		private static void HandleFlagUpdate(NetworkMessage msg)
 		{
 			MsgFlagUpdate update = msg as MsgFlagUpdate;
@@ -390,8 +409,18 @@ namespace ConnectionTester
 				WriteLine(String.Format("\tID:{0} ({1}) {2}", u.FlagID, u.Abreviation, u.Status));
 			}
 		}
+        private static void HandleHandicap(NetworkMessage msg)
+        {
+            MsgHandicap update = msg as MsgHandicap;
 
-		private static void HandleNegotiateFlags(NetworkMessage msg)
+            WriteLine("Handicap update");
+            foreach (var u in update.Handicaps)
+            {
+                WriteLine(String.Format("\tID:{0} ({1})", u.Key, u.Value));
+            }
+        }
+
+        private static void HandleNegotiateFlags(NetworkMessage msg)
 		{
 			MsgNegotiateFlags flags = msg as MsgNegotiateFlags;
 			if(flags.FlagAbrevs.Count > 0)
@@ -403,6 +432,11 @@ namespace ConnectionTester
 			else
 				WriteLine("Flag Negotiation Successful");
 		}
+		private static void HandleFlagType(NetworkMessage msg)
+		{
+            MsgFlagType flag = msg as MsgFlagType;
+            WriteLine("MsgFlagType " + flag.Name.ToString() + " (" + flag.Abreviation + ")");
+        }
 
 		private static void HandleSetVarsMessage(NetworkMessage msg)
 		{
@@ -426,6 +460,16 @@ namespace ConnectionTester
 			WriteLine("\tShake Wins " + g.ShakeWins.ToString() + " Shake Timeout " + g.ShakeTimeout.ToString());
 			WriteLine("\tMax Player Score " + g.MaxTeamScore.ToString() + " Max Team Score " + g.MaxTeamScore.ToString());
 		}
+
+        private static void HandleGameSettings(NetworkMessage msg)
+        {
+            MsgGameSettings g = msg as MsgGameSettings;
+            WriteLine("MsgGameSettings " + g.CodeAbreviation.ToString());
+            WriteLine("\tGame Style " + g.GameType.ToString());
+            WriteLine("\tOptions " + g.GameOptions.ToString());
+            WriteLine("\tMax Shots " + g.MaxShots.ToString() + " Max Players " + g.MaxPlayers.ToString());
+            WriteLine("\tShake Wins " + g.ShakeWins.ToString() + " Shake Timeout " + g.ShakeTimeout.ToString());
+        }
 
         private static void HandleQueryPlayers(NetworkMessage msg)
         {
@@ -526,6 +570,52 @@ namespace ConnectionTester
             WriteLine("MsgCaptureFlag PlayerID" + cp.PlayerID.ToString());
             WriteLine("\tFlagID " + cp.FlagID.ToString());
             WriteLine("\tTeam " + cp.Team.ToString());
+        }
+
+        private static void HandleTimeUpdate(NetworkMessage msg)
+        {
+            MsgTimeUpdate tu = msg as MsgTimeUpdate;
+            WriteLine("MsgTimeUpdate Time Left" + tu.TimeLeft.ToString());
+        }
+
+        private static void HandleScoreOver(NetworkMessage msg)
+        {
+            MsgScoreOver so = msg as MsgScoreOver;
+            WriteLine("MsgScoreOver " + String.Format("Player ID {0} on Team {1} Won",so.PlayerID,so.Team));
+        }
+
+        private static void HandlePause(NetworkMessage msg)
+        {
+            MsgPause pa = msg as MsgPause;
+            WriteLine("MsgPause " + String.Format("Player ID {0} Paused = {1}", pa.PlayerID, pa.Paused));
+        }
+        private static void HandleAutoPilot(NetworkMessage msg)
+        {
+            MsgAutoPilot ap = msg as MsgAutoPilot;
+            WriteLine("MsgAutoPilot " + String.Format("Player ID {0} Autopilot = {1}", ap.PlayerID, ap.AutoPilot));
+        }
+        private static void HandleNewRabbit(NetworkMessage msg)
+        {
+            MsgNewRabbit nr = msg as MsgNewRabbit;
+            WriteLine("MsgNewRabbit " + String.Format("Player ID {0}", nr.PlayerID));
+        }
+
+        private static void HandleCustomSound(NetworkMessage msg)
+        {
+            MsgCustomSound s = msg as MsgCustomSound;
+            WriteLine("MsgCustomSound " + s.SoundName);
+        }
+
+        private static void HandleFetchResources(NetworkMessage msg)
+        {
+            MsgFetchResources s = msg as MsgFetchResources;
+            WriteLine("MsgFetchResources Want to get " + s.Resources.Count.ToString() + " resources");
+        }
+
+        private static void HandleAdminInfo(NetworkMessage msg)
+        {
+            MsgAdminInfo s = msg as MsgAdminInfo;
+            WriteLine("MsgAdminInfo Has " + s.Records.Count.ToString() + " records");
         }
     }
 }
