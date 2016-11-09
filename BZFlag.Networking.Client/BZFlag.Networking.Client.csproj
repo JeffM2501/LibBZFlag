@@ -63,6 +63,7 @@
     <Compile Include="Messages\BZFS\BZDB\MsgSetVars.cs" />
     <Compile Include="Messages\BZFS\MsgSuperKill.cs" />
     <Compile Include="Messages\BZFS\Info\MsgTeamUpdate.cs" />
+    <Compile Include="Messages\BZFS\Shots\MsgGMUpdate.cs" />
     <Compile Include="Messages\BZFS\Shots\MsgShotBegin.cs" />
     <Compile Include="Messages\BZFS\Shots\MsgShotEnd.cs" />
     <Compile Include="Messages\BZFS\World\MsgGetWorld.cs" />

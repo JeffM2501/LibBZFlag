@@ -16,7 +16,7 @@ Network connection class for bzflag clients
 * **DONE** MsgFlagUpdate = 0x6675;			// 'fu'
 * MsgFetchResources = 0x6672;		// 'fr'
 * **DONE** MsgGrabFlag = 0x6766;			// 'gf'
-* MsgGMUpdate = 0x676d;			// 'gm'
+* **DONE** MsgGMUpdate = 0x676d;			// 'gm'
 * **DONE** MsgGetWorld = 0x6777;			// 'gw'
 * MsgGameSettings = 0x6773;		// 'gs'
 * **DONE** MsgGameTime = 0x6774;			// 'gt'

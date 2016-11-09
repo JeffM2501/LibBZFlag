@@ -22,11 +22,11 @@ namespace BZFlag.Networking
 
 		public event EventHandler CompleteMessageRecived = null;
 
-		protected bool UDP = false;
+		protected bool OneMessagePerPacket = false;
 
-		public InboundMessageBuffer(bool udp)
+		public InboundMessageBuffer(bool noGrouping)
 		{
-			UDP = udp;
+			OneMessagePerPacket = noGrouping;
 		}
 
 		public void Clear()
@@ -76,6 +76,8 @@ namespace BZFlag.Networking
 				CompleteMessageRecived.Invoke(this, EventArgs.Empty);
 		}
 
+		public static readonly int MaxSanityBuffer = 1024 * 3;
+
 		// TODO, do some pooling here, for performance
 		public void AddData(byte[] buffer)
 		{
@@ -83,7 +85,7 @@ namespace BZFlag.Networking
 			{
 				PartialMessage = buffer;
 			}
-			else if (!UDP) // UDP can't add packets together
+			else if (!OneMessagePerPacket) // can't add packets together
 			{
 				int copyStart = PartialMessage.Length;
 				Array.Resize(ref PartialMessage, copyStart + buffer.Length);
@@ -94,6 +96,16 @@ namespace BZFlag.Networking
 			{
 				int len = BufferUtils.ReadUInt16(PartialMessage, 0);
 				int code = BufferUtils.ReadUInt16(PartialMessage, 2);
+
+				if (len > MaxSanityBuffer)
+				{
+					// odd shit, just assume the new packet is a buffer
+					PartialMessage = buffer;
+					len = BufferUtils.ReadUInt16(PartialMessage, 0);
+					code = BufferUtils.ReadUInt16(PartialMessage, 2);
+					if(PartialMessage.Length < 4)
+						return;
+				}
 
 				if(PartialMessage.Length >= (len + 4))
 				{
@@ -107,7 +119,7 @@ namespace BZFlag.Networking
 					string msgCode = Encoding.ASCII.GetString(PartialMessage, 2, 2);
 					PushMessage(msg);
 
-					if(UDP || PartialMessage.Length == len + 4) // UDP is one message per packet
+					if(OneMessagePerPacket || PartialMessage.Length == len + 4) // one message per packet
 						PartialMessage = null;
 					else
 					{
@@ -117,7 +129,7 @@ namespace BZFlag.Networking
 					}
 				}
 			}
-			else if(UDP) // UDP is one message per packet
+			else if(OneMessagePerPacket) // one message per packet
 				PartialMessage = null;
 		}
 	}

@@ -83,6 +83,7 @@ namespace BZFlag.Networking.Messages
 			RegisterMessageType(new MsgDropFlag());
 			RegisterMessageType(new MsgGrabFlag());
 			RegisterMessageType(new MsgTransferFlag());
+			RegisterMessageType(new MsgGMUpdate());
 		}
 	}
 }

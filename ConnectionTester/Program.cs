@@ -151,6 +151,7 @@ namespace ConnectionTester
 			Handlers.Add(new MsgDropFlag().Code, HandleDropFlag);
 			Handlers.Add(new MsgGrabFlag().Code, HandleGrabFlag);
 			Handlers.Add(new MsgTransferFlag().Code, HandleTransferFlag);
+			Handlers.Add(new MsgGMUpdate().Code, HandleGMUpdate);
 		}
 
 		private static void Client_HostMessageReceived(object sender, Client.HostMessageReceivedEventArgs e)
@@ -459,6 +460,16 @@ namespace ConnectionTester
 			WriteLine("\tExploded " + se.Exploded.ToString());
 		}
 
+		private static void HandleGMUpdate(NetworkMessage msg)
+		{
+			MsgGMUpdate gm = msg as MsgGMUpdate;
+			WriteLine("MsgGMUpdate " + gm.PlayerID.ToString());
+			WriteLine("\tShotID " + gm.ShotID.ToString());
+			WriteLine("\tTarget " + gm.TargetID.ToString());
+			WriteLine(String.Format("\tPosition = X{0} Y{1} Z{2}", gm.Position.X, gm.Position.Y, gm.Position.Z));
+			WriteLine(String.Format("\tVelocity = X{0} Y{1} Z{2}", gm.Velocity.X, gm.Velocity.Y, gm.Velocity.Z));
+		}
+
 		private static void HandleDropFlag(NetworkMessage msg)
 		{
 			MsgDropFlag df = msg as MsgDropFlag;
@@ -472,6 +483,7 @@ namespace ConnectionTester
 			WriteLine("MsgGrabFlag " + gf.PlayerID.ToString());
 			WriteLine("\tFlagID " + gf.FlagData.FlagID.ToString());
 		}
+
 		private static void HandleTransferFlag(NetworkMessage msg)
 		{
 			MsgTransferFlag tf = msg as MsgTransferFlag;
