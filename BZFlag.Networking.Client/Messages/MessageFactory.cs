@@ -55,7 +55,8 @@ namespace BZFlag.Networking.Messages
 		public static void  RegisterBSFSMessages()
 		{
 			RegisterMessageType(new MsgEnter());
-			RegisterMessageType(new MsgQueryGame());
+			RegisterMessageType(new MsgExit());
+            RegisterMessageType(new MsgQueryGame());
 			RegisterMessageType(new MsgSuperKill());
 			RegisterMessageType(new MsgWantWHash());
 			RegisterMessageType(new MsgNegotiateFlags());
@@ -84,6 +85,9 @@ namespace BZFlag.Networking.Messages
 			RegisterMessageType(new MsgGrabFlag());
 			RegisterMessageType(new MsgTransferFlag());
 			RegisterMessageType(new MsgGMUpdate());
-		}
+            RegisterMessageType(new MsgKilled());
+            RegisterMessageType(new MsgTeleport());
+            RegisterMessageType(new MsgCaptureFlag());
+        }
 	}
 }

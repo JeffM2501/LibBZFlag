@@ -132,7 +132,9 @@ namespace BZFlag.Networking
 
 			UDP = new UdpClient(HostName, HostPort);
 
-			UDPNetworkPollThread = new Thread(new ThreadStart(PollUDP));
+            UDP.DontFragment = false;
+
+            UDPNetworkPollThread = new Thread(new ThreadStart(PollUDP));
 			UDPNetworkPollThread.Start();
 		}
 

@@ -43,6 +43,7 @@
     <Compile Include="Client.cs" />
     <Compile Include="DynamicOutputBuffer.cs" />
     <Compile Include="InboundMessageBuffer.cs" />
+    <Compile Include="Messages\BZFS\Flags\MsgCaptureFlag.cs" />
     <Compile Include="Messages\BZFS\Flags\MsgDropFlag.cs" />
     <Compile Include="Messages\BZFS\Flags\MsgGrabFlag.cs" />
     <Compile Include="Messages\BZFS\Flags\MsgTransferFlag.cs" />
@@ -55,6 +56,8 @@
     <Compile Include="Messages\BZFS\Info\MsgLagPing.cs" />
     <Compile Include="Messages\BZFS\MsgMessage.cs" />
     <Compile Include="Messages\BZFS\Info\MsgNegotiateFlags.cs" />
+    <Compile Include="Messages\BZFS\Player\MsgExit.cs" />
+    <Compile Include="Messages\BZFS\Player\MsgKilled.cs" />
     <Compile Include="Messages\BZFS\Player\MsgPlayerInfo.cs" />
     <Compile Include="Messages\BZFS\Player\MsgPlayerUpdate.cs" />
     <Compile Include="Messages\BZFS\Info\MsgQueryGame.cs" />
@@ -63,6 +66,7 @@
     <Compile Include="Messages\BZFS\BZDB\MsgSetVars.cs" />
     <Compile Include="Messages\BZFS\MsgSuperKill.cs" />
     <Compile Include="Messages\BZFS\Info\MsgTeamUpdate.cs" />
+    <Compile Include="Messages\BZFS\Player\MsgTeleport.cs" />
     <Compile Include="Messages\BZFS\Shots\MsgGMUpdate.cs" />
     <Compile Include="Messages\BZFS\Shots\MsgShotBegin.cs" />
     <Compile Include="Messages\BZFS\Shots\MsgShotEnd.cs" />

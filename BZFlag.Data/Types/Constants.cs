@@ -18,5 +18,7 @@ namespace BZFlag.Data.Types
         public static readonly float SmallMaxDist = 0.02f * SmallScale; // 2 cm resolution  (range: +/- 655.32 meters)
         public static readonly float SmallMaxVel = 0.01f * SmallScale;        // 1 cm/sec resolution  (range: +/- 327.66 meters/sec)       
         public static readonly float SmallMaxAngVel = 0.001f * SmallScale; // 0.001 radians/sec resolution  (range: +/- 32.766 rads/sec)
+
+        public static readonly UInt16 PhysicsDriverDeath = 0x7064;		// 'pd'
     }
 }

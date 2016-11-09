@@ -126,7 +126,7 @@ namespace ConnectionTester
 		static void RegisterHandlers()
 		{
 			Handlers.Add(new MsgQueryGame().Code, HandleMsgQueryGame);
-			Handlers.Add(new MsgSuperKill().Code, HandleKilled);
+			Handlers.Add(new MsgSuperKill().Code, HandleSuperKill);
 			Handlers.Add(new MsgWantWHash().Code, HandleWorldHash);
 			Handlers.Add(new MsgNegotiateFlags().Code, HandleNegotiateFlags);
 			Handlers.Add(new MsgGameTime().Code, HandleGameTime);
@@ -154,7 +154,10 @@ namespace ConnectionTester
 			Handlers.Add(new MsgGrabFlag().Code, HandleGrabFlag);
 			Handlers.Add(new MsgTransferFlag().Code, HandleTransferFlag);
 			Handlers.Add(new MsgGMUpdate().Code, HandleGMUpdate);
-		}
+			Handlers.Add(new MsgKilled().Code, HandleKilled);
+ 			Handlers.Add(new MsgTeleport().Code, HandleTeleported);
+ 			Handlers.Add(new MsgCaptureFlag().Code, HandleCaptureFlag);
+        }
 
 		private static void Client_HostMessageReceived(object sender, Client.HostMessageReceivedEventArgs e)
 		{
@@ -292,7 +295,7 @@ namespace ConnectionTester
 			WriteLine("\t" + t.MessageText);
 		}
 
-		private static void HandleKilled(NetworkMessage msg)
+		private static void HandleSuperKill(NetworkMessage msg)
 		{
 			WriteLine("Received SuperKill, shutting down");
 			client.Shutdown();
@@ -491,6 +494,30 @@ namespace ConnectionTester
 			MsgTransferFlag tf = msg as MsgTransferFlag;
 			WriteLine("MsgTransferFlag From" + tf.FromID.ToString() + " To " + tf.ToID.ToString());
 			WriteLine("\tFlagID " + tf.FlagID.ToString());
-		}
-	}
+        }
+
+        private static void HandleKilled(NetworkMessage msg)
+        {
+            MsgKilled k = msg as MsgKilled;
+            WriteLine("MsgKilled Killer" + k.KillerID.ToString() + " Victim " + k.VictimID.ToString());
+            WriteLine("\tShot " + k.ShotID.ToString());
+            WriteLine("\tFlag " + k.FlagAbreviation);
+        }
+
+        private static void HandleTeleported(NetworkMessage msg)
+        {
+            MsgTeleport tp = msg as MsgTeleport;
+            WriteLine("MsgTeleport PlayerID" + tp.PlayerID.ToString());
+            WriteLine("\tFrom " + tp.FromTPID.ToString());
+            WriteLine("\tTo " + tp.ToTPID.ToString());
+        }
+
+        private static void HandleCaptureFlag(NetworkMessage msg)
+        {
+            MsgCaptureFlag cp = msg as MsgCaptureFlag;
+            WriteLine("MsgCaptureFlag PlayerID" + cp.PlayerID.ToString());
+            WriteLine("\tFlagID " + cp.FlagID.ToString());
+            WriteLine("\tTeam " + cp.Team.ToString());
+        }
+    }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.Data.Types;
+
 namespace BZFlag.Data.Players
 {
     public enum PlayerTypes
@@ -41,6 +43,20 @@ namespace BZFlag.Data.Players
         JumpSound = (1 << 0),
         WingsSound = (1 << 1),
         BounceSound = (1 << 2),
+    };
+
+    public enum BlowedUpReasons
+    {
+        GotKilledMsg = 0,
+        GotShot = 1,
+        GotRunOver = 2,
+        GotCaptured = 3,
+        GenocideEffect = 4,
+        SelfDestruct = 5,
+        WaterDeath = 6,
+        LastReason = 7,
+        DeathTouch = 8,
+        Unknown = 255,
     };
 
 }

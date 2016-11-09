@@ -8,30 +8,21 @@ using BZFlag.Data.Players;
 
 namespace BZFlag.Data.Flags
 {
-	
     public enum FlagStatuses
     {
-        /// the flag is not present in the world
-        FlagNoExist = 0,
-        /// the flag is sitting on the ground and can be picked up
-        FlagOnGround,
-        /// the flag is being carried by a tank
-        FlagOnTank,
-        /// the flag is falling through the air
-        FlagInAir,
-        /// the flag is entering the world
-        FlagComing,
-        /// the flag is leaving the world
-        FlagGoing
+        FlagNoExist = 0,/// the flag is not present in the world
+        FlagOnGround, /// the flag is sitting on the ground and can be picked up
+        FlagOnTank,/// the flag is being carried by a tank
+        FlagInAir,/// the flag is falling through the air
+        FlagComing,/// the flag is entering the world
+        FlagGoing,  /// the flag is leaving the world
     };
+
     public enum FlagEndurances
     {
-        /// permanent flag
-        FlagNormal = 0,
-        /// disappears after use
-        FlagUnstable = 1,
-        /// can't be dropped normally
-        FlagSticky = 2
+        FlagNormal = 0,/// permanent flag
+        FlagUnstable = 1, /// disappears after use
+        FlagSticky = 2/// can't be dropped normally
     };
 
     public enum FlagQualities
@@ -51,7 +42,6 @@ namespace BZFlag.Data.Flags
 		public ShotTypes FlagShot = ShotTypes.NormalShot;
 		public TeamColors FlagTeam = TeamColors.AutomaticTeam;
 		public bool Custom = false;
-
 
 		public FlagType(string name, string abbv, FlagEndurances _endurance, ShotTypes sType, FlagQualities quality, TeamColors team, string help, bool _custom )
 		{
