@@ -7,7 +7,7 @@ using BZFlag.Data.Types;
 using BZFlag.Data.Players;
 using BZFlag.Data.Teams;
 
-namespace BZFlag.Networking.Messages.BZFS
+namespace BZFlag.Networking.Messages.BZFS.Player
 {
 	public class MsgEnter : NetworkMessage
 	{

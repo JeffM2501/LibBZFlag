@@ -5,7 +5,7 @@ using System.Text;
 
 using BZFlag.Data.Flags;
 
-namespace BZFlag.Networking.Messages.BZFS
+namespace BZFlag.Networking.Messages.BZFS.Info
 {
 	public class MsgNegotiateFlags : NetworkMessage
 	{

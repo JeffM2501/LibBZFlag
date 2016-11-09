@@ -70,8 +70,8 @@ namespace BZFlag.Networking
 		public static float ReadSingle(byte[] fromBuffer, int readOffset)
 		{
 			Array.Copy(fromBuffer, readOffset, singleBuffer, 0, 4);
-			if(BitConverter.IsLittleEndian)
-				Array.Reverse(singleBuffer);
+ 			if(BitConverter.IsLittleEndian)
+ 				Array.Reverse(singleBuffer);
 
 			return BitConverter.ToSingle(singleBuffer, 0);
 		}

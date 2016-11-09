@@ -4,21 +4,26 @@ using System.Linq;
 using System.Text;
 
 using BZFlag.Data.Types;
+using BZFlag.Data.Flags;
 
 namespace BZFlag.Networking.Messages
 {
 	public abstract class NetworkMessage
 	{
 		public int Code = int.MinValue;
+		public string CodeAbreviation = string.Empty;
+
 		public bool FromUDP = false;
 
 		public abstract void Unpack(byte[] data);
 		public abstract byte[] Pack();
 
-		public static int CodeFromChars(string msgCode)
+		public int CodeFromChars(string msgCode)
 		{
 			if(msgCode.Length < 2)
 				msgCode = " " + msgCode;
+
+			CodeAbreviation = msgCode;
 
 			byte[] b = Encoding.ASCII.GetBytes(msgCode.Substring(0, 2));
 			if(BitConverter.IsLittleEndian)
@@ -125,27 +130,27 @@ namespace BZFlag.Networking.Messages
 
         protected float ReadSmallDist(byte[] b)
         {
-            return ((float)ReadInt16(b) * Constants.SmallMaxDist) * Constants.SmallScale;
+            return ((float)ReadInt16(b) * Constants.SmallMaxDist) / Constants.SmallScale;
         }
 
         protected float ReadSmallAngle(byte[] b)
         {
-            return ((float)(ReadInt16(b) * Math.PI)) * Constants.SmallScale;
+            return ((float)(ReadInt16(b) * Math.PI)) / Constants.SmallScale;
         }
 
         protected float ReadSmallScale(byte[] b)
         {
-            return ((float)ReadInt16(b) )* Constants.SmallScale;
+            return ((float)ReadInt16(b) )/Constants.SmallScale;
         }
 
         protected float ReadSmallVel(byte[] b)
         {
-            return ((float)ReadUInt16(b) * Constants.SmallMaxVel) * Constants.SmallScale;
+            return ((float)ReadUInt16(b) * Constants.SmallMaxVel) / Constants.SmallScale;
         }
 
         protected float ReadSmallAngVel(byte[] b)
         {
-            return ((float)ReadUInt16(b) * Constants.SmallMaxAngVel) * Constants.SmallScale;
+            return ((float)ReadUInt16(b) * Constants.SmallMaxAngVel) / Constants.SmallScale;
         }
 
         protected double ReadDouble(byte[] b)
@@ -239,6 +244,24 @@ namespace BZFlag.Networking.Messages
 				BufferOffset = end + 1;
 				return ret;
 			}
+		}
+
+		protected FlagUpdateData ReadFlagUpdateData(byte[] data)
+		{
+			FlagUpdateData flag = new FlagUpdateData();
+			flag.FlagID = ReadUInt16(data);
+			flag.Abreviation = ReadFixedSizeString(data, 2);
+			flag.Status = (FlagStatuses)ReadUInt16(data);
+			flag.Endurance = (FlagEndurances)ReadUInt16(data);
+			flag.Owner = ReadByte(data);
+			flag.Postion = ReadVector3F(data);
+			flag.LaunchPosition = ReadVector3F(data);
+			flag.LandingPostion = ReadVector3F(data);
+			flag.FlightTime = ReadFloat(data);
+			flag.FlightEnd = ReadFloat(data);
+			flag.InitalVelocity = ReadFloat(data);
+
+			return flag;
 		}
 	}
 

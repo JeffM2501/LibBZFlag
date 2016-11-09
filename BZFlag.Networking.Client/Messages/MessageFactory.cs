@@ -6,6 +6,11 @@ using System.Text;
 using BZFlag.Networking.Messages.BZFS;
 using BZFlag.Networking.Messages.BZFS.UDP;
 using BZFlag.Networking.Messages.BZFS.World;
+using BZFlag.Networking.Messages.BZFS.BZDB;
+using BZFlag.Networking.Messages.BZFS.Player;
+using BZFlag.Networking.Messages.BZFS.Info;
+using BZFlag.Networking.Messages.BZFS.Shots;
+using BZFlag.Networking.Messages.BZFS.Flags;
 
 namespace BZFlag.Networking.Messages
 {
@@ -65,12 +70,19 @@ namespace BZFlag.Networking.Messages
             RegisterMessageType(new MsgLagPing());
             RegisterMessageType(new MsgFlagUpdate());
 			RegisterMessageType(new MsgAddPlayer());
+			RegisterMessageType(new MsgRemovePlayer());
 			RegisterMessageType(new MsgPlayerInfo());
 			RegisterMessageType(new MsgGetWorld());
             RegisterMessageType(new MsgPlayerUpdateSmall());
             RegisterMessageType(new MsgPlayerUpdate());
             RegisterMessageType(new MsgQueryPlayers());
             RegisterMessageType(new MsgScore());
+			RegisterMessageType(new MsgAlive());
+			RegisterMessageType(new MsgShotBegin());
+			RegisterMessageType(new MsgShotEnd());
+			RegisterMessageType(new MsgDropFlag());
+			RegisterMessageType(new MsgGrabFlag());
+			RegisterMessageType(new MsgTransferFlag());
 		}
 	}
 }

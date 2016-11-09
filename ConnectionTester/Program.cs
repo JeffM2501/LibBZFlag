@@ -10,10 +10,16 @@ using BZFlag.Networking.Messages;
 using BZFlag.Networking.Messages.BZFS;
 using BZFlag.Networking.Messages.BZFS.UDP;
 using BZFlag.Networking.Messages.BZFS.World;
+using BZFlag.Networking.Messages.BZFS.BZDB;
+using BZFlag.Networking.Messages.BZFS.Player;
+using BZFlag.Networking.Messages.BZFS.Info;
+using BZFlag.Networking.Messages.BZFS.Flags;
+using BZFlag.Networking.Messages.BZFS.Shots;
 
 using BZFlag.Data.Teams;
 using BZFlag.Data.Types;
 using BZFlag.Authentication;
+
 
 namespace ConnectionTester
 {
@@ -32,6 +38,8 @@ namespace ConnectionTester
 
 		private static string Callsign = "Billy D. Bugger";
 
+		private static bool GetWorld = false;
+
 		static void Main(string[] args)
 		{
 			Link.RequestCompleted += Link_RequestCompleted;
@@ -49,7 +57,7 @@ namespace ConnectionTester
 			client.TCPConnected += Client_TCPConnected;
 
             var server = Link.FindServerWithMostPlayers();
-            if (server == null || true)
+            if (server == null || false)
                 server = new ServiceLink.ListServerData("bzflag.allejo.io", 5147);
 
 			client.Startup(server.Host,server.Port);
@@ -137,7 +145,13 @@ namespace ConnectionTester
             Handlers.Add(new MsgPlayerUpdateSmall().Code, HandlePlayerUpdate);
             Handlers.Add(new MsgScore().Code, HandleScoreUpdate);
             Handlers.Add(new MsgAlive().Code, HandleAlive);
-        }
+            Handlers.Add(new MsgRemovePlayer().Code, HandleRemovePlayer);
+			Handlers.Add(new MsgShotBegin().Code, HandleShotBegin);
+			Handlers.Add(new MsgShotEnd().Code, HandleShotEnd);
+			Handlers.Add(new MsgDropFlag().Code, HandleDropFlag);
+			Handlers.Add(new MsgGrabFlag().Code, HandleGrabFlag);
+			Handlers.Add(new MsgTransferFlag().Code, HandleTransferFlag);
+		}
 
 		private static void Client_HostMessageReceived(object sender, Client.HostMessageReceivedEventArgs e)
 		{
@@ -195,11 +209,16 @@ namespace ConnectionTester
             SendTCPMessage(enter);
 		}
 
-
 		private static void HandleAddPlayer(NetworkMessage msg)
 		{
 			MsgAddPlayer ap = msg as MsgAddPlayer;
 			WriteLine("Player Added " + ap.Callsign + "(" + ap.PlayerID.ToString() + ")");
+		}
+
+		private static void HandleRemovePlayer(NetworkMessage msg)
+		{
+			MsgRemovePlayer rp = msg as MsgRemovePlayer;
+			WriteLine("Player Removed " + rp.PlayerID.ToString());
 		}
 
 		private static void HandlePlayerInfo(NetworkMessage msg)
@@ -207,13 +226,15 @@ namespace ConnectionTester
 			MsgPlayerInfo info = msg as MsgPlayerInfo;
 			WriteLine("Players Were Updated ");
 			foreach(var p in info.PlayerUpdates)
-				WriteLine(String.Format("\tID: {0} Attributes: {1} ", p.PlayerID, p.Attributes));
+				WriteLine(String.Format("\tID: {0} Attributes: {1} ", p.PlayerID, p.Attributes.ToString()));
 		}
+
         private static void HandleScoreUpdate(NetworkMessage msg)
         {
             MsgScore sc = msg as MsgScore;
-            WriteLine("Player Score was updated" + sc.PlayerID.ToString() + String.Format(" = {0}/{1}/{2}", sc.Wins, sc.Losses, sc.TeamKills));
+            WriteLine("Player Score was updated " + sc.PlayerID.ToString() + String.Format(" = {0}/{1}/{2}", sc.Wins, sc.Losses, sc.TeamKills));
         }
+
 		private static void HandleTeamUpdate(NetworkMessage msg)
 		{
 			MsgTeamUpdate upd = msg as MsgTeamUpdate;
@@ -227,8 +248,13 @@ namespace ConnectionTester
 			MsgWantWHash hash = msg as MsgWantWHash;
 			WriteLine("Received" + (hash.IsRandomMap ? " Random "  : " Normal ") + "WorldHash:" + hash.WorldHash);
 
-			WriteLine("Requesting World");
-			client.SendMessage(new MsgGetWorld(0));
+			if (GetWorld)
+			{
+				WriteLine("Requesting World");
+				client.SendMessage(new MsgGetWorld(0));
+			}
+			else
+				SendEnter();
 		}
 
 		private static void HandleGetWorld(NetworkMessage msg)
@@ -382,7 +408,7 @@ namespace ConnectionTester
 		private static void HandleMsgQueryGame(NetworkMessage msg)
 		{
 			MsgQueryGame g = msg as MsgQueryGame;
-			WriteLine("MsgQueryGame " + g.Code.ToString());
+			WriteLine("MsgQueryGame " + g.CodeAbreviation.ToString());
 			WriteLine("\tGame Style " + g.GameStyle.ToString() + " Elapsed Time " + g.ElapsedTime.ToString() );
 			WriteLine("\tOptions " + g.GameOptions.ToString());
 			WriteLine("\tMax Shots " + g.MaxShots.ToString() + " Max Players " + g.MaxPlayers.ToString());
@@ -405,14 +431,52 @@ namespace ConnectionTester
         {
             MsgAlive alive = msg as MsgAlive;
             WriteLine("MsgAlive " + alive.PlayerID.ToString());
-            WriteLine(String.Format("Position = X{0} Y{1} Z{2} Rotation = {3}", alive.Position.X, alive.Position.Y, alive.Position.Z, alive.Azimuth));
+            WriteLine(String.Format("\tPosition = X{0} Y{1} Z{2} Rotation = {3}", alive.Position.X, alive.Position.Y, alive.Position.Z, alive.Azimuth));
         }
 
         private static void HandlePlayerUpdate(NetworkMessage msg)
         {
             MsgPlayerUpdateBase upd = msg as MsgPlayerUpdateBase;
-            WriteLine("MsgPlayerUpdate " + upd.Code.ToString() + String.Format("From {0} {1}",upd.PlayerID,upd.Status));
-            WriteLine(String.Format("Position = X{0} Y{1} Z{2}", upd.Position.X, upd.Position.Y, upd.Position.Z));
-        }
-    }
+            WriteLine("MsgPlayerUpdate " + upd.CodeAbreviation.ToString() + String.Format(" From {0} {1}",upd.PlayerID,upd.Status));
+            WriteLine(String.Format("\tPosition = X{0} Y{1} Z{2}", upd.Position.X, upd.Position.Y, upd.Position.Z));
+			WriteLine(String.Format("\tVelocity = X{0} Y{1} Z{2}", upd.Velocity.X, upd.Velocity.Y, upd.Velocity.Z));
+		}
+
+		private static void HandleShotBegin(NetworkMessage msg)
+		{
+			MsgShotBegin sb = msg as MsgShotBegin;
+			WriteLine("MsgShotBegin " + sb.PlayerID.ToString() + " With flag [" + sb.Flag + "]");
+			WriteLine("\tShotID " + sb.ShotID.ToString());
+			WriteLine(String.Format("\tPosition = X{0} Y{1} Z{2}", sb.Position.X, sb.Position.Y, sb.Position.Z));
+			WriteLine(String.Format("\tVelocity = X{0} Y{1} Z{2}", sb.Velocity.X, sb.Velocity.Y, sb.Velocity.Z));
+		}
+
+		private static void HandleShotEnd(NetworkMessage msg)
+		{
+			MsgShotEnd se = msg as MsgShotEnd;
+			WriteLine("MsgShotEnd " + se.PlayerID.ToString());
+			WriteLine("\tShotID " + se.ShotID.ToString());
+			WriteLine("\tExploded " + se.Exploded.ToString());
+		}
+
+		private static void HandleDropFlag(NetworkMessage msg)
+		{
+			MsgDropFlag df = msg as MsgDropFlag;
+			WriteLine("MsgDropFlag " + df.PlayerID.ToString());
+			WriteLine("\tFlagID " + df.FlagID.ToString());
+		}
+
+		private static void HandleGrabFlag(NetworkMessage msg)
+		{
+			MsgGrabFlag gf = msg as MsgGrabFlag;
+			WriteLine("MsgGrabFlag " + gf.PlayerID.ToString());
+			WriteLine("\tFlagID " + gf.FlagData.FlagID.ToString());
+		}
+		private static void HandleTransferFlag(NetworkMessage msg)
+		{
+			MsgTransferFlag tf = msg as MsgTransferFlag;
+			WriteLine("MsgTransferFlag From" + tf.FromID.ToString() + " To " + tf.ToID.ToString());
+			WriteLine("\tFlagID " + tf.FlagID.ToString());
+		}
+	}
 }

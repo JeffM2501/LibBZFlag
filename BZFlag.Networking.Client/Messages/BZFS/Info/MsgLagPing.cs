@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BZFlag.Networking.Messages.BZFS
+namespace BZFlag.Networking.Messages.BZFS.Info
 {
     public class MsgLagPing : NetworkMessage
     {

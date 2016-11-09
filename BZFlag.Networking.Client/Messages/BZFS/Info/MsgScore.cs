@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BZFlag.Networking.Messages
+namespace BZFlag.Networking.Messages.BZFS.Info
 {
     public class MsgScore : NetworkMessage
     {

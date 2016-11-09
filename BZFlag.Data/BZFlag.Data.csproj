@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Flags\FlagCache.cs" />
     <Compile Include="Flags\FlagType.cs" />
+    <Compile Include="Flags\FlagUpdateData.cs" />
     <Compile Include="Players\PlayerAttributes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Teams\TeamColors.cs" />

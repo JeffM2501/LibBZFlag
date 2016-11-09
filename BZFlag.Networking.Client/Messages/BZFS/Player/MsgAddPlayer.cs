@@ -5,7 +5,7 @@ using System.Text;
 using BZFlag.Data.Teams;
 using BZFlag.Data.Types;
 
-namespace BZFlag.Networking.Messages.BZFS
+namespace BZFlag.Networking.Messages.BZFS.Player
 {
 	public class MsgAddPlayer : NetworkMessage
 	{

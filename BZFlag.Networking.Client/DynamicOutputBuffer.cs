@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.Data.Types;
+using BZFlag.Data.Flags;
+
 namespace BZFlag.Networking
 {
 	public class DynamicOutputBuffer
@@ -83,6 +86,11 @@ namespace BZFlag.Networking
 			Array.Copy(b, 0, Buffer, offset, 2);
 		}
 
+		public void WriteInt16(int value)
+		{
+			WriteInt16((Int16)value);
+		}
+
 		public void WriteInt16(Int16 value)
 		{
 			CheckBuffer(2);
@@ -155,6 +163,27 @@ namespace BZFlag.Networking
 			BytesUsed += 4;
 		}
 
+		public void WriteVector2F(Vector2F value)
+		{
+			WriteFloat(value.X);
+			WriteFloat(value.Y);
+		}
+
+		public void WriteVector3F(Vector3F value)
+		{
+			WriteFloat(value.X);
+			WriteFloat(value.Y);
+			WriteFloat(value.Z);
+		}
+
+		public void WriteVector4F(Vector4F value)
+		{
+			WriteFloat(value.A);
+			WriteFloat(value.X);
+			WriteFloat(value.Y);
+			WriteFloat(value.Z);
+		}
+
 		public void WriteDouble(double value)
 		{
 			CheckBuffer(8);
@@ -222,6 +251,21 @@ namespace BZFlag.Networking
 			Encoding.UTF8.GetBytes(value, 0, value.Length, Buffer, BytesUsed);
 			BytesUsed += value.Length;
 			WriteByte(byte.MinValue);
+		}
+
+		public void WriteFlagUpdateData(FlagUpdateData flag)
+		{
+			WriteInt16(flag.FlagID);
+			WriteFixedSizeString(flag.Abreviation, 2);
+			WriteUInt16((UInt16)flag.Status);
+			WriteUInt16((UInt16)flag.Endurance);
+			WriteByte(flag.Owner);
+			WriteVector3F(flag.Postion);
+			WriteVector3F(flag.LaunchPosition);
+			WriteVector3F(flag.LandingPostion);
+			WriteFloat(flag.FlightTime);
+			WriteFloat(flag.FlightEnd);
+			WriteFloat(flag.InitalVelocity);
 		}
 	}
 }
