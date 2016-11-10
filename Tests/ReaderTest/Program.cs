@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-using BZFlag.IO;
+using BZFlag.IO.BZW;
 
 namespace ReaderTest
 {

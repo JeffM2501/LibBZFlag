@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-using BZFlag.IO.Elements;
+using BZFlag.Map;
 
-namespace BZFlag.IO
+using BZFlag.IO.BZW.Parsers;
+
+namespace BZFlag.IO.BZW
 {
     public static class Reader
     {
@@ -64,12 +66,12 @@ namespace BZFlag.IO
             return vec;
         }
 
-        public static Map ReadMap(StreamReader inStream)
+        public static WorldMap ReadMap(StreamReader inStream)
 		{
-			Map map = new Map();
+            WorldMap map = new WorldMap();
 			map.IntForLoad();
 
-			BasicObject obj = null;
+			BasicObjectParser parser = null;
 			while (!inStream.EndOfStream)
 			{
 				string line = inStream.ReadLine().Trim();
@@ -81,30 +83,30 @@ namespace BZFlag.IO
 
                 string cmd = cmd_norm.ToUpperInvariant();
 
-				if (obj == null)
+				if (parser == null)
 				{
-					obj = ElementFactory.Create(cmd);
-                    obj.Init(cmd_norm, GetRestOfWords(TrimTrainingComments(line)));
+                    parser = ParserFactory.Create(cmd);
+                    parser.Init(cmd_norm, GetRestOfWords(TrimTrainingComments(line)));
 				}
 				else
 				{
 					if (cmd == "END")
 					{
-						obj.Finish();
-						map.AddObject(obj);
-						obj = null;
+                        parser.Finish();
+						map.AddObject(parser.Object);
+                        parser = null;
 					}
 					else
-						obj.AddCodeLine(cmd,TrimTrainingComments(line));
+                        parser.AddCodeLine(cmd,TrimTrainingComments(line));
 				}
 
 			}
 
-			if (obj != null)	// should not happen, but don't loose data
+			if (parser != null)	// should not happen, but don't loose data
 			{
-				obj.Finish();
-				map.AddObject(obj);
-				obj = null;
+                parser.Finish();
+				map.AddObject(parser.Object);
+                parser = null;
 			}
 
             map.FinishLoad();

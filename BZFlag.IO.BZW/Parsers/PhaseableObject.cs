@@ -3,29 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BZFlag.IO.Elements.Shapes
-{
-	public abstract class PhaseableObject : PositionableObject
-    {
-        public bool Passable = false;
-        public bool ShootThrough = false;
-        public bool DriveThrough = false;
-        public bool Ricochet = false;
+using BZFlag.Map.Elements.Shapes;
 
+namespace BZFlag.IO.BZW.Parsers
+{
+	public abstract class PhaseableObjectParser : PositionableObjectParser
+    {
 		public override bool AddCodeLine(string command, string line)
 		{
-			if(!base.AddCodeLine(command, line))
+            PhaseableObject p = Object as PhaseableObject;
+            if (p == null)
+                return base.AddCodeLine(command,line);
+
+            if (!base.AddCodeLine(command, line))
 			{
                 if (command == "PASSABLE")
-                    Passable = true;
+                    p.Passable = true;
                 else if (command == "DRIVETHROUGH")
-                    DriveThrough = true;
+                    p.DriveThrough = true;
                 else if (command == "SHOOTTHROUGH")
-                    ShootThrough = true;
+                    p.ShootThrough = true;
                 else if (command == "RICOCHET")
-                    Ricochet = true;
+                    p.Ricochet = true;
                 else
-                    Attributes.Add(line);
+                    p.Attributes.Add(line);
 			}
 
 			return true;
@@ -38,20 +39,24 @@ namespace BZFlag.IO.Elements.Shapes
 
 		public override string BuildCode()
 		{
+            PhaseableObject p = Object as PhaseableObject;
+            if (p == null)
+                return base.BuildCode();
+
             string name = base.BuildCode();
 
-            if (Passable)
+            if (p.Passable)
                 AddCode(1, "passable");
             else
             {
-                if (DriveThrough)
+                if (p.DriveThrough)
                     AddCode(1, "drivethrough");
 
-                if (ShootThrough)
+                if (p.ShootThrough)
                     AddCode(1, "shootthrough");
             }
 
-            if (Ricochet)
+            if (p.Ricochet)
                 AddCode(1, "ricochet");
 
             return name;

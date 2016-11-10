@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("BZFlag.IO.BZW")]
+[assembly: AssemblyTitle("BzwIO")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("BZFlag.IO.BZW")]
+[assembly: AssemblyProduct("BzwIO")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("45813dae-e820-4a91-8c97-3cdef89ebe4b")]
+[assembly: Guid("4c5393f4-0040-41c3-a7ef-a6692bda7e59")]
 
 // Version information for an assembly consists of the following four values:
 //

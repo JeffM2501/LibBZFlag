@@ -11,11 +11,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.Data", "BZFlag.Data\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.Authentication", "BZFlag.Authentication\BZFlag.Authentication.csproj", "{310E93A9-1EC2-4909-B96B-C08F02B34F63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.IO.BZW", "BZFlag.IO.BZW\BZFlag.IO.BZW.csproj", "{4C5393F4-0040-41C3-A7EF-A6692BDA7E59}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.Map", "BZFlag.Map\BZFlag.Map.csproj", "{4C5393F4-0040-41C3-A7EF-A6692BDA7E59}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReaderTest", "Tests\ReaderTest\ReaderTest.csproj", "{3F012837-E7A3-4BC7-9044-728766C5CFCE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D40E9B5F-6F75-468D-B946-E1442078490D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.IO.BZW", "BZFlag.IO.BZW\BZFlag.IO.BZW.csproj", "{45813DAE-E820-4A91-8C97-3CDEF89EBE4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{3F012837-E7A3-4BC7-9044-728766C5CFCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F012837-E7A3-4BC7-9044-728766C5CFCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F012837-E7A3-4BC7-9044-728766C5CFCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45813DAE-E820-4A91-8C97-3CDEF89EBE4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45813DAE-E820-4A91-8C97-3CDEF89EBE4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45813DAE-E820-4A91-8C97-3CDEF89EBE4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45813DAE-E820-4A91-8C97-3CDEF89EBE4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

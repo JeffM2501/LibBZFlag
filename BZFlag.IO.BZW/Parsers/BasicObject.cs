@@ -1,35 +1,37 @@
-﻿using BZFlag.IO.Types;
+﻿using BZFlag.Data.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BZFlag.IO.Elements
+using BZFlag.Map.Elements;
+
+using BZFlag.IO.BZW;
+
+namespace BZFlag.IO.BZW.Parsers
 {
-	public class BasicObject
+	public class BasicObjectParser
 	{
 		public virtual string ObjectTerminator {  get { return "end"; } }
 
-		public string ObjectType = string.Empty;
-        public string TypeParams = string.Empty;
-		public List<string> Code = new List<string>();
+        public List<string> Code = new List<string>(); // output code
 
-		public string Name = string.Empty;
+        public BasicObject Object = null;
 
-		public string GUID = string.Empty;
+        public BasicObjectParser()
+        {
+            Object = new BasicObject();
+        }
 
-		private static Random RNG = new Random();
+        public BasicObjectParser(BasicObject obj)
+        {
+            Object = obj;
+        }
 
-		public BasicObject()
-		{
-			ObjectType = "Unknown";
-
-			GUID = RNG.Next().ToString() + RNG.Next().ToString() + RNG.Next().ToString();
-		}
 
         public virtual void Init(string objectType, string typeParams)
         {
-            ObjectType = objectType;
+            Object.ObjectType = objectType;
         }
 
         public virtual void Finish()
@@ -42,7 +44,7 @@ namespace BZFlag.IO.Elements
 			Code.Add(line);
 
 			if(command == "NAME")
-				Name = Reader.GetRestOfWords(line);
+                Object.Name = Reader.GetRestOfWords(line);
 			else
 				return false;
 
@@ -51,15 +53,11 @@ namespace BZFlag.IO.Elements
 
 		public virtual string BuildCode()
 		{
-			string[] code = Code.ToArray();
 			Code.Clear();
 
-			foreach(string c in code)
-				AddCode(1, c);
-
-            string t = ObjectType;
-            if (TypeParams != null)
-                t += " " + TypeParams;
+            string t = Object.ObjectType;
+            if (Object.TypeParams != null)
+                t += " " + Object.TypeParams;
 
             return t;
 		}

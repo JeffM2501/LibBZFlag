@@ -3,117 +3,86 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using BZFlag.IO.Types;
+using BZFlag.Data.Types;
+using BZFlag.Map.Elements.Shapes;
 
-namespace BZFlag.IO.Elements.Shapes
+namespace BZFlag.IO.BZW.Parsers
 {
-    public class Mesh : PositionableObject
+    public class MeshParser : PositionableObjectParser
     {
-        public List<Vector3F> InsidePoints = new List<Vector3F>();
-        public List<Vector3F> OutsidePoints = new List<Vector3F>();
-
-        public List<Vector3F> Vertecies = new List<Vector3F>();
-        public List<Vector3F> Normals = new List<Vector3F>();
-        public List<Vector2F> UVs = new List<Vector2F>();
-
-        public class Face
+       public Mesh.Transformation ParseTransformation( string type, string data)
         {
-            public List<int> Vertecies = new List<int>();
-            public List<int> Normals = new List<int>();
-            public List<int> UVs = new List<int>();
+            Mesh.Transformation t = new Mesh.Transformation();
 
-            public string PhysicsDriver = string.Empty;
-            public bool SmoothBounce = false;
-            public bool NoClusters = false;
-
-            public bool Passable = false;
-            public bool ShootThrough = false;
-            public bool DriveThrough = false;
+            if (type == "SCALE")
+            {
+                t.TransformType = Mesh.Transformation.TransformTypes.Scale;
+                t.Value = new Vector4F(Utilities.ReadVector3F(data));
+            }
+            else if (type == "SHIFT")
+            {
+                t.TransformType = Mesh.Transformation.TransformTypes.Shift;
+                t.Value = new Vector4F(Utilities.ReadVector3F(data));
+            }
+            else if (type == "SHEAR")
+            {
+                t.TransformType = Mesh.Transformation.TransformTypes.Shear;
+                t.Value = new Vector4F(Utilities.ReadVector3F(data));
+            }
+            else if (type == "SPIN")
+            {
+                t.TransformType = Mesh.Transformation.TransformTypes.Spin;
+                t.Value = Utilities.ReadVector4F(data);
+            }
+            return t;
         }
 
-        public List<Face> Faces = new List<Face>();
 
-        public class Transformation
+        private Mesh.Face TempFace = null;
+
+        public MeshParser()
         {
-            public enum TransformTypes
-            {
-                Scale,
-                Shift,
-                Shear,
-                Spin,
-            }
-            public TransformTypes TransformType = TransformTypes.Shift;
-            public Vector4F Value = new Vector4F();
-
-            public Transformation() { }
-
-            public Transformation( string type, string data)
-            {
-                if (type == "SCALE")
-                {
-                    TransformType = TransformTypes.Scale;
-                    Value = new Vector4F(Vector3F.Read(data));
-                }
-                else if (type == "SHIFT")
-                {
-                    TransformType = TransformTypes.Shift;
-                    Value = new Vector4F(Vector3F.Read(data));
-                }
-                else if (type == "SHEAR")
-                {
-                    TransformType = TransformTypes.Shear;
-                    Value = new Vector4F(Vector3F.Read(data));
-                }
-                else if (type == "SPIN")
-                {
-                    TransformType = TransformTypes.Spin;
-                    Value = Vector4F.Read(data);
-                }
-            }
+            Object = new Mesh();
         }
 
-        public List<Transformation> Transforms = new List<Transformation>();
-
-        public string PhysicsDriver = string.Empty;
-        public bool SmoothBounce = false;
-        public bool NoClusters = false;
-
-        private Face TempFace = null;
-
-        public Mesh()
+        public MeshParser(Mesh obj)
         {
-            ObjectType = "Mesh";
+            Object = obj;
         }
 
         public override bool AddCodeLine(string command, string line)
         {
+            Mesh p = Object as Mesh;
+            if (p == null)
+                return base.AddCodeLine(command, line);
+
             Code.Add(line);// save the raw data
 
             string nub = Reader.GetRestOfWords(line);
 
             if (command == "VERTEX")
-                Vertecies.Add(Vector3F.Read(nub));
+                p.Vertecies.Add(Utilities.ReadVector3F(nub));
             else if (command == "NORMAL")
-                Normals.Add(Vector3F.Read(nub));
+                p.Normals.Add(Utilities.ReadVector3F(nub));
             else if (command == "TEXTCOORD")
-                UVs.Add(Vector2F.Read(nub));
+                p.UVs.Add(Utilities.ReadVector2F(nub));
             else if (command == "INSIDE")
-                InsidePoints.Add(Vector3F.Read(nub));
+                p.InsidePoints.Add(Utilities.ReadVector3F(nub));
             else if (command == "OUTSIDE")
-                OutsidePoints.Add(Vector3F.Read(nub));
+                p.OutsidePoints.Add(Utilities.ReadVector3F(nub));
             else if (command == "SHIFT" || command == "SPIN" || command == "SCALE" || command == "SHEAR")
-                Transforms.Add(new Transformation(command,nub));
+                p.Transforms.Add(ParseTransformation(command,nub));
             else if (command == "FACE")
             {
                 if (TempFace != null)
-                    Faces.Add(TempFace);
+                    p.Faces.Add(TempFace);
 
-                TempFace = new Face();
+                TempFace = new Mesh.Face();
             }
             else if (command == "ENDFACE")
             {
                 if (TempFace != null)
-                    Faces.Add(TempFace);
+                    p.Faces.Add(TempFace);
 
                 TempFace = null;
             }
@@ -122,21 +91,21 @@ namespace BZFlag.IO.Elements.Shapes
                 if (TempFace != null)
                     TempFace.PhysicsDriver = nub;
                 else
-                    PhysicsDriver = nub;
+                    p.PhysicsDriver = nub;
             }
             else if (command == "NOCLOSTERS")
             {
                 if (TempFace != null)
                     TempFace.NoClusters = true;
                 else
-                    NoClusters = true;
+                    p.NoClusters = true;
             }
             else if (command == "SMOOTHBOUNCE")
             {
                 if (TempFace != null)
                     TempFace.SmoothBounce = true;
                 else
-                    SmoothBounce = true;
+                    p.SmoothBounce = true;
             }
             else if (command == "PASSABLE")
             {
@@ -161,59 +130,67 @@ namespace BZFlag.IO.Elements.Shapes
 
         public override void Finish()
         {
-            if (TempFace != null)
-                Faces.Add(TempFace);
+            Mesh p = Object as Mesh;
+            if (p == null)
+                base.Finish();
+            else
+            {
+                if (TempFace != null)
+                    p.Faces.Add(TempFace);
 
-            TempFace.ToString();
-            base.Finish();
+                base.Finish();
+            }
         }
 
         public override string BuildCode()
         {
-            string name = base.BuildCode();
+            Mesh m = Object as Mesh;
+            if (m == null)
+                return base.BuildCode();
+                string name = base.BuildCode();
 
-            foreach (var p in InsidePoints)
+            foreach (var p in m.InsidePoints)
                 AddCode(1, "inside", p);
 
-            foreach (var p in OutsidePoints)
+            foreach (var p in m.OutsidePoints)
                 AddCode(1, "outside", p);
 
-            foreach (var p in Vertecies)
+            foreach (var p in m.Vertecies)
                 AddCode(1, "vertex", p);
-            foreach (var p in Normals)
+            foreach (var p in m.Normals)
                 AddCode(1, "normal", p);
-            foreach (var p in UVs)
+            foreach (var p in m.UVs)
                 AddCode(1, "texcoord", p);
 
-            foreach (var xform in Transforms)
+            foreach (var xform in m.Transforms)
             {
                 switch (xform.TransformType)
                 {
-                    case Transformation.TransformTypes.Scale:
+                    case Mesh.Transformation.TransformTypes.Scale:
                         AddCode(1, "scale", new Vector3F(xform.Value));
                         break;
-                    case Transformation.TransformTypes.Shear:
+                    case Mesh.Transformation.TransformTypes.Shear:
                         AddCode(1, "shear", new Vector3F(xform.Value));
                         break;
-                    case Transformation.TransformTypes.Shift:
+                    case Mesh.Transformation.TransformTypes.Shift:
                         AddCode(1, "shift", new Vector3F(xform.Value));
                         break;
-                    case Transformation.TransformTypes.Spin:
+                    case Mesh.Transformation.TransformTypes.Spin:
                         AddCode(1, "spin", xform.Value);
                         break;
                 }
             }
 
-            if (PhysicsDriver != string.Empty)
-                AddCode(1, "phydrv", PhysicsDriver);
+            if (m.PhysicsDriver != string.Empty)
+                AddCode(1, "phydrv", m.PhysicsDriver);
 
-            if (NoClusters)
+            if (m.NoClusters)
                 AddCode(1, "noclusters");
 
-            if (SmoothBounce)
+            if (m.SmoothBounce)
                 AddCode(1, "smoothbounce");
 
-            foreach(var face in Faces)
+            foreach(var face in m.Faces)
             {
                 AddCode(1, "face");
 
@@ -222,7 +199,7 @@ namespace BZFlag.IO.Elements.Shapes
                 AddCode(2, "texcoords", string.Join(" ", Utilities.GetStringList<int>(face.UVs)));
 
                 if (face.PhysicsDriver != string.Empty)
-                    AddCode(2, "phydrv", PhysicsDriver);
+                    AddCode(2, "phydrv", m.PhysicsDriver);
 
                 if (face.NoClusters)
                     AddCode(2, "noclusters");

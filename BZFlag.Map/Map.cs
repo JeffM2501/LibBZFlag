@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using BZFlag.IO.Elements;
-using BZFlag.IO.Elements.Shapes;
+using BZFlag.Map.Elements;
+using BZFlag.Map.Elements.Shapes;
 
-namespace BZFlag.IO
+namespace BZFlag.Map
 {
-	public class Map
+	public class WorldMap
 	{
 		public List<BasicObject> Objects = new List<BasicObject>();
 
