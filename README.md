@@ -7,6 +7,10 @@ A basic list server client with authentication
 ##BZFlag.Data
 Common shared data structures
 
+##BZFlag.IO.BZW
+Library for reading/writing and storing bzworld objects
+
+
 ## BZFlag.Networking.Client
 Network connection class for bzflag clients
 
