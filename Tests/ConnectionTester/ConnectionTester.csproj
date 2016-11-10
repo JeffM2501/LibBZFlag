@@ -49,15 +49,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BZFlag.Authentication\BZFlag.Authentication.csproj">
+    <ProjectReference Include="..\..\BZFlag.Authentication\BZFlag.Authentication.csproj">
       <Project>{310e93a9-1ec2-4909-b96b-c08f02b34f63}</Project>
       <Name>BZFlag.Authentication</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BZFlag.Data\BZFlag.Data.csproj">
+    <ProjectReference Include="..\..\BZFlag.Data\BZFlag.Data.csproj">
       <Project>{e20fc2b8-a7d1-4ad7-9b04-7f7d2e1c6056}</Project>
       <Name>BZFlag.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BZFlag.Networking.Client\BZFlag.Networking.Client.csproj">
+    <ProjectReference Include="..\..\BZFlag.Networking.Client\BZFlag.Networking.Client.csproj">
       <Project>{cf984932-7b25-4b21-a9dd-40ba12748bb6}</Project>
       <Name>BZFlag.Networking.Client</Name>
     </ProjectReference>
