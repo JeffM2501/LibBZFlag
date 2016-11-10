@@ -1,6 +1,17 @@
-# BZFSConnect
+# LibBZFlag
+A library implementaiton of bzflag features
+
+## BZFlag.Authentication
+A basic list server client with authentication
+
+##BZFlag.Data
+Common shared data structures
+
+## BZFlag.Networking.Client
 Network connection class for bzflag clients
 
+### Messages 
+/// Main system messages
 * **DONE** MsgAccept = 0x6163;			    // 'ac'          
 * **DONE** MsgAdminInfo = 0x6169;			// 'ai'
 * **DONE** MsgAlive = 0x616c;			    // 'al'
