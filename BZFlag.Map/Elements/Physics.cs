@@ -14,8 +14,6 @@ namespace BZFlag.Map.Elements
         public float Slide = 0;
         public string Death = string.Empty;
 
-        public List<string> Attributes = new List<string>();
-
         public Physics()
         {
             ObjectType = "Physics";

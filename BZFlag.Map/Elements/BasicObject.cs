@@ -15,7 +15,9 @@ namespace BZFlag.Map.Elements
 
 		public string GUID = string.Empty;
 
-		private static Random RNG = new Random();
+        public List<string> Attributes = new List<string>();
+
+        private static Random RNG = new Random();
 
 		public BasicObject()
 		{

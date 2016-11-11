@@ -13,8 +13,6 @@ namespace BZFlag.Map.Elements
 		public bool NoWalls = false;
 		public bool FreeCTFSpawns = false;
 
-		public List<string> Attributes = new List<string>();
-
 		public World()
 		{
 			ObjectType = "World";

@@ -123,7 +123,7 @@ namespace BZFlag.IO.BZW.Parsers
                     TempFace.ShootThrough = true;
             }
             else if (!base.AddCodeLine(command, line))
-                return false;
+                return true;
 
             return true;
         }

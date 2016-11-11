@@ -26,15 +26,14 @@ namespace BZFlag.IO.BZW.Parsers
             if (p == null)
                 return base.AddCodeLine(command, line);
 
-            if (!base.AddCodeLine(command, line))
-			{
-				if(command == "HEIGHT")
-					float.TryParse(Reader.GetRestOfWords(line), out p.Height);
-				else
-					p.Attributes.Add(line);
-			}
+            if (command == "NAME")
+                p.Name = Reader.GetRestOfWords(line);
+            else if (command == "HEIGHT")
+                float.TryParse(Reader.GetRestOfWords(line), out p.Height);
+            else
+                p.Attributes.Add(line);
 
-			return true;
+            return true;
 		}
 
 		public override string BuildCode()

@@ -54,8 +54,6 @@ namespace BZFlag.Map.Elements.Shapes
         public bool SmoothBounce = false;
         public bool NoClusters = false;
 
-        private Face TempFace = null;
-
         public Mesh()
         {
             ObjectType = "Mesh";

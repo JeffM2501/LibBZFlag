@@ -25,19 +25,18 @@ namespace BZFlag.IO.BZW.Parsers
             if (w == null)
                 return base.AddCodeLine(command, line);
 
-            if (!base.AddCodeLine(command, line))
-			{
-				if(command == "SIZE")
-					float.TryParse(Reader.GetRestOfWords(line), out w.Size);
-				else if(command == "FLAGHEIGHT")
-					float.TryParse(Reader.GetRestOfWords(line), out w.FlagHeight);
-				else if(command == "NOWALLS")
-                    w.NoWalls = true;
-				else if(command == "FREECTFSPAWNS")
-                    w.FreeCTFSpawns = true;
-				else
-                    w.Attributes.Add(line);
-			}
+            if (command == "NAME")
+                w.Name = Reader.GetRestOfWords(line);
+            else if (command == "SIZE")
+                float.TryParse(Reader.GetRestOfWords(line), out w.Size);
+            else if (command == "FLAGHEIGHT")
+                float.TryParse(Reader.GetRestOfWords(line), out w.FlagHeight);
+            else if (command == "NOWALLS")
+                w.NoWalls = true;
+            else if (command == "FREECTFSPAWNS")
+                w.FreeCTFSpawns = true;
+            else
+                w.Attributes.Add(line);
 
 			return true;
 		}

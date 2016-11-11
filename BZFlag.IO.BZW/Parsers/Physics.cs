@@ -26,19 +26,18 @@ namespace BZFlag.IO.BZW.Parsers
             if (p == null)
                 return base.AddCodeLine(command, line);
 
-            if (!base.AddCodeLine(command, line))
-            {
-                if (command == "LINEAR")
-                    p.Linear = Utilities.ReadVector3F(Reader.GetRestOfWords(line));
-                else if (command == "ANGULAR")
-                    p.Angular = Utilities.ReadVector3F(Reader.GetRestOfWords(line));
-                else if (command == "SLIDE")
-                    float.TryParse(Reader.GetRestOfWords(line), out p.Slide);
-                else if (command == "DEATH")
-                    p.Death = Reader.GetRestOfWords(line);
-                else
-                    p.Attributes.Add(line);
-            }
+            if(command == "NAME")
+                p.Name = Reader.GetRestOfWords(line);
+            else if (command == "LINEAR")
+                p.Linear = Utilities.ReadVector3F(Reader.GetRestOfWords(line));
+            else if (command == "ANGULAR")
+                p.Angular = Utilities.ReadVector3F(Reader.GetRestOfWords(line));
+            else if (command == "SLIDE")
+                float.TryParse(Reader.GetRestOfWords(line), out p.Slide);
+            else if (command == "DEATH")
+                p.Death = Reader.GetRestOfWords(line);
+            else
+                p.Attributes.Add(line);
 
             return true;
         }

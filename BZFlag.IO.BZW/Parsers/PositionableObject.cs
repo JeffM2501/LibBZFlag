@@ -17,19 +17,18 @@ namespace BZFlag.IO.BZW.Parsers
             if (p == null)
                 return base.AddCodeLine(command, line);
 
-            if (!base.AddCodeLine(command, line))
-			{
-				if(command == "POSITION")
-					p.Position = Utilities.ReadVector3F(Reader.GetRestOfWords(line));
-				else if(command == "SIZE")
-                    p.Size = Utilities.ReadVector3F(Reader.GetRestOfWords(line));
-				else if(command == "ROTATION")
-					float.TryParse(Reader.GetRestOfWords(line), out p.Rotation);
-				else
-                    p.Attributes.Add(line);
-			}
+            if (command == "NAME")
+                Object.Name = Reader.GetRestOfWords(line);
+            else if (command == "POSITION")
+                p.Position = Utilities.ReadVector3F(Reader.GetRestOfWords(line));
+            else if (command == "SIZE")
+                p.Size = Utilities.ReadVector3F(Reader.GetRestOfWords(line));
+            else if (command == "ROTATION")
+                float.TryParse(Reader.GetRestOfWords(line), out p.Rotation);
+            else
+                p.Attributes.Add(line);
 
-			return true;
+            return true;
 		}
 
 		public override void Finish()

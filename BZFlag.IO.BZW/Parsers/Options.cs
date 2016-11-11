@@ -21,15 +21,7 @@ namespace BZFlag.IO.BZW.Parsers
 
         public override bool AddCodeLine(string command, string line)
 		{
-            Options p = Object as Options;
-            if (p == null)
-                return base.AddCodeLine(command, line);
-
-            if (!base.AddCodeLine(command, line))
-			{
-				p.Attributes.Add(line);
-			}
-
+            base.AddCodeLine(command, line);
 			return true;
 		}
 

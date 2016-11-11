@@ -19,8 +19,6 @@ namespace BZFlag.Map.Elements
         public PorterLink From = new PorterLink();
         public PorterLink To = new PorterLink();
 
-        public List<string> Attributes = new List<string>();
-
         public Link()
 		{
 			ObjectType = "Link";

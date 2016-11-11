@@ -25,8 +25,6 @@ namespace BZFlag.IO.BZW.Parsers
                     p.ShootThrough = true;
                 else if (command == "RICOCHET")
                     p.Ricochet = true;
-                else
-                    p.Attributes.Add(line);
 			}
 
 			return true;

@@ -104,17 +104,16 @@ namespace BZFlag.IO.BZW.Parsers
             if (l == null)
                 return base.AddCodeLine(command, line);
 
-            if (!base.AddCodeLine(command, line))
-			{
-                if (command == "FROM")
-                    l.From = ImportPorterLink(Reader.GetRestOfWords(line));
-                else if (command == "TO")
-                    l.To = ImportPorterLink(Reader.GetRestOfWords(line));
-                else
-                    l.Attributes.Add(line);
-			}
+            if (command == "NAME")
+                l.Name = Reader.GetRestOfWords(line);
+            else if (command == "FROM")
+                l.From = ImportPorterLink(Reader.GetRestOfWords(line));
+            else if (command == "TO")
+                l.To = ImportPorterLink(Reader.GetRestOfWords(line));
+            else
+                l.Attributes.Add(line);
 
-			return true;
+            return true;
 		}
 
 		public override string BuildCode()

@@ -41,14 +41,14 @@ namespace BZFlag.IO.BZW.Parsers
 
         public virtual bool AddCodeLine(string command, string line)
 		{
-			Code.Add(line);
-
+            
 			if(command == "NAME")
+            {
                 Object.Name = Reader.GetRestOfWords(line);
-			else
-				return false;
-
-			return true;
+                return true;
+            }
+            Object.Attributes.Add(line);
+			return false;
 		}
 
 		public virtual string BuildCode()
