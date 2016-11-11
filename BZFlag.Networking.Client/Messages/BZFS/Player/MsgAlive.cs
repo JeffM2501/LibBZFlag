@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-
 using BZFlag.Data.Types;
+using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages.BZFS.Player
 {
@@ -26,10 +26,10 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
-            PlayerID = ReadByte(data);
-            Position = ReadVector3F(data);
-            Azimuth = ReadFloat(data);
+            Reset(data);
+            PlayerID = ReadByte();
+            Position = ReadVector3F();
+            Azimuth = ReadFloat();
         }
     }
 }

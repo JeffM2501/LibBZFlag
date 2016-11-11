@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages.BZFS.Info
 {
@@ -22,9 +23,9 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
-            NumTeams = ReadUInt16(data);
-            NumPlayers = ReadUInt16(data);
+            Reset(data);
+            NumTeams = ReadUInt16();
+            NumPlayers = ReadUInt16();
         }
     }
 }

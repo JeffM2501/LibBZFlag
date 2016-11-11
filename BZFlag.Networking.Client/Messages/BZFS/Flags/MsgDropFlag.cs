@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.Data.Utils;
+
 namespace BZFlag.Networking.Messages.BZFS.Flags
 {
 	public class MsgDropFlag : NetworkMessage
@@ -26,9 +28,9 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
 
 		public override void Unpack(byte[] data)
 		{
-			ResetOffset();
-			FlagID = ReadByte(data);
-			FlagID = ReadUInt16(data);
+			Reset(data);
+			FlagID = ReadByte();
+			FlagID = ReadUInt16();
 		}
 	}
 }

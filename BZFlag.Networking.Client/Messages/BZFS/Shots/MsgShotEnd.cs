@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.Data.Utils;
+
 namespace BZFlag.Networking.Messages.BZFS.Shots
 {
 	public class MsgShotEnd : NetworkMessage
@@ -28,11 +30,11 @@ namespace BZFlag.Networking.Messages.BZFS.Shots
 
 		public override void Unpack(byte[] data)
 		{
-			ResetOffset();
+			Reset(data);
 
-			PlayerID = ReadByte(data);
-			ShotID = ReadInt16(data);
-			Exploded = ReadUInt16(data) == 0;
+			PlayerID = ReadByte();
+			ShotID = ReadInt16();
+			Exploded = ReadUInt16() == 0;
 		}
 	}
 }

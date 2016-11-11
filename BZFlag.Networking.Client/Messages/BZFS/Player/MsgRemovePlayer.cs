@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages.BZFS.Player
 {
@@ -21,8 +22,8 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 
 		public override void Unpack(byte[] data)
 		{
-			ResetOffset();
-			PlayerID = ReadByte(data);
+			Reset(data);
+			PlayerID = ReadByte();
 		}
 	}
 }

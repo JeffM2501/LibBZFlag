@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.Data.Utils;
+
 namespace BZFlag.Networking.Messages.BZFS.World
 {
 	public class MsgGetWorld : NetworkMessage
@@ -30,9 +32,9 @@ namespace BZFlag.Networking.Messages.BZFS.World
 
 		public override void Unpack(byte[] data)
 		{
-			ResetOffset();
-			Offset = ReadUInt32(data);
-			Data = ReadRestOfBytes(data);
+			Reset(data);
+			Offset = ReadUInt32();
+			Data = ReadRestOfBytes();
 		}
 	}
 }

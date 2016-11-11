@@ -5,6 +5,7 @@ using System.Text;
 
 using BZFlag.Data.Types;
 using BZFlag.Data.Teams;
+using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages.BZFS.Shots
 {
@@ -41,14 +42,14 @@ namespace BZFlag.Networking.Messages.BZFS.Shots
 
 		public override void Unpack(byte[] data)
 		{
-			ResetOffset();
-			PlayerID = ReadByte(data);
-			ShotID = ReadUInt16(data);
-			Position = ReadVector3F(data);
-			Velocity = ReadVector3F(data);
-			DeltaTime = ReadFloat(data);
-			Team = (TeamColors)ReadInt16(data);
-			TargetID = ReadByte(data);
+			Reset(data);
+			PlayerID = ReadByte();
+			ShotID = ReadUInt16();
+			Position = ReadVector3F();
+			Velocity = ReadVector3F();
+			DeltaTime = ReadFloat();
+			Team = (TeamColors)ReadInt16();
+			TargetID = ReadByte();
 		}
 	}
 }

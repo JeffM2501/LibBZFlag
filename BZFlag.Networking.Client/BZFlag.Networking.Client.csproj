@@ -39,9 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BufferUtils.cs" />
     <Compile Include="Client.cs" />
-    <Compile Include="DynamicOutputBuffer.cs" />
     <Compile Include="InboundMessageBuffer.cs" />
     <Compile Include="Messages\BZFS\Control\MsgAutoPilot.cs" />
     <Compile Include="Messages\BZFS\Control\MsgCustomSound.cs" />

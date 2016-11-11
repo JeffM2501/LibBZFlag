@@ -21,11 +21,11 @@ namespace BZFlag.Networking.Messages.BZFS.Control
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
+            Reset(data);
 
-            int count = ReadUInt16(data);
+            int count = ReadUInt16();
             for (int i = 0; i < count; i++)
-                Handicaps.Add(ReadByte(data), ReadInt16(data));
+                Handicaps.Add(ReadByte(), ReadInt16());
         }
     }
 }

@@ -28,17 +28,17 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
+            Reset(data);
 
-            int count = ReadByte(data);
+            int count = ReadByte();
 
             for (int i = 0; i < count; i++)
             {
                 IPRecord rec = new IPRecord();
 
-                int size = ReadByte(data);
-                rec.PlayerID = ReadByte(data);
-                rec.IPAddress = ReadBytes(data, size);
+                int size = ReadByte();
+                rec.PlayerID = ReadByte();
+                rec.IPAddress = ReadBytes(size);
 
                 Records.Add(rec);
             }

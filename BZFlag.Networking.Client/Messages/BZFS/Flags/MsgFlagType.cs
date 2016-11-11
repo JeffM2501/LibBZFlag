@@ -28,14 +28,14 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
+            Reset(data);
 
-            Abreviation = ReadFixedSizeString(data, 2);
-            Quality = (FlagQualities)ReadByte(data);
-            ShotType = (ShotTypes)ReadByte(data);
+            Abreviation = ReadFixedSizeString(2);
+            Quality = (FlagQualities)ReadByte();
+            ShotType = (ShotTypes)ReadByte();
 
-            Name = ReadULongPascalString(data);
-            HelpText = ReadULongPascalString(data);
+            Name = ReadULongPascalString();
+            HelpText = ReadULongPascalString();
         }
     }
 }

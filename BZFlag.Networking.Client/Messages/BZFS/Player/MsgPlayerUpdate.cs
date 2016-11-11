@@ -5,6 +5,7 @@ using System.Text;
 
 using BZFlag.Data.Players;
 using BZFlag.Data.Types;
+using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages.BZFS.Player
 {
@@ -28,31 +29,31 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 
         public PlayerStatusSounds Sounds = PlayerStatusSounds.NoSounds;
 
-        protected void UnpackHeader(byte[] data)
+        protected void UnpackHeader()
         {
-            TimeStamp = ReadFloat(data);
-            PlayerID = ReadByte(data);
+            TimeStamp = ReadFloat();
+            PlayerID = ReadByte();
 
-            Order = ReadInt32(data);
-            Status = (PlayerStatuses)ReadInt16(data);
+            Order = ReadInt32();
+            Status = (PlayerStatuses)ReadInt16();
         }
 
-        protected void UnpackFooter(byte[] data)
+        protected void UnpackFooter()
         {
             if (Status == PlayerStatuses.JumpJets)
-                JumpSquish = ReadSmallScale(data);
+                JumpSquish = ReadSmallScale();
 
             if (Status == PlayerStatuses.OnDriver)
-                OnDriver = ReadInt32(data);
+                OnDriver = ReadInt32();
 
             if (Status == PlayerStatuses.UserInputs)
             {
-                UserSpeed = ReadSmallVel(data);
-                UserAngVel = ReadSmallAngVel(data);
+                UserSpeed = ReadSmallVel();
+                UserAngVel = ReadSmallAngVel();
             }
 
             if (Status == PlayerStatuses.PlaySound)
-                Sounds = (PlayerStatusSounds)ReadByte(data);
+                Sounds = (PlayerStatusSounds)ReadByte();
         }
 
         protected void PackHeader(DynamicOutputBuffer buffer)
@@ -89,15 +90,15 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
-            UnpackHeader(data);
+            Reset(data);
+            UnpackHeader();
 
-            Position = ReadVector3F(data);
-            Velocity = ReadVector3F(data);
-            Azimuth = ReadFloat(data);
-            AngularVelocity = ReadFloat(data);
+            Position = ReadVector3F();
+            Velocity = ReadVector3F();
+            Azimuth = ReadFloat();
+            AngularVelocity = ReadFloat();
 
-            UnpackFooter(data);
+            UnpackFooter();
         }
     }
 
@@ -115,15 +116,15 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
-            UnpackHeader(data);
+            Reset(data);
+            UnpackHeader();
 
-            Position = ReadSmallVector3F(data);
-            Velocity = ReadSmallVelVector3F(data);
-            Azimuth = ReadSmallAngle(data);
-            AngularVelocity = ReadSmallAngVel(data);
+            Position = ReadSmallVector3F();
+            Velocity = ReadSmallVelVector3F();
+            Azimuth = ReadSmallAngle();
+            AngularVelocity = ReadSmallAngVel();
 
-            UnpackFooter(data);
+            UnpackFooter();
         }
     }
 }

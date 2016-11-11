@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using BZFlag.Data.Game;
+using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages.BZFS.Info
 {
@@ -35,21 +36,21 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
+            Reset(data);
 
-            WorldSize = ReadFloat(data);
-            GameType = (GameTypes)ReadUInt16(data);
-            GameOptions = (GameOptionFlags)ReadUInt16(data);
-            MaxPlayers = ReadUInt16(data);
-            MaxShots = ReadUInt16(data);
-            MaxFlags = ReadUInt16(data);
+            WorldSize = ReadFloat();
+            GameType = (GameTypes)ReadUInt16();
+            GameOptions = (GameOptionFlags)ReadUInt16();
+            MaxPlayers = ReadUInt16();
+            MaxShots = ReadUInt16();
+            MaxFlags = ReadUInt16();
 
-            LinearAcceleration = ReadFloat(data);
-            AngularAcceleration = ReadFloat(data);
+            LinearAcceleration = ReadFloat();
+            AngularAcceleration = ReadFloat();
 
-            ShakeTimeout = 0.1f * ReadUInt16(data);
-            ShakeWins = ReadUInt16(data);
-            UsedToBeSyncTime = (int)ReadUInt32(data);
+            ShakeTimeout = 0.1f * ReadUInt16();
+            ShakeWins = ReadUInt16();
+            UsedToBeSyncTime = (int)ReadUInt32();
         }
     }
 }

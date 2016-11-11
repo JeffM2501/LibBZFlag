@@ -22,11 +22,11 @@ namespace BZFlag.Networking.Messages.BZFS.BZDB
 		public override void Unpack(byte[] data)
 		{
 			BZDBVariables.Clear();
-			ResetOffset();
+			Reset(data);
 
-			int varCount = ReadUInt16(data);
+			int varCount = ReadUInt16();
 			for (int i = 0; i < varCount; i++)
-				BZDBVariables.Add(ReadPascalString(data), ReadPascalString(data));
+				BZDBVariables.Add(ReadPascalString(), ReadPascalString());
 		}
 	}
 }

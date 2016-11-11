@@ -21,8 +21,8 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
-            URL = ReadNullTermString(data,true);
+            Reset(data);
+            URL = ReadNullTermString(true);
         }
     }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.Data.Utils;
+
 namespace BZFlag.Networking.Messages.BZFS.UDP
 {
 	public class MsgUDPLinkRequest : NetworkMessage
@@ -28,8 +30,8 @@ namespace BZFlag.Networking.Messages.BZFS.UDP
 
 		public override void Unpack(byte[] data)
 		{
-			ResetOffset();
-			PlayerID = ReadByte(data);
+			Reset(data);
+			PlayerID = ReadByte();
 		}
 	}
 }

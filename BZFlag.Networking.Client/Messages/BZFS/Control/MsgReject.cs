@@ -41,9 +41,9 @@ namespace BZFlag.Networking.Messages.BZFS.Control
 
 		public override void Unpack(byte[] data)
 		{
-			ResetOffset();
-			ReasonCode = (RejectionCodes)ReadUInt16(data);
-			ReasonMessage = ReadNullTermString(data, true);
+			Reset(data);
+			ReasonCode = (RejectionCodes)ReadUInt16();
+			ReasonMessage = ReadNullTermString(true);
 		}
 	}
 }

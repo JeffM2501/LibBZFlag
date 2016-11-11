@@ -23,9 +23,9 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
-            Position = ReadVector3F(data);
-            FlagName = ReadULongPascalString(data);
+            Reset(data);
+            Position = ReadVector3F();
+            FlagName = ReadULongPascalString();
         }
     }
 }

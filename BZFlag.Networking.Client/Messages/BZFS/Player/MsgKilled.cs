@@ -5,6 +5,7 @@ using System.Text;
 
 using BZFlag.Data.Players;
 using BZFlag.Data.Types;
+using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages.BZFS.Player
 {
@@ -46,22 +47,22 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
+            Reset(data);
 
-            VictimID = ReadByte(data);
-            KillerID = ReadByte(data);
+            VictimID = ReadByte();
+            KillerID = ReadByte();
 
-            int r = ReadInt16(data);
+            int r = ReadInt16();
             if (r == Constants.PhysicsDriverDeath)
                 Reason = BlowedUpReasons.DeathTouch;
             else
                 Reason = (BlowedUpReasons)r;
 
-            ShotID = ReadInt16(data);
-            FlagAbreviation = ReadFixedSizeString(data, 2);
+            ShotID = ReadInt16();
+            FlagAbreviation = ReadFixedSizeString( 2);
 
             if (Reason == BlowedUpReasons.DeathTouch)
-                PhysicsDriverID = ReadInt32(data);
+                PhysicsDriverID = ReadInt32();
         }
     }
 }

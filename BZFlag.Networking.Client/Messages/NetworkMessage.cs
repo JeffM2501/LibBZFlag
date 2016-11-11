@@ -5,11 +5,12 @@ using System.Text;
 
 using BZFlag.Data.Types;
 using BZFlag.Data.Flags;
+using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages
 {
-	public abstract class NetworkMessage
-	{
+	public abstract class NetworkMessage : DynamicBufferReader
+    {
 		public int Code = int.MinValue;
 		public string CodeAbreviation = string.Empty;
 
@@ -31,250 +32,54 @@ namespace BZFlag.Networking.Messages
 			return (int)BitConverter.ToUInt16(b,0);
 		}
 
-		private int BufferOffset = 0;
-		protected void ResetOffset()
-		{
-			BufferOffset = 0;
-		}
-
-		protected byte ReadByte(byte[] b)
-		{
-			if(b.Length < BufferOffset + 1)
-				return 0;
-
-			BufferOffset += 1;
-			return b[BufferOffset-1];
-		}
-
-		protected byte[] ReadBytes(byte[] b, int size)
-		{
-			if(b.Length < BufferOffset + size)
-				return new byte[0];
-
-			byte[] d = new byte[size];
-			Array.Copy(b, BufferOffset, d, 0, size);
-			BufferOffset += size;
-			return d;
-		}
-
-		protected byte[] ReadRestOfBytes(byte[] b)
-		{
-			byte[] d = new byte[b.Length-BufferOffset];
-			Array.Copy(b, BufferOffset, d, 0, d.Length);
-			BufferOffset = b.Length;
-			return d;
-		}
-
-		protected UInt16 ReadUInt16(byte[] b)
-		{
-			if(b.Length < BufferOffset + 2)
-				return 0;
-
-			BufferOffset += 2;
-			return BufferUtils.ReadUInt16(b, BufferOffset-2);
-		}
-
-		protected Int16 ReadInt16(byte[] b)
-		{
-			if(b.Length < BufferOffset + 2)
-				return 0;
-
-			BufferOffset += 2;
-			return BufferUtils.ReadInt16(b, BufferOffset - 2);
-		}
-
-		protected UInt32 ReadUInt32(byte[] b)
-		{
-			if(b.Length < BufferOffset + 4)
-				return 0;
-
-			BufferOffset += 4;
-			return BufferUtils.ReadUInt32(b, BufferOffset - 4);
-		}
-
-		protected Int32 ReadInt32(byte[] b)
-		{
-			if(b.Length < BufferOffset + 4)
-				return 0;
-
-			BufferOffset += 4;
-			return BufferUtils.ReadInt32(b, BufferOffset - 4);
-		}
-
-		protected UInt64 ReadUInt64(byte[] b)
-		{
-			if(b.Length < BufferOffset + 4)
-				return 0;
-
-			BufferOffset += 8;
-			return BufferUtils.ReadUInt64(b, BufferOffset - 8);
-		}
-
-		protected Int64 ReadInt64(byte[] b)
-		{
-			if(b.Length < BufferOffset + 8)
-				return 0;
-
-			BufferOffset += 8;
-			return BufferUtils.ReadInt64(b, BufferOffset - 8);
-		}
-
-        protected float ReadFloat(byte[] b)
+        protected float ReadSmallDist()
         {
-            if (b.Length < BufferOffset + 4)
-                return 0;
-
-            BufferOffset += 4;
-            return BufferUtils.ReadSingle(b, BufferOffset - 4);
+            return ((float)ReadInt16() * Constants.SmallMaxDist) / Constants.SmallScale;
         }
 
-        protected float ReadSmallDist(byte[] b)
+        protected float ReadSmallAngle()
         {
-            return ((float)ReadInt16(b) * Constants.SmallMaxDist) / Constants.SmallScale;
+            return ((float)(ReadInt16() * Math.PI)) / Constants.SmallScale;
         }
 
-        protected float ReadSmallAngle(byte[] b)
+        protected float ReadSmallScale()
         {
-            return ((float)(ReadInt16(b) * Math.PI)) / Constants.SmallScale;
+            return ((float)ReadInt16() )/Constants.SmallScale;
         }
 
-        protected float ReadSmallScale(byte[] b)
+        protected float ReadSmallVel()
         {
-            return ((float)ReadInt16(b) )/Constants.SmallScale;
+            return ((float)ReadUInt16() * Constants.SmallMaxVel) / Constants.SmallScale;
         }
 
-        protected float ReadSmallVel(byte[] b)
+        protected float ReadSmallAngVel()
         {
-            return ((float)ReadUInt16(b) * Constants.SmallMaxVel) / Constants.SmallScale;
+            return ((float)ReadUInt16() * Constants.SmallMaxAngVel) / Constants.SmallScale;
         }
 
-        protected float ReadSmallAngVel(byte[] b)
+        protected Vector3F ReadSmallVector3F()
         {
-            return ((float)ReadUInt16(b) * Constants.SmallMaxAngVel) / Constants.SmallScale;
+            return new Vector3F(ReadSmallDist(), ReadSmallDist(), ReadSmallDist());
+        }
+        protected Vector3F ReadSmallVelVector3F()
+        {
+            return new Vector3F(ReadSmallVel(), ReadSmallVel(), ReadSmallVel());
         }
 
-        protected double ReadDouble(byte[] b)
-        {
-            if (b.Length < BufferOffset + 8)
-                return 0;
-
-            BufferOffset += 8;
-            return BufferUtils.ReadDouble(b, BufferOffset - 8);
-        }
-
-        protected Vector4F ReadVector4F(byte[] b)
-        {
-            return new Vector4F(ReadFloat(b), ReadFloat(b), ReadFloat(b), ReadFloat(b));
-        }
-
-        protected Vector3F ReadVector3F(byte[] b)
-        {
-            return new Vector3F(ReadFloat(b), ReadFloat(b), ReadFloat(b));
-        }
-
-        protected Vector2F ReadVector2F(byte[] b)
-        {
-            return new Vector2F(ReadFloat(b), ReadFloat(b));
-        }
-
-        protected Vector3F ReadSmallVector3F(byte[] b)
-        {
-            return new Vector3F(ReadSmallDist(b), ReadSmallDist(b), ReadSmallDist(b));
-        }
-        protected Vector3F ReadSmallVelVector3F(byte[] b)
-        {
-            return new Vector3F(ReadSmallVel(b), ReadSmallVel(b), ReadSmallVel(b));
-        }
-
-        protected string ReadFixedSizeString(byte[] b, int size)
-		{
-			if(b.Length < BufferOffset + size)
-				return string.Empty;
-
-			string s = Encoding.UTF8.GetString(b, BufferOffset, size);
-			BufferOffset += size;
-			return s.TrimEnd(new char[] { '\0' });
-		}
-
-		protected string ReadPascalString(byte[] b)
-		{
-			if(b.Length < BufferOffset + 1)
-				return string.Empty;
-
-			byte len = b[BufferOffset];
-
-			if(b.Length < BufferOffset + 1 + len)
-				return string.Empty;
-
-			string s = Encoding.UTF8.GetString(b, BufferOffset+1, len);
-			BufferOffset += len+1;
-			return s;
-		}
-
-		protected string ReadUShortPascalString(byte[] b)
-		{
-			if(b.Length < BufferOffset + 2)
-				return string.Empty;
-
-			int len = BufferUtils.ReadUInt16(b, BufferOffset);
-
-			if(b.Length < BufferOffset + 2 + len)
-				return string.Empty;
-
-			string s = Encoding.UTF8.GetString(b, BufferOffset + 2, len);
-			BufferOffset += len + 2;
-			return s;
-		}
-
-        protected string ReadULongPascalString(byte[] b)
-        {
-            if (b.Length < BufferOffset + 4)
-                return string.Empty;
-
-            int len = (int)BufferUtils.ReadUInt32(b, BufferOffset);
-
-            if (b.Length < BufferOffset + 4 + len)
-                return string.Empty;
-
-            string s = Encoding.UTF8.GetString(b, BufferOffset + 4, len);
-            BufferOffset += len + 4;
-            return s;
-        }
-
-
-        protected string ReadNullTermString(byte[] b, bool readToEnd)
-		{
-			if (readToEnd)
-			{
-				int start = BufferOffset;
-				BufferOffset = b.Length;
-				return Encoding.UTF8.GetString(b, start, BufferOffset - start - 1);
-			}
-			else
-			{
-				int end = Array.FindIndex(b, BufferOffset, x => x == byte.MinValue);
-				if(end == -1)
-					return string.Empty;
-				string ret = Encoding.UTF8.GetString(b, BufferOffset, BufferOffset - end);
-				BufferOffset = end + 1;
-				return ret;
-			}
-		}
-
-		protected FlagUpdateData ReadFlagUpdateData(byte[] data)
+		protected FlagUpdateData ReadFlagUpdateData()
 		{
 			FlagUpdateData flag = new FlagUpdateData();
-			flag.FlagID = ReadUInt16(data);
-			flag.Abreviation = ReadFixedSizeString(data, 2);
-			flag.Status = (FlagStatuses)ReadUInt16(data);
-			flag.Endurance = (FlagEndurances)ReadUInt16(data);
-			flag.Owner = ReadByte(data);
-			flag.Postion = ReadVector3F(data);
-			flag.LaunchPosition = ReadVector3F(data);
-			flag.LandingPostion = ReadVector3F(data);
-			flag.FlightTime = ReadFloat(data);
-			flag.FlightEnd = ReadFloat(data);
-			flag.InitalVelocity = ReadFloat(data);
+			flag.FlagID = ReadUInt16();
+			flag.Abreviation = ReadFixedSizeString( 2);
+			flag.Status = (FlagStatuses)ReadUInt16();
+			flag.Endurance = (FlagEndurances)ReadUInt16();
+			flag.Owner = ReadByte();
+			flag.Postion = ReadVector3F();
+			flag.LaunchPosition = ReadVector3F();
+			flag.LandingPostion = ReadVector3F();
+			flag.FlightTime = ReadFloat();
+			flag.FlightEnd = ReadFloat();
+			flag.InitalVelocity = ReadFloat();
 
 			return flag;
 		}

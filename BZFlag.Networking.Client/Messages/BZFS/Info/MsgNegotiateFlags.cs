@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using BZFlag.Data.Flags;
+using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages.BZFS.Info
 {
@@ -39,11 +40,11 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 
 		public override void Unpack(byte[] data)
 		{
-			ResetOffset();
+			Reset(data);
 
 			int count = data.Length / 2;
 			for(int i = 0; i < count; i++)
-				FlagAbrevs.Add(ReadFixedSizeString(data, 2));
+				FlagAbrevs.Add(ReadFixedSizeString(2));
 		}
 	}
 }

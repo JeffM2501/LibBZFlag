@@ -6,7 +6,7 @@ using System.Text;
 using BZFlag.Data.Types;
 using BZFlag.Data.Flags;
 
-namespace BZFlag.Networking
+namespace BZFlag.Data.Utils
 {
 	public class DynamicOutputBuffer
 	{

@@ -30,16 +30,16 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 		public override void Unpack(byte[] data)
 		{
 			TeamUpdates.Clear();
-			ResetOffset();
+			Reset(data);
 
-			int count = ReadByte(data);
+			int count = ReadByte();
 			for (int i =0; i < count; i++)
 			{
 				TeamUpdate team = new TeamUpdate();
-				team.TeamID = ReadUInt16(data);
-				team.Size = ReadUInt16(data);
-				team.Wins = ReadUInt16(data);
-				team.Losses = ReadUInt16(data);
+				team.TeamID = ReadUInt16();
+				team.Size = ReadUInt16();
+				team.Wins = ReadUInt16();
+				team.Losses = ReadUInt16();
 				TeamUpdates.Add(team);
 			}
 		}

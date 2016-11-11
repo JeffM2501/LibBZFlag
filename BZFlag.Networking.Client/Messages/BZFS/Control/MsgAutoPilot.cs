@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.Data.Utils;
+
 namespace BZFlag.Networking.Messages.BZFS.Control
 {
     public class MsgAutoPilot : NetworkMessage
@@ -27,9 +29,9 @@ namespace BZFlag.Networking.Messages.BZFS.Control
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
-            PlayerID = ReadByte(data);
-            AutoPilot = ReadByte(data) != 0;
+            Reset(data);
+            PlayerID = ReadByte();
+            AutoPilot = ReadByte() != 0;
         }
     }
 }

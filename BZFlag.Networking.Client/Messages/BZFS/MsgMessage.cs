@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.Data.Utils;
+
 namespace BZFlag.Networking.Messages.BZFS
 {
 	public class MsgMessage : NetworkMessage
@@ -36,12 +38,12 @@ namespace BZFlag.Networking.Messages.BZFS
 
 		public override void Unpack(byte[] data)
 		{
-			ResetOffset();
-			From = ReadByte(data);
-			To = ReadByte(data);
-			MessageType = (MessageTypes)ReadByte(data);
+			Reset(data);
+			From = ReadByte();
+			To = ReadByte();
+			MessageType = (MessageTypes)ReadByte();
 
-			MessageText = ReadNullTermString(data, true);
+			MessageText = ReadNullTermString(true);
 		}
 	}
 }

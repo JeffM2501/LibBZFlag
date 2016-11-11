@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.Data.Utils;
+
 namespace BZFlag.Networking.Messages.BZFS.Flags
 {
 	public class MsgGrabFlag : NetworkMessage
@@ -29,10 +31,10 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
 
 		public override void Unpack(byte[] data)
 		{
-			ResetOffset();
+			Reset(data);
 
-			PlayerID = ReadByte(data);
-			FlagData = ReadFlagUpdateData(data);
+			PlayerID = ReadByte();
+			FlagData = ReadFlagUpdateData();
 		}
 	}
 }

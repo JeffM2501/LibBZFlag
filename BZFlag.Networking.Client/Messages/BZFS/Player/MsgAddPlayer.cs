@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using BZFlag.Data.Teams;
 using BZFlag.Data.Types;
+using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages.BZFS.Player
 {
@@ -31,15 +33,15 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 
 		public override void Unpack(byte[] data)
 		{
-			ResetOffset();
-			PlayerID = ReadByte(data);
-			PlayerType = ReadUInt16(data);
-			Team = (TeamColors)ReadUInt16(data);
-			Wins = ReadUInt16(data);
-			Losses = ReadUInt16(data);
-			TeamKills = ReadUInt16(data);
-			Callsign = ReadFixedSizeString(data, Constants.CallsignLen);
-			Motto = ReadFixedSizeString(data, Constants.MottoLen);
+			Reset(data);
+			PlayerID = ReadByte();
+			PlayerType = ReadUInt16();
+			Team = (TeamColors)ReadUInt16();
+			Wins = ReadUInt16();
+			Losses = ReadUInt16();
+			TeamKills = ReadUInt16();
+			Callsign = ReadFixedSizeString(Constants.CallsignLen);
+			Motto = ReadFixedSizeString(Constants.MottoLen);
 		}
 	}
 }

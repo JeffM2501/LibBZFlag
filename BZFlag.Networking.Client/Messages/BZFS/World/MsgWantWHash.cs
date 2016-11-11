@@ -18,7 +18,8 @@ namespace BZFlag.Networking.Messages.BZFS.World
 
 		public override void Unpack(byte[] data)
 		{
-			string t = Encoding.UTF8.GetString(data);
+            Reset(data);
+            string t = ReadNullTermString(true);
 			if(t.Length > 0)
 			{
 				IsRandomMap = t[0] == 't';

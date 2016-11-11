@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using BZFlag.Data.Teams;
 
+using BZFlag.Data.Utils;
+
 namespace BZFlag.Networking.Messages.BZFS.Flags
 {
     public class MsgCaptureFlag : NetworkMessage
@@ -31,11 +33,11 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
+            Reset(data);
 
-            PlayerID = ReadByte(data);
-            FlagID = ReadUInt16(data);
-            Team = (TeamColors)ReadInt16(data);
+            PlayerID = ReadByte();
+            FlagID = ReadUInt16();
+            Team = (TeamColors)ReadInt16();
         }
     }
 }

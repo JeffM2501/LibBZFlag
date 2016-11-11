@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.Data.Utils;
+
 namespace BZFlag.Networking.Messages.BZFS.Info
 {
     public class MsgLagPing : NetworkMessage
@@ -23,8 +25,8 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
-            SequenceNumber = ReadUInt16(data);
+            Reset(data);
+            SequenceNumber = ReadUInt16();
         }
     }
 }

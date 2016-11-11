@@ -22,9 +22,9 @@ namespace BZFlag.Networking.Messages.BZFS.Control
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
-            SoundID = ReadUInt16(data);
-            SoundName = ReadUShortPascalString(data);
+            Reset(data);
+            SoundID = ReadUInt16();
+            SoundName = ReadUShortPascalString();
         }
     }
 }

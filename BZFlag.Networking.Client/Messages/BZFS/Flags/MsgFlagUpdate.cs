@@ -24,11 +24,11 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
 
 		public override void Unpack(byte[] data)
         {
-            ResetOffset();
+            Reset(data);
 
-            int count = ReadUInt16(data);
+            int count = ReadUInt16();
             for (int i = 0; i < count; i++)
-				FlagUpdates.Add(ReadFlagUpdateData(data));
+				FlagUpdates.Add(ReadFlagUpdateData());
         }
     }
 }

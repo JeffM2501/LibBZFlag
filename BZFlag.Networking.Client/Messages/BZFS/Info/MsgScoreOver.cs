@@ -25,9 +25,9 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
-            PlayerID = ReadByte(data);
-            Team = (TeamColors)ReadInt16(data);
+            Reset(data);
+            PlayerID = ReadByte();
+            Team = (TeamColors)ReadInt16();
         }
     }
 }

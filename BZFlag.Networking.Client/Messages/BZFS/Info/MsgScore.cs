@@ -23,11 +23,11 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
-            PlayerID = ReadByte(data);
-            Wins = ReadUInt16(data);
-            Losses = ReadUInt16(data);
-            TeamKills = ReadUInt16(data);
+            Reset(data);
+            PlayerID = ReadByte();
+            Wins = ReadUInt16();
+            Losses = ReadUInt16();
+            TeamKills = ReadUInt16();
         }
     }
 }

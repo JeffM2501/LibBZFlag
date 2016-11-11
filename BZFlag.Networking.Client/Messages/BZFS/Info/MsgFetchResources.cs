@@ -37,15 +37,15 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 
         public override void Unpack(byte[] data)
         {
-            ResetOffset();
+            Reset(data);
 
-            int count = ReadUInt16(data);
+            int count = ReadUInt16();
 
             for(int i =0; i < count; i++)
             {
                 Resource res = new Resource();
-                res.ResType = (ResourceTypes)ReadUInt16(data);
-                res.URL = ReadUShortPascalString(data);
+                res.ResType = (ResourceTypes)ReadUInt16();
+                res.URL = ReadUShortPascalString();
 
                 Resources.Add(res);
             }

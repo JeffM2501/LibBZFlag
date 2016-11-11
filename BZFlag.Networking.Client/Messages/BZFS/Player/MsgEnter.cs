@@ -6,6 +6,7 @@ using System.Text;
 using BZFlag.Data.Types;
 using BZFlag.Data.Players;
 using BZFlag.Data.Teams;
+using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages.BZFS.Player
 {
@@ -49,7 +50,7 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 
 		public override void Unpack(byte[] data)
 		{
-			
+            Reset(data);
 		}
 	}
 }

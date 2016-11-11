@@ -5,6 +5,7 @@ using System.Text;
 
 using BZFlag.Data.Teams;
 using BZFlag.Data.Game;
+using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages.BZFS.Info
 {
@@ -40,38 +41,38 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 
 		public override byte[] Pack()
 		{
-			return new byte[] { 0, 0, 0x71, 0x67 };
+            return new DynamicOutputBuffer(Code).GetMessageBuffer();
 		}
 
 		public override void Unpack(byte[] data)
 		{
-			ResetOffset();
+			Reset(data);
 
-			GameStyle = (GameTypes)ReadUInt16(data);
-			GameOptions = (GameOptionFlags)ReadUInt16(data);
-			MaxPlayers = ReadUInt16(data);
-			MaxShots = ReadUInt16(data);
+			GameStyle = (GameTypes)ReadUInt16();
+			GameOptions = (GameOptionFlags)ReadUInt16();
+			MaxPlayers = ReadUInt16();
+			MaxShots = ReadUInt16();
 
 			TeamData.Clear();
 			for(TeamColors t = TeamColors.RogueTeam; t <= TeamColors.ObserverTeam; t++)
 			{
 				TeamInfo info = new TeamInfo();
 				info.Team = t;
-				info.Size = ReadUInt16(data);
+				info.Size = ReadUInt16();
 				TeamData.Add(t, info);
 			}
 			for(TeamColors t = TeamColors.RogueTeam; t <= TeamColors.ObserverTeam; t++)
 			{
 				TeamInfo info = TeamData[t];
-				info.Max = ReadUInt16(data);
+				info.Max = ReadUInt16();
 			}
 
-			ShakeWins = ReadUInt16(data); ;
-			ShakeTimeout = ReadUInt16(data); ;
+			ShakeWins = ReadUInt16(); ;
+			ShakeTimeout = ReadUInt16(); ;
 
-			MaxPlayerScore = ReadUInt16(data); ;
-			MaxTeamScore = ReadUInt16(data); ;
-			ElapsedTime = ReadUInt16(data); ;
+			MaxPlayerScore = ReadUInt16(); ;
+			MaxTeamScore = ReadUInt16(); ;
+			ElapsedTime = ReadUInt16(); ;
 		}
 	}
 }
