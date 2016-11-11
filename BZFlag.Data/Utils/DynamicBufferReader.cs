@@ -9,8 +9,8 @@ namespace BZFlag.Data.Utils
 {
     public abstract class DynamicBufferReader
     {
-        private byte[] Buffer = new byte[0];
-        private int BufferOffset = 0;
+        protected byte[] Buffer = new byte[0];
+        protected int BufferOffset = 0;
 
         public DynamicBufferReader()
         {
