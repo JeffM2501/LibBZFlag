@@ -7,7 +7,8 @@ namespace BZFlag.Map.Elements
 {
 	public class WaterLevel : BasicObject
 	{
-		public float Height = 0;
+		public float Height = -1;
+		public int MaterialID = -1;
 
 		public WaterLevel()
 		{

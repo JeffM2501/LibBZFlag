@@ -47,5 +47,11 @@ namespace BZFlag.IO.BZW.Binary
         public static readonly UInt16 WorldCodeLinkSize = 4;
         public static readonly UInt16 WorldCodeWeaponSize = 24;  // basic size, not including lists
         public static readonly UInt16 WorldCodeZoneSize = 34;    // basic size, not including lists
-    }
+
+
+		public static readonly byte DRIVE_THRU = ( 1 << 0 );
+		public static readonly byte SHOOT_THRU = (1 << 1 );
+		public static readonly byte FLIP_Z = (1 << 2 );
+		public static readonly byte RICOCHET = (1 << 3 );
+	}
 }

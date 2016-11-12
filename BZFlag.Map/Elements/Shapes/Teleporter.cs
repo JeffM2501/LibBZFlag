@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BZFlag.Map.Elements.Shapes
 {
-	public class Teleporter : PositionableObject
+	public class Teleporter : PhaseableObject
 	{
 		public static int TeleporterCount = 0;
 
@@ -13,7 +13,6 @@ namespace BZFlag.Map.Elements.Shapes
 		public int Index = 0;
 
         public bool Horizontal = false;
-        public bool Ricochet = false;
 
 		public Teleporter()
 		{

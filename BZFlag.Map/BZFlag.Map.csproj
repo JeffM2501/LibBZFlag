@@ -39,7 +39,11 @@
   <ItemGroup>
     <Compile Include="ElementFactory.cs" />
     <Compile Include="Elements\BasicObject.cs" />
+    <Compile Include="Elements\DynamicColor.cs" />
+    <Compile Include="Elements\GroupDefinition.cs" />
     <Compile Include="Elements\Link.cs" />
+    <Compile Include="Elements\Material.cs" />
+    <Compile Include="Elements\MeshTransform.cs" />
     <Compile Include="Elements\Options.cs" />
     <Compile Include="Elements\Physics.cs" />
     <Compile Include="Elements\Shapes\Base.cs" />
@@ -50,8 +54,11 @@
     <Compile Include="Elements\Shapes\Pyramid.cs" />
     <Compile Include="Elements\Shapes\Teleporter.cs" />
     <Compile Include="Elements\Shapes\Zone.cs" />
+    <Compile Include="Elements\TextureMatrix.cs" />
+    <Compile Include="Elements\Shapes\WallObstacle.cs" />
     <Compile Include="Elements\WaterLevel.cs" />
     <Compile Include="Elements\World.cs" />
+    <Compile Include="Elements\WorldWeapon.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

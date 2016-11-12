@@ -61,5 +61,11 @@ namespace BZFlag.Map
 				Objects.Add(obj);
 
 		}
+
+		public void AddObjects(IEnumerable<BasicObject> lst)
+		{
+			foreach(var o in lst)
+				AddObject(o);
+		}
 	}
 }

@@ -128,8 +128,12 @@ namespace BZFlag.Data.Utils
             BufferOffset += 8;
             return BufferUtils.ReadDouble(Buffer, BufferOffset - 8);
         }
+		public Color4F ReadColor4F()
+		{
+			return new Color4F(ReadFloat(), ReadFloat(), ReadFloat(), ReadFloat());
+		}
 
-        public Vector4F ReadVector4F()
+		public Vector4F ReadVector4F()
         {
             return new Vector4F(ReadFloat(), ReadFloat(), ReadFloat(), ReadFloat());
         }
@@ -143,6 +147,7 @@ namespace BZFlag.Data.Utils
         {
             return new Vector2F(ReadFloat(), ReadFloat());
         }
+
 
         public string ReadFixedSizeString(int size)
         {

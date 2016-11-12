@@ -7,7 +7,7 @@ using BZFlag.Data.Types;
 
 namespace BZFlag.Map.Elements.Shapes
 {
-    public class Mesh : PositionableObject
+    public class Mesh : PhaseableObject
     {
         public List<Vector3F> InsidePoints = new List<Vector3F>();
         public List<Vector3F> OutsidePoints = new List<Vector3F>();
@@ -29,7 +29,11 @@ namespace BZFlag.Map.Elements.Shapes
             public bool Passable = false;
             public bool ShootThrough = false;
             public bool DriveThrough = false;
-        }
+			public bool Ricochet = false;
+
+			public int MaterialID = -1;
+			public int PhysicsDriverID = -1;
+		}
 
         public List<Face> Faces = new List<Face>();
 

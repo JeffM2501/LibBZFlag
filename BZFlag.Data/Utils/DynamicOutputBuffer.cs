@@ -183,6 +183,13 @@ namespace BZFlag.Data.Utils
 			WriteFloat(value.Y);
 			WriteFloat(value.Z);
 		}
+		public void WriteColor4F(Color4F value)
+		{
+			WriteFloat(value.R);
+			WriteFloat(value.G);
+			WriteFloat(value.B);
+			WriteFloat(value.A);
+		}
 
 		public void WriteDouble(double value)
 		{
