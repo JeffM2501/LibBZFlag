@@ -82,7 +82,7 @@ namespace BZFlag.IO.BZW.Binary
 			    map.AddObjects(UnpackWorldWeapons());
 			    map.AddObjects(UnpackZones());
             }
-            catch (Exception ex)
+            catch (Exception /*ex*/)
             {
 
             }
@@ -277,12 +277,154 @@ namespace BZFlag.IO.BZW.Binary
 					return UnpackMesh();
 
 				case GroupDefinition.ObstacleTypes.arcType:
+					return UnpackArc();
+
 				case GroupDefinition.ObstacleTypes.coneType:
+					return UnpackCone();
+
 				case GroupDefinition.ObstacleTypes.sphereType:
+					return UnpackSphere();
+
 				case GroupDefinition.ObstacleTypes.tetraType:
+					return UnpackTetra();
+
 				default:
 					return null;
 			}
+		}
+
+		protected Tetra UnpackTetra()
+		{
+			Tetra o = new Tetra();
+
+			byte stateByte = ReadByte();
+			o.DriveThrough = (stateByte & (1 << 0)) != 0;
+			o.ShootThrough = (stateByte & (1 << 1)) != 0;
+			o.Ricochet = (stateByte & (1 << 2)) != 0;
+
+			o.Transform = UnpackMeshTransform();
+
+
+			for(int i = 0; i < 4; i++)
+				o.Verts.Add(ReadVector3F());
+
+			byte normalFlags = ReadByte();
+
+			for(int i = 0; i < 4; i++)
+			{
+				Tetra.Face face = new Tetra.Face();
+				o.Faces.Add(face);
+				face.UseNormals = (normalFlags & (1 << i)) != 0;
+				if (face.UseNormals)
+				{
+					for(int j = 0; j < 3; j++)
+						face.Norms.Add(ReadVector3F());
+				}
+			}
+
+			byte uvFlags = ReadByte();
+
+			for(int i = 0; i < 4; i++)
+			{
+				Tetra.Face face = o.Faces[i];
+				face.UseUVs = (uvFlags & (1 << i)) != 0;
+				if(face.UseNormals)
+				{
+					for(int j = 0; j < 3; j++)
+						face.UVs.Add(ReadVector2F());
+				}
+			}
+
+			for(int i = 0; i < 4; i++)
+			{
+				Tetra.Face face = o.Faces[i];
+				face.MaterialID = ReadInt32();
+			}
+
+			return o;
+		}
+
+		protected Sphere UnpackSphere()
+		{
+			Sphere o = new Sphere();
+			o.Transform = UnpackMeshTransform();
+			o.Position = ReadVector3F();
+			o.Size = ReadVector3F();
+			o.Rotation = ReadFloat();
+			o.Divisions = ReadInt32();
+			o.PhysicsID = ReadInt32();
+
+			for(int i = 0; i < 2; i++)
+				o.TextureSize[i] = ReadFloat();
+
+			for(Sphere.MaterialLocations loc = Sphere.MaterialLocations.Edge; loc < Sphere.MaterialLocations.MaterialCount; loc++)
+				o.MaterialIDs.Add(loc, ReadInt32());
+
+			byte stateByte = ReadByte();
+			o.DriveThrough = (stateByte & (1 << 0)) != 0;
+			o.ShootThrough = (stateByte & (1 << 1)) != 0;
+			o.SmoothBounce = (stateByte & (1 << 2)) != 0;
+			o.UseNormals = (stateByte & (1 << 3)) != 0;
+			o.Hemisphere = (stateByte & (1 << 4)) != 0;
+			o.Ricochet = (stateByte & (1 << 5)) != 0;
+
+			return o;
+		}
+
+		protected Cone UnpackCone()
+		{
+			Cone o = new Cone();
+			o.Transform = UnpackMeshTransform();
+			o.Position = ReadVector3F();
+			o.Size = ReadVector3F();
+			o.Rotation = ReadFloat();
+			o.SweepAngle = ReadFloat();
+			o.Divisions = ReadInt32();
+			o.PhysicsID = ReadInt32();
+
+			for(int i = 0; i < 2; i++)
+				o.TextureSize[i] = ReadFloat();
+
+			for(Cone.MaterialLocations loc = Cone.MaterialLocations.Edge; loc < Cone.MaterialLocations.MaterialCount; loc++)
+				o.MaterialIDs.Add(loc, ReadInt32());
+
+			byte stateByte = ReadByte();
+			o.DriveThrough = (stateByte & (1 << 0)) != 0;
+			o.ShootThrough = (stateByte & (1 << 1)) != 0;
+			o.SmoothBounce = (stateByte & (1 << 2)) != 0;
+			o.UseNormals = (stateByte & (1 << 3)) != 0;
+			o.Ricochet = (stateByte & (1 << 4)) != 0;
+
+			return o;
+		}
+
+
+		protected Arc UnpackArc()
+		{
+			Arc o = new Arc();
+			o.Transform = UnpackMeshTransform();
+			o.Position = ReadVector3F();
+			o.Size = ReadVector3F();
+			o.Rotation = ReadFloat();
+			o.SweepAngle = ReadFloat();
+			o.Ratio = ReadFloat();
+			o.Divisions = ReadInt32();
+			o.PhysicsID = ReadInt32();
+
+			for(int i = 0; i < 4; i++)
+				o.TextureSize[i] = ReadFloat();
+
+			for(Arc.MaterialLocations loc = Arc.MaterialLocations.Top; loc < Arc.MaterialLocations.MaterialCount; loc++)
+				o.MaterialIDs.Add(loc, ReadInt32());
+
+			byte stateByte = ReadByte();
+			o.DriveThrough = (stateByte & (1 << 0)) != 0;
+			o.ShootThrough = (stateByte & (1 << 1)) != 0;
+			o.SmoothBounce = (stateByte & (1 << 2)) != 0;
+			o.UseNormals = (stateByte & (1 << 3)) != 0;
+			o.Ricochet = (stateByte & (1 << 4)) != 0;
+
+			return o;
 		}
 
 		protected Mesh UnpackMesh()
