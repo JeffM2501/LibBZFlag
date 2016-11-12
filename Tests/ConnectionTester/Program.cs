@@ -58,7 +58,7 @@ namespace ConnectionTester
 
             var server = Link.FindServerWithMostPlayers();
 			if(server == null || true)
-				server = new ServiceLink.ListServerData("127.0.0.1", 5154);
+				server = new ServiceLink.ListServerData("bzflag.allejo.io", 5170);
 
 			client.Startup(server.Host,server.Port);
 

@@ -17,7 +17,20 @@ namespace BZFlag.IO.BZW.Binary
     {
         public static readonly UInt16 MapVersion = 1;
 
-        public void AddData(byte[] b)
+		public List<string> Errors = new List<string>();
+		public List<string> Warnings = new List<string>();
+
+		protected void Error(string err)
+		{
+			Errors.Add(err);
+		}
+
+		protected void Warning(string warn)
+		{
+			Warnings.Add(warn);
+		}
+
+		public void AddData(byte[] b)
         {
             int oldSize = Buffer.Length;
             Array.Resize(ref Buffer, oldSize + b.Length);
@@ -164,6 +177,12 @@ namespace BZFlag.IO.BZW.Binary
 		{
 			List<BasicObject> items = new List<BasicObject>();
 
+			items.Add(ParseWorldObject());
+
+			// parse the fixed size world
+			for(GroupDefinition.ObstacleTypes objType = GroupDefinition.ObstacleTypes.wallType; objType < GroupDefinition.ObstacleTypes.ObstacleTypeCount; objType++)
+				items.AddRange(UnpackObstacleList(objType));
+
 			UInt32 count = ReadUInt32();
 
 			for(int i = 0; i < count; i++)
@@ -172,46 +191,51 @@ namespace BZFlag.IO.BZW.Binary
 				items.Add(group);
 				group.Name = ReadULongPascalString();
 
-				for (GroupDefinition.ObstacleTypes objType = GroupDefinition.ObstacleTypes.wallType; objType < GroupDefinition.ObstacleTypes.ObstacleTypeCount; objType++)
+				for(GroupDefinition.ObstacleTypes objType = GroupDefinition.ObstacleTypes.wallType; objType < GroupDefinition.ObstacleTypes.ObstacleTypeCount; objType++)
 					group.Obstacles.AddRange(UnpackObstacleList(objType));
-		
-				count = ReadUInt32();
-
-				for(int j = 0; j < count; j++)
-				{
-					GroupDefinition.GroupInstance instance = new GroupDefinition.GroupInstance();
-					instance.GroupDef = ReadULongPascalString();
-					instance.Name = ReadULongPascalString(); // this has some material mapping shit int in, TODO, extract it
-
-					instance.Transform = UnpackMeshTransform();
-
-					byte bits = ReadByte();
-
-					instance.ModifyTeam = ((bits & (1 << 0)) == 0) ? false : true;
-					instance.ModifyColor = ((bits & (1 << 1)) == 0) ? false : true;
-					instance.ModifyPhysicsDriver = ((bits & (1 << 2)) == 0) ? false : true;
-					instance.ModifyMaterial = ((bits & (1 << 3)) == 0) ? false : true;
-					instance.DriveThrough = ((bits & (1 << 4)) == 0) ? false : true;
-					instance.ShootThrough = ((bits & (1 << 5)) == 0) ? false : true;
-					instance.Ricochet = ((bits & (1 << 6)) == 0) ? false : true;
-
-					if(instance.ModifyTeam)
-						instance.Team = (TeamColors)ReadUInt16();
-					if(instance.ModifyColor)
-						instance.Tint = ReadColor4F();
-					if(instance.ModifyPhysicsDriver)
-						instance.Phydrv = ReadInt32();
-					if(instance.ModifyMaterial)
-						instance.MaterialID = ReadInt32();
-				}
 			}
+			count = ReadUInt32();
+
+			for(int j = 0; j < count; j++)
+			{
+				GroupInstance instance = new GroupInstance();
+				items.Add(instance);
+				instance.GroupDef = ReadULongPascalString();
+				instance.Name = ReadULongPascalString(); // this has some material mapping shit int in, TODO, extract it
+
+				instance.Transform = UnpackMeshTransform();
+
+				byte bits = ReadByte();
+
+				instance.ModifyTeam = ((bits & (1 << 0)) == 0) ? false : true;
+				instance.ModifyColor = ((bits & (1 << 1)) == 0) ? false : true;
+				instance.ModifyPhysicsDriver = ((bits & (1 << 2)) == 0) ? false : true;
+				instance.ModifyMaterial = ((bits & (1 << 3)) == 0) ? false : true;
+				instance.DriveThrough = ((bits & (1 << 4)) == 0) ? false : true;
+				instance.ShootThrough = ((bits & (1 << 5)) == 0) ? false : true;
+				instance.Ricochet = ((bits & (1 << 6)) == 0) ? false : true;
+
+				if(instance.ModifyTeam)
+					instance.Team = (TeamColors)ReadUInt16();
+				if(instance.ModifyColor)
+					instance.Tint = ReadColor4F();
+				if(instance.ModifyPhysicsDriver)
+					instance.Phydrv = ReadInt32();
+				if(instance.ModifyMaterial)
+					instance.MaterialID = ReadInt32();
+			}
+
 
 			return items;
 		}
 
         protected World ParseWorldObject()
         {
+			World world = new World();
+			world.Name = ReadULongPascalString();
+			world.NoWalls = true;
 
+			return world;
         }
 
 		protected BasicObject[] UnpackObstacleList(GroupDefinition.ObstacleTypes objType)
