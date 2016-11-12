@@ -20,7 +20,7 @@ using BZFlag.Networking.Messages.BZFS.Control;
 using BZFlag.Data.Teams;
 using BZFlag.Data.Types;
 using BZFlag.Authentication;
-
+using BZFlag.Map;
 
 namespace ConnectionTester
 {
@@ -35,11 +35,10 @@ namespace ConnectionTester
 
 		public static StreamWriter sw = new StreamWriter("log.txt");
 
-		private static byte[] WorldData = new byte[0];
-
 		private static string Callsign = "Billy D. Bugger";
 
-		private static bool GetWorld = false;
+		private static bool GetWorld = true;
+        private static WorldMap Map = new WorldMap();
 
 		static void Main(string[] args)
 		{
@@ -58,8 +57,8 @@ namespace ConnectionTester
 			client.TCPConnected += Client_TCPConnected;
 
             var server = Link.FindServerWithMostPlayers();
-			if(server == null || false)
-				server = new ServiceLink.ListServerData("bzflag.allejo.io", 5147);
+			if(server == null || true)
+				server = new ServiceLink.ListServerData("127.0.0.1", 5154);
 
 			client.Startup(server.Host,server.Port);
 
@@ -120,7 +119,7 @@ namespace ConnectionTester
 		{
 		//	client.SendMessage(new MsgNegotiateFlags(BZFlag.Networking.Flags.FlagCache.FlagList.Keys));
 
-			client.SendMessage(new MsgQueryGame());
+		//	client.SendMessage(new MsgQueryGame());
 			client.SendMessage(new MsgWantWHash());
 		}
 
@@ -282,22 +281,26 @@ namespace ConnectionTester
             WriteLine("Received Cache URL" + url.URL );
         }
 
+        private static BZFlag.IO.BZW.Binary.WorldUnpacker Unpacker = new BZFlag.IO.BZW.Binary.WorldUnpacker();
+
         private static void HandleGetWorld(NetworkMessage msg)
 		{
 			MsgGetWorld wldChunk = msg as MsgGetWorld;
 
 			WriteLine("World Data Received, " + (wldChunk.Offset / 1024.0).ToString() + "Kb is left");
-					
-			int offset = WorldData.Length;
-			Array.Resize(ref WorldData, WorldData.Length + wldChunk.Data.Length);
-			Array.Copy(wldChunk.Data, 0, WorldData, offset, wldChunk.Data.Length);
+
+            Unpacker.AddData(wldChunk.Data);
 
 			if(wldChunk.Offset > 0)
-				client.SendMessage(new MsgGetWorld((UInt32)WorldData.Length));
+				client.SendMessage(new MsgGetWorld((UInt32)Unpacker.Size()));
 			else
 			{
-				WriteLine("World Data Received, size " + (WorldData.Length / 1024.0).ToString() + "Kb");
-				SendEnter();
+				WriteLine("World Data Received, size " + (Unpacker.Size() / 1024.0).ToString() + "Kb, unpacking");
+                Map = Unpacker.Unpack();
+
+                WriteLine("World Data unpacked, " + Map.Objects.Count.ToString() + " objects");
+
+                SendEnter();
 			}	
 		}
 

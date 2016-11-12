@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
-using System.Threading.Tasks;
 
 using BZFlag.Data.Types;
 using BZFlag.Data.Utils;
@@ -43,29 +42,39 @@ namespace BZFlag.IO.BZW.Binary
             UInt32 uncompressedSize = ReadUInt32();
             UInt32 compressedSize = ReadUInt32();
 
-            MemoryStream ms = new MemoryStream(Buffer, BufferOffset, (int)compressedSize);
-            DeflateStream dfs = new DeflateStream(ms, CompressionLevel.Optimal);
+            UInt16 zlibFlags = ReadUInt16(); // deflate doesnt need these
 
-            byte[] uncompressedData = new byte[uncompressedSize];
-            dfs.Read(uncompressedData, 0, (int)uncompressedSize);
-            dfs.Close();
-            ms.Close();
+            try
+            {
+                MemoryStream ms = new MemoryStream(Buffer, BufferOffset, (int)compressedSize);
+                DeflateStream dfs = new DeflateStream(ms, CompressionMode.Decompress);
 
-            Buffer = uncompressedData;
-            BufferOffset = 0;
+                byte[] uncompressedData = new byte[uncompressedSize];
+                dfs.Read(uncompressedData, 0, (int)uncompressedSize);
+                dfs.Close();
+                ms.Close();
 
-			// start parsin that sweet sweet world data
-			map.AddObjects(UnpackDynamicColors());
-			map.AddObjects(UnpackTextureMatricies());
-			map.AddObjects(UnpackMaterials());
-			map.AddObjects(UnpackPhysicsDrivers());
-			map.AddObjects(UnpackTransforms());
-			map.AddObjects(UnpackObstacles());
-			map.AddObjects(UnpackLinks());
-			map.AddObject(UnpackWaterLevel());
-			map.AddObjects(UnpackWorldWeapons());
-			map.AddObjects(UnpackZones());
-			return map;
+                Buffer = uncompressedData;
+                BufferOffset = 0;
+
+			    // start parsin that sweet sweet world data
+			    map.AddObjects(UnpackDynamicColors());
+			    map.AddObjects(UnpackTextureMatricies());
+			    map.AddObjects(UnpackMaterials());
+			    map.AddObjects(UnpackPhysicsDrivers());
+			    map.AddObjects(UnpackTransforms());
+			    map.AddObjects(UnpackObstacles());
+			    map.AddObjects(UnpackLinks());
+			    map.AddObject(UnpackWaterLevel());
+			    map.AddObjects(UnpackWorldWeapons());
+			    map.AddObjects(UnpackZones());
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return map;
         }
 
 		protected List<BasicObject> UnpackZones()
@@ -199,6 +208,11 @@ namespace BZFlag.IO.BZW.Binary
 
 			return items;
 		}
+
+        protected World ParseWorldObject()
+        {
+
+        }
 
 		protected BasicObject[] UnpackObstacleList(GroupDefinition.ObstacleTypes objType)
 		{

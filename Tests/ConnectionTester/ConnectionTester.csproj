@@ -57,6 +57,14 @@
       <Project>{e20fc2b8-a7d1-4ad7-9b04-7f7d2e1c6056}</Project>
       <Name>BZFlag.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\BZFlag.IO.BZW\BZFlag.IO.BZW.csproj">
+      <Project>{45813dae-e820-4a91-8c97-3cdef89ebe4b}</Project>
+      <Name>BZFlag.IO.BZW</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\BZFlag.Map\BZFlag.Map.csproj">
+      <Project>{4c5393f4-0040-41c3-a7ef-a6692bda7e59}</Project>
+      <Name>BZFlag.Map</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\BZFlag.Networking.Client\BZFlag.Networking.Client.csproj">
       <Project>{cf984932-7b25-4b21-a9dd-40ba12748bb6}</Project>
       <Name>BZFlag.Networking.Client</Name>
