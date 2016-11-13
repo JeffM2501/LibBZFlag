@@ -27,22 +27,40 @@ namespace BZFlag.Game
 		private  bool UDPOutOk = false;
 		private  bool UDPInOk = false;
 
-		private void NetClient_HostMessageReceived(object sender, Networking.Client.HostMessageReceivedEventArgs e)
+		protected virtual void NetClient_HostMessageReceived(object sender, Networking.ClientConnection.HostMessageReceivedEventArgs e)
 		{
+			PreDispatchChecks(e.Message);
+
 			if(Handlers.ContainsKey(e.Message.Code))
 				Handlers[e.Message.Code](e.Message);
-			else if(e.Message as UnknownMessage != null)
+			else // if(e.Message as UnknownMessage != null)
 			{
 				// unknown message
 			}
+
+			PostDispatchChecks();
+		}
+		
+		protected void PreDispatchChecks(NetworkMessage msg)
+		{
+			if(!InitalSetVarsFinished && InitalSetVarsStarted && msg.Code != MsgSetVars.CodeValue)
+			{
+				InitalSetVarsFinished = true;
+				BZDatabase.FinishLoading();
+			}
 		}
 
-		protected void SendTCPMessage(NetworkMessage msg)
+		private void PostDispatchChecks()
+		{
+
+		}
+
+		protected virtual void SendTCPMessage(NetworkMessage msg)
 		{
 			NetClient.SendMessage(true, msg);
 		}
 
-		protected void SendUDPMessage(NetworkMessage msg)
+		protected virtual void SendUDPMessage(NetworkMessage msg)
 		{
 			NetClient.SendMessage(!UDPSendEnabled, msg);
 		}
@@ -56,7 +74,7 @@ namespace BZFlag.Game
 			SendTCPMessage(enter);
 		}
 
-		public void RegisterMessageHandlers()
+		protected virtual void RegisterMessageHandlers()
 		{
 			// basic connections
 			Handlers.Add(new MsgAccept().Code, HandleAcceptMessage);
@@ -69,6 +87,19 @@ namespace BZFlag.Game
 
 			// bzdb
 			Handlers.Add(new MsgSetVars().Code, HandleSetVarsMessage);
+
+			// teams
+			Handlers.Add(new MsgTeamUpdate().Code, HandleTeamUpdate);
+
+			// flags
+			Handlers.Add(new MsgFlagUpdate().Code, HandleFlagUpdate);
+
+
+			// players
+			Handlers.Add(new MsgAddPlayer().Code, HandleAddPlayer);
+			Handlers.Add(new MsgRemovePlayer().Code, HandleRemovePlayer);
+			Handlers.Add(new MsgPlayerInfo().Code, HandlePlayerInfo);
+			Handlers.Add(new MsgScore().Code, HandleScoreUpdate);
 		}
 
 		private void HandleAcceptMessage(NetworkMessage msg)

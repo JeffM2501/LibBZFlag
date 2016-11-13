@@ -26,7 +26,7 @@ namespace ConnectionTester
 {
 	class Program
 	{
-		public static Client client = null;
+		public static ClientConnection client = null;
 
 		public static int PlayerID = -1;
 
@@ -52,7 +52,7 @@ namespace ConnectionTester
 
 			RegisterHandlers();
 
-			client = new Client();
+			client = new ClientConnection();
 			client.HostMessageReceived += Client_HostMessageReceived;
 			client.TCPConnected += Client_TCPConnected;
 
@@ -172,7 +172,7 @@ namespace ConnectionTester
   			Handlers.Add(new MsgAdminInfo().Code, HandleAdminInfo);
         }
 
-		private static void Client_HostMessageReceived(object sender, Client.HostMessageReceivedEventArgs e)
+		private static void Client_HostMessageReceived(object sender, ClientConnection.HostMessageReceivedEventArgs e)
 		{
 			if(Handlers.ContainsKey(e.Message.Code))
 				Handlers[e.Message.Code](e.Message);

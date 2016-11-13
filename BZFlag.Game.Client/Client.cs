@@ -25,7 +25,7 @@ namespace BZFlag.Game
 
     public partial class Client
     {
-		public BZFlag.Networking.Client NetClient = new BZFlag.Networking.Client();
+		public BZFlag.Networking.ClientConnection NetClient = new BZFlag.Networking.ClientConnection();
 
 		public BZFlag.Map.WorldMap Map = null;
 

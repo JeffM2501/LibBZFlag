@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using BZFlag.Data.Utils;
+using BZFlag.Data.Players;
 
 namespace BZFlag.Networking.Messages.BZFS.Player
 {
@@ -11,15 +13,6 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 		public class PlayerInfoData
 		{
 			public int PlayerID = 0;
-
-			[Flags]public enum PlayerAttributes
-			{
-				Unknown = 0,
-				IsRegistered = 0x02,
-				IsVerified = 0x04,
-				IsAdmin = 0x08,
-			};
-
 			public PlayerAttributes Attributes = PlayerAttributes.Unknown;
 		}
 
@@ -45,7 +38,7 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 			{
 				PlayerInfoData info = new PlayerInfoData();
 				info.PlayerID = ReadByte();
-				info.Attributes = (PlayerInfoData.PlayerAttributes)ReadByte();
+				info.Attributes = (PlayerAttributes)ReadByte();
 
 				PlayerUpdates.Add(info);
 			}

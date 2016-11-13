@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.Data.Teams;
+
 namespace BZFlag.Networking.Messages.BZFS.Info
 {
 	public class MsgTeamUpdate : NetworkMessage
 	{
 		public class TeamUpdate
 		{
-			public int TeamID = 0;
+			public TeamColors TeamID = 0;
 			public int Size = 0;
 			public int Wins = 0;
 			public int Losses = 0;
@@ -36,7 +38,7 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 			for (int i =0; i < count; i++)
 			{
 				TeamUpdate team = new TeamUpdate();
-				team.TeamID = ReadUInt16();
+				team.TeamID = (TeamColors)ReadUInt16();
 				team.Size = ReadUInt16();
 				team.Wins = ReadUInt16();
 				team.Losses = ReadUInt16();

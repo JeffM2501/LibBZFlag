@@ -12,8 +12,14 @@ namespace BZFlag.Game
 	{
 		public BZFlag.Data.BZDB.Database BZDatabase = new BZFlag.Data.BZDB.Database();
 
+		protected bool InitalSetVarsStarted = false;
+		protected bool InitalSetVarsFinished = false;
+
 		private void HandleSetVarsMessage(NetworkMessage msg)
 		{
+			if(!InitalSetVarsFinished)
+				InitalSetVarsStarted = true;
+
 			MsgSetVars vars = msg as MsgSetVars;
 
 			BZDatabase.SetValues(vars.BZDBVariables, false);

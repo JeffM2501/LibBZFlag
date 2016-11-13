@@ -9,7 +9,7 @@ using BZFlag.Networking.Messages;
 
 namespace BZFlag.Networking
 {
-    public class Client
+    public class ClientConnection
     {
 		public static readonly byte[] BZFSHail = System.Text.Encoding.ASCII.GetBytes("BZFLAG\r\n\r\n");
 
@@ -83,7 +83,7 @@ namespace BZFlag.Networking
 			return n;
 		}
 
-		public Client()
+		public ClientConnection()
 		{
 			MessageFactory.RegisterBSFSMessages();
 

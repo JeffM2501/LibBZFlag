@@ -59,4 +59,12 @@ namespace BZFlag.Data.Players
         Unknown = 255,
     };
 
+	[Flags] public enum PlayerAttributes
+	{
+		Unknown = 0,
+		IsRegistered = 0x02,
+		IsVerified = 0x04,
+		IsAdmin = 0x08,
+	};
+
 }

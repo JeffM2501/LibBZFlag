@@ -9,6 +9,8 @@ namespace BZFlag.Networking.Messages.BZFS.BZDB
 	{
 		public Dictionary<string, string> BZDBVariables = new Dictionary<string, string>();
 
+		public readonly static int CodeValue = 0x7376;
+
 		public MsgSetVars()
 		{
 			Code = CodeFromChars("sv");

@@ -8,16 +8,11 @@ using BZFlag.Data.Teams;
 
 namespace BZFlag.Data.Flags
 {
-    public static class FlagCache
+    public class FlagTypeList
     {
-        public static Dictionary<string, FlagType> FlagList = new Dictionary<string, FlagType>();
+        private Dictionary<string, FlagType> FlagList = new Dictionary<string, FlagType>();
 
-        static void Add(FlagType f)
-        {
-            FlagList.Add(f.FlagAbbv, f);
-        }
-
-        static FlagCache()
+        public FlagTypeList()
         {
             Add(new FlagType("", "", FlagEndurances.FlagNormal, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, ""));
 
@@ -114,5 +109,18 @@ namespace BZFlag.Data.Flags
             Add(new FlagType("Bouncy", "BY", FlagEndurances.FlagSticky, ShotTypes.NormalShot, FlagQualities.FlagBad, TeamColors.NoTeam,
                             "Tank can't stop bouncing."));
         }
-    }
+
+		public void Add(FlagType f)
+		{
+			FlagList.Add(f.FlagAbbv, f);
+		}
+
+		public FlagType GetFromAbriv(string abriviation)
+		{
+			if(!FlagList.ContainsKey(abriviation))
+				return null;
+
+			return FlagList[abriviation];
+		}
+	}
 }
