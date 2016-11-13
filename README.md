@@ -55,7 +55,7 @@ Network connection class for bzflag clients, that implements the following messa
 * **DONE** MsgQueryPlayers = 0x7170;		// 'qp'
 * **DONE** MsgReject = 0x726a;			// 'rj'
 * **DONE** MsgRemovePlayer = 0x7270;		// 'rp'
-* **UNSUPPORTED** MsgReplayReset = 0x7272;		// 'rr'
+* **DONE** MsgReplayReset = 0x7272;		// 'rr'
 * **DONE** MsgShotBegin = 0x7362;			// 'sb'
 * **DONE** MsgScore = 0x7363;			// 'sc'
 * **DONE** MsgScoreOver = 0x736f;			// 'so'
