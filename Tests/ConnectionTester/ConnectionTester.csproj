@@ -42,8 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientTester.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimpleLogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -56,6 +58,10 @@
     <ProjectReference Include="..\..\BZFlag.Data\BZFlag.Data.csproj">
       <Project>{e20fc2b8-a7d1-4ad7-9b04-7f7d2e1c6056}</Project>
       <Name>BZFlag.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\BZFlag.Game.Client\BZFlag.Game.Client.csproj">
+      <Project>{ae8638e3-4185-4857-b6aa-e5ebe6ee33a8}</Project>
+      <Name>BZFlag.Game.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\BZFlag.IO.BZW\BZFlag.IO.BZW.csproj">
       <Project>{45813dae-e820-4a91-8c97-3cdef89ebe4b}</Project>

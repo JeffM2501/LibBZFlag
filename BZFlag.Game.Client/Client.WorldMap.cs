@@ -99,14 +99,14 @@ namespace BZFlag.Game
 		{
 			MsgGetWorld wldChunk = msg as MsgGetWorld;
 
-
 			Unpacker.AddData(wldChunk.Data);
 
-			if(WorldDownloadProgress != null)
-				WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs((float)Unpacker.Size() / (float)(((UInt32)wldChunk.Offset + Unpacker.Size()))));
-
 			if(wldChunk.Offset > 0)
+			{
+				if(WorldDownloadProgress != null)
+					WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs((float)Unpacker.Size() / (float)(((UInt32)wldChunk.Offset + Unpacker.Size()))));
 				NetClient.SendMessage(new MsgGetWorld((UInt32)Unpacker.Size()));
+			}
 			else
 			{
 				if(WorldDownloadProgress != null)

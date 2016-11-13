@@ -139,7 +139,7 @@ namespace BZFlag.Data.Utils
 			BytesUsed += 8;
 		}
 
-		public void WriteInt64(Int32 value)
+		public void WriteInt64(Int64 value)
 		{
 			CheckBuffer(8);
 

@@ -9,7 +9,7 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 {
 	public class MsgGameTime : NetworkMessage
 	{
-		public UInt64 NetTime = UInt64.MinValue;
+		public Int64 NetTime = Int64.MinValue;
 
 		public MsgGameTime()
 		{
@@ -19,14 +19,14 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 		public override byte[] Pack()
 		{
 			DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
-			buffer.WriteUInt64(NetTime);
+			buffer.WriteInt64(NetTime);
 			return buffer.GetMessageBuffer();
 		}
 
 		public override void Unpack(byte[] data)
 		{
 			Reset(data);
-			NetTime = ReadUInt32();
+			NetTime = ReadInt64();
 		}
 	}
 }

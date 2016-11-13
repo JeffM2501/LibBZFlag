@@ -11,6 +11,7 @@ namespace BZFlag.Data.Utils
 
 		private static byte[] shortBuffer = new byte[] { 0, 0 };
 		private static byte[] longBuffer = new byte[] { 0, 0,0,0 };
+		private static byte[] ultraLongBuffer = new byte[8];
 
 		public static ushort ReadUInt16(byte[] fromBuffer, int readOffset)
 		{
@@ -32,11 +33,11 @@ namespace BZFlag.Data.Utils
 
 		public static UInt64 ReadUInt64(byte[] fromBuffer, int readOffset)
 		{
-			Array.Copy(fromBuffer, readOffset, longBuffer, 0, 8);
+			Array.Copy(fromBuffer, readOffset, ultraLongBuffer, 0, 8);
 			if(BitConverter.IsLittleEndian)
-				Array.Reverse(longBuffer);
+				Array.Reverse(ultraLongBuffer);
 
-			return BitConverter.ToUInt64(longBuffer, 0);
+			return BitConverter.ToUInt64(ultraLongBuffer, 0);
 		}
 
 		public static short ReadInt16(byte[] fromBuffer, int readOffset)
@@ -59,11 +60,11 @@ namespace BZFlag.Data.Utils
 
 		public static Int64 ReadInt64(byte[] fromBuffer, int readOffset)
 		{
-			Array.Copy(fromBuffer, readOffset, longBuffer, 0, 8);
+			Array.Copy(fromBuffer, readOffset, ultraLongBuffer, 0, 8);
 			if(BitConverter.IsLittleEndian)
-				Array.Reverse(longBuffer);
+				Array.Reverse(ultraLongBuffer);
 
-			return BitConverter.ToInt64(longBuffer, 0);
+			return BitConverter.ToInt64(ultraLongBuffer, 0);
 		}
 
 		private static byte[] singleBuffer = new byte[4] { 0, 0, 0, 0 };

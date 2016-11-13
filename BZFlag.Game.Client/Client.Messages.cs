@@ -27,6 +27,13 @@ namespace BZFlag.Game
 		private  bool UDPOutOk = false;
 		private  bool UDPInOk = false;
 
+		public class UnknownMessageEventArgs : EventArgs
+		{
+			public string CodeAbriv = string.Empty;
+			public int CodeID = 0;
+		}
+		public event EventHandler<UnknownMessageEventArgs> ReceivedUnknownMessage = null;
+
 		protected virtual void NetClient_HostMessageReceived(object sender, Networking.ClientConnection.HostMessageReceivedEventArgs e)
 		{
 			PreDispatchChecks(e.Message);
@@ -35,7 +42,14 @@ namespace BZFlag.Game
 				Handlers[e.Message.Code](e.Message);
 			else // if(e.Message as UnknownMessage != null)
 			{
-				// unknown message
+				if (ReceivedUnknownMessage != null)
+				{
+					UnknownMessageEventArgs args = new UnknownMessageEventArgs();
+					args.CodeAbriv = e.Message.CodeAbreviation;
+					args.CodeID = e.Message.Code;
+					ReceivedUnknownMessage.Invoke(this, args);
+				}
+				
 			}
 
 			PostDispatchChecks();
@@ -80,6 +94,8 @@ namespace BZFlag.Game
 			Handlers.Add(new MsgAccept().Code, HandleAcceptMessage);
 			Handlers.Add(new MsgReject().Code, HandleRejectMessage);
 
+			Handlers.Add(new MsgGameTime().Code, HandleGameTime);
+
 			// world data
 			Handlers.Add(new MsgWantWHash().Code, HandleWorldHash);
 			Handlers.Add(new MsgCacheURL().Code, HandleWorldCacheURL);
@@ -100,6 +116,9 @@ namespace BZFlag.Game
 			Handlers.Add(new MsgRemovePlayer().Code, HandleRemovePlayer);
 			Handlers.Add(new MsgPlayerInfo().Code, HandlePlayerInfo);
 			Handlers.Add(new MsgScore().Code, HandleScoreUpdate);
+
+			// chat
+			Handlers.Add(new MsgMessage().Code, Chat.HandleChatMessage);
 		}
 
 		private void HandleAcceptMessage(NetworkMessage msg)
@@ -122,5 +141,10 @@ namespace BZFlag.Game
 			NetClientRejected(reject.ReasonCode, reject.ReasonMessage);
 		}
 
+		private  void HandleGameTime(NetworkMessage msg)
+		{
+			MsgGameTime gt = msg as MsgGameTime;
+			Clock.AddTimeUpdate(gt.NetTime);
+		}
 	}
 }

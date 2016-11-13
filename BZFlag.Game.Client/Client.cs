@@ -6,6 +6,7 @@ using System.Text;
 using BZFlag.Data.Teams;
 using BZFlag.Networking.Messages.BZFS.Control;
 using BZFlag.Networking.Messages.BZFS.World;
+using BZFlag.Game.Chat;
 
 namespace BZFlag.Game
 {
@@ -28,6 +29,9 @@ namespace BZFlag.Game
 		public BZFlag.Networking.ClientConnection NetClient = new BZFlag.Networking.ClientConnection();
 
 		public BZFlag.Map.WorldMap Map = null;
+		public ChatSystem Chat = new ChatSystem();
+
+		public GameTime Clock = new GameTime();
 
 		public int PlayerID { get; protected set; }
 
@@ -50,6 +54,12 @@ namespace BZFlag.Game
 
 		}
 
+		public void Update()
+		{
+			Clock.SetStepTime();
+			NetClient.Update();
+		}
+
 		public event EventHandler HostIsNotBZFlag = null;
 		private void NetClient_HostIsNotBZFS(object sender, EventArgs e)
 		{
@@ -57,19 +67,44 @@ namespace BZFlag.Game
 				HostIsNotBZFlag.Invoke(this, e);
 		}
 
+		public event EventHandler TCPConnected = null;
+
 		private void NetClient_TCPConnected(object sender, EventArgs e)
 		{
-			throw new NotImplementedException();
+			//SendMessage(new MsgNegotiateFlags(BZFlag.Networking.Flags.FlagCache.FlagList.Keys));
+			// SendMessage(new MsgQueryGame());
+			NetClient.SendMessage(new MsgWantWHash());
+
+			if(TCPConnected != null)
+				TCPConnected.Invoke(this, e);
 		}
 
+		public event EventHandler ClientAccepted = null;
 		protected virtual void NetClientAccepted()
 		{
-			NetClient.SendMessage(new MsgWantWHash());
+			//NetClient.SendMessage(new MsgWantWHash());
+			if(ClientAccepted != null)
+				ClientAccepted.Invoke(this, EventArgs.Empty);
 		}
+
+		public class ClientRejectionEventArgs : EventArgs
+		{
+			public MsgReject.RejectionCodes Code;
+			public string Reason = string.Empty;
+
+			public ClientRejectionEventArgs(MsgReject.RejectionCodes code, string reason)
+			{
+				Code = code;
+				Reason = reason;
+			}
+		}
+		public event EventHandler<ClientRejectionEventArgs> ClientRejected = null;
 
 		protected virtual void NetClientRejected(MsgReject.RejectionCodes code, string reason)
 		{
-
+			NetClient.Shutdown();
+			if(ClientRejected != null)
+				ClientRejected.Invoke(this, new ClientRejectionEventArgs(code,reason));
 		}
 	}
 }

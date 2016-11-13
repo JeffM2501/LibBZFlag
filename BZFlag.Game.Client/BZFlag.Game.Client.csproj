@@ -39,8 +39,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BZWCache.cs" />
+    <Compile Include="Chat\ChatSystem.cs" />
+    <Compile Include="Client.BZDB.cs" />
     <Compile Include="Client.cs" />
+    <Compile Include="Client.Flags.cs" />
+    <Compile Include="Client.Players.cs" />
+    <Compile Include="Client.Teams.cs" />
     <Compile Include="Client.WorldMap.cs" />
+    <Compile Include="GameTime.cs" />
+    <Compile Include="Player\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
