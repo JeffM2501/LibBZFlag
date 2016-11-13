@@ -43,6 +43,11 @@ namespace BZFlag.Data.Utils
             return Buffer.Length;
         }
 
+		public byte[] GetBuffer()
+		{
+			return Buffer;
+		}
+
         public byte[] ReadBytes( int size)
         {
             if (Buffer.Length < BufferOffset + size)

@@ -57,7 +57,7 @@ namespace ConnectionTester
 			client.TCPConnected += Client_TCPConnected;
 
 			var server = Link.FindServerWithMostPlayers();
-			if(server == null || true)
+			if(server == null || false)
 				server = new ServiceLink.ListServerData("bzflag.allejo.io", 5170);
 
 			client.Startup(server.Host, server.Port);

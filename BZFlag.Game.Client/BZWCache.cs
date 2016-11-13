@@ -52,5 +52,22 @@ namespace BZFlag.Game
 			unpacker.AddData(bits);
 			return unpacker.Unpack();
 		}
+
+		public void SaveMapToCache(string hash, byte[] data)
+		{
+			if(Folder == null)
+				return;
+
+			FileInfo file = new FileInfo(Path.Combine(Folder.FullName, hash + ".bzwc"));
+			if(!file.Exists)
+				return;
+
+			WorldUnpacker unpacker = new WorldUnpacker();
+			FileStream fs = file.OpenWrite();
+
+			fs.Write(data, 0, data.Length);
+			
+			fs.Close();
+		}
 	}
 }

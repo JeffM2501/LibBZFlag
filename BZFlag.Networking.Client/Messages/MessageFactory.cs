@@ -103,6 +103,7 @@ namespace BZFlag.Networking.Messages
             RegisterMessageType(new MsgGameSettings());
             RegisterMessageType(new MsgFetchResources());
             RegisterMessageType(new MsgAdminInfo());
-        }
+            RegisterMessageType(new MsgReplayReset());
+		}
 	}
 }

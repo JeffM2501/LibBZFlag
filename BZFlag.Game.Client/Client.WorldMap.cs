@@ -29,18 +29,22 @@ namespace BZFlag.Game
 		}
 		public event EventHandler<WorldDownloadProgressEventArgs> WorldDownloadProgress = null;
 
+		protected string WorldHash = string.Empty;
+		protected BZWCache WorldCache = null;
+
 		private void HandleWorldHash(NetworkMessage msg)
 		{
 			MsgWantWHash hash = msg as MsgWantWHash;
+			WorldHash = hash.WorldHash;
 
 			bool getWorld = true;
 
 			if (Params.CacheFolder != null)
 			{
-				BZWCache cache = new BZWCache(Params.CacheFolder);
-				if (cache.CheckCacheForHash(hash.WorldHash))
+				WorldCache = new BZWCache(Params.CacheFolder);
+				if (WorldCache.CheckCacheForHash(hash.WorldHash))
 				{
-					Map = cache.ReadMapFromCache(hash.WorldHash);
+					Map = WorldCache.ReadMapFromCache(hash.WorldHash);
 					if(Map != null)
 						getWorld = false;
 				}
@@ -87,11 +91,15 @@ namespace BZFlag.Game
 				SendGetWorld();
 			else
 			{
-				Map = (new WorldUnpacker(e.Result)).Unpack();
+				WorldUnpacker unpacker = new WorldUnpacker(e.Result);
+				Map = unpacker.Unpack();
 				if (Map == null)
 					SendGetWorld();
 				else
+				{
+					WorldCache.SaveMapToCache(WorldHash, unpacker.GetBuffer());
 					SendEnter();
+				}
 			}
 		}
 
@@ -113,6 +121,7 @@ namespace BZFlag.Game
 					WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs(1));
 				
 				Map = Unpacker.Unpack();
+				WorldCache.SaveMapToCache(WorldHash, Unpacker.GetBuffer());
 				SendEnter();
 			}
 		}

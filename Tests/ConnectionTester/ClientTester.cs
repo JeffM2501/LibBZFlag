@@ -5,6 +5,7 @@ using System.IO;
 
 using BZFlag.Game;
 using BZFlag.Authentication;
+using BZFlag.Data.Teams;
 
 namespace ConnectionTester
 {
@@ -43,6 +44,8 @@ namespace ConnectionTester
 			Link.RequestCompleted += Link_RequestCompleted;
 			Link.RequestErrored += Link_RequestErrored;
 
+			StartupParams.DesiredTeam = TeamColors.ObserverTeam;
+
 			if(args.Length > 0)
 				StartupParams.Callsign = args[0];
 			else
@@ -51,7 +54,7 @@ namespace ConnectionTester
 			GetList(args.Length > 1 ? args[1] : string.Empty);
 
 			var server = Link.FindServerWithMostPlayers();
-			if(server == null || true)
+			if(server == null || false)
 				server = new ServiceLink.ListServerData("bzflag.allejo.io", 5170);
 
 			StartupParams.Host = server.Host;
@@ -98,11 +101,18 @@ namespace ConnectionTester
 
 			GameClient.ReceivedUnknownMessage += GameClient_ReceivedUnknownMessage;
 
+			GameClient.Chat.ChatMessageReceived += Chat_ChatMessageReceived;
+
 			while(true)
 			{
 				GameClient.Update();
 				Thread.Sleep(50);
 			}
+		}
+
+		private void Chat_ChatMessageReceived(object sender, BZFlag.Game.Chat.ChatSystem.ChatMessageEventArgs e)
+		{
+			WriteLine("Chat Recieved " + e.Message.From.ToString() + " " + e.Message.Message);
 		}
 
 		private void GameClient_WorldDownloadProgress(object sender, Client.WorldDownloadProgressEventArgs e)

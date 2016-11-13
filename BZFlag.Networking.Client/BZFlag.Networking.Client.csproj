@@ -46,6 +46,7 @@
     <Compile Include="Messages\BZFS\Control\MsgHandicap.cs" />
     <Compile Include="Messages\BZFS\Control\MsgNewRabbit.cs" />
     <Compile Include="Messages\BZFS\Control\MsgPause.cs" />
+    <Compile Include="Messages\BZFS\Control\MsgReplayReset.cs" />
     <Compile Include="Messages\BZFS\Control\MsgTimeUpdate.cs" />
     <Compile Include="Messages\BZFS\Flags\MsgCaptureFlag.cs" />
     <Compile Include="Messages\BZFS\Flags\MsgDropFlag.cs" />
