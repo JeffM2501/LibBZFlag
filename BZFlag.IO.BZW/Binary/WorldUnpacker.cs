@@ -20,6 +20,12 @@ namespace BZFlag.IO.BZW.Binary
 		public List<string> Errors = new List<string>();
 		public List<string> Warnings = new List<string>();
 
+		public WorldUnpacker() { }
+		public WorldUnpacker(byte[] b)
+		{
+			AddData(b);
+		}
+
 		protected void Error(string err)
 		{
 			Errors.Add(err);

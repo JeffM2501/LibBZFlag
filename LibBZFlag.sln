@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D40E9B5F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.IO.BZW", "BZFlag.IO.BZW\BZFlag.IO.BZW.csproj", "{45813DAE-E820-4A91-8C97-3CDEF89EBE4B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.Game.Client", "BZFlag.Game.Client\BZFlag.Game.Client.csproj", "{AE8638E3-4185-4857-B6AA-E5EBE6EE33A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{45813DAE-E820-4A91-8C97-3CDEF89EBE4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45813DAE-E820-4A91-8C97-3CDEF89EBE4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45813DAE-E820-4A91-8C97-3CDEF89EBE4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE8638E3-4185-4857-B6AA-E5EBE6EE33A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE8638E3-4185-4857-B6AA-E5EBE6EE33A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE8638E3-4185-4857-B6AA-E5EBE6EE33A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE8638E3-4185-4857-B6AA-E5EBE6EE33A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
