@@ -58,11 +58,17 @@ namespace BZFlag.Game
 
 		public void RegisterMessageHandlers()
 		{
+			// basic connections
 			Handlers.Add(new MsgAccept().Code, HandleAcceptMessage);
 			Handlers.Add(new MsgReject().Code, HandleRejectMessage);
+
+			// world data
 			Handlers.Add(new MsgWantWHash().Code, HandleWorldHash);
 			Handlers.Add(new MsgCacheURL().Code, HandleWorldCacheURL);
 			Handlers.Add(new MsgGetWorld().Code, HandleGetWorld);
+
+			// bzdb
+			Handlers.Add(new MsgSetVars().Code, HandleSetVarsMessage);
 		}
 
 		private void HandleAcceptMessage(NetworkMessage msg)
