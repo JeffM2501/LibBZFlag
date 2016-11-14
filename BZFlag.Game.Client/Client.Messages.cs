@@ -109,13 +109,17 @@ namespace BZFlag.Game
 
 			// flags
 			Handlers.Add(new MsgFlagUpdate().Code, HandleFlagUpdate);
-
+			Handlers.Add(new MsgDropFlag().Code, HandleDropFlag);
+			Handlers.Add(new MsgGrabFlag().Code, HandleGrabFlag);
+			Handlers.Add(new MsgTransferFlag().Code, HandleTransferFlag);
 
 			// players
 			Handlers.Add(new MsgAddPlayer().Code, HandleAddPlayer);
 			Handlers.Add(new MsgRemovePlayer().Code, HandleRemovePlayer);
 			Handlers.Add(new MsgPlayerInfo().Code, HandlePlayerInfo);
 			Handlers.Add(new MsgScore().Code, HandleScoreUpdate);
+			Handlers.Add(new MsgPlayerUpdate().Code, HandlePlayerUpdate);
+			Handlers.Add(new MsgPlayerUpdateSmall().Code, HandlePlayerUpdate);
 
 			// chat
 			Handlers.Add(new MsgMessage().Code, Chat.HandleChatMessage);

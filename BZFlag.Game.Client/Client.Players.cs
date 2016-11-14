@@ -24,24 +24,14 @@ namespace BZFlag.Game
 			return PlayerList[id];
 		}
 
-		public class PlayerEventArgs : EventArgs
-		{
-			public Player PlayerRecord = null;
+		public event EventHandler<Player> PlayerAdded = null;
+		public event EventHandler<Player> PlayerRemoved = null;
+			  
+		public event EventHandler<Player> PlayerInfoUpdated = null;
+		public event EventHandler<Player> PlayerStateUpdated = null;
 
-			public PlayerEventArgs(Player p)
-			{
-				PlayerRecord = p;
-			}
-		}
-
-		public event EventHandler<PlayerEventArgs> PlayerAdded = null;
-		public event EventHandler<PlayerEventArgs> PlayerRemoved = null;
-
-		public event EventHandler<PlayerEventArgs> PlayerInfoUpdated = null;
-		public event EventHandler<PlayerEventArgs> PlayerStateUpdated = null;
-
-		public event EventHandler<PlayerEventArgs> SelfAdded = null;
-		public event EventHandler<PlayerEventArgs> SelfRemoved = null;
+		public event EventHandler<Player> SelfAdded = null;
+		public event EventHandler<Player> SelfRemoved = null;
 
 		private void HandleAddPlayer(NetworkMessage msg)
 		{
@@ -64,11 +54,11 @@ namespace BZFlag.Game
 			{
 				LocalPlayer = player;
 				if(SelfAdded != null)
-					SelfAdded.Invoke(this, new PlayerEventArgs(player));
+					SelfAdded.Invoke(this, player);
 			}
 
 			if(PlayerAdded != null)
-				PlayerAdded.Invoke(this, new PlayerEventArgs(player));
+				PlayerAdded.Invoke(this, player);
 		}
 
 		private void HandleRemovePlayer(NetworkMessage msg)
@@ -82,13 +72,13 @@ namespace BZFlag.Game
 			PlayerList.Remove(player.PlayerID);
 
 			if(PlayerRemoved != null)
-				PlayerRemoved.Invoke(this, new PlayerEventArgs(player));
+				PlayerRemoved.Invoke(this, player);
 
 			if (LocalPlayer == player)	//oh shit it's us!
 			{
 				LocalPlayer = null;
 				if(SelfRemoved != null)
-					SelfRemoved.Invoke(this, new PlayerEventArgs(player));
+					SelfRemoved.Invoke(this, player);
 			}
 		}
 
@@ -103,7 +93,7 @@ namespace BZFlag.Game
 					player.Attributes = p.Attributes;
 
 					if(PlayerInfoUpdated != null)
-						PlayerInfoUpdated.Invoke(this, new PlayerEventArgs(player));
+						PlayerInfoUpdated.Invoke(this, player);
 				}
 			}
 		}
@@ -112,15 +102,27 @@ namespace BZFlag.Game
 		{
 			MsgScore sc = msg as MsgScore;
 			Player player = GetPlayerByID(sc.PlayerID);
-			if(player != null)
-			{
-				player.Wins = sc.Wins;
-				player.Losses = sc.Losses;
-				player.TeamKills = sc.TeamKills;
+			if(player == null)
+				return;
 
-				if(PlayerInfoUpdated != null)
-					PlayerInfoUpdated.Invoke(this, new PlayerEventArgs(player));
-			}
+			player.Wins = sc.Wins;
+			player.Losses = sc.Losses;
+			player.TeamKills = sc.TeamKills;
+
+			if(PlayerInfoUpdated != null)
+				PlayerInfoUpdated.Invoke(this, player);
+		}
+
+		private void HandlePlayerUpdate(NetworkMessage msg)
+		{
+			MsgPlayerUpdateBase upd = msg as MsgPlayerUpdateBase;
+			Player player = GetPlayerByID(upd.PlayerID);
+			if(player == null)
+				return;
+
+			player.LastUpdate = upd;
+			if(PlayerStateUpdated != null)
+				PlayerStateUpdated.Invoke(this, player);
 		}
 	}
 }

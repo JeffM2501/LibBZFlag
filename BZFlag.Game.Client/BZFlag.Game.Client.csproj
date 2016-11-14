@@ -47,6 +47,7 @@
     <Compile Include="Client.Players.cs" />
     <Compile Include="Client.Teams.cs" />
     <Compile Include="Client.WorldMap.cs" />
+    <Compile Include="Flags\FlagInstance.cs" />
     <Compile Include="GameTime.cs" />
     <Compile Include="Player\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

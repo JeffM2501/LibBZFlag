@@ -8,9 +8,12 @@ using BZFlag.Data.Players;
 using BZFlag.Data.Types;
 using BZFlag.Networking.Messages.BZFS.Player;
 
+using BZFlag.Game.Flags;
+
 namespace BZFlag.Game.Players
 {
-	public class Player
+
+	public class Player : EventArgs
 	{
 		public int PlayerID = -1;
 
@@ -32,5 +35,17 @@ namespace BZFlag.Game.Players
 		// DR values
 		public Vector3F Position = Vector3F.Zero;
 		public float Azimuth = 0;
+
+		// state values
+		public FlagInstance CurrentFlag = null;
+
+		public bool SetFlag(FlagInstance flag)
+		{
+			if(flag == CurrentFlag)
+				return false;
+
+			CurrentFlag = flag;
+			return true;
+		}
 	}
 }

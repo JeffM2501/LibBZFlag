@@ -6,6 +6,7 @@ using System.IO;
 using BZFlag.Game;
 using BZFlag.Authentication;
 using BZFlag.Data.Teams;
+using BZFlag.Game.Players;
 
 namespace ConnectionTester
 {
@@ -98,16 +99,29 @@ namespace ConnectionTester
 			GameClient.SelfAdded += GameClient_SelfAdded;
 			GameClient.PlayerAdded += GameClient_PlayerAdded;
 			GameClient.PlayerRemoved += GameClient_PlayerRemoved;
+			GameClient.PlayerStateUpdated += GameClient_PlayerStateUpdated;
+			GameClient.PlayerInfoUpdated += GameClient_PlayerInfoUpdated;
 
 			GameClient.ReceivedUnknownMessage += GameClient_ReceivedUnknownMessage;
 
 			GameClient.Chat.ChatMessageReceived += Chat_ChatMessageReceived;
+
+			GameClient.FlagCreated += GameClient_FlagCreated;
+			GameClient.FlagUpdated += GameClient_FlagUpdated;
+			GameClient.FlagGrabbed += GameClient_FlagGrabbed;
+			GameClient.FlagDropped += GameClient_FlagDropped;
+			GameClient.FlagTransfered += GameClient_FlagTransfered;
 
 			while(true)
 			{
 				GameClient.Update();
 				Thread.Sleep(50);
 			}
+		}
+
+		private void GameClient_ReceivedUnknownMessage(object sender, Client.UnknownMessageEventArgs e)
+		{
+			WriteLine("Unknown message " + e.CodeAbriv + " (" + e.CodeID.ToString("X2") + ")");
 		}
 
 		private void Chat_ChatMessageReceived(object sender, BZFlag.Game.Chat.ChatSystem.ChatMessageEventArgs e)
@@ -135,24 +149,54 @@ namespace ConnectionTester
 			WriteLine("Client Accepted " + GameClient.PlayerID.ToString());
 		}
 
-		private void GameClient_PlayerRemoved(object sender, Client.PlayerEventArgs e)
+		private void GameClient_PlayerRemoved(object sender, Player player)
 		{
-			WriteLine("Player Removed " + e.PlayerRecord.Callsign);
+			WriteLine("Player Removed " + player.Callsign);
 		}
 
-		private void GameClient_PlayerAdded(object sender, Client.PlayerEventArgs e)
+		private void GameClient_PlayerAdded(object sender, Player player)
 		{
-			WriteLine("Player Added " + e.PlayerRecord.Callsign);
+			WriteLine("Player Added " + player.Callsign);
 		}
 
-		private void GameClient_ReceivedUnknownMessage(object sender, Client.UnknownMessageEventArgs e)
+		private void GameClient_PlayerInfoUpdated(object sender, Player player)
 		{
-			WriteLine("Unknown message " + e.CodeAbriv + " (" + e.CodeID.ToString("X2") + ")");
+			WriteLine("Player Info Updated " + player.Callsign);
 		}
 
-		private void GameClient_SelfAdded(object sender, Client.PlayerEventArgs e)
+		private void GameClient_PlayerStateUpdated(object sender, Player player)
 		{
-			WriteLine("Self Added " + e.PlayerRecord.Callsign);
+			WriteLine("Player Status Updated " + player.Callsign + " Last Pos " + string.Format("X{0} Y{1} Z{2}", player.LastUpdate.Position.X, player.LastUpdate.Position.Y, player.LastUpdate.Position.Z));
+		}
+
+		private void GameClient_SelfAdded(object sender, Player player)
+		{
+			WriteLine("Self Added " + player.Callsign);
+		}
+
+		private void GameClient_FlagTransfered(object sender, BZFlag.Game.Flags.FlagInstance e)
+		{
+			WriteLine("Flag Instance " + e.ID.ToString() + " Transfered to " + e.Owner.Callsign);
+		}
+
+		private void GameClient_FlagDropped(object sender, BZFlag.Game.Flags.FlagInstance e)
+		{
+			WriteLine("Flag Instance " + e.ID.ToString() + " dropped");
+		}
+
+		private void GameClient_FlagGrabbed(object sender, BZFlag.Game.Flags.FlagInstance e)
+		{
+			WriteLine("Flag Instance " + e.ID.ToString() + " Grabbed by " + e.Owner.Callsign);
+		}
+
+		private void GameClient_FlagUpdated(object sender, BZFlag.Game.Flags.FlagInstance e)
+		{
+			WriteLine("Flag Instance " + e.ID.ToString() + " Updated");
+		}
+
+		private void GameClient_FlagCreated(object sender, BZFlag.Game.Flags.FlagInstance e)
+		{
+			WriteLine("Flag Instance " + e.ID.ToString() + " Created");
 		}
 
 		private void GameClient_HostIsNotBZFlag(object sender, EventArgs e)
