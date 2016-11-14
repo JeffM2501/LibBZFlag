@@ -150,6 +150,7 @@ namespace ConnectionTester
 			Handlers.Add(new MsgPlayerUpdateSmall().Code, HandlePlayerUpdate);
 			Handlers.Add(new MsgScore().Code, HandleScoreUpdate);
 			Handlers.Add(new MsgAlive().Code, HandleAlive);
+			Handlers.Add(new MsgKilled().Code, HandleKilled);
 			Handlers.Add(new MsgRemovePlayer().Code, HandleRemovePlayer);
 			Handlers.Add(new MsgShotBegin().Code, HandleShotBegin);
 			Handlers.Add(new MsgShotEnd().Code, HandleShotEnd);
@@ -157,7 +158,6 @@ namespace ConnectionTester
 			Handlers.Add(new MsgGrabFlag().Code, HandleGrabFlag);
 			Handlers.Add(new MsgTransferFlag().Code, HandleTransferFlag);
 			Handlers.Add(new MsgGMUpdate().Code, HandleGMUpdate);
-			Handlers.Add(new MsgKilled().Code, HandleKilled);
 			Handlers.Add(new MsgTeleport().Code, HandleTeleported);
 			Handlers.Add(new MsgCaptureFlag().Code, HandleCaptureFlag);
 			Handlers.Add(new MsgNearFlag().Code, HandleNearFlag);

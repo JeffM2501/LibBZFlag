@@ -106,5 +106,6 @@ namespace BZFlag.Game
 			if(ClientRejected != null)
 				ClientRejected.Invoke(this, new ClientRejectionEventArgs(code,reason));
 		}
+		
 	}
 }

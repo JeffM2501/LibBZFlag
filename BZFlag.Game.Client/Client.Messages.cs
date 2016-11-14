@@ -22,17 +22,17 @@ namespace BZFlag.Game
 		public delegate void MessageHandler(NetworkMessage msg);
 		public static Dictionary<int, MessageHandler> Handlers = new Dictionary<int, MessageHandler>();
 
-		protected bool UDPRequestSent = false;
-		protected bool UDPSendEnabled = false;
-		private  bool UDPOutOk = false;
-		private  bool UDPInOk = false;
-
 		public class UnknownMessageEventArgs : EventArgs
 		{
 			public string CodeAbriv = string.Empty;
 			public int CodeID = 0;
 		}
 		public event EventHandler<UnknownMessageEventArgs> ReceivedUnknownMessage = null;
+
+		protected bool UDPRequestSent = false;
+		protected bool UDPSendEnabled = false;
+		private bool UDPOutOk = false;
+		private bool UDPInOk = false;
 
 		protected virtual void NetClient_HostMessageReceived(object sender, Networking.ClientConnection.HostMessageReceivedEventArgs e)
 		{
@@ -49,7 +49,6 @@ namespace BZFlag.Game
 					args.CodeID = e.Message.Code;
 					ReceivedUnknownMessage.Invoke(this, args);
 				}
-				
 			}
 
 			PostDispatchChecks();
@@ -95,6 +94,9 @@ namespace BZFlag.Game
 			Handlers.Add(new MsgReject().Code, HandleRejectMessage);
 
 			Handlers.Add(new MsgGameTime().Code, HandleGameTime);
+			Handlers.Add(new MsgUDPLinkRequest().Code, HandleUDPLinkRequest);
+			Handlers.Add(new MsgUDPLinkEstablished().Code, HandleUDPLinkEstablished);
+			Handlers.Add(new MsgLagPing().Code, HandleLagPing);
 
 			// world data
 			Handlers.Add(new MsgWantWHash().Code, HandleWorldHash);
@@ -118,6 +120,8 @@ namespace BZFlag.Game
 			Handlers.Add(new MsgRemovePlayer().Code, HandleRemovePlayer);
 			Handlers.Add(new MsgPlayerInfo().Code, HandlePlayerInfo);
 			Handlers.Add(new MsgScore().Code, HandleScoreUpdate);
+			Handlers.Add(new MsgAlive().Code, HandleAlive);
+			Handlers.Add(new MsgKilled().Code, HandleKilled);
 			Handlers.Add(new MsgPlayerUpdate().Code, HandlePlayerUpdate);
 			Handlers.Add(new MsgPlayerUpdateSmall().Code, HandlePlayerUpdate);
 
@@ -149,6 +153,58 @@ namespace BZFlag.Game
 		{
 			MsgGameTime gt = msg as MsgGameTime;
 			Clock.AddTimeUpdate(gt.NetTime);
+		}
+
+
+		public event EventHandler UDPLinkEstablished = null;
+
+		private void HandleUDPLinkRequest(NetworkMessage msg)
+		{
+			MsgUDPLinkRequest udp = msg as MsgUDPLinkRequest;
+
+			if(udp.FromUDP)
+			{
+				if(UDPRequestSent)
+				{
+					UDPInOk = true;
+					NetClient.SendMessage(false, new MsgUDPLinkEstablished());
+
+					if(UDPOutOk)
+					{
+						if(UDPLinkEstablished != null)
+							UDPLinkEstablished.Invoke(this, EventArgs.Empty);
+						UDPSendEnabled = true;
+					}
+				}
+			}
+		}
+
+		private void HandleUDPLinkEstablished(NetworkMessage msg)
+		{
+			MsgUDPLinkEstablished udp = msg as MsgUDPLinkEstablished;
+
+			if(!udp.FromUDP)
+			{
+				if(UDPRequestSent)
+				{
+					UDPOutOk = true;
+					NetClient.SendMessage(false, new MsgUDPLinkEstablished());
+
+					if(UDPInOk)
+					{
+						if(UDPLinkEstablished != null)
+							UDPLinkEstablished.Invoke(this, EventArgs.Empty);
+						UDPSendEnabled = true;
+					}
+				}
+			}
+		}
+
+		private void HandleLagPing(NetworkMessage msg)
+		{
+			MsgLagPing ping = msg as MsgLagPing;
+
+			NetClient.SendMessage(ping.FromUDP, ping);
 		}
 	}
 }

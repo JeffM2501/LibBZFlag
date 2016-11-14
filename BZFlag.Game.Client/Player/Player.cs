@@ -32,6 +32,10 @@ namespace BZFlag.Game.Players
 
 		public MsgPlayerUpdateBase LastUpdate = null;
 
+		// infered values from updates
+		public double PlayerSpawnTime = -1;
+		public bool Active = false;
+
 		// DR values
 		public Vector3F Position = Vector3F.Zero;
 		public float Azimuth = 0;

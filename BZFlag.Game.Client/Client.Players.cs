@@ -8,6 +8,7 @@ using BZFlag.Networking.Messages;
 using BZFlag.Networking.Messages.BZFS.Player;
 using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Data.Players;
+using BZFlag.Data.Flags;
 
 namespace BZFlag.Game
 {
@@ -26,7 +27,21 @@ namespace BZFlag.Game
 
 		public event EventHandler<Player> PlayerAdded = null;
 		public event EventHandler<Player> PlayerRemoved = null;
-			  
+
+		public event EventHandler<Player> PlayerSpawned = null;
+
+		public class KilledEventArgs : EventArgs
+		{
+			public Player Victim = null;
+			public Player Killer = null;
+
+			public BlowedUpReasons Reason = BlowedUpReasons.Unknown;
+			public int InstrumentID = -1; // shot or physics
+			public FlagType KilledByFlag = null;
+		}
+
+		public event EventHandler<KilledEventArgs> PlayerKilled = null;
+
 		public event EventHandler<Player> PlayerInfoUpdated = null;
 		public event EventHandler<Player> PlayerStateUpdated = null;
 
@@ -123,6 +138,54 @@ namespace BZFlag.Game
 			player.LastUpdate = upd;
 			if(PlayerStateUpdated != null)
 				PlayerStateUpdated.Invoke(this, player);
+		}
+
+		private void HandleAlive(NetworkMessage msg)
+		{
+			MsgAlive alive = msg as MsgAlive;
+
+			Player player = GetPlayerByID(alive.PlayerID);
+
+			player.Active = true;
+			player.PlayerSpawnTime = Clock.GetStepTime();
+
+			player.Position = alive.Position;
+			player.Azimuth = alive.Azimuth;
+
+			if(PlayerSpawned != null)
+				PlayerSpawned.Invoke(this, player);
+		}
+
+		private void HandleKilled(NetworkMessage msg)
+		{
+			MsgKilled killed = msg as MsgKilled;
+
+			KilledEventArgs args = new KilledEventArgs();
+
+			args.Victim = GetPlayerByID(killed.VictimID);
+			args.Killer = GetPlayerByID(killed.KillerID);
+			args.Reason = killed.Reason;
+			args.KilledByFlag = FlagTypes.GetFromAbriv(killed.FlagAbreviation);
+			if(killed.Reason == BlowedUpReasons.DeathTouch)
+				args.InstrumentID = killed.PhysicsDriverID;
+			else
+			{
+				args.InstrumentID = killed.ShotID;
+
+				if (killed.ShotID > 0)
+				{
+					// kill shot 
+					int bzfsShotID = (killed.KillerID * byte.MaxValue) + killed.ShotID;
+					// tell the shot manager to kill that thar shot
+				}
+			}
+				
+
+			if(args.Victim != null)
+				args.Victim.Active = false;
+
+			if(PlayerKilled != null)
+				PlayerKilled.Invoke(this, args);
 		}
 	}
 }
