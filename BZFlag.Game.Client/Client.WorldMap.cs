@@ -128,8 +128,13 @@ namespace BZFlag.Game
 
 		private void HandleWorldCacheURL(NetworkMessage msg)
 		{
+			if(WorldURL != string.Empty)
+				return;
+
 			MsgCacheURL url = msg as MsgCacheURL;
 			WorldURL = url.URL;
+
+			NetClient.SendMessage(new MsgWantWHash()); // fastmap servers send the world cache before the hash, so send the hash request again so they know we wants it
 		}
 	}
 }

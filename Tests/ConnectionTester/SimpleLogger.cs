@@ -219,8 +219,14 @@ namespace ConnectionTester
 			client.SendMessage(!UDPSendEnabled, msg);
 		}
 
+		protected static bool SentEnter = false;
+
 		protected static void SendEnter()
 		{
+			if(SentEnter)
+				return;
+
+			SentEnter = true;
 			var enter = new MsgEnter();
 			enter.Callsign = Callsign;
 			enter.Motto = "Testing 1...2..3.";
@@ -275,10 +281,19 @@ namespace ConnectionTester
 			else
 				SendEnter();
 		}
+
+		public static bool GotURL = false;
+
 		private static void HandleWorldCacheURL(NetworkMessage msg)
 		{
+			if(GotURL)
+				return;
+
+			GotURL = true;
 			MsgCacheURL url = msg as MsgCacheURL;
 			WriteLine("Received Cache URL" + url.URL);
+
+			client.SendMessage(new MsgWantWHash());
 		}
 
 		private static BZFlag.IO.BZW.Binary.WorldUnpacker Unpacker = new BZFlag.IO.BZW.Binary.WorldUnpacker();

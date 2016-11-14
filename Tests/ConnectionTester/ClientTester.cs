@@ -95,6 +95,7 @@ namespace ConnectionTester
 			GameClient.TCPConnected += GameClient_TCPConnected;
 			GameClient.ClientAccepted += GameClient_ClientAccepted;
 			GameClient.ClientRejected += GameClient_ClientRejected;
+			GameClient.UDPLinkEstablished += GameClient_UDPLinkEstablished;
 
 			GameClient.PlayerList.SelfAdded += GameClient_SelfAdded;
 			GameClient.PlayerList.PlayerAdded += GameClient_PlayerAdded;
@@ -123,6 +124,11 @@ namespace ConnectionTester
 				GameClient.Update();
 				Thread.Sleep(50);
 			}
+		}
+
+		private void GameClient_UDPLinkEstablished(object sender, EventArgs e)
+		{
+			WriteLine("UDP Link Established");
 		}
 
 		private void GameClient_ReceivedUnknownMessage(object sender, Client.UnknownMessageEventArgs e)
