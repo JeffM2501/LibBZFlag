@@ -7,6 +7,9 @@ using BZFlag.Data.Teams;
 using BZFlag.Networking.Messages.BZFS.Control;
 using BZFlag.Networking.Messages.BZFS.World;
 using BZFlag.Game.Chat;
+using BZFlag.Game.Shots;
+using BZFlag.Game.Players;
+using BZFlag.Data.Flags;
 
 namespace BZFlag.Game
 {
@@ -31,14 +34,21 @@ namespace BZFlag.Game
 		public BZFlag.Map.WorldMap Map = null;
 		public ChatSystem Chat = new ChatSystem();
 
-		public GameTime Clock = new GameTime();
+		public FlagTypeList FlagTypes = new FlagTypeList();
+		public PlayerManager PlayerList = new PlayerManager();
+		public ShotManager ShotMan = null;
 
-		public int PlayerID { get; protected set; }
+		public GameTime Clock = new GameTime();
 
 		protected ClientParams Params = null;
 
 		public Client(ClientParams _params)
 		{
+			PlayerList.Clock = Clock;
+			PlayerList.FlagTypes = FlagTypes;
+
+			ShotMan = new ShotManager(PlayerList); ;
+
 			Params = _params;
 			RegisterMessageHandlers();
 
@@ -51,7 +61,7 @@ namespace BZFlag.Game
 
 		public void Shutdown()
 		{
-
+			NetClient.Shutdown();
 		}
 
 		public void Update()

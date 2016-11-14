@@ -116,30 +116,35 @@ namespace BZFlag.Game
 			Handlers.Add(new MsgTransferFlag().Code, HandleTransferFlag);
 
 			// players
-			Handlers.Add(new MsgAddPlayer().Code, HandleAddPlayer);
-			Handlers.Add(new MsgRemovePlayer().Code, HandleRemovePlayer);
-			Handlers.Add(new MsgPlayerInfo().Code, HandlePlayerInfo);
-			Handlers.Add(new MsgScore().Code, HandleScoreUpdate);
-			Handlers.Add(new MsgAlive().Code, HandleAlive);
-			Handlers.Add(new MsgKilled().Code, HandleKilled);
-			Handlers.Add(new MsgPlayerUpdate().Code, HandlePlayerUpdate);
-			Handlers.Add(new MsgPlayerUpdateSmall().Code, HandlePlayerUpdate);
+			Handlers.Add(new MsgAddPlayer().Code, PlayerList.HandleAddPlayer);
+			Handlers.Add(new MsgRemovePlayer().Code, PlayerList.HandleRemovePlayer);
+			Handlers.Add(new MsgPlayerInfo().Code, PlayerList.HandlePlayerInfo);
+			Handlers.Add(new MsgScore().Code, PlayerList.HandleScoreUpdate);
+			Handlers.Add(new MsgAlive().Code, PlayerList.HandleAlive);
+			Handlers.Add(new MsgKilled().Code, PlayerList.HandleKilled);
+			Handlers.Add(new MsgPlayerUpdate().Code, PlayerList.HandlePlayerUpdate);
+			Handlers.Add(new MsgPlayerUpdateSmall().Code, PlayerList.HandlePlayerUpdate);
 
 			// chat
 			Handlers.Add(new MsgMessage().Code, Chat.HandleChatMessage);
+
+			// shots
+			Handlers.Add(new MsgShotBegin().Code, ShotMan.HandleShotBegin);
+			Handlers.Add(new MsgShotEnd().Code, ShotMan.HandleShotEnd);
+			Handlers.Add(new MsgGMUpdate().Code, ShotMan.HandleGMUpdate);
 		}
 
 		private void HandleAcceptMessage(NetworkMessage msg)
 		{
 			MsgAccept accept = msg as MsgAccept;
 
-			PlayerID = accept.PlayerID;
+			PlayerList.LocalPlayerID = accept.PlayerID;
 
 			NetClientAccepted();
 			UDPRequestSent = true;
 			// start UDP Link
 			NetClient.ConnectToUDP();
-			NetClient.SendMessage(false, new MsgUDPLinkRequest(PlayerID));
+			NetClient.SendMessage(false, new MsgUDPLinkRequest(PlayerList.LocalPlayerID));
 		}
 
 		private void HandleRejectMessage(NetworkMessage msg)

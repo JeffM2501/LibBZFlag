@@ -9,6 +9,7 @@ using BZFlag.Data.Types;
 using BZFlag.Networking.Messages.BZFS.Player;
 
 using BZFlag.Game.Flags;
+using BZFlag.Game.Shots;
 
 namespace BZFlag.Game.Players
 {
@@ -43,6 +44,8 @@ namespace BZFlag.Game.Players
 		// state values
 		public FlagInstance CurrentFlag = null;
 
+		public Dictionary<int, Shot> ShotList = new Dictionary<int, Shot>();
+
 		public bool SetFlag(FlagInstance flag)
 		{
 			if(flag == CurrentFlag)
@@ -50,6 +53,25 @@ namespace BZFlag.Game.Players
 
 			CurrentFlag = flag;
 			return true;
+		}
+
+		public int AddShot(Shot shot)
+		{
+			if (ShotList.ContainsKey(shot.BZFSShotID))
+			{
+				Shot oldShot = ShotList[shot.BZFSShotID];
+				ShotList[shot.BZFSShotID] = shot;
+				return oldShot.GlobalID;
+			}
+
+			ShotList.Add(shot.BZFSShotID, shot);
+			return shot.GlobalID;
+		}
+
+		public void RemoveShot(Shot shot)
+		{
+			if(ShotList.ContainsKey(shot.BZFSShotID) && ShotList[shot.BZFSShotID] == shot)
+				ShotList.Remove(shot.BZFSShotID);
 		}
 	}
 }

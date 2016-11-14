@@ -14,7 +14,6 @@ namespace BZFlag.Game
 {
 	public partial class Client
 	{
-		public FlagTypeList FlagTypes = new FlagTypeList();
 		public List<FlagInstance> WorldFlags = new List<FlagInstance>();
 
 		protected FlagInstance FindFlagByID(int id)
@@ -74,7 +73,7 @@ namespace BZFlag.Game
 			flag.Status = u.Status;
 			flag.Endurance = u.Endurance;
 
-			var owner = GetPlayerByID(u.Owner);
+			var owner = PlayerList.GetPlayerByID(u.Owner);
 			flag.Owner = owner;
 			if(owner != null)
 				owner.SetFlag(flag);
@@ -101,7 +100,7 @@ namespace BZFlag.Game
 		{
 			MsgDropFlag df = msg as MsgDropFlag;
 
-			var owner = GetPlayerByID(df.PlayerID);
+			var owner = PlayerList.GetPlayerByID(df.PlayerID);
 			FlagInstance flag = FindFlagByID(df.FlagID);
 
 			if(owner != null)
@@ -123,7 +122,7 @@ namespace BZFlag.Game
 		{
 			MsgGrabFlag gf = msg as MsgGrabFlag;
 
-			var owner = GetPlayerByID(gf.PlayerID);
+			var owner = PlayerList.GetPlayerByID(gf.PlayerID);
 			FlagInstance flag = SetFlagUpdateData(gf.FlagData);
 
 			if(FlagGrabbed != null)
@@ -135,8 +134,8 @@ namespace BZFlag.Game
 			MsgTransferFlag tf = msg as MsgTransferFlag;
 
 			var flag = FindFlagByID(tf.FlagID);
-			var from = GetPlayerByID(tf.FromID);
-			var to = GetPlayerByID(tf.ToID);
+			var from = PlayerList.GetPlayerByID(tf.FromID);
+			var to = PlayerList.GetPlayerByID(tf.ToID);
 
 			if(from != null)
 				from.SetFlag(null);

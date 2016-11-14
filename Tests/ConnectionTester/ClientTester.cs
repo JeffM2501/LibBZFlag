@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using System.IO;
 
@@ -96,11 +96,13 @@ namespace ConnectionTester
 			GameClient.ClientAccepted += GameClient_ClientAccepted;
 			GameClient.ClientRejected += GameClient_ClientRejected;
 
-			GameClient.SelfAdded += GameClient_SelfAdded;
-			GameClient.PlayerAdded += GameClient_PlayerAdded;
-			GameClient.PlayerRemoved += GameClient_PlayerRemoved;
-			GameClient.PlayerStateUpdated += GameClient_PlayerStateUpdated;
-			GameClient.PlayerInfoUpdated += GameClient_PlayerInfoUpdated;
+			GameClient.PlayerList.SelfAdded += GameClient_SelfAdded;
+			GameClient.PlayerList.PlayerAdded += GameClient_PlayerAdded;
+			GameClient.PlayerList.PlayerRemoved += GameClient_PlayerRemoved;
+			GameClient.PlayerList.PlayerStateUpdated += GameClient_PlayerStateUpdated;
+			GameClient.PlayerList.PlayerInfoUpdated += GameClient_PlayerInfoUpdated;
+			GameClient.PlayerList.PlayerSpawned += GameClient_PlayerSpawned;
+			GameClient.PlayerList.PlayerKilled += GameClient_PlayerKilled;
 
 			GameClient.ReceivedUnknownMessage += GameClient_ReceivedUnknownMessage;
 
@@ -111,6 +113,10 @@ namespace ConnectionTester
 			GameClient.FlagGrabbed += GameClient_FlagGrabbed;
 			GameClient.FlagDropped += GameClient_FlagDropped;
 			GameClient.FlagTransfered += GameClient_FlagTransfered;
+
+			GameClient.ShotMan.ShotCreated += ShotMan_ShotCreated;
+			GameClient.ShotMan.ShotRemoved += ShotMan_ShotRemoved;
+			GameClient.ShotMan.ShotUpdated += ShotMan_ShotUpdated;
 
 			while(true)
 			{
@@ -146,7 +152,7 @@ namespace ConnectionTester
 
 		private void GameClient_ClientAccepted(object sender, EventArgs e)
 		{
-			WriteLine("Client Accepted " + GameClient.PlayerID.ToString());
+			WriteLine("Client Accepted " + GameClient.PlayerList.LocalPlayerID.ToString());
 		}
 
 		private void GameClient_PlayerRemoved(object sender, Player player)
@@ -157,6 +163,34 @@ namespace ConnectionTester
 		private void GameClient_PlayerAdded(object sender, Player player)
 		{
 			WriteLine("Player Added " + player.Callsign);
+		}
+
+		private void GameClient_PlayerKilled(object sender, PlayerManager.KilledEventArgs e)
+		{
+			StringBuilder builder = new StringBuilder();
+
+			builder.Append("Player ");
+			builder.Append(e.Victim.Callsign);
+			builder.Append(" was killed (");
+			builder.Append(e.Reason.ToString());
+			builder.Append(") with ");
+			if (e.KilledByFlag != null)
+				builder.Append(e.KilledByFlag.FlagName);
+			else
+				builder.Append("Divine Judgment");
+
+			builder.Append(" by ");
+			if(e.Killer != null)
+				builder.Append(e.Killer.Callsign);
+			else
+				builder.Append("God herself");
+	
+			WriteLine(builder.ToString());
+		}
+
+		private void GameClient_PlayerSpawned(object sender, Player player)
+		{
+			WriteLine("Player spawned " + player.Callsign);
 		}
 
 		private void GameClient_PlayerInfoUpdated(object sender, Player player)
@@ -197,6 +231,21 @@ namespace ConnectionTester
 		private void GameClient_FlagCreated(object sender, BZFlag.Game.Flags.FlagInstance e)
 		{
 			WriteLine("Flag Instance " + e.ID.ToString() + " Created");
+		}
+
+		private void ShotMan_ShotUpdated(object sender, BZFlag.Game.Shots.Shot e)
+		{
+			WriteLine("ShotID " + e.GlobalID.ToString() + " Updated");
+		}
+
+		private void ShotMan_ShotRemoved(object sender, BZFlag.Game.Shots.Shot e)
+		{
+			WriteLine("ShotID " + e.GlobalID.ToString() + " Removed");
+		}
+
+		private void ShotMan_ShotCreated(object sender, BZFlag.Game.Shots.Shot e)
+		{
+			WriteLine("ShotID " + e.GlobalID.ToString() + " Created");
 		}
 
 		private void GameClient_HostIsNotBZFlag(object sender, EventArgs e)

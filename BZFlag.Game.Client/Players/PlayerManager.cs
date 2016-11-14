@@ -10,12 +10,17 @@ using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Data.Players;
 using BZFlag.Data.Flags;
 
-namespace BZFlag.Game
+namespace BZFlag.Game.Players
 {
-	public partial class Client
+	public class PlayerManager
 	{
 		public Dictionary<int, Player> PlayerList = new Dictionary<int, Player>();
+
+		public int LocalPlayerID = -1;
 		public Player LocalPlayer = null;
+
+		public GameTime Clock = new GameTime();
+		public FlagTypeList FlagTypes = null;
 
 		public Player GetPlayerByID(int id)
 		{
@@ -48,7 +53,7 @@ namespace BZFlag.Game
 		public event EventHandler<Player> SelfAdded = null;
 		public event EventHandler<Player> SelfRemoved = null;
 
-		private void HandleAddPlayer(NetworkMessage msg)
+		public void HandleAddPlayer(NetworkMessage msg)
 		{
 			MsgAddPlayer ap = msg as MsgAddPlayer;
 			if(!PlayerList.ContainsKey(ap.PlayerID))
@@ -65,7 +70,7 @@ namespace BZFlag.Game
 			player.Losses = ap.Losses;
 			player.TeamKills = ap.TeamKills;
 
-			if(PlayerID == player.PlayerID) // hey it's us!
+			if(LocalPlayerID == player.PlayerID) // hey it's us!
 			{
 				LocalPlayer = player;
 				if(SelfAdded != null)
@@ -76,7 +81,7 @@ namespace BZFlag.Game
 				PlayerAdded.Invoke(this, player);
 		}
 
-		private void HandleRemovePlayer(NetworkMessage msg)
+		public void HandleRemovePlayer(NetworkMessage msg)
 		{
 			MsgRemovePlayer rp = msg as MsgRemovePlayer;
 
@@ -89,7 +94,7 @@ namespace BZFlag.Game
 			if(PlayerRemoved != null)
 				PlayerRemoved.Invoke(this, player);
 
-			if (LocalPlayer == player)	//oh shit it's us!
+			if(LocalPlayer == player)   //oh shit it's us!
 			{
 				LocalPlayer = null;
 				if(SelfRemoved != null)
@@ -97,13 +102,13 @@ namespace BZFlag.Game
 			}
 		}
 
-		private void HandlePlayerInfo(NetworkMessage msg)
+		public void HandlePlayerInfo(NetworkMessage msg)
 		{
 			MsgPlayerInfo info = msg as MsgPlayerInfo;
 			foreach(var p in info.PlayerUpdates)
 			{
 				Player player = GetPlayerByID(p.PlayerID);
-				if (player != null)
+				if(player != null)
 				{
 					player.Attributes = p.Attributes;
 
@@ -113,7 +118,7 @@ namespace BZFlag.Game
 			}
 		}
 
-		private void HandleScoreUpdate(NetworkMessage msg)
+		public void HandleScoreUpdate(NetworkMessage msg)
 		{
 			MsgScore sc = msg as MsgScore;
 			Player player = GetPlayerByID(sc.PlayerID);
@@ -128,7 +133,7 @@ namespace BZFlag.Game
 				PlayerInfoUpdated.Invoke(this, player);
 		}
 
-		private void HandlePlayerUpdate(NetworkMessage msg)
+		public void HandlePlayerUpdate(NetworkMessage msg)
 		{
 			MsgPlayerUpdateBase upd = msg as MsgPlayerUpdateBase;
 			Player player = GetPlayerByID(upd.PlayerID);
@@ -140,7 +145,7 @@ namespace BZFlag.Game
 				PlayerStateUpdated.Invoke(this, player);
 		}
 
-		private void HandleAlive(NetworkMessage msg)
+		public void HandleAlive(NetworkMessage msg)
 		{
 			MsgAlive alive = msg as MsgAlive;
 
@@ -156,7 +161,7 @@ namespace BZFlag.Game
 				PlayerSpawned.Invoke(this, player);
 		}
 
-		private void HandleKilled(NetworkMessage msg)
+		public void HandleKilled(NetworkMessage msg)
 		{
 			MsgKilled killed = msg as MsgKilled;
 
@@ -172,14 +177,13 @@ namespace BZFlag.Game
 			{
 				args.InstrumentID = killed.ShotID;
 
-				if (killed.ShotID > 0)
+				if(killed.ShotID > 0)
 				{
 					// kill shot 
 					int bzfsShotID = (killed.KillerID * byte.MaxValue) + killed.ShotID;
 					// tell the shot manager to kill that thar shot
 				}
 			}
-				
 
 			if(args.Victim != null)
 				args.Victim.Active = false;
