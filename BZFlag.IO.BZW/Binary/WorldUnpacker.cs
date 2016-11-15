@@ -93,6 +93,7 @@ namespace BZFlag.IO.BZW.Binary
 
             }
 
+            map.CacheRuntimeObjects();
             return map;
         }
 

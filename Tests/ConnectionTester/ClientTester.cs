@@ -114,6 +114,7 @@ namespace ConnectionTester
 			GameClient.FlagGrabbed += GameClient_FlagGrabbed;
 			GameClient.FlagDropped += GameClient_FlagDropped;
 			GameClient.FlagTransfered += GameClient_FlagTransfered;
+            GameClient.FlagIsNear += GameClient_FlagIsNear;
 
 			GameClient.ShotMan.ShotCreated += ShotMan_ShotCreated;
 			GameClient.ShotMan.ShotRemoved += ShotMan_ShotRemoved;
@@ -126,7 +127,7 @@ namespace ConnectionTester
 			}
 		}
 
-		private void GameClient_UDPLinkEstablished(object sender, EventArgs e)
+        private void GameClient_UDPLinkEstablished(object sender, EventArgs e)
 		{
 			WriteLine("UDP Link Established");
 		}
@@ -214,7 +215,12 @@ namespace ConnectionTester
 			WriteLine("Self Added " + player.Callsign);
 		}
 
-		private void GameClient_FlagTransfered(object sender, BZFlag.Game.Flags.FlagInstance e)
+        private void GameClient_FlagIsNear(object sender, Client.NearFlagEventArgs e)
+        {
+            WriteLine("Flag " + e.Name.ToString() + " Is Near ");
+        }
+
+        private void GameClient_FlagTransfered(object sender, BZFlag.Game.Flags.FlagInstance e)
 		{
 			WriteLine("Flag Instance " + e.ID.ToString() + " Transfered to " + e.Owner.Callsign);
 		}

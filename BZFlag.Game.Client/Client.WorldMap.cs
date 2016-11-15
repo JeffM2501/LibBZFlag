@@ -7,8 +7,11 @@ using System.Net;
 
 using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Networking.Messages.BZFS.World;
+using BZFlag.Networking.Messages.BZFS.Player;
 using BZFlag.IO.BZW.Binary;
 using BZFlag.Networking.Messages;
+using BZFlag.Game.Players;
+using BZFlag.Map.Elements.Shapes;
 
 namespace BZFlag.Game
 {
@@ -136,5 +139,33 @@ namespace BZFlag.Game
 
 			NetClient.SendMessage(new MsgWantWHash()); // fastmap servers send the world cache before the hash, so send the hash request again so they know we wants it
 		}
-	}
+
+        public class TeleportEventArgs : EventArgs
+        {
+            public Player PortingPlayer = null;
+            public Teleporter From = null;
+            public Teleporter To = null;
+        }
+        public event EventHandler<TeleportEventArgs> PlayerTeleported = null;
+
+        public void HandleTeleported(NetworkMessage msg)
+        {
+            MsgTeleport tp = msg as MsgTeleport;
+
+            TeleportEventArgs args = new Game.Client.TeleportEventArgs();
+
+            args.PortingPlayer = PlayerList.GetPlayerByID(tp.PlayerID);
+            if (args.PortingPlayer == null)
+                return;
+
+            args.From = Map.GetTeleporterByID(tp.FromTPID);
+            args.To = Map.GetTeleporterByID(tp.ToTPID);
+
+            args.PortingPlayer.SetTeleport(Clock.GetStepTime(), args.From, args.To);
+
+            if (PlayerTeleported != null)
+                PlayerTeleported.Invoke(this, args);
+
+        }
+    }
 }

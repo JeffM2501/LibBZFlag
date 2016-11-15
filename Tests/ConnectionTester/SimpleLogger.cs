@@ -607,11 +607,13 @@ namespace ConnectionTester
 			MsgPause pa = msg as MsgPause;
 			WriteLine("MsgPause " + String.Format("Player ID {0} Paused = {1}", pa.PlayerID, pa.Paused));
 		}
+
 		private static void HandleAutoPilot(NetworkMessage msg)
 		{
 			MsgAutoPilot ap = msg as MsgAutoPilot;
 			WriteLine("MsgAutoPilot " + String.Format("Player ID {0} Autopilot = {1}", ap.PlayerID, ap.AutoPilot));
 		}
+
 		private static void HandleNewRabbit(NetworkMessage msg)
 		{
 			MsgNewRabbit nr = msg as MsgNewRabbit;

@@ -51,7 +51,20 @@ namespace BZFlag.Game
 		public event EventHandler<FlagInstance> FlagUpdated = null;
 		public event EventHandler<FlagInstance> FlagTransfered = null;
 
-		private void HandleFlagUpdate(NetworkMessage msg)
+        public class NearFlagEventArgs : EventArgs
+        {
+            public string Name = string.Empty;
+            public Vector3F Location = Vector3F.Zero;
+
+            public NearFlagEventArgs(string n, Vector3F l)
+            {
+                Name = n;
+                Location = l;
+            }
+        }
+        public event EventHandler<NearFlagEventArgs> FlagIsNear = null;
+
+        private void HandleFlagUpdate(NetworkMessage msg)
 		{
 			MsgFlagUpdate update = msg as MsgFlagUpdate;
 
@@ -149,5 +162,15 @@ namespace BZFlag.Game
 			if(FlagTransfered != null)
 				FlagTransfered.Invoke(this, flag);
 		}
-	}
+
+        protected void HandleNearFlag(NetworkMessage msg)
+        {
+            MsgNearFlag nf = msg as MsgNearFlag;
+
+            if (FlagIsNear != null)
+            {
+                FlagIsNear.Invoke(this, new NearFlagEventArgs(nf.FlagName, nf.Position));
+            }
+        }
+    }
 }

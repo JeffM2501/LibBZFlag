@@ -18,6 +18,8 @@ namespace BZFlag.Map
 			Teleporter.TeleporterCount = 0;
 		}
 
+        protected List<Teleporter> TeleporterCache = new List<Teleporter>();
+
         public void FinishLoad()
         {
             // check to see if all the teleporters have names and if not fix any links
@@ -28,9 +30,31 @@ namespace BZFlag.Map
                 if (tp == null)
                     continue;
 
+                TeleporterCache.Add(tp);
+
                 if (tp.Name == string.Empty)
                     tp.Name = "teleporter_" + tp.Index.ToString();
             }
+        }
+       
+        public void CacheRuntimeObjects()
+        {
+            foreach (BasicObject obj in Objects)
+            {
+                Teleporter tp = obj as Teleporter;
+                if (tp == null)
+                    continue;
+
+                TeleporterCache.Add(tp);
+            }
+        }
+
+        public Teleporter GetTeleporterByID(int id)
+        {
+            if (id < 0 || id >= TeleporterCache.Count)
+                return null;
+
+            return TeleporterCache[id];
         }
 
         private BasicObject FindObjectByName(string name)
@@ -59,7 +83,6 @@ namespace BZFlag.Map
 				WorldOptions = obj as Options;
 			else
 				Objects.Add(obj);
-
 		}
 
 		public void AddObjects(IEnumerable<BasicObject> lst)

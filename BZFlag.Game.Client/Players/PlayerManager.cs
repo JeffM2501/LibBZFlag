@@ -9,6 +9,7 @@ using BZFlag.Networking.Messages.BZFS.Player;
 using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Data.Players;
 using BZFlag.Data.Flags;
+using BZFlag.Networking.Messages.BZFS.Control;
 
 namespace BZFlag.Game.Players
 {
@@ -50,7 +51,11 @@ namespace BZFlag.Game.Players
 		public event EventHandler<Player> PlayerInfoUpdated = null;
 		public event EventHandler<Player> PlayerStateUpdated = null;
 
-		public event EventHandler<Player> SelfAdded = null;
+        public event EventHandler<Player> PlayerPaused = null;
+        public event EventHandler<Player> PlayerAutoPiloted = null;
+        public event EventHandler<Player> PlayerMadeRabbit = null;
+
+        public event EventHandler<Player> SelfAdded = null;
 		public event EventHandler<Player> SelfRemoved = null;
 
 		public void HandleAddPlayer(NetworkMessage msg)
@@ -153,8 +158,9 @@ namespace BZFlag.Game.Players
 
 			player.Active = true;
 			player.PlayerSpawnTime = Clock.GetStepTime();
+            player.SetTeleport(-1, null, null);
 
-			player.Position = alive.Position;
+            player.Position = alive.Position;
 			player.Azimuth = alive.Azimuth;
 
 			if(PlayerSpawned != null)
@@ -186,10 +192,69 @@ namespace BZFlag.Game.Players
 			}
 
 			if(args.Victim != null)
-				args.Victim.Active = false;
+            {
+                args.Victim.SetTeleport(-1,null, null);
+                args.Victim.Active = false;
+                args.Victim.IsRabbit = false;
+            }
+				
 
 			if(PlayerKilled != null)
 				PlayerKilled.Invoke(this, args);
 		}
-	}
+   
+        public void HandleHandicap(NetworkMessage msg)
+        {
+            MsgHandicap update = msg as MsgHandicap;
+
+            foreach (var u in update.Handicaps)
+            {
+                Player p = GetPlayerByID(u.Key);
+                if (p != null)
+                {
+                    p.Handicap = u.Value;
+                    if (PlayerInfoUpdated != null)
+                        PlayerInfoUpdated.Invoke(this, p);
+                }
+            }
+        }
+
+        public void HandlePause(NetworkMessage msg)
+        {
+            MsgPause pa = msg as MsgPause;
+            Player p = GetPlayerByID(pa.PlayerID);
+            if (p != null)
+            {
+                p.Paused = pa.Paused;
+
+                if (PlayerPaused != null)
+                    PlayerStateUpdated.Invoke(this, p);
+            }
+        }
+        public void HandleAutoPilot(NetworkMessage msg)
+        {
+            MsgAutoPilot ap = msg as MsgAutoPilot;
+            Player p = GetPlayerByID(ap.PlayerID);
+            if (p != null)
+            {
+                p.AutoPilot = ap.AutoPilot;
+
+                if (PlayerAutoPiloted != null)
+                    PlayerAutoPiloted.Invoke(this, p);
+            }
+        }
+
+        public void HandleNewRabbit(NetworkMessage msg)
+        {
+            MsgNewRabbit nr = msg as MsgNewRabbit;
+            Player p = GetPlayerByID(nr.PlayerID);
+            if (p != null)
+            {
+                p.IsRabbit = true;
+
+                if (PlayerMadeRabbit != null)
+                    PlayerMadeRabbit.Invoke(this, p);
+            }
+        }
+    }
 }

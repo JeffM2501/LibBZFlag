@@ -29,6 +29,8 @@ namespace BZFlag.Game
 		}
 		public event EventHandler<UnknownMessageEventArgs> ReceivedUnknownMessage = null;
 
+        public event EventHandler ServerShutdown = null;
+
 		protected bool UDPRequestSent = false;
 		protected bool UDPSendEnabled = false;
 		private bool UDPOutOk = false;
@@ -98,13 +100,16 @@ namespace BZFlag.Game
 			Handlers.Add(new MsgUDPLinkEstablished().Code, HandleUDPLinkEstablished);
 			Handlers.Add(new MsgLagPing().Code, HandleLagPing);
 
-			// world data
-			Handlers.Add(new MsgWantWHash().Code, HandleWorldHash);
+            Handlers.Add(new MsgSuperKill().Code, HandleSuperKill);
+
+            // world data
+            Handlers.Add(new MsgWantWHash().Code, HandleWorldHash);
 			Handlers.Add(new MsgCacheURL().Code, HandleWorldCacheURL);
 			Handlers.Add(new MsgGetWorld().Code, HandleGetWorld);
+            Handlers.Add(new MsgTeleport().Code, HandleTeleported);
 
-			// bzdb
-			Handlers.Add(new MsgSetVars().Code, HandleSetVarsMessage);
+            // bzdb
+            Handlers.Add(new MsgSetVars().Code, HandleSetVarsMessage);
 
 			// teams
 			Handlers.Add(new MsgTeamUpdate().Code, HandleTeamUpdate);
@@ -114,9 +119,10 @@ namespace BZFlag.Game
 			Handlers.Add(new MsgDropFlag().Code, HandleDropFlag);
 			Handlers.Add(new MsgGrabFlag().Code, HandleGrabFlag);
 			Handlers.Add(new MsgTransferFlag().Code, HandleTransferFlag);
+            Handlers.Add(new MsgNearFlag().Code, HandleNearFlag);
 
-			// players
-			Handlers.Add(new MsgAddPlayer().Code, PlayerList.HandleAddPlayer);
+            // players
+            Handlers.Add(new MsgAddPlayer().Code, PlayerList.HandleAddPlayer);
 			Handlers.Add(new MsgRemovePlayer().Code, PlayerList.HandleRemovePlayer);
 			Handlers.Add(new MsgPlayerInfo().Code, PlayerList.HandlePlayerInfo);
 			Handlers.Add(new MsgScore().Code, PlayerList.HandleScoreUpdate);
@@ -124,9 +130,13 @@ namespace BZFlag.Game
 			Handlers.Add(new MsgKilled().Code, PlayerList.HandleKilled);
 			Handlers.Add(new MsgPlayerUpdate().Code, PlayerList.HandlePlayerUpdate);
 			Handlers.Add(new MsgPlayerUpdateSmall().Code, PlayerList.HandlePlayerUpdate);
+            Handlers.Add(new MsgHandicap().Code, PlayerList.HandleHandicap);
+            Handlers.Add(new MsgPause().Code, PlayerList.HandlePause);
+            Handlers.Add(new MsgAutoPilot().Code, PlayerList.HandleAutoPilot);
+            Handlers.Add(new MsgNewRabbit().Code, PlayerList.HandleNewRabbit);
 
-			// chat
-			Handlers.Add(new MsgMessage().Code, Chat.HandleChatMessage);
+            // chat
+            Handlers.Add(new MsgMessage().Code, Chat.HandleChatMessage);
 
 			// shots
 			Handlers.Add(new MsgShotBegin().Code, ShotMan.HandleShotBegin);
@@ -154,7 +164,15 @@ namespace BZFlag.Game
 			NetClientRejected(reject.ReasonCode, reject.ReasonMessage);
 		}
 
-		private  void HandleGameTime(NetworkMessage msg)
+        private void HandleSuperKill(NetworkMessage msg)
+        {
+            NetClient.Shutdown();
+
+            if (ServerShutdown != null)
+                ServerShutdown.Invoke(this, EventArgs.Empty);
+        }
+
+        private  void HandleGameTime(NetworkMessage msg)
 		{
 			MsgGameTime gt = msg as MsgGameTime;
 			Clock.AddTimeUpdate(gt.NetTime);
@@ -211,5 +229,5 @@ namespace BZFlag.Game
 
 			NetClient.SendMessage(ping.FromUDP, ping);
 		}
-	}
+    }
 }
