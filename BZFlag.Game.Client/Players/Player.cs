@@ -30,6 +30,7 @@ namespace BZFlag.Game.Players
 		public int TeamKills = 0;
 
         public int Handicap = 0;
+        public byte[] IPAddress = new byte[0];
 
 		public PlayerAttributes Attributes = PlayerAttributes.Unknown;
 

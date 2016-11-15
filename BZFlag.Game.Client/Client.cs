@@ -40,11 +40,17 @@ namespace BZFlag.Game
 
 		public GameTime Clock = new GameTime();
 
-		protected ClientParams Params = null;
+        public bool InTimedGame { get; protected set; }
+        public double TimeLeftInGame { get; protected set; }
+
+        protected ClientParams Params = null;
 
 		public Client(ClientParams _params)
 		{
-			PlayerList.Clock = Clock;
+            InTimedGame = false;
+            TimeLeftInGame = -1;
+
+            PlayerList.Clock = Clock;
 			PlayerList.FlagTypes = FlagTypes;
 
 			ShotMan = new ShotManager(PlayerList); ;

@@ -172,5 +172,22 @@ namespace BZFlag.Game
                 FlagIsNear.Invoke(this, new NearFlagEventArgs(nf.FlagName, nf.Position));
             }
         }
+
+        protected void HandleCaptureFlag(NetworkMessage msg)
+        {
+            MsgCaptureFlag cp = msg as MsgCaptureFlag;
+
+            var capturer = PlayerList.GetPlayerByID(cp.PlayerID);
+            var flag = FindFlagByID(cp.FlagID);
+
+            if (capturer != null)
+                capturer.SetFlag(null);
+
+            if (flag != null)
+            {
+                flag.Owner = null;
+                flag.Status = FlagStatuses.FlagInAir;
+            }
+        }
     }
 }

@@ -31,7 +31,11 @@ namespace BZFlag.Game
 
         public event EventHandler ServerShutdown = null;
 
-		protected bool UDPRequestSent = false;
+        public event EventHandler TimedGameStarted = null;
+        public event EventHandler TimedGameTimeUpdated = null;
+        public event EventHandler TimedGameEnded = null;
+
+        protected bool UDPRequestSent = false;
 		protected bool UDPSendEnabled = false;
 		private bool UDPOutOk = false;
 		private bool UDPInOk = false;
@@ -108,6 +112,10 @@ namespace BZFlag.Game
 			Handlers.Add(new MsgGetWorld().Code, HandleGetWorld);
             Handlers.Add(new MsgTeleport().Code, HandleTeleported);
 
+            // game info
+            Handlers.Add(new MsgTimeUpdate().Code, HandleTimeUpdate);
+            Handlers.Add(new MsgScoreOver().Code, HandleScoreOver);
+
             // bzdb
             Handlers.Add(new MsgSetVars().Code, HandleSetVarsMessage);
 
@@ -120,6 +128,7 @@ namespace BZFlag.Game
 			Handlers.Add(new MsgGrabFlag().Code, HandleGrabFlag);
 			Handlers.Add(new MsgTransferFlag().Code, HandleTransferFlag);
             Handlers.Add(new MsgNearFlag().Code, HandleNearFlag);
+            Handlers.Add(new MsgCaptureFlag().Code, HandleCaptureFlag);
 
             // players
             Handlers.Add(new MsgAddPlayer().Code, PlayerList.HandleAddPlayer);
@@ -134,6 +143,7 @@ namespace BZFlag.Game
             Handlers.Add(new MsgPause().Code, PlayerList.HandlePause);
             Handlers.Add(new MsgAutoPilot().Code, PlayerList.HandleAutoPilot);
             Handlers.Add(new MsgNewRabbit().Code, PlayerList.HandleNewRabbit);
+            Handlers.Add(new MsgAdminInfo().Code, PlayerList.HandleAdminInfo);
 
             // chat
             Handlers.Add(new MsgMessage().Code, Chat.HandleChatMessage);
@@ -229,5 +239,34 @@ namespace BZFlag.Game
 
 			NetClient.SendMessage(ping.FromUDP, ping);
 		}
+
+        private void HandleTimeUpdate(NetworkMessage msg)
+        {
+            MsgTimeUpdate tu = msg as MsgTimeUpdate;
+
+            TimeLeftInGame = tu.TimeLeft;
+
+            if (!InTimedGame)
+            {
+                InTimedGame = true;
+                if (TimedGameStarted != null)
+                    TimedGameStarted.Invoke(this, EventArgs.Empty);
+            }
+            else
+            {
+                if (TimedGameTimeUpdated != null)
+                    TimedGameTimeUpdated.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        private void HandleScoreOver(NetworkMessage msg)
+        {
+            MsgScoreOver so = msg as MsgScoreOver;
+            InTimedGame = false;
+            TimeLeftInGame = -1;
+
+            if (TimedGameEnded != null)
+                TimedGameEnded.Invoke(this, EventArgs.Empty);
+        }
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 
 namespace BZFlag.Networking.Messages.BZFS.Info
 {
+    // Not used by anything really
     public class MsgFetchResources : NetworkMessage
     {
         public enum ResourceTypes
@@ -20,6 +21,10 @@ namespace BZFlag.Networking.Messages.BZFS.Info
         {
             public ResourceTypes ResType = ResourceTypes.Unknown;
             public string URL = string.Empty;
+
+            // non-transmitted values
+            public string LocalFile = string.Empty;
+            public object Tag = null;
         }
 
         public List<Resource> Resources = new List<Resource>();

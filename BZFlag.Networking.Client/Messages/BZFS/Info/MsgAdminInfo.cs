@@ -7,7 +7,7 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 {
     public class MsgAdminInfo : NetworkMessage
     {
-        public class IPRecord
+        public class IPRecord : EventArgs
         {
             public int PlayerID = 0;
             public byte[] IPAddress = new byte[0];

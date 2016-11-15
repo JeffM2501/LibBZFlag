@@ -49,7 +49,8 @@ namespace BZFlag.Game.Players
 		public event EventHandler<KilledEventArgs> PlayerKilled = null;
 
 		public event EventHandler<Player> PlayerInfoUpdated = null;
-		public event EventHandler<Player> PlayerStateUpdated = null;
+        public event EventHandler<Player> PlayerAdminInfoUpdated = null;
+        public event EventHandler<Player> PlayerStateUpdated = null;
 
         public event EventHandler<Player> PlayerPaused = null;
         public event EventHandler<Player> PlayerAutoPiloted = null;
@@ -254,6 +255,21 @@ namespace BZFlag.Game.Players
 
                 if (PlayerMadeRabbit != null)
                     PlayerMadeRabbit.Invoke(this, p);
+            }
+        }
+
+        public void HandleAdminInfo(NetworkMessage msg)
+        {
+            MsgAdminInfo s = msg as MsgAdminInfo;
+            foreach(var i in s.Records)
+            {
+                Player p = GetPlayerByID(i.PlayerID);
+                if (p == null)
+                    continue;
+
+                p.IPAddress = i.IPAddress;
+                if (PlayerAdminInfoUpdated != null)
+                    PlayerAdminInfoUpdated.Invoke(this, p);
             }
         }
     }
