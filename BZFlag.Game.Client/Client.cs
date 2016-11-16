@@ -10,6 +10,7 @@ using BZFlag.Game.Chat;
 using BZFlag.Game.Shots;
 using BZFlag.Game.Players;
 using BZFlag.Data.Flags;
+using BZFlag.Networking.Messages.BZFS.Player;
 
 namespace BZFlag.Game
 {
@@ -67,7 +68,11 @@ namespace BZFlag.Game
 
 		public void Shutdown()
 		{
-			NetClient.Shutdown();
+            if (NetClient != null)
+            {
+                NetClient.SendMessage(new MsgExit());
+                NetClient.Shutdown();
+            }
 		}
 
 		public void Update()
@@ -76,7 +81,7 @@ namespace BZFlag.Game
 			NetClient.Update();
 		}
 
-		public event EventHandler HostIsNotBZFlag = null;
+        public event EventHandler HostIsNotBZFlag = null;
 		private void NetClient_HostIsNotBZFS(object sender, EventArgs e)
 		{
 			if(HostIsNotBZFlag != null)

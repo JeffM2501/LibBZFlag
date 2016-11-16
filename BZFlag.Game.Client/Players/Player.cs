@@ -58,6 +58,11 @@ namespace BZFlag.Game.Players
         public Teleporter PortSource = null;
         public Teleporter PortDestination = null;
 
+        public override string ToString()
+        {
+            return string.Format("({0}) {1} : {2}", PlayerID, Callsign, Team);
+        }
+
         public void SetTeleport(double time, Teleporter from, Teleporter to)
         {
             TeleportStartTime = time;
@@ -75,6 +80,14 @@ namespace BZFlag.Game.Players
 			CurrentFlag = flag;
 			return true;
 		}
+
+        public void Update(double now, double delta)
+        {
+            double deltaFromUpdate = now - LastUpdate.TimeStamp;
+
+            Position = LastUpdate.Position + (LastUpdate.Velocity * deltaFromUpdate);
+            Azimuth = LastUpdate.Azimuth + (float)(LastUpdate.AngularVelocity * deltaFromUpdate);
+        }
 
 		public int AddShot(Shot shot)
 		{

@@ -180,7 +180,7 @@ namespace BZFlag.Game.Shots
 
 			s.Position = gm.Position;
 			s.Velocity = gm.Velocity;
-			s.LastUpdate = PlayerList.Clock.GetStepTime();
+			s.LastUpdate = PlayerList.Clock.StepTime;
 			s.DeltaTime = gm.DeltaTime;
 			s.Target = PlayerList.GetPlayerByID(gm.TargetID);
 

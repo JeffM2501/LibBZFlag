@@ -79,6 +79,26 @@ namespace BZFlag.Data.Types
             Pos[2] = v.Z;
         }
 
+        public static Vector3F operator + (Vector3F lhs, Vector3F rhs)
+        {
+            return new Vector3F(lhs.X + rhs.X, lhs.Y + rhs.Y, lhs.Z + rhs.Z);
+        }
+
+        public static Vector3F operator -(Vector3F lhs, Vector3F rhs)
+        {
+            return new Vector3F(lhs.X - rhs.X, lhs.Y - rhs.Y, lhs.Z - rhs.Z);
+        }
+
+        public static Vector3F operator *(Vector3F lhs, float rhs)
+        {
+            return new Vector3F(lhs.X * rhs, lhs.Y * rhs, lhs.Z * rhs);
+        }
+
+        public static Vector3F operator *(Vector3F lhs, double rhs)
+        {
+            return new Vector3F((float)(lhs.X * rhs), (float)(lhs.Y * rhs), (float)(lhs.Z * rhs));
+        }
+
         public bool IsZero ()
         {
             return Pos[0] == 0.0f && Pos[1] == 0.0f && Pos[2] == 0.0f;

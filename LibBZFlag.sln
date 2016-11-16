@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.IO.BZW", "BZFlag.IO.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.Game.Client", "BZFlag.Game.Client\BZFlag.Game.Client.csproj", "{AE8638E3-4185-4857-B6AA-E5EBE6EE33A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClient", "Tests\TestClient\TestClient.csproj", "{05AEE668-6872-4C92-B6FF-F2501C6DB63C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{AE8638E3-4185-4857-B6AA-E5EBE6EE33A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE8638E3-4185-4857-B6AA-E5EBE6EE33A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE8638E3-4185-4857-B6AA-E5EBE6EE33A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05AEE668-6872-4C92-B6FF-F2501C6DB63C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05AEE668-6872-4C92-B6FF-F2501C6DB63C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05AEE668-6872-4C92-B6FF-F2501C6DB63C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05AEE668-6872-4C92-B6FF-F2501C6DB63C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,5 +72,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{2C4D16ED-1019-4332-8F05-31B848D64E76} = {D40E9B5F-6F75-468D-B946-E1442078490D}
 		{3F012837-E7A3-4BC7-9044-728766C5CFCE} = {D40E9B5F-6F75-468D-B946-E1442078490D}
+		{05AEE668-6872-4C92-B6FF-F2501C6DB63C} = {D40E9B5F-6F75-468D-B946-E1442078490D}
 	EndGlobalSection
 EndGlobal

@@ -17,6 +17,8 @@ namespace BZFlag.Game.Players
 	{
 		public Dictionary<int, Player> PlayerList = new Dictionary<int, Player>();
 
+        public Player[] GetPlayerList() { return PlayerList.Values.ToArray(); }
+
 		public int LocalPlayerID = -1;
 		public Player LocalPlayer = null;
 
@@ -59,6 +61,17 @@ namespace BZFlag.Game.Players
         public event EventHandler<Player> SelfAdded = null;
 		public event EventHandler<Player> SelfRemoved = null;
 
+        public void Update()
+        {
+            foreach(Player p in PlayerList.Values)
+            {
+                if (!p.Active || p.Team == Data.Teams.TeamColors.ObserverTeam)
+                    continue;
+
+                p.Update(Clock.StepTime, Clock.StepDelta);
+            }
+        }
+
 		public void HandleAddPlayer(NetworkMessage msg)
 		{
 			MsgAddPlayer ap = msg as MsgAddPlayer;
@@ -66,6 +79,7 @@ namespace BZFlag.Game.Players
 				PlayerList.Add(ap.PlayerID, new Player());
 
 			Player player = PlayerList[ap.PlayerID];
+            player.PlayerID = ap.PlayerID;
 
 			player.Callsign = ap.Callsign;
 			player.Motto = ap.Motto;
@@ -158,7 +172,7 @@ namespace BZFlag.Game.Players
 			Player player = GetPlayerByID(alive.PlayerID);
 
 			player.Active = true;
-			player.PlayerSpawnTime = Clock.GetStepTime();
+			player.PlayerSpawnTime = Clock.StepTime;
             player.SetTeleport(-1, null, null);
 
             player.Position = alive.Position;

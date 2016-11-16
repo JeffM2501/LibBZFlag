@@ -40,7 +40,18 @@ namespace BZFlag.Game
 		private bool UDPOutOk = false;
 		private bool UDPInOk = false;
 
-		protected virtual void NetClient_HostMessageReceived(object sender, Networking.ClientConnection.HostMessageReceivedEventArgs e)
+
+        public void SendMessage(NetworkMessage msg)
+        {
+            NetClient.SendMessage(true, msg);
+        }
+
+        public void SendMessage(bool viaTCP, NetworkMessage msg)
+        {
+            NetClient.SendMessage(viaTCP, msg);
+        }
+
+        protected virtual void NetClient_HostMessageReceived(object sender, Networking.ClientConnection.HostMessageReceivedEventArgs e)
 		{
 			PreDispatchChecks(e.Message);
 

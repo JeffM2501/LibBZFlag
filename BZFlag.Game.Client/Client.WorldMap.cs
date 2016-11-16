@@ -161,7 +161,7 @@ namespace BZFlag.Game
             args.From = Map.GetTeleporterByID(tp.FromTPID);
             args.To = Map.GetTeleporterByID(tp.ToTPID);
 
-            args.PortingPlayer.SetTeleport(Clock.GetStepTime(), args.From, args.To);
+            args.PortingPlayer.SetTeleport(Clock.StepTime, args.From, args.To);
 
             if (PlayerTeleported != null)
                 PlayerTeleported.Invoke(this, args);

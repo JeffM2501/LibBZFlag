@@ -10,6 +10,7 @@ namespace BZFlag.Authentication
     {
 		public WebClient Client = null;
 
+        public string LastCallsign = string.Empty;
 		public string LastToken = string.Empty;
 		public string LastError = string.Empty;
 
@@ -66,6 +67,11 @@ namespace BZFlag.Authentication
                 Address = Host;
                 Host = host;
                 Port = port;
+            }
+
+            public override string ToString()
+            {
+                return Name + "(" + TotalPlayers.ToString() + ")";
             }
 
             private static int ReadUInt16(byte[] fromBuffer)
@@ -140,7 +146,9 @@ namespace BZFlag.Authentication
 
 		public void GetList(string callsign, string password)
 		{
-			string p = string.Format("action=LIST&vesion={0}&callsign={1}&pasword={2}", BZFSVersion, HttpUtility.UrlEncode(callsign), HttpUtility.UrlEncode(password));
+            LastCallsign = callsign;
+
+            string p = string.Format("action=LIST&version={0}&callsign={1}&password={2}", BZFSVersion, HttpUtility.UrlEncode(callsign), HttpUtility.UrlEncode(password));
 			Client = new WebClient();
 			Client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
 			Client.UploadStringCompleted += Client_UploadStringCompleted;
@@ -149,7 +157,7 @@ namespace BZFlag.Authentication
 
 		public void GetToken(string callsign, string password)
 		{
-			string p = string.Format("action=GETTOKEN&vesion={0}&callsign={1}&pasword={2}", BZFSVersion, HttpUtility.UrlEncode(callsign), HttpUtility.UrlEncode(password));
+			string p = string.Format("action=GETTOKEN&version={0}&callsign={1}&password={2}", BZFSVersion, HttpUtility.UrlEncode(callsign), HttpUtility.UrlEncode(password));
 			Client = new WebClient();
 			Client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
 			Client.UploadStringCompleted += Client_UploadStringCompleted;

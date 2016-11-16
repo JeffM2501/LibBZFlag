@@ -70,6 +70,22 @@ namespace BZFlag.Data.Types
             Pos[1] = v.Y;
         }
 
+
+        public static Vector2F operator +(Vector2F lhs, Vector2F rhs)
+        {
+            return new Vector2F(lhs.X + rhs.X, lhs.Y + rhs.Y);
+        }
+
+        public static Vector2F operator -(Vector2F lhs, Vector2F rhs)
+        {
+            return new Vector2F(lhs.X - rhs.X, lhs.Y - rhs.Y);
+        }
+
+        public static Vector2F operator *(Vector2F lhs, float rhs)
+        {
+            return new Vector2F(lhs.X * rhs, lhs.Y * rhs);
+        }
+
         public static readonly Vector2F Zero = new Vector2F(0, 0);
     }
 }
