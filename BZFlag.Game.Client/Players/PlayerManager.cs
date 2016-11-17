@@ -17,6 +17,20 @@ namespace BZFlag.Game.Players
 	{
 		public Dictionary<int, Player> PlayerList = new Dictionary<int, Player>();
 
+        // Special Players
+        public readonly Player ServerPlayer = new Player(253, "Server");
+        public readonly Player AllPlayers = new Player(254, "Everyone");
+
+        public readonly Player RogueTeam = new Player(251, "Rogue", Data.Teams.TeamColors.RogueTeam);
+        public readonly Player RedTeam = new Player(250, "Red", Data.Teams.TeamColors.RedTeam);
+        public readonly Player GreenTeam = new Player(249, "Green", Data.Teams.TeamColors.GreenTeam);
+        public readonly Player BlueTeam = new Player(248, "Blue", Data.Teams.TeamColors.BlueTeam);
+        public readonly Player PurpleTeam = new Player(247, "Purple", Data.Teams.TeamColors.PurpleTeam);
+        public readonly Player ObserverTeam = new Player(246, "Observers", Data.Teams.TeamColors.ObserverTeam);
+        public readonly Player RabbitTeam = new Player(245, "Rabbits", Data.Teams.TeamColors.RabbitTeam);
+        public readonly Player HunterTeam = new Player(244, "Hunters", Data.Teams.TeamColors.HunterTeam);
+        protected Dictionary<int, Player> SpecialPlayers = new Dictionary<int, Player>();
+
         public Player[] GetPlayerList() { return PlayerList.Values.ToArray(); }
 
 		public int LocalPlayerID = -1;
@@ -33,7 +47,22 @@ namespace BZFlag.Game.Players
 			return PlayerList[id];
 		}
 
-		public event EventHandler<Player> PlayerAdded = null;
+        public Player GetPlayerByID(int id, bool allowSpecial)
+        {
+            if (!PlayerList.ContainsKey(id))
+            {
+                if (allowSpecial)
+                {
+                    if (SpecialPlayers.ContainsKey(id))
+                        return SpecialPlayers[id];
+                }
+                return null;
+            }
+
+            return PlayerList[id];
+        }
+
+        public event EventHandler<Player> PlayerAdded = null;
 		public event EventHandler<Player> PlayerRemoved = null;
 
 		public event EventHandler<Player> PlayerSpawned = null;
@@ -60,6 +89,22 @@ namespace BZFlag.Game.Players
 
         public event EventHandler<Player> SelfAdded = null;
 		public event EventHandler<Player> SelfRemoved = null;
+
+
+        public PlayerManager()
+        {
+            SpecialPlayers.Add(ServerPlayer.PlayerID, ServerPlayer);
+            SpecialPlayers.Add(AllPlayers.PlayerID, AllPlayers);
+
+            SpecialPlayers.Add(RogueTeam.PlayerID, RogueTeam);
+            SpecialPlayers.Add(RedTeam.PlayerID, RedTeam);
+            SpecialPlayers.Add(GreenTeam.PlayerID, GreenTeam);
+            SpecialPlayers.Add(BlueTeam.PlayerID, BlueTeam);
+            SpecialPlayers.Add(PurpleTeam.PlayerID, PurpleTeam);
+            SpecialPlayers.Add(ObserverTeam.PlayerID, ObserverTeam);
+            SpecialPlayers.Add(RabbitTeam.PlayerID, RabbitTeam);
+            SpecialPlayers.Add(HunterTeam.PlayerID, HunterTeam);
+        }
 
         public void Update()
         {

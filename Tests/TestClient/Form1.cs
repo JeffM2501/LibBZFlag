@@ -109,12 +109,35 @@ namespace TestClient
 
             GameClient.Chat.ChatMessageReceived += Chat_ChatMessageReceived;
             GameClient.PlayerList.PlayerInfoUpdated += PlayerList_PlayerInfoUpdated;
+
+            GameClient.ClientAccepted += GameClient_ClientAccepted;
+            GameClient.WorldDownloadProgress += GameClient_WorldDownloadProgress;
+
+            GameClient.FlagCreated += GameClient_FlagCreated;
+        }
+
+        private void GameClient_FlagCreated(object sender, BZFlag.Game.Flags.FlagInstance e)
+        {
+            AddLogLine("Flag Created " + e.ID.ToString()); 
+        }
+
+        private void GameClient_WorldDownloadProgress(object sender, BZFlag.Game.Client.WorldDownloadProgressEventArgs e)
+        {
+            AddLogLine("World Download Progress " + (e.Paramater * 100).ToString());
+            WorldLoadProgress.Value = (int)(e.Paramater * WorldLoadProgress.Maximum);
+        }
+
+        private void GameClient_ClientAccepted(object sender, EventArgs e)
+        {
+            Accepted.Checked = true;
+            AddLogLine("Client Accepted");
         }
 
         private void PlayerList_PlayerInfoUpdated(object sender, BZFlag.Game.Players.Player e)
         {
             PlayersList.Items.Clear();
             PlayersList.Items.AddRange(GameClient.PlayerList.GetPlayerList());
+            AddLogLine("Player Updated " + e.Callsign);
         }
 
         protected void AddChatLine(string text)
@@ -124,10 +147,17 @@ namespace TestClient
             ChatArea.SelectionStart = ChatArea.Text.Length;
             ChatArea.SelectionLength = 0;
         }
+        protected void AddLogLine(string text)
+        {
+            LogArea.Text += string.Format("{0}\r\n", text);
+
+            LogArea.SelectionStart = LogArea.Text.Length;
+            LogArea.SelectionLength = 0;
+        }
 
         private void Chat_ChatMessageReceived(object sender, BZFlag.Game.Chat.ChatSystem.ChatMessageEventArgs e)
         {
-            var from = GameClient.PlayerList.GetPlayerByID(e.Message.From);
+            var from = GameClient.PlayerList.GetPlayerByID(e.Message.From,true);
             if (from == null)
             {
                 AddChatLine(string.Format("{0}-{1}", e.Message.From, e.Message.Message));

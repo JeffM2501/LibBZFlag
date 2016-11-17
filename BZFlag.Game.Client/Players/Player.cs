@@ -58,6 +58,21 @@ namespace BZFlag.Game.Players
         public Teleporter PortSource = null;
         public Teleporter PortDestination = null;
 
+        public Player() { }
+
+        public Player(int id, string name)
+        {
+            PlayerID = id;
+            Callsign = name;
+        }
+
+        public Player(int id, string name, TeamColors team)
+        {
+            PlayerID = id;
+            Callsign = name;
+            Team = team;
+        }
+
         public override string ToString()
         {
             return string.Format("({0}) {1} : {2}", PlayerID, Callsign, Team);

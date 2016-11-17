@@ -40,7 +40,6 @@ namespace BZFlag.Game
 		private bool UDPOutOk = false;
 		private bool UDPInOk = false;
 
-
         public void SendMessage(NetworkMessage msg)
         {
             NetClient.SendMessage(true, msg);
