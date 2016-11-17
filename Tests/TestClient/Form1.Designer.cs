@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.AuthPannel = new System.Windows.Forms.Panel();
@@ -42,16 +43,17 @@
             this.label2 = new System.Windows.Forms.Label();
             this.Callsign = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.SendChat = new System.Windows.Forms.Button();
-            this.SendChatLine = new System.Windows.Forms.TextBox();
-            this.ChatArea = new System.Windows.Forms.TextBox();
-            this.PlayersList = new System.Windows.Forms.ListBox();
-            this.Accepted = new System.Windows.Forms.RadioButton();
+            this.WorldLoadProgress = new System.Windows.Forms.ProgressBar();
             this.LowerTabs = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.ChatArea = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.WorldLoadProgress = new System.Windows.Forms.ProgressBar();
             this.LogArea = new System.Windows.Forms.TextBox();
+            this.Accepted = new System.Windows.Forms.RadioButton();
+            this.SendChat = new System.Windows.Forms.Button();
+            this.SendChatLine = new System.Windows.Forms.TextBox();
+            this.PlayersList = new System.Windows.Forms.ListBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -213,54 +215,12 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Callsign";
             // 
-            // SendChat
+            // WorldLoadProgress
             // 
-            this.SendChat.Location = new System.Drawing.Point(744, 589);
-            this.SendChat.Name = "SendChat";
-            this.SendChat.Size = new System.Drawing.Size(44, 23);
-            this.SendChat.TabIndex = 3;
-            this.SendChat.Text = "Send";
-            this.SendChat.UseVisualStyleBackColor = true;
-            this.SendChat.Click += new System.EventHandler(this.SendChat_Click);
-            // 
-            // SendChatLine
-            // 
-            this.SendChatLine.Location = new System.Drawing.Point(4, 592);
-            this.SendChatLine.Name = "SendChatLine";
-            this.SendChatLine.Size = new System.Drawing.Size(734, 20);
-            this.SendChatLine.TabIndex = 2;
-            this.SendChatLine.TextChanged += new System.EventHandler(this.SendChatLine_TextChanged);
-            // 
-            // ChatArea
-            // 
-            this.ChatArea.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ChatArea.Location = new System.Drawing.Point(3, 3);
-            this.ChatArea.Multiline = true;
-            this.ChatArea.Name = "ChatArea";
-            this.ChatArea.ReadOnly = true;
-            this.ChatArea.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.ChatArea.Size = new System.Drawing.Size(779, 146);
-            this.ChatArea.TabIndex = 1;
-            // 
-            // PlayersList
-            // 
-            this.PlayersList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.PlayersList.FormattingEnabled = true;
-            this.PlayersList.Location = new System.Drawing.Point(549, 5);
-            this.PlayersList.Name = "PlayersList";
-            this.PlayersList.Size = new System.Drawing.Size(248, 394);
-            this.PlayersList.TabIndex = 0;
-            // 
-            // Accepted
-            // 
-            this.Accepted.AutoSize = true;
-            this.Accepted.Location = new System.Drawing.Point(11, 13);
-            this.Accepted.Name = "Accepted";
-            this.Accepted.Size = new System.Drawing.Size(71, 17);
-            this.Accepted.TabIndex = 4;
-            this.Accepted.TabStop = true;
-            this.Accepted.Text = "Accepted";
-            this.Accepted.UseVisualStyleBackColor = true;
+            this.WorldLoadProgress.Location = new System.Drawing.Point(88, 10);
+            this.WorldLoadProgress.Name = "WorldLoadProgress";
+            this.WorldLoadProgress.Size = new System.Drawing.Size(455, 23);
+            this.WorldLoadProgress.TabIndex = 6;
             // 
             // LowerTabs
             // 
@@ -283,6 +243,17 @@
             this.tabPage1.Text = "Chat";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // ChatArea
+            // 
+            this.ChatArea.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ChatArea.Location = new System.Drawing.Point(3, 3);
+            this.ChatArea.Multiline = true;
+            this.ChatArea.Name = "ChatArea";
+            this.ChatArea.ReadOnly = true;
+            this.ChatArea.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.ChatArea.Size = new System.Drawing.Size(779, 146);
+            this.ChatArea.TabIndex = 1;
+            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.LogArea);
@@ -294,13 +265,6 @@
             this.tabPage2.Text = "Log";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // WorldLoadProgress
-            // 
-            this.WorldLoadProgress.Location = new System.Drawing.Point(88, 10);
-            this.WorldLoadProgress.Name = "WorldLoadProgress";
-            this.WorldLoadProgress.Size = new System.Drawing.Size(455, 23);
-            this.WorldLoadProgress.TabIndex = 6;
-            // 
             // LogArea
             // 
             this.LogArea.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -311,6 +275,48 @@
             this.LogArea.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.LogArea.Size = new System.Drawing.Size(779, 146);
             this.LogArea.TabIndex = 2;
+            // 
+            // Accepted
+            // 
+            this.Accepted.AutoSize = true;
+            this.Accepted.Location = new System.Drawing.Point(11, 13);
+            this.Accepted.Name = "Accepted";
+            this.Accepted.Size = new System.Drawing.Size(71, 17);
+            this.Accepted.TabIndex = 4;
+            this.Accepted.TabStop = true;
+            this.Accepted.Text = "Accepted";
+            this.Accepted.UseVisualStyleBackColor = true;
+            // 
+            // SendChat
+            // 
+            this.SendChat.Location = new System.Drawing.Point(744, 589);
+            this.SendChat.Name = "SendChat";
+            this.SendChat.Size = new System.Drawing.Size(44, 23);
+            this.SendChat.TabIndex = 3;
+            this.SendChat.Text = "Send";
+            this.SendChat.UseVisualStyleBackColor = true;
+            this.SendChat.Click += new System.EventHandler(this.SendChat_Click);
+            // 
+            // SendChatLine
+            // 
+            this.SendChatLine.Location = new System.Drawing.Point(4, 592);
+            this.SendChatLine.Name = "SendChatLine";
+            this.SendChatLine.Size = new System.Drawing.Size(734, 20);
+            this.SendChatLine.TabIndex = 2;
+            this.SendChatLine.TextChanged += new System.EventHandler(this.SendChatLine_TextChanged);
+            // 
+            // PlayersList
+            // 
+            this.PlayersList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.PlayersList.FormattingEnabled = true;
+            this.PlayersList.Location = new System.Drawing.Point(549, 5);
+            this.PlayersList.Name = "PlayersList";
+            this.PlayersList.Size = new System.Drawing.Size(248, 394);
+            this.PlayersList.TabIndex = 0;
+            // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
             // 
@@ -363,6 +369,7 @@
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.RadioButton Accepted;
         private System.Windows.Forms.TextBox LogArea;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

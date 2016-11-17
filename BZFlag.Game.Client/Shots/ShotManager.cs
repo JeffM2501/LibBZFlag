@@ -5,19 +5,25 @@ using BZFlag.Networking.Messages;
 using BZFlag.Networking.Messages.BZFS.Shots;
 using BZFlag.Game.Players;
 using BZFlag.Data.Types;
+using BZFlag.Map;
 
 namespace BZFlag.Game.Shots
 {
-	public class ShotManager
+	public class ShotManager : ShotPathGenerator
 	{
 		public Dictionary<int, Shot> ShotList = new Dictionary<int, Shot>();
 		protected Dictionary<int, int> BZFStoGlobalIDMap = new Dictionary<int, int>();
 
 		public PlayerManager PlayerList = null;
+        public WorldMap Map = null;
 
 		public event EventHandler<Shot> ShotCreated = null;
 		public event EventHandler<Shot> ShotRemoved = null;
 		public event EventHandler<Shot> ShotUpdated = null;
+
+        public Dictionary<string, ShotPathGenerator> PathGenerators = new Dictionary<string, ShotPathGenerator>();
+
+        public ShotPathGenerator DefaultShotPathGenerator = null;
 
 		public class ExplosionEventArgs : EventArgs
 		{
@@ -35,10 +41,26 @@ namespace BZFlag.Game.Shots
 
 		public event EventHandler<ExplosionEventArgs> ExplosionCreated = null;
 
-		public ShotManager(PlayerManager p)
+		public ShotManager(PlayerManager p, WorldMap map)
 		{
-			PlayerList = p;
+            DefaultShotPathGenerator = this;
+
+            PlayerList = p;
+            Map = map;
 		}
+
+        protected ShotPath GetShotPath(Shot shot)
+        {
+            ShotPathGenerator gen = DefaultShotPathGenerator;
+
+            if (PathGenerators.ContainsKey(shot.Flag))
+                gen = PathGenerators[shot.Flag];
+
+            if (gen == null)
+                return ShotPath.Empty;
+
+            return gen.GetShotPath(shot, shot.Owner, Map);
+        }
 
 		protected int LastGlobalShotID = 0;
 		protected int NewShotID()
@@ -187,5 +209,11 @@ namespace BZFlag.Game.Shots
 			if(ShotUpdated != null)
 				ShotUpdated.Invoke(this, s);
 		}
-	}
+
+        // dumb generator
+        public ShotPath GetShotPath(Shot shot, Player player, WorldMap map)
+        {
+            return new ShotPath();
+        }
+    }
 }

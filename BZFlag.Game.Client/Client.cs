@@ -54,7 +54,7 @@ namespace BZFlag.Game
             PlayerList.Clock = Clock;
 			PlayerList.FlagTypes = FlagTypes;
 
-			ShotMan = new ShotManager(PlayerList); ;
+            ShotMan = new ShotManager(PlayerList, Map);
 
 			Params = _params;
 			RegisterMessageHandlers();

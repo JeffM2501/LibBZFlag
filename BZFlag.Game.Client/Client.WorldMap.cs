@@ -12,6 +12,7 @@ using BZFlag.IO.BZW.Binary;
 using BZFlag.Networking.Messages;
 using BZFlag.Game.Players;
 using BZFlag.Map.Elements.Shapes;
+using BZFlag.Map;
 
 namespace BZFlag.Game
 {
@@ -35,6 +36,12 @@ namespace BZFlag.Game
 		protected string WorldHash = string.Empty;
 		protected BZWCache WorldCache = null;
 
+        protected void SetMap(WorldMap map)
+        {
+            Map = map;
+            ShotMan.Map = map;
+        }
+
 		private void HandleWorldHash(NetworkMessage msg)
 		{
 			MsgWantWHash hash = msg as MsgWantWHash;
@@ -47,7 +54,7 @@ namespace BZFlag.Game
 				WorldCache = new BZWCache(Params.CacheFolder);
 				if (WorldCache.CheckCacheForHash(hash.WorldHash))
 				{
-					Map = WorldCache.ReadMapFromCache(hash.WorldHash);
+                    SetMap(WorldCache.ReadMapFromCache(hash.WorldHash));
 					if(Map != null)
 						getWorld = false;
 				}
@@ -95,7 +102,7 @@ namespace BZFlag.Game
 			else
 			{
 				WorldUnpacker unpacker = new WorldUnpacker(e.Result);
-				Map = unpacker.Unpack();
+                SetMap(unpacker.Unpack());
 				if (Map == null)
 					SendGetWorld();
 				else
@@ -122,8 +129,8 @@ namespace BZFlag.Game
 			{
 				if(WorldDownloadProgress != null)
 					WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs(1));
-				
-				Map = Unpacker.Unpack();
+
+                SetMap(Unpacker.Unpack());
 				WorldCache.SaveMapToCache(WorldHash, Unpacker.GetBuffer());
 				SendEnter();
 			}

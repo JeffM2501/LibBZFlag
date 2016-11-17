@@ -216,6 +216,9 @@ namespace BZFlag.Game.Players
 
 			Player player = GetPlayerByID(alive.PlayerID);
 
+            if (player == null)
+                return;
+
 			player.Active = true;
 			player.PlayerSpawnTime = Clock.StepTime;
             player.SetTeleport(-1, null, null);

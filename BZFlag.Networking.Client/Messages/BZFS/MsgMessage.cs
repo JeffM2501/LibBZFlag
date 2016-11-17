@@ -28,9 +28,7 @@ namespace BZFlag.Networking.Messages.BZFS
 		public override byte[] Pack()
 		{
 			DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
-			buffer.WriteByte((byte)From);
 			buffer.WriteByte((byte)To);
-			buffer.WriteByte((byte)MessageType);
 			buffer.WriteNullTermString(MessageText);
 
 			return buffer.GetMessageBuffer();

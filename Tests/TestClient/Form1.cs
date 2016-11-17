@@ -30,6 +30,8 @@ namespace TestClient
 
         public void Application_Idle(object sender, EventArgs e)
         {
+            return;
+
             if (GameClient != null)
                 GameClient.Update();
         }
@@ -109,11 +111,19 @@ namespace TestClient
 
             GameClient.Chat.ChatMessageReceived += Chat_ChatMessageReceived;
             GameClient.PlayerList.PlayerInfoUpdated += PlayerList_PlayerInfoUpdated;
+            GameClient.PlayerList.PlayerStateUpdated += PlayerList_PlayerStateUpdated;
 
             GameClient.ClientAccepted += GameClient_ClientAccepted;
             GameClient.WorldDownloadProgress += GameClient_WorldDownloadProgress;
 
-            GameClient.FlagCreated += GameClient_FlagCreated;
+        //    GameClient.FlagCreated += GameClient_FlagCreated;
+
+            timer1.Start();
+        }
+
+        private void PlayerList_PlayerStateUpdated(object sender, BZFlag.Game.Players.Player e)
+        {
+            AddLogLine("Player Updated " + e.Callsign);
         }
 
         private void GameClient_FlagCreated(object sender, BZFlag.Game.Flags.FlagInstance e)
@@ -142,17 +152,12 @@ namespace TestClient
 
         protected void AddChatLine(string text)
         {
-            ChatArea.Text += string.Format("{0}\r\n", text);
- 
-            ChatArea.SelectionStart = ChatArea.Text.Length;
-            ChatArea.SelectionLength = 0;
+            ChatArea.AppendText(string.Format("{0}\r\n", text));
         }
+
         protected void AddLogLine(string text)
         {
-            LogArea.Text += string.Format("{0}\r\n", text);
-
-            LogArea.SelectionStart = LogArea.Text.Length;
-            LogArea.SelectionLength = 0;
+            LogArea.AppendText(string.Format("{0}\r\n", text));
         }
 
         private void Chat_ChatMessageReceived(object sender, BZFlag.Game.Chat.ChatSystem.ChatMessageEventArgs e)
@@ -185,6 +190,8 @@ namespace TestClient
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            timer1.Stop();
+
             if (GameClient != null)
                 GameClient.Shutdown();
         }
@@ -196,7 +203,7 @@ namespace TestClient
 
             var msg = new MsgMessage();
             msg.From = GameClient.PlayerList.LocalPlayerID;
-            msg.To = 254;
+            msg.To = GameClient.PlayerList.AllPlayers.PlayerID;
             msg.MessageText = SendChatLine.Text;
             msg.MessageType = MsgMessage.MessageTypes.ChatMessage;
 
@@ -209,6 +216,12 @@ namespace TestClient
         private void SendChatLine_TextChanged(object sender, EventArgs e)
         {
             SendChat.Enabled = GameClient != null && SendChatLine.Text != string.Empty;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (GameClient != null)
+                GameClient.Update();
         }
     }
 }
