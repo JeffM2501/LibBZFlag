@@ -40,66 +40,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
-    <Compile Include="InboundMessageBuffer.cs" />
-    <Compile Include="Messages\BZFS\Control\MsgAutoPilot.cs" />
-    <Compile Include="Messages\BZFS\Control\MsgCustomSound.cs" />
-    <Compile Include="Messages\BZFS\Control\MsgHandicap.cs" />
-    <Compile Include="Messages\BZFS\Control\MsgNewRabbit.cs" />
-    <Compile Include="Messages\BZFS\Control\MsgPause.cs" />
-    <Compile Include="Messages\BZFS\Control\MsgReplayReset.cs" />
-    <Compile Include="Messages\BZFS\Control\MsgTimeUpdate.cs" />
-    <Compile Include="Messages\BZFS\Flags\MsgCaptureFlag.cs" />
-    <Compile Include="Messages\BZFS\Flags\MsgDropFlag.cs" />
-    <Compile Include="Messages\BZFS\Flags\MsgFlagType.cs" />
-    <Compile Include="Messages\BZFS\Flags\MsgGrabFlag.cs" />
-    <Compile Include="Messages\BZFS\Flags\MsgNearFlag.cs" />
-    <Compile Include="Messages\BZFS\Flags\MsgTransferFlag.cs" />
-    <Compile Include="Messages\BZFS\Control\MsgAccept.cs" />
-    <Compile Include="Messages\BZFS\Info\MsgAdminInfo.cs" />
-    <Compile Include="Messages\BZFS\Info\MsgCacheURL.cs" />
-    <Compile Include="Messages\BZFS\Info\MsgFetchResources.cs" />
-    <Compile Include="Messages\BZFS\Info\MsgGameSettings.cs" />
-    <Compile Include="Messages\BZFS\Info\MsgScoreOver.cs" />
-    <Compile Include="Messages\BZFS\Info\MsgWantSettings.cs" />
-    <Compile Include="Messages\BZFS\Player\MsgAddPlayer.cs" />
-    <Compile Include="Messages\BZFS\Player\MsgAlive.cs" />
-    <Compile Include="Messages\BZFS\Player\MsgEnter.cs" />
-    <Compile Include="Messages\BZFS\Flags\MsgFlagUpdate.cs" />
-    <Compile Include="Messages\BZFS\Info\MsgGameTime.cs" />
-    <Compile Include="Messages\BZFS\Info\MsgLagPing.cs" />
-    <Compile Include="Messages\BZFS\MsgMessage.cs" />
-    <Compile Include="Messages\BZFS\Info\MsgNegotiateFlags.cs" />
-    <Compile Include="Messages\BZFS\Player\MsgExit.cs" />
-    <Compile Include="Messages\BZFS\Player\MsgKilled.cs" />
-    <Compile Include="Messages\BZFS\Player\MsgPlayerInfo.cs" />
-    <Compile Include="Messages\BZFS\Player\MsgPlayerUpdate.cs" />
-    <Compile Include="Messages\BZFS\Info\MsgQueryGame.cs" />
-    <Compile Include="Messages\BZFS\Info\MsgQueryPlayers.cs" />
-    <Compile Include="Messages\BZFS\Control\MsgReject.cs" />
-    <Compile Include="Messages\BZFS\BZDB\MsgSetVars.cs" />
-    <Compile Include="Messages\BZFS\Control\MsgSuperKill.cs" />
-    <Compile Include="Messages\BZFS\Info\MsgTeamUpdate.cs" />
-    <Compile Include="Messages\BZFS\Player\MsgTeleport.cs" />
-    <Compile Include="Messages\BZFS\Shots\MsgGMUpdate.cs" />
-    <Compile Include="Messages\BZFS\Shots\MsgShotBegin.cs" />
-    <Compile Include="Messages\BZFS\Shots\MsgShotEnd.cs" />
-    <Compile Include="Messages\BZFS\World\MsgGetWorld.cs" />
-    <Compile Include="Messages\BZFS\World\MsgWantWHash.cs" />
-    <Compile Include="Messages\BZFS\NoPackedDataNetworkMessage.cs" />
-    <Compile Include="Messages\BZFS\UDP\MsgUDPLinkEstablished.cs" />
-    <Compile Include="Messages\BZFS\UDP\MsgUDPLinkRequest.cs" />
-    <Compile Include="Messages\MessageFactory.cs" />
-    <Compile Include="Messages\MessageUnpacker.cs" />
-    <Compile Include="Messages\BZFS\Player\MsgRemovePlayer.cs" />
-    <Compile Include="Messages\BZFS\Info\MsgScore.cs" />
-    <Compile Include="Messages\NetworkMessage.cs" />
-    <Compile Include="OutboundMessageBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BZFlag.Data\BZFlag.Data.csproj">
       <Project>{e20fc2b8-a7d1-4ad7-9b04-7f7d2e1c6056}</Project>
       <Name>BZFlag.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BZFlag.Networking.Common\BZFlag.Networking.Common.csproj">
+      <Project>{8594acfd-a708-4076-8940-a4536f3eeda2}</Project>
+      <Name>BZFlag.Networking.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -47,9 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Form1.cs" />
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
@@ -104,6 +102,10 @@
     <ProjectReference Include="..\..\BZFlag.Networking.Client\BZFlag.Networking.Client.csproj">
       <Project>{cf984932-7b25-4b21-a9dd-40ba12748bb6}</Project>
       <Name>BZFlag.Networking.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\BZFlag.Networking.Common\BZFlag.Networking.Common.csproj">
+      <Project>{8594acfd-a708-4076-8940-a4536f3eeda2}</Project>
+      <Name>BZFlag.Networking.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

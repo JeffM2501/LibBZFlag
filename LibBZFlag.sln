@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.Game.Client", "BZFla
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClient", "Tests\TestClient\TestClient.csproj", "{05AEE668-6872-4C92-B6FF-F2501C6DB63C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.Networking.Server", "BZFlag.Networking.Server\BZFlag.Networking.Server.csproj", "{6A69803E-A03F-4351-A8B5-14DE5DADCC41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.Networking.Common", "BZFlag.Networking.Common\BZFlag.Networking.Common.csproj", "{8594ACFD-A708-4076-8940-A4536F3EEDA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +69,14 @@ Global
 		{05AEE668-6872-4C92-B6FF-F2501C6DB63C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05AEE668-6872-4C92-B6FF-F2501C6DB63C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05AEE668-6872-4C92-B6FF-F2501C6DB63C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A69803E-A03F-4351-A8B5-14DE5DADCC41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A69803E-A03F-4351-A8B5-14DE5DADCC41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A69803E-A03F-4351-A8B5-14DE5DADCC41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A69803E-A03F-4351-A8B5-14DE5DADCC41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8594ACFD-A708-4076-8940-A4536F3EEDA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8594ACFD-A708-4076-8940-A4536F3EEDA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8594ACFD-A708-4076-8940-A4536F3EEDA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8594ACFD-A708-4076-8940-A4536F3EEDA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
