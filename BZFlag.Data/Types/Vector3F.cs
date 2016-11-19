@@ -72,7 +72,14 @@ namespace BZFlag.Data.Types
             Pos[1] = v.Y;
         }
 
-        public Vector3F(Vector4F v)
+		public Vector3F(Vector3F v)
+		{
+			Pos[0] = v.X;
+			Pos[1] = v.Y;
+			Pos[2] = v.Z;
+		}
+
+		public Vector3F(Vector4F v)
         {
             Pos[0] = v.X;
             Pos[1] = v.Y;

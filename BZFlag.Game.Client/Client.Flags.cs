@@ -99,7 +99,7 @@ namespace BZFlag.Game
 
 			flag.FlightTime = u.FlightTime;
 			flag.FlightEnd = u.FlightEnd;
-			flag.InitalVelocity = u.InitalVelocity;
+			flag.InitialVelocity = u.InitalVelocity;
 
 			if(created && FlagCreated != null)
 				FlagCreated.Invoke(this, flag);

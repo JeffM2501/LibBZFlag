@@ -29,41 +29,64 @@ namespace BZFlag.Game.Flags
 
 		public double FlightTime = 0;
 		public double FlightEnd = 0;
-		public float InitalVelocity = 0;
+		public float InitialVelocity = 0;
 
         public void Update(double now, double delta, WorldMap map)
         {
-            switch (Status)
-            {
-                default:
-                    break;
+			float gravFactor = (InitialVelocity + 0.5f * map.Constants.Gravity * (float)FlightTime);
 
-                case FlagStatuses.FlagInAir:
-                    FlightTime += delta;
-                    if (FlightTime >= FlightEnd)
-                    {
-                        Status = FlagStatuses.FlagOnGround;
-                        CurrentPosition = LandingPostion;
-                    }
-                    else
-                    {
-                        double p = FlightTime / FlightEnd;
-                        double ip = 1.0 - p;
-                        CurrentPosition = (ip * LaunchPosition) + (p * LandingPostion);
-                        CurrentPosition.Z += (float)FlightTime * InitalVelocity + 0.5f * map.Constants.Gravity;
-                    }
-                    break;
+			switch(Status)
+			{
+				case FlagStatuses.FlagInAir:
+					FlightTime += delta;
+					if(FlightTime >= FlightEnd)
+					{
+						Status = FlagStatuses.FlagOnGround;
+						CurrentPosition = LandingPostion;
+					}
+					else
+					{
+						double p = FlightTime / FlightEnd;
+						double ip = 1.0 - p;
+						CurrentPosition = (ip * LaunchPosition) + (p * LandingPostion);
+						CurrentPosition.Z += (float)FlightTime * gravFactor;
+					}
+					break;
 
-                case FlagStatuses.FlagComing:
-                    FlightTime += delta;
-                    if (FlightTime >= FlightEnd)
-                    {
+				case FlagStatuses.FlagComing:
+					FlightTime += delta;
+					if(FlightTime >= FlightEnd)
+					{
+						Status = FlagStatuses.FlagOnGround;
+						CurrentPosition.Z = 0;
+					}
+					else if(FlightTime >= 0.5f * FlightEnd)
+						CurrentPosition.Z = (float)FlightTime * gravFactor + LandingPostion.Z;
+					else
+						CurrentPosition.Z = 0.5f * (float)FlightEnd * (InitialVelocity + 0.25f * map.Constants.Gravity * (float)FlightEnd) + LandingPostion.Z;
 
-                    }
+					break;
 
-                    break;
-            }
-        }
+				case FlagStatuses.FlagGoing:
+					FlightTime += delta;
 
+					if(FlightTime > FlightEnd)
+						Status = FlagStatuses.FlagNoExist;
+					else if(FlightTime < 0.5f * FlightEnd)
+						CurrentPosition.Z = (float)FlightTime * gravFactor + LastUpdatePostion.Z;
+					else
+						CurrentPosition.Z = 0.5f * (float)FlightEnd * (InitialVelocity + 0.25f * map.Constants.Gravity * (float)FlightEnd) + LandingPostion.Z;
+
+					break;
+
+				case FlagStatuses.FlagOnTank:
+					if(Owner != null)
+						CurrentPosition = new Vector3F(Owner.Position);
+					break;
+				default:
+					break;
+
+			}
+		}
     }
 }
