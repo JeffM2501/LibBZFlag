@@ -58,8 +58,9 @@ namespace BZFlag.Game
 
 			Params = _params;
 			RegisterMessageHandlers();
+            InitDBCallbacks();
 
-			NetClient.TCPConnected += NetClient_TCPConnected;
+            NetClient.TCPConnected += NetClient_TCPConnected;
 			NetClient.HostMessageReceived += NetClient_HostMessageReceived;
 			NetClient.HostIsNotBZFS += NetClient_HostIsNotBZFS;
 

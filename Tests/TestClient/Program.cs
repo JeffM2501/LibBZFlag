@@ -18,7 +18,6 @@ namespace TestClient
             Application.SetCompatibleTextRenderingDefault(false);
 
             var form = new Form1();
-            Application.Idle += form.Application_Idle;
             Application.Run(form);
         }
     }

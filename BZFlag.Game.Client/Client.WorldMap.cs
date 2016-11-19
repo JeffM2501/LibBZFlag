@@ -13,6 +13,7 @@ using BZFlag.Networking.Messages;
 using BZFlag.Game.Players;
 using BZFlag.Map.Elements.Shapes;
 using BZFlag.Map;
+using BZFlag.Data.BZDB;
 
 namespace BZFlag.Game
 {
@@ -173,6 +174,11 @@ namespace BZFlag.Game
             if (PlayerTeleported != null)
                 PlayerTeleported.Invoke(this, args);
 
+        }
+
+        protected void HandleGravityChanged(object sender, EventArgs e)
+        {
+            Map.Constants.Gravity = BZDatabase.GetValueF(BZDBVarNames.Gravity);
         }
     }
 }

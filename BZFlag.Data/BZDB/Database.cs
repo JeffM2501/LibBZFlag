@@ -5,10 +5,16 @@ using System.Text;
 
 namespace BZFlag.Data.BZDB
 {
+    public static class BZDBVarNames
+    {
+        public static readonly string Gravity = "_gravity";
+    }
+
 	public class Database
 	{
 		protected Dictionary<string, string> RawBZDBVariables = new Dictionary<string, string>();
 
+    
 		public class DatabaseChangedEventArgs : EventArgs
 		{
 			public string Key = string.Empty;
@@ -19,7 +25,45 @@ namespace BZFlag.Data.BZDB
 		public event EventHandler<DatabaseChangedEventArgs> ValueChanged = null;
 		public event EventHandler InitalLoadCompleted = null;
 
-		public void SetValue(string key, string value)
+        public Dictionary<string, EventHandler> NotificationEvents = new Dictionary<string, EventHandler>();
+
+        public void RegisterVariableChangeNotifiacation(string name, EventHandler handler)
+        {
+            if (NotificationEvents.ContainsKey(name))
+                NotificationEvents[name] += handler;
+            else
+                NotificationEvents[name] = handler;
+        }
+
+        public string GetValue(string key)
+        {
+            if (RawBZDBVariables.ContainsKey(key))
+                return RawBZDBVariables[key];
+            return string.Empty;
+        }
+
+        public double GetValueD(string key)
+        {
+            double v = 0;
+            double.TryParse(GetValue(key), out v);
+
+            return v;
+        }
+
+        public float GetValueF(string key)
+        {
+            float v = 0;
+            float.TryParse(GetValue(key), out v);
+
+            return v;
+        }
+
+        public bool GetValueB(string key)
+        {
+            return GetValue(key) == "1";
+        }
+
+        public void SetValue(string key, string value)
 		{
 			DatabaseChangedEventArgs args = new DatabaseChangedEventArgs();
 			if(RawBZDBVariables.ContainsKey(key))
@@ -35,6 +79,9 @@ namespace BZFlag.Data.BZDB
 
 			if(ValueChanged != null)
 				ValueChanged.Invoke(this, args);
+
+            if (NotificationEvents.ContainsKey(key))
+                NotificationEvents[key].Invoke(this, args);
 		}
 
 		public void SetValues(Dictionary<string,string> values, bool callEvents)

@@ -8,7 +8,15 @@ namespace BZFlag.Map
 {
 	public class WorldMap
 	{
-		public List<BasicObject> Objects = new List<BasicObject>();
+        public class PhysicalConstants
+        {
+            public float Gravity = -9.7f;
+        }
+
+        public PhysicalConstants Constants = new PhysicalConstants();
+
+
+        public List<BasicObject> Objects = new List<BasicObject>();
 
 		public World WorldInfo = new World();
 		public Options WorldOptions = new Options();

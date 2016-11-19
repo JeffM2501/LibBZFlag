@@ -28,14 +28,6 @@ namespace TestClient
             CheckLogin();
         }
 
-        public void Application_Idle(object sender, EventArgs e)
-        {
-            return;
-
-            if (GameClient != null)
-                GameClient.Update();
-        }
-
         protected void CheckLogin()
         {
             AuthButton.Enabled = Callsign.Text != string.Empty;

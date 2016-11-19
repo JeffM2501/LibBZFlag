@@ -99,6 +99,11 @@ namespace BZFlag.Data.Types
             return new Vector3F((float)(lhs.X * rhs), (float)(lhs.Y * rhs), (float)(lhs.Z * rhs));
         }
 
+        public static Vector3F operator *(double lhs, Vector3F rhs)
+        {
+            return new Vector3F((float)(lhs * rhs.X), (float)(lhs * rhs.Y), (float)(lhs* rhs.Z ));
+        }
+
         public bool IsZero ()
         {
             return Pos[0] == 0.0f && Pos[1] == 0.0f && Pos[2] == 0.0f;

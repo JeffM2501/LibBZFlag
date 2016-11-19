@@ -49,6 +49,22 @@ namespace BZFlag.Game.Shots
             Map = map;
 		}
 
+        public void Update()
+        {
+            if (PlayerList == null)
+                return;
+
+            var Clock = PlayerList.Clock;
+
+            foreach (Shot s in ShotList.Values)
+            {
+                if (!s.Active)
+                    continue;
+
+                s.Update(Clock.StepTime, Clock.StepDelta);
+            }
+        }
+
         protected ShotPath GetShotPath(Shot shot)
         {
             ShotPathGenerator gen = DefaultShotPathGenerator;
@@ -98,6 +114,8 @@ namespace BZFlag.Game.Shots
 			s.Team = sb.Team;
 			s.DeltaTime = sb.DeltaTime;
 			s.Lifetime = sb.Lifetime;
+
+            s.Path = GetShotPath(s);
 
 			if (s.Owner != null)
 			{
@@ -213,7 +231,16 @@ namespace BZFlag.Game.Shots
         // dumb generator
         public ShotPath GetShotPath(Shot shot, Player player, WorldMap map)
         {
-            return new ShotPath();
+            ShotPath path = new ShotPath();
+
+            ShotPath.Segment seg = new ShotPath.Segment();
+            seg.StartPoint = shot.InitalPosition;
+            seg.EndPoint = shot.InitalPosition + (shot.InitalVelocity * shot.Lifetime);
+            seg.StartT = shot.TimeSent;
+            seg.EndT = shot.TimeSent + shot.Lifetime;
+            path.Segments.Add(seg);
+
+            return path;
         }
     }
 }
