@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
+using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
+using System.Security.Cryptography;
+
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,18 +17,81 @@ using BZFlag.Networking.Messages.BZFS;
 
 namespace TestClient
 {
-    public partial class Form1 : Form
+	public class Config
+	{
+		public string Callsign = string.Empty;
+		public string Motto = string.Empty;
+		public string Password = string.Empty;
+
+		public void Save()
+		{
+			FileInfo file = new FileInfo(Path.Combine(Application.UserAppDataPath, "settings.xml"));
+			if(file.Exists)
+				file.Delete();
+
+			XmlSerializer xml = new XmlSerializer(this.GetType());
+			FileStream fs = file.OpenWrite();
+			xml.Serialize(fs, this);
+			fs.Close();
+		}
+
+		public static Config Load()
+		{
+			FileInfo file = new FileInfo(Path.Combine(Application.UserAppDataPath, "settings.xml"));
+			if(!file.Exists)
+				return new Config();
+
+			XmlSerializer xml = new XmlSerializer(typeof(Config));
+			FileStream fs = file.OpenRead();
+			Config cfg = xml.Deserialize(fs) as Config;
+			fs.Close();
+
+			if(cfg == null)
+				return new Config();
+
+			return cfg;
+		}
+
+		public string GetPassword()
+		{
+			if(Password == string.Empty)
+				return Password;
+
+			return Encoding.UTF8.GetString(ProtectedData.Unprotect(Convert.FromBase64String(Password),null, DataProtectionScope.CurrentUser));
+		}
+
+		public void SetPassword(string pass)
+		{
+			if(pass == string.Empty)
+			{
+				Password = pass;
+				return;
+			}
+
+			Password = Convert.ToBase64String(ProtectedData.Protect(Encoding.UTF8.GetBytes(pass), null, DataProtectionScope.CurrentUser));
+		}
+	}
+
+	public partial class Form1 : Form
     {
         ServiceLink ListServerLink = new ServiceLink();
 
         BZFlag.Game.Client GameClient = null;
 
-        public Form1()
+		protected Config UserConfig = new Config();
+
+		public Form1()
         {
             InitializeComponent();
             ListServerLink.RequestCompleted += ListServerLink_RequestCompleted;
 
-            SendChatLine_TextChanged(this, EventArgs.Empty);
+			UserConfig = Config.Load();
+
+			Callsign.Text = UserConfig.Callsign;
+			Motto.Text = UserConfig.Motto;
+			Password.Text = UserConfig.GetPassword();
+
+			SendChatLine_TextChanged(this, EventArgs.Empty);
             CheckLogin();
         }
 
@@ -59,6 +126,11 @@ namespace TestClient
         private void AuthButton_Click(object sender, EventArgs e)
         {
             ListServerLink.GetList(Callsign.Text, Password.Text);
+
+			UserConfig.Callsign = Callsign.Text;
+			UserConfig.Motto = Motto.Text;
+			UserConfig.SetPassword(Password.Text);
+			UserConfig.Save();
         }
 
 
