@@ -4,6 +4,7 @@ using System.Threading;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using BZFlag.Networking;
 
 namespace BZFlag.Networking
 {
@@ -12,17 +13,18 @@ namespace BZFlag.Networking
 		public int Port = 5154;
 		public TcpListener Listener = null;
 
-		public class PendingClient
+		public BanList Bans = new BanList();
+
+		public class PendingClient : EventArgs
 		{
 			public TcpClient ClientConnection = null;
+
+			public bool Active = false;
 
 			public bool DNSStarted = false;
 			public IPHostEntry HostEntry = null;
 
 			public bool DNSPassed = false;
-
-			public bool IPStarted = false;
-			public bool IPPassed = false;
 
 			public bool DataRecieved = false;
 			public bool ProtcolPassed = false;
@@ -30,6 +32,8 @@ namespace BZFlag.Networking
 			public byte[] PendingData = new byte[0];
 		}
 		protected List<PendingClient> PendingClients = new List<PendingClient>();
+
+		public event EventHandler<PendingClient> BZFSProtocolConnectionAccepted = null;
 
 		protected Thread WorkerThread = null;
 
@@ -58,6 +62,15 @@ namespace BZFlag.Networking
 			c.ClientConnection = Listener.EndAcceptTcpClient(ar);
 			Listener.BeginAcceptTcpClient(TCPClientAccepted, null);
 
+			var address = ((IPEndPoint)c.ClientConnection.Client.RemoteEndPoint).Address.ToString();
+
+			var ban = Bans.FindIPBan(address);
+			if (ban != null)
+			{
+				c.ClientConnection.Close();
+				return;
+			}
+
 			lock(PendingClients)
 				PendingClients.Add(c);
 
@@ -66,6 +79,19 @@ namespace BZFlag.Networking
 				WorkerThread = new Thread(new ThreadStart(ProcessPendingClients));
 				WorkerThread.Start();
 			}
+		}
+
+		protected void DisconnectPendingClient(PendingClient pc)
+		{
+			pc.Active = false;
+			pc.ClientConnection.Close();
+			RemovePendingClient(pc);
+		}
+
+		protected void RemovePendingClient(PendingClient pc)
+		{
+			lock(PendingClients)
+				PendingClients.Remove(pc);
 		}
 
 		protected void ProcessPendingClients()
@@ -90,6 +116,55 @@ namespace BZFlag.Networking
 						if(c.HostEntry != null)
 						{
 							// lookup the host in the ban list
+							var ban = Bans.FindHostBan(c.HostEntry.HostName);
+							if(ban != null)
+								c.DNSPassed = true;
+							else
+							{
+								c.HostEntry = null;
+								DisconnectPendingClient(c);
+							}
+						}
+					}
+
+					if (!c.Active)
+						continue;
+
+					if (c.ClientConnection.Available >= Protocol.BZFSHail.Length)
+					{
+						if (!c.ProtcolPassed)
+						{
+							c.DataRecieved = true;
+							byte[] buffer = new byte[Protocol.BZFSHail.Length];
+
+							var stream = c.ClientConnection.GetStream();
+
+							int read = stream.Read(buffer,0, buffer.Length);
+							if (read != buffer.Length)
+							{
+								c.ProtcolPassed = false;
+								DisconnectPendingClient(c);
+							}
+							else
+							{
+								if (Encoding.ASCII.GetString(buffer) == Protocol.BZFSHailString)
+								{
+									c.ProtcolPassed = true;
+									stream.Write(Protocol.DefaultBZFSVersion, 0, Protocol.DefaultBZFSVersion.Length);
+								}
+							}
+						}
+					}
+
+					if (c.Active)
+					{
+						if (c.DNSStarted && c.DNSPassed && c.DataRecieved && c.ProtcolPassed)
+						{
+							RemovePendingClient(c);
+
+							// send them off to the next step
+							if(BZFSProtocolConnectionAccepted != null)
+								BZFSProtocolConnectionAccepted.Invoke(this, c);
 						}
 					}
 				}

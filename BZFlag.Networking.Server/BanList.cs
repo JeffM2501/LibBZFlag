@@ -19,16 +19,32 @@ namespace BZFlag.Networking
 
 		public BanRecord FindHostBan(string host)
 		{
-			string lHost = host.ToLowerInvariant();
-			// just do a simple lookup now
-			return Hostbans.Find(x => lHost.Contains(x.BanMask));
+			return TrivialLookupBan(Hostbans, host);
 		}
 
 		public BanRecord FindIPBan(string ip)
 		{
-			string lip = ip.ToLowerInvariant();
+			return TrivialLookupBan(IPBans, ip);
+		}
+
+		public void AddHostBans(IEnumerable<BanRecord> bans)
+		{
+			lock(Hostbans)
+				Hostbans.AddRange(bans);
+		}
+
+		public void AddIPBans(IEnumerable<BanRecord> bans)
+		{
+			lock(IPBans)
+				IPBans.AddRange(bans);
+		}
+
+		private BanRecord TrivialLookupBan(List<BanRecord> list, string text)
+		{
+			string lHost = text.ToLowerInvariant();
 			// just do a simple lookup now
-			return IPBans.Find(x => lip.Contains(x.BanMask));
+			lock(list)
+				return list.Find(x => lHost.Substring(x.BanMask.Length) == x.BanMask);
 		}
 	}
 }

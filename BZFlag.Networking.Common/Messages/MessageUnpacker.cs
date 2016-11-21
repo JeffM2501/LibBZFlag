@@ -10,6 +10,8 @@ namespace BZFlag.Networking.Messages
 		protected List<NetworkMessage> ParsedMessages = new List<NetworkMessage>();
 		protected List<InboundMessageBuffer.CompletedMessage> InboudMessages = new List<InboundMessageBuffer.CompletedMessage>();
 
+		public MessageManager Factory = ClientMessageFactory.Factory;
+
 		private Thread Worker = null;
 
 		public void Push(InboundMessageBuffer.CompletedMessage msg)
@@ -76,7 +78,7 @@ namespace BZFlag.Networking.Messages
 				InboundMessageBuffer.CompletedMessage buffer = GetNextInbound();
 				while (buffer != null)
 				{
-					NetworkMessage msg = MessageFactory.Unpack(buffer.ID, buffer.Data);
+					NetworkMessage msg = Factory.Unpack(buffer.ID, buffer.Data);
 					if(msg != null)
 					{
 						msg.FromUDP = buffer.UDP;

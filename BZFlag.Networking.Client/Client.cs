@@ -11,8 +11,6 @@ namespace BZFlag.Networking
 {
     public class ClientConnection
     {
-		public static readonly byte[] BZFSHail = System.Text.Encoding.ASCII.GetBytes("BZFLAG\r\n\r\n");
-
 		protected InboundMessageBuffer InboundTCP = new InboundMessageBuffer(false);
 		protected InboundMessageBuffer InboundUDP = new InboundMessageBuffer(true);
 
@@ -85,8 +83,6 @@ namespace BZFlag.Networking
 
 		public ClientConnection()
 		{
-			MessageFactory.RegisterBSFSMessages();
-
 			InboundTCP.CompleteMessageRecived += Inbound_CompleteMessageRecived;
 			InboundUDP.CompleteMessageRecived += Inbound_CompleteMessageRecived;
 		}
@@ -112,7 +108,7 @@ namespace BZFlag.Networking
 			OutboundTCP.Start();
 			OutboundUDP.Start();
 
-			OutboundTCP.PushDirectMessage(BZFSHail);
+			OutboundTCP.PushDirectMessage(Protocol.BZFSHail);
 
 			HostName = server;
 			HostPort = port;

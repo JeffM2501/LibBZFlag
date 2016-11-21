@@ -11,10 +11,18 @@ namespace BZFlag.Networking.Messages
 {
 	public abstract class NetworkMessage : DynamicBufferReader
     {
+		public static bool IsOnServer = false;
+		
+		public bool IsServer()
+		{
+			return IsOnServer;
+		}
+			
 		public int Code = int.MinValue;
 		public string CodeAbreviation = string.Empty;
 
 		public bool FromUDP = false;
+		public object Tag = null;
 
 		public abstract void Unpack(byte[] data);
 		public abstract byte[] Pack();

@@ -14,13 +14,13 @@ using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Networking.Messages.BZFS.Flags;
 using BZFlag.Networking.Messages.BZFS.Shots;
 using BZFlag.Networking.Messages.BZFS.Control;
+using BZFlag.Networking;
 
 namespace BZFlag.Game
 {
     public partial class Client
     {
-		public delegate void MessageHandler(NetworkMessage msg);
-		public static Dictionary<int, MessageHandler> Handlers = new Dictionary<int, MessageHandler>();
+		InboundMessageCallbackProcessor Handler = new InboundMessageCallbackProcessor();
 
 		public class UnknownMessageEventArgs : EventArgs
 		{
@@ -54,9 +54,7 @@ namespace BZFlag.Game
 		{
 			PreDispatchChecks(e.Message);
 
-			if(Handlers.ContainsKey(e.Message.Code))
-				Handlers[e.Message.Code](e.Message);
-			else // if(e.Message as UnknownMessage != null)
+			if(!Handler.DispatchMessage(e.Message))
 			{
 				if (ReceivedUnknownMessage != null)
 				{
@@ -106,62 +104,62 @@ namespace BZFlag.Game
 		protected virtual void RegisterMessageHandlers()
 		{
 			// basic connections
-			Handlers.Add(new MsgAccept().Code, HandleAcceptMessage);
-			Handlers.Add(new MsgReject().Code, HandleRejectMessage);
+			Handler.Add(new MsgAccept(), HandleAcceptMessage);
+			Handler.Add(new MsgReject(), HandleRejectMessage);
 
-			Handlers.Add(new MsgGameTime().Code, HandleGameTime);
-			Handlers.Add(new MsgUDPLinkRequest().Code, HandleUDPLinkRequest);
-			Handlers.Add(new MsgUDPLinkEstablished().Code, HandleUDPLinkEstablished);
-			Handlers.Add(new MsgLagPing().Code, HandleLagPing);
+			Handler.Add(new MsgGameTime(), HandleGameTime);
+			Handler.Add(new MsgUDPLinkRequest(), HandleUDPLinkRequest);
+			Handler.Add(new MsgUDPLinkEstablished(), HandleUDPLinkEstablished);
+			Handler.Add(new MsgLagPing(), HandleLagPing);
 
-            Handlers.Add(new MsgSuperKill().Code, HandleSuperKill);
+            Handler.Add(new MsgSuperKill(), HandleSuperKill);
 
             // world data
-            Handlers.Add(new MsgWantWHash().Code, HandleWorldHash);
-			Handlers.Add(new MsgCacheURL().Code, HandleWorldCacheURL);
-			Handlers.Add(new MsgGetWorld().Code, HandleGetWorld);
-            Handlers.Add(new MsgTeleport().Code, HandleTeleported);
+            Handler.Add(new MsgWantWHash(), HandleWorldHash);
+			Handler.Add(new MsgCacheURL(), HandleWorldCacheURL);
+			Handler.Add(new MsgGetWorld(), HandleGetWorld);
+            Handler.Add(new MsgTeleport(), HandleTeleported);
 
             // game info
-            Handlers.Add(new MsgTimeUpdate().Code, HandleTimeUpdate);
-            Handlers.Add(new MsgScoreOver().Code, HandleScoreOver);
+            Handler.Add(new MsgTimeUpdate(), HandleTimeUpdate);
+            Handler.Add(new MsgScoreOver(), HandleScoreOver);
 
             // bzdb
-            Handlers.Add(new MsgSetVars().Code, HandleSetVarsMessage);
+            Handler.Add(new MsgSetVars(), HandleSetVarsMessage);
 
 			// teams
-			Handlers.Add(new MsgTeamUpdate().Code, HandleTeamUpdate);
+			Handler.Add(new MsgTeamUpdate(), HandleTeamUpdate);
 
 			// flags
-			Handlers.Add(new MsgFlagUpdate().Code, HandleFlagUpdate);
-			Handlers.Add(new MsgDropFlag().Code, HandleDropFlag);
-			Handlers.Add(new MsgGrabFlag().Code, HandleGrabFlag);
-			Handlers.Add(new MsgTransferFlag().Code, HandleTransferFlag);
-            Handlers.Add(new MsgNearFlag().Code, HandleNearFlag);
-            Handlers.Add(new MsgCaptureFlag().Code, HandleCaptureFlag);
+			Handler.Add(new MsgFlagUpdate(), HandleFlagUpdate);
+			Handler.Add(new MsgDropFlag(), HandleDropFlag);
+			Handler.Add(new MsgGrabFlag(), HandleGrabFlag);
+			Handler.Add(new MsgTransferFlag(), HandleTransferFlag);
+            Handler.Add(new MsgNearFlag(), HandleNearFlag);
+            Handler.Add(new MsgCaptureFlag(), HandleCaptureFlag);
 
             // players
-            Handlers.Add(new MsgAddPlayer().Code, PlayerList.HandleAddPlayer);
-			Handlers.Add(new MsgRemovePlayer().Code, PlayerList.HandleRemovePlayer);
-			Handlers.Add(new MsgPlayerInfo().Code, PlayerList.HandlePlayerInfo);
-			Handlers.Add(new MsgScore().Code, PlayerList.HandleScoreUpdate);
-			Handlers.Add(new MsgAlive().Code, PlayerList.HandleAlive);
-			Handlers.Add(new MsgKilled().Code, PlayerList.HandleKilled);
-			Handlers.Add(new MsgPlayerUpdate().Code, PlayerList.HandlePlayerUpdate);
-			Handlers.Add(new MsgPlayerUpdateSmall().Code, PlayerList.HandlePlayerUpdate);
-            Handlers.Add(new MsgHandicap().Code, PlayerList.HandleHandicap);
-            Handlers.Add(new MsgPause().Code, PlayerList.HandlePause);
-            Handlers.Add(new MsgAutoPilot().Code, PlayerList.HandleAutoPilot);
-            Handlers.Add(new MsgNewRabbit().Code, PlayerList.HandleNewRabbit);
-            Handlers.Add(new MsgAdminInfo().Code, PlayerList.HandleAdminInfo);
+            Handler.Add(new MsgAddPlayer(), PlayerList.HandleAddPlayer);
+			Handler.Add(new MsgRemovePlayer(), PlayerList.HandleRemovePlayer);
+			Handler.Add(new MsgPlayerInfo(), PlayerList.HandlePlayerInfo);
+			Handler.Add(new MsgScore(), PlayerList.HandleScoreUpdate);
+			Handler.Add(new MsgAlive(), PlayerList.HandleAlive);
+			Handler.Add(new MsgKilled(), PlayerList.HandleKilled);
+			Handler.Add(new MsgPlayerUpdate(), PlayerList.HandlePlayerUpdate);
+			Handler.Add(new MsgPlayerUpdateSmall(), PlayerList.HandlePlayerUpdate);
+            Handler.Add(new MsgHandicap(), PlayerList.HandleHandicap);
+            Handler.Add(new MsgPause(), PlayerList.HandlePause);
+            Handler.Add(new MsgAutoPilot(), PlayerList.HandleAutoPilot);
+            Handler.Add(new MsgNewRabbit(), PlayerList.HandleNewRabbit);
+            Handler.Add(new MsgAdminInfo(), PlayerList.HandleAdminInfo);
 
             // chat
-            Handlers.Add(new MsgMessage().Code, Chat.HandleChatMessage);
+            Handler.Add(new MsgMessage(), Chat.HandleChatMessage);
 
 			// shots
-			Handlers.Add(new MsgShotBegin().Code, ShotMan.HandleShotBegin);
-			Handlers.Add(new MsgShotEnd().Code, ShotMan.HandleShotEnd);
-			Handlers.Add(new MsgGMUpdate().Code, ShotMan.HandleGMUpdate);
+			Handler.Add(new MsgShotBegin(), ShotMan.HandleShotBegin);
+			Handler.Add(new MsgShotEnd(), ShotMan.HandleShotEnd);
+			Handler.Add(new MsgGMUpdate(), ShotMan.HandleGMUpdate);
 		}
 
 		private void HandleAcceptMessage(NetworkMessage msg)

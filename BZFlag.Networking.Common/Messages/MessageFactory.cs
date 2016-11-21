@@ -15,11 +15,44 @@ using BZFlag.Networking.Messages.BZFS.Control;
 
 namespace BZFlag.Networking.Messages
 {
-	public static class MessageFactory
+	public static class ClientMessageFactory
 	{
-		private static Dictionary<int, Type> MessageTypes = new Dictionary<int, Type>();
+		public static MessageManager Factory = new MessageManager();
 
-		public static void RegisterMessageType(int code, Type t)
+		static ClientMessageFactory()
+		{
+			Factory.RegisterBSFSClientMessages();
+		}
+	}
+
+	public static class SecurityJailMessageFacotry
+	{
+		public static MessageManager Factory = new MessageManager();
+
+		static SecurityJailMessageFacotry()
+		{
+			Factory.RegisterMessageType(new MsgEnter());
+			Factory.RegisterMessageType(new MsgExit());
+
+			Factory.RegisterMessageType(new MsgQueryGame());
+			Factory.RegisterMessageType(new MsgQueryPlayers());
+
+			Factory.RegisterMessageType(new MsgWantWHash());
+			Factory.RegisterMessageType(new MsgGetWorld());
+
+			Factory.RegisterMessageType(new MsgWantSettings());
+			Factory.RegisterMessageType(new MsgNegotiateFlags());
+
+			Factory.RegisterMessageType(new MsgUDPLinkRequest());
+			Factory.RegisterMessageType(new MsgUDPLinkEstablished());
+		}
+	}
+
+	public class MessageManager
+	{
+		private Dictionary<int, Type> MessageTypes = new Dictionary<int, Type>();
+
+		public void RegisterMessageType(int code, Type t)
 		{
 			if(t.IsAbstract || !t.IsSubclassOf(typeof(NetworkMessage)))
 				return;
@@ -31,12 +64,12 @@ namespace BZFlag.Networking.Messages
 			}	
 		}
 
-		public static void RegisterMessageType(NetworkMessage m)
+		public void RegisterMessageType(NetworkMessage m)
 		{
 			RegisterMessageType(m.Code, m.GetType());
 		}
 
-		public static NetworkMessage Unpack(int code, byte[] buffer)
+		public  NetworkMessage Unpack(int code, byte[] buffer)
 		{
 			Type t = null;
 			lock(MessageTypes)
@@ -53,7 +86,7 @@ namespace BZFlag.Networking.Messages
 			return msg;
 		}
 
-		public static void  RegisterBSFSMessages()
+		public void  RegisterBSFSClientMessages()
 		{
 			RegisterMessageType(new MsgEnter());
 			RegisterMessageType(new MsgExit());

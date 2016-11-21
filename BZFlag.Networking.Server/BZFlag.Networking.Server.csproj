@@ -40,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BanList.cs" />
+    <Compile Include="PendingPlayerSecurityLockdown.cs" />
+    <Compile Include="Players\Player.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TCPConnectionManager.cs" />
@@ -60,6 +62,10 @@
     <ProjectReference Include="..\BZFlag.Map\BZFlag.Map.csproj">
       <Project>{4c5393f4-0040-41c3-a7ef-a6692bda7e59}</Project>
       <Name>BZFlag.Map</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BZFlag.Networking.Common\BZFlag.Networking.Common.csproj">
+      <Project>{8594ACFD-A708-4076-8940-A4536F3EEDA2}</Project>
+      <Name>BZFlag.Networking.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

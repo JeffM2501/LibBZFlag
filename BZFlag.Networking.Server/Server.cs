@@ -8,5 +8,6 @@ namespace BZFlag.Networking
 {
     public class Server
     {
-    }
+		public TCPConnectionManager InboundConnections = null;
+	}
 }
