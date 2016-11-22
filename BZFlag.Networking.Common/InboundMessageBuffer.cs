@@ -15,6 +15,8 @@ namespace BZFlag.Networking
 			public byte[] Data = new byte[0];
 
 			public bool UDP = false;
+
+            public object Tag = null;
 		}
 
 		protected List<CompletedMessage> CompletedMessages = new List<CompletedMessage>();
@@ -79,8 +81,13 @@ namespace BZFlag.Networking
 
 		public static readonly int MaxSanityBuffer = 1024 * 3;
 
-		// TODO, do some pooling here, for performance
-		public void AddData(byte[] buffer)
+        public void AddData(byte[] buffer)
+        {
+            AddData(buffer, null);
+        }
+
+        // TODO, do some pooling here, for performance
+        public void AddData(byte[] buffer, object tag)
 		{
 			if (PartialMessage == null)
 			{
@@ -114,6 +121,7 @@ namespace BZFlag.Networking
 					CompletedMessage msg = new CompletedMessage();
 					msg.ID = code;
 					msg.Size = len;
+                    msg.Tag = tag;
 					msg.Data = new byte[len];
 					Array.Copy(PartialMessage, 4, msg.Data, 0, len);
 

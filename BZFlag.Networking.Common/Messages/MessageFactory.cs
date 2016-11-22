@@ -69,7 +69,12 @@ namespace BZFlag.Networking.Messages
 			RegisterMessageType(m.Code, m.GetType());
 		}
 
-		public  NetworkMessage Unpack(int code, byte[] buffer)
+        public NetworkMessage Unpack(int code, byte[] buffer)
+        {
+            return Unpack(code, buffer, false);
+        }
+
+        public  NetworkMessage Unpack(int code, byte[] buffer, bool udp)
 		{
 			Type t = null;
 			lock(MessageTypes)
@@ -83,6 +88,7 @@ namespace BZFlag.Networking.Messages
 			NetworkMessage msg = Activator.CreateInstance(t) as NetworkMessage;
 			msg.Code = code;
 			msg.Unpack(buffer);
+            msg.FromUDP = udp;
 			return msg;
 		}
 

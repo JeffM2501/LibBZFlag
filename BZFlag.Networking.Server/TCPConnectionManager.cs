@@ -37,9 +37,12 @@ namespace BZFlag.Networking
 
 		protected Thread WorkerThread = null;
 
-		public TCPConnectionManager(int port)
+        protected Server Host = null;
+
+		public TCPConnectionManager(int port, Server server)
 		{
-			Port = port;
+            Host = server;
+            Port = port;
 			Listener = new TcpListener(IPAddress.Any, port);
 		}
 
