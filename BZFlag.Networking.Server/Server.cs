@@ -9,7 +9,10 @@ namespace BZFlag.Networking
 {
     public class Server
     {
-		public TCPConnectionManager InboundConnections = null;
+		public TCPConnectionManager TCPConnections = null;
+        public UDPConnectionManager UDPConnections = new UDPConnectionManager();
+
+        protected List<PlayerProcessor> ConnectionHandlers = new List<PlayerProcessor>();
 
 
         public virtual void AcceptTCPConnection (TcpClient client)
@@ -18,5 +21,24 @@ namespace BZFlag.Networking
         }
 
         public virtual ServerPlayer NewPlayerRecord(TcpClient client) {  return new ServerPlayer(client);}
-	}
+
+
+        public Server()
+        {
+
+        }
+
+        public void Listen( int port )
+        {
+            TCPConnections = new TCPConnectionManager(port, this);
+            TCPConnections.BZFSProtocolConnectionAccepted += BZFSProtocolConnectionAccepted;
+
+            UDPConnections = new UDPConnectionManager();
+        }
+
+        protected virtual void BZFSProtocolConnectionAccepted(object sender, TCPConnectionManager.PendingClient e)
+        {
+           
+        }
+    }
 }

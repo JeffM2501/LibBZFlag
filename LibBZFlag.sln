@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.Networking.Server", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.Networking.Common", "BZFlag.Networking.Common\BZFlag.Networking.Common.csproj", "{8594ACFD-A708-4076-8940-A4536F3EEDA2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.Game.Server", "BZFlag.Game.Server\BZFlag.Game.Server.csproj", "{D24AB624-B161-46FA-B3FF-35DB9C9F796F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{8594ACFD-A708-4076-8940-A4536F3EEDA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8594ACFD-A708-4076-8940-A4536F3EEDA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8594ACFD-A708-4076-8940-A4536F3EEDA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D24AB624-B161-46FA-B3FF-35DB9C9F796F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D24AB624-B161-46FA-B3FF-35DB9C9F796F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D24AB624-B161-46FA-B3FF-35DB9C9F796F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D24AB624-B161-46FA-B3FF-35DB9C9F796F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

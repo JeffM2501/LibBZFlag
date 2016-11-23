@@ -34,7 +34,7 @@ namespace BZFlag.Networking
 			}
 		}
 
-        protected virtual void ProcessClientMessage(ServerPlayer player, NetworkMessage msg)
+        public virtual void ProcessClientMessage(ServerPlayer player, NetworkMessage msg)
         {
 
         }
