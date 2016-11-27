@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 
-using BZFlag.Networking;
+using BZFlag.Networking.Common;
 using BZFlag.Networking.Messages;
 
 using BZFlag.Networking.Messages.BZFS;
@@ -26,7 +26,7 @@ namespace ConnectionTester
 {
 	public class SimpleLogger
 	{
-		public static ClientConnection client = null;
+		public static Peer client = null;
 
 		public static int PlayerID = -1;
 
@@ -52,15 +52,15 @@ namespace ConnectionTester
 
 			RegisterHandlers();
 
-			client = new ClientConnection();
-			client.HostMessageReceived += Client_HostMessageReceived;
+			client = new Peer();
+			client.MessageReceived += Client_HostMessageReceived;
 			client.TCPConnected += Client_TCPConnected;
 
 			var server = Link.FindServerWithMostPlayers();
 			if(server == null || false)
 				server = new ServiceLink.ListServerData("bzflag.allejo.io", 5170);
 
-			client.Startup(server.Host, server.Port);
+			client.Connect(server.Host, server.Port);
 
 			WriteLine("Connecting to " + server.Name);
 
@@ -172,7 +172,7 @@ namespace ConnectionTester
 			Handlers.Add(new MsgAdminInfo().Code, HandleAdminInfo);
 		}
 
-		private static void Client_HostMessageReceived(object sender, ClientConnection.HostMessageReceivedEventArgs e)
+		private static void Client_HostMessageReceived(object sender, Peer.MessageReceivedEventArgs e)
 		{
 			if(Handlers.ContainsKey(e.Message.Code))
 				Handlers[e.Message.Code](e.Message);

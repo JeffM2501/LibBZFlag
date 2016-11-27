@@ -5,8 +5,9 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using BZFlag.Networking;
+using BZFlag.Game.Security;
 
-namespace BZFlag.Networking
+namespace BZFlag.Game.Host
 {
 	public class TCPConnectionManager
 	{

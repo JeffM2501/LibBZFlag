@@ -7,20 +7,24 @@ using System.Net.Sockets;
 
 using BZFlag.Networking.Messages;
 
-namespace BZFlag.Networking
+namespace BZFlag.Networking.Common
 {
-    public class ClientConnection
-    {
-		protected InboundMessageBuffer InboundTCP = new InboundMessageBuffer(false);
-		protected InboundMessageBuffer InboundUDP = new InboundMessageBuffer(true);
+	public class Peer
+	{
+		public InboundMessageBuffer InboundTCP = null;
+		public InboundMessageBuffer InboundUDP = null;
 
 		public MessageUnpacker InboundMessageProcessor = new MessageUnpacker();
 
-		protected OutboundMessageBuffer OutboundTCP = new OutboundMessageBuffer();
-		protected OutboundMessageBuffer OutboundUDP = new OutboundMessageBuffer();
+		public OutboundMessageBuffer OutboundTCP = new OutboundMessageBuffer();
+		public OutboundMessageBuffer OutboundUDP = new OutboundMessageBuffer();
 
 		protected TcpClient TCP = null;
-		protected UdpClient UDP = null;
+
+		/// <summary>
+		/// Only used by client connections, server connections have to share a single UDP with all users and do prefi
+		/// </summary>
+		protected UdpClient UDP = null;	
 
 		protected Thread TCPNetworkPollThread = null;
 		protected Thread UDPNetworkPollThread = null;
@@ -29,22 +33,24 @@ namespace BZFlag.Networking
 
 		public int MaxMessagesPerCycle = 20;
 
-        public bool ReturnPingsEarly = false;
+		public bool ReturnPingsEarly = false;
 
 		protected string HostName = string.Empty;
 		protected int HostPort = -1;
 
-		public class HostMessageReceivedEventArgs : EventArgs
+		public class MessageReceivedEventArgs : EventArgs
 		{
+			public Peer Recipient = null;
 			public NetworkMessage Message = null;
-			
-			public HostMessageReceivedEventArgs(NetworkMessage msg)
+
+			public MessageReceivedEventArgs(Peer p, NetworkMessage msg)
 			{
+				Recipient = p;
 				Message = msg;
 			}
 		}
 
-		public event EventHandler<HostMessageReceivedEventArgs> HostMessageReceived = null;
+		public event EventHandler<MessageReceivedEventArgs> MessageReceived = null;
 
 		protected enum NetworkPushMessages
 		{
@@ -72,7 +78,7 @@ namespace BZFlag.Networking
 			NetworkPushMessages n = NetworkPushMessages.None;
 			lock(PendingNetworkNotifications)
 			{
-				if (PendingNetworkNotifications.Count > 0)
+				if(PendingNetworkNotifications.Count > 0)
 				{
 					n = PendingNetworkNotifications[0];
 					PendingNetworkNotifications.RemoveAt(0);
@@ -81,10 +87,9 @@ namespace BZFlag.Networking
 			return n;
 		}
 
-		public ClientConnection()
+		public virtual void AddInboundMessage(InboundMessageBuffer.CompletedMessage msg)
 		{
-			InboundTCP.CompleteMessageRecived += Inbound_CompleteMessageRecived;
-			InboundUDP.CompleteMessageRecived += Inbound_CompleteMessageRecived;
+			InboundMessageProcessor.Push(msg);
 		}
 
 		private void Inbound_CompleteMessageRecived(object sender, EventArgs e)
@@ -94,17 +99,22 @@ namespace BZFlag.Networking
 				return;
 
 			foreach(var m in buffer.GetMessages())
-            {
-                if (ReturnPingsEarly && m.ID == 0x7069)
-                    SendDirectMessage(m.UDP,new byte[] { 0, 6, 0x70, 0x69, m.Data[0], m.Data[1] }); // just blast it back with miniumal processing
-                else
-                    InboundMessageProcessor.Push(m);
-            }
+				AddInboundMessage(m);
 		}
 
-		public void Startup(string server, int port)
+		public void Connect(string server, int port)
 		{
 			Shutdown();
+
+			if(InboundTCP == null)
+			{
+				InboundTCP = new InboundMessageBuffer(false);
+				InboundUDP = new InboundMessageBuffer(true);
+
+				InboundTCP.CompleteMessageRecived += Inbound_CompleteMessageRecived;
+				InboundUDP.CompleteMessageRecived += Inbound_CompleteMessageRecived;
+			}
+
 			OutboundTCP.Start();
 			OutboundUDP.Start();
 
@@ -121,6 +131,19 @@ namespace BZFlag.Networking
 			TCPNetworkPollThread.Start();
 		}
 
+		public void Link(TcpClient client)
+		{
+			TCP = client;
+			Connected = true;
+			OutboundTCP.Start();
+			OutboundUDP.Start();
+
+			InboundMessageProcessor.Start();
+
+			TCPNetworkPollThread = new Thread(new ThreadStart(PollTCP));
+			TCPNetworkPollThread.Start();
+		}
+
 		public void ConnectToUDP()
 		{
 			if(HostName == string.Empty || HostPort < 0)
@@ -128,9 +151,9 @@ namespace BZFlag.Networking
 
 			UDP = new UdpClient(HostName, HostPort);
 
-            UDP.DontFragment = false;
+			UDP.DontFragment = false;
 
-            UDPNetworkPollThread = new Thread(new ThreadStart(PollUDP));
+			UDPNetworkPollThread = new Thread(new ThreadStart(PollUDP));
 			UDPNetworkPollThread.Start();
 		}
 
@@ -160,8 +183,12 @@ namespace BZFlag.Networking
 			HostPort = -1;
 
 			PendingNetworkNotifications.Clear();
-			InboundTCP.Clear();
-			InboundUDP.Clear();
+			if (InboundTCP != null)
+				InboundTCP.Clear();
+
+			if(InboundUDP != null)
+				InboundUDP.Clear();
+
 			OutboundTCP.Clear();
 			OutboundUDP.Clear();
 		}
@@ -179,15 +206,15 @@ namespace BZFlag.Networking
 				OutboundUDP.Push(msg);
 		}
 
-        public void SendDirectMessage(bool viaTCP, byte[] msg)
-        {
-            if (viaTCP)
-                OutboundTCP.PushDirectMessage(msg);
-            else
-                OutboundUDP.PushDirectMessage(msg);
-        }
+		public void SendDirectMessage(bool viaTCP, byte[] msg)
+		{
+			if(viaTCP)
+				OutboundTCP.PushDirectMessage(msg);
+			else
+				OutboundUDP.PushDirectMessage(msg);
+		}
 
-        public event EventHandler TCPConnected = null;
+		public event EventHandler TCPConnected = null;
 		public event EventHandler HostHasData = null;
 		public event EventHandler TCPHostDisconnect = null;
 		public event EventHandler HostIsNotBZFS = null;
@@ -195,7 +222,7 @@ namespace BZFlag.Networking
 		public void Update()
 		{
 			NetworkPushMessages evtMsg = PopNetworkNotification();
-			while (evtMsg != NetworkPushMessages.None)
+			while(evtMsg != NetworkPushMessages.None)
 			{
 				switch(evtMsg)
 				{
@@ -224,24 +251,24 @@ namespace BZFlag.Networking
 
 			int count = 0;
 			var msg = InboundMessageProcessor.Pop();
-			while (msg != null)
+			while(msg != null)
 			{
-				if(HostMessageReceived != null)
-					HostMessageReceived.Invoke(this, new HostMessageReceivedEventArgs(msg));
+				if(MessageReceived != null)
+					MessageReceived.Invoke(this, new MessageReceivedEventArgs(this,msg));
 				count++;
 				if(count >= MaxMessagesPerCycle)
 					msg = null;
 				else
 					msg = InboundMessageProcessor.Pop();
 			}
-			
+
 		}
 
 		// TCP polling local data
-		private bool Connected = false;
+		protected bool Connected = false;
 		private string HostProtoVersion = string.Empty;
 
-		protected void PollTCP()
+		protected virtual void PollTCP()
 		{
 			var stream = TCP.GetStream();
 			while(true)
@@ -254,18 +281,18 @@ namespace BZFlag.Networking
 				}
 				stream.Flush();
 
-				if (!Connected)
+				if(!Connected)
 				{
-					if (TCP.Available >= 9)
+					if(TCP.Available >= 9)
 					{
 						byte[] header = new byte[8];
-						if (stream.Read(header, 0, 8) != 8)
+						if(stream.Read(header, 0, 8) != 8)
 						{
 							PushNetworkNotificatioin(NetworkPushMessages.HostIsNotBZFS);
 							return;
 						}
 						HostProtoVersion = Encoding.ASCII.GetString(header);
-						if (HostProtoVersion.Substring(0,4) != "BZFS")
+						if(HostProtoVersion.Substring(0, 4) != "BZFS")
 						{
 							PushNetworkNotificatioin(NetworkPushMessages.HostIsNotBZFS);
 							return;
@@ -278,19 +305,19 @@ namespace BZFlag.Networking
 					}
 				}
 
-				if (Connected && TCP.Available > 0)
+				if(Connected && TCP.Available > 0)
 				{
 					byte[] data = new byte[TCP.Available];
 					int read = stream.Read(data, 0, data.Length);
 					InboundTCP.AddData(data);
-					if (RaiseDataMessages)
+					if(RaiseDataMessages)
 						PushNetworkNotificatioin(NetworkPushMessages.HostHasData);
 				}
 				Thread.Sleep(10);
 			}
 		}
 
-		protected void PollUDP()
+		protected virtual void PollUDP()
 		{
 			while(true)
 			{

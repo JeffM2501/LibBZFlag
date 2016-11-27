@@ -5,8 +5,9 @@ using System.Net.Sockets;
 using System.Threading;
 
 using BZFlag.Networking.Messages;
+using BZFlag.Networking;
 
-namespace BZFlag.Networking
+namespace BZFlag.Game.Host
 {
     public class UDPConnectionManager
     {

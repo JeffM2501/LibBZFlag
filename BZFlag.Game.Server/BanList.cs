@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BZFlag.Networking
+namespace BZFlag.Game.Security
 {
 	public class BanList
 	{

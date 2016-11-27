@@ -50,7 +50,7 @@ namespace BZFlag.Game
             NetClient.SendMessage(viaTCP, msg);
         }
 
-        protected virtual void NetClient_HostMessageReceived(object sender, Networking.ClientConnection.HostMessageReceivedEventArgs e)
+        protected virtual void NetClient_HostMessageReceived(object sender, Networking.Common.Peer.MessageReceivedEventArgs e)
 		{
 			PreDispatchChecks(e.Message);
 

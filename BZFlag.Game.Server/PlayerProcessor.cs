@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Text;
 using BZFlag.Networking.Messages;
+using BZFlag.Networking;
 
-namespace BZFlag.Networking
+namespace BZFlag.Game.Host
 {
 	public class PlayerProcessor
 	{
@@ -50,8 +51,6 @@ namespace BZFlag.Networking
 			{
 				foreach(ServerPlayer player in locals)
 				{
-                    player.ProcessTCP();
-
 					int count = 0; 
 					while (count < MaxMessagesPerClientCycle)
 					{

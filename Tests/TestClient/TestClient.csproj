@@ -99,10 +99,6 @@
       <Project>{4c5393f4-0040-41c3-a7ef-a6692bda7e59}</Project>
       <Name>BZFlag.Map</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\BZFlag.Networking.Client\BZFlag.Networking.Client.csproj">
-      <Project>{cf984932-7b25-4b21-a9dd-40ba12748bb6}</Project>
-      <Name>BZFlag.Networking.Client</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\BZFlag.Networking.Common\BZFlag.Networking.Common.csproj">
       <Project>{8594acfd-a708-4076-8940-a4536f3eeda2}</Project>
       <Name>BZFlag.Networking.Common</Name>

@@ -30,7 +30,7 @@ namespace BZFlag.Game
 
     public partial class Client
     {
-		public BZFlag.Networking.ClientConnection NetClient = new BZFlag.Networking.ClientConnection();
+		public BZFlag.Networking.Common.Peer NetClient = new BZFlag.Networking.Common.Peer();
 
 		public BZFlag.Map.WorldMap Map = null;
 		public ChatSystem Chat = new ChatSystem();
@@ -61,10 +61,10 @@ namespace BZFlag.Game
             InitDBCallbacks();
 
             NetClient.TCPConnected += NetClient_TCPConnected;
-			NetClient.HostMessageReceived += NetClient_HostMessageReceived;
+			NetClient.MessageReceived += NetClient_HostMessageReceived;
 			NetClient.HostIsNotBZFS += NetClient_HostIsNotBZFS;
 
-			NetClient.Startup(Params.Host, Params.Port);
+			NetClient.Connect(Params.Host, Params.Port);
 		}
 
 		public void Shutdown()
