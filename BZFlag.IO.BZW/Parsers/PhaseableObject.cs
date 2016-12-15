@@ -15,17 +15,16 @@ namespace BZFlag.IO.BZW.Parsers
             if (p == null)
                 return base.AddCodeLine(command,line);
 
-            if (!base.AddCodeLine(command, line))
-			{
-                if (command == "PASSABLE")
-                    p.Passable = true;
-                else if (command == "DRIVETHROUGH")
-                    p.DriveThrough = true;
-                else if (command == "SHOOTTHROUGH")
-                    p.ShootThrough = true;
-                else if (command == "RICOCHET")
-                    p.Ricochet = true;
-			}
+			if(command == "PASSABLE")
+				p.Passable = true;
+			else if(command == "DRIVETHROUGH")
+				p.DriveThrough = true;
+			else if(command == "SHOOTTHROUGH")
+				p.ShootThrough = true;
+			else if(command == "RICOCHET")
+				p.Ricochet = true;
+			else
+				base.AddCodeLine(command, line);
 
 			return true;
 		}
