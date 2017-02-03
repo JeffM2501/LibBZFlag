@@ -7,7 +7,7 @@
     <ProjectGuid>{6A69803E-A03F-4351-A8B5-14DE5DADCC41}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BZFlag.Networking</RootNamespace>
+    <RootNamespace>BZFlag.Game.Server</RootNamespace>
     <AssemblyName>BZFlag.Game.Server</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -48,6 +48,7 @@
     <Compile Include="Players\Player.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerConfig.cs" />
     <Compile Include="TCPConnectionManager.cs" />
     <Compile Include="UDPConnectionManager.cs" />
   </ItemGroup>

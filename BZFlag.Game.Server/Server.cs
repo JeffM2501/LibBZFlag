@@ -15,6 +15,7 @@ namespace BZFlag.Game.Host
 
         protected List<PlayerProcessor> ConnectionHandlers = new List<PlayerProcessor>();
 
+        public ServerConfig ConfigData = new ServerConfig();
 
         public virtual void AcceptTCPConnection (TcpClient client)
         {
@@ -24,17 +25,32 @@ namespace BZFlag.Game.Host
         public virtual ServerPlayer NewPlayerRecord(TcpClient client) {  return new ServerPlayer(client);}
 
 
-        public Server()
+        public Server( ServerConfig cfg )
         {
-
+            ConfigData = cfg;
         }
 
-        public void Listen( int port )
+        public void Listen()
         {
+            int port = ConfigData.Port;
+
             TCPConnections = new TCPConnectionManager(port, this);
             TCPConnections.BZFSProtocolConnectionAccepted += BZFSProtocolConnectionAccepted;
 
             UDPConnections = new UDPConnectionManager();
+        }
+
+        public void Run()
+        {
+            Listen();
+
+            while(true)
+            {
+                // do any monitoring we need done here....
+
+
+                System.Threading.Thread.Sleep(20);
+            }
         }
 
         protected virtual void BZFSProtocolConnectionAccepted(object sender, TCPConnectionManager.PendingClient e)
