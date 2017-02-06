@@ -9,13 +9,23 @@ namespace ConnectionTester
 {
 	class Program
 	{
-		public static bool useSimple = false;
+		public static bool testClient = false;
+
+		public static bool useSimple = true;
 		static void Main(string[] args)
 		{
-			if(useSimple)
-				SimpleLogger.Run(args);
+			if (testClient)
+			{
+				if(useSimple)
+					SimpleLogger.Run(args);
+				else
+					new ClientTester(args).Run();
+			}
 			else
-				new ClientTester(args).Run();
+			{
+				if(useSimple)
+					SimpleHoster.Run(args);
+			}
 		}
     }
 }

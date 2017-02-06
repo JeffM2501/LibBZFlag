@@ -4,7 +4,7 @@ using System.Threading;
 using System.IO;
 
 using BZFlag.Game;
-using BZFlag.Authentication;
+using BZFlag.Services;
 using BZFlag.Data.Teams;
 using BZFlag.Game.Players;
 
@@ -16,7 +16,7 @@ namespace ConnectionTester
 
 		Client GameClient = null;
 
-		ServiceLink Link = new ServiceLink();
+		GameList Link = new GameList();
 		bool GotList = false;
 
 		public StreamWriter LogStream = new StreamWriter("log.txt");
@@ -56,7 +56,7 @@ namespace ConnectionTester
 
 			var server = Link.FindServerWithMostPlayers();
 			if(server == null || false)
-				server = new ServiceLink.ListServerData("bzflag.allejo.io", 5170);
+				server = new GameList.ListServerData("bzflag.allejo.io", 5170);
 
 			StartupParams.Host = server.Host;
 			StartupParams.Port = server.Port;

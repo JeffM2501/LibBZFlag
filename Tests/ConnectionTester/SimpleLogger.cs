@@ -19,7 +19,7 @@ using BZFlag.Networking.Messages.BZFS.Control;
 
 using BZFlag.Data.Teams;
 using BZFlag.Data.Types;
-using BZFlag.Authentication;
+using BZFlag.Services;
 using BZFlag.Map;
 
 namespace ConnectionTester
@@ -58,7 +58,7 @@ namespace ConnectionTester
 
 			var server = Link.FindServerWithMostPlayers();
 			if(server == null || false)
-				server = new ServiceLink.ListServerData("bzflag.allejo.io", 5170);
+				server = new GameList.ListServerData("bzflag.allejo.io", 5170);
 
 			client.Connect(server.Host, server.Port);
 
@@ -72,7 +72,7 @@ namespace ConnectionTester
 		}
 
 		static bool GotList = false;
-		private static ServiceLink Link = new ServiceLink();
+		private static GameList Link = new GameList();
 
 		private static void GetList(string user, string pass)
 		{

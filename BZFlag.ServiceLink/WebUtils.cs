@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BZFlag.Authentication
+namespace BZFlag.Services
 {
     public static class WebUtils
     {
@@ -14,5 +14,15 @@ namespace BZFlag.Authentication
                              .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
                              .ToArray();
         }
-    }
+
+		public static  string ByteArrayToString(byte[] bytes)
+		{
+			StringBuilder sb = new StringBuilder();
+			foreach(byte b in bytes)
+			{
+				sb.Append(b.ToString("x2"));
+			}
+			return sb.ToString();
+		}
+	}
 }

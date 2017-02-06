@@ -10,8 +10,19 @@ namespace BZFlag.Game.Host
     {
         public int Port = 5154;
 
+		public string LogFile = string.Empty;
+		public int LogLevel = 1;
+
         public string MapFile = string.Empty;
         public string BanListFile = string.Empty;
+
+
+		public bool ListPublicly = false;
+		public string PublicHost = string.Empty;
+		public string PublicListKey = string.Empty;
+		public List<string> PublicAdvertizeGroups = new List<string>();
+		public string PublicTitle = string.Empty;
+
 
         public static ServerConfig Read(string filepath)
         {

@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using BZFlag.Authentication;
+using BZFlag.Services;
 using BZFlag.Networking.Messages.BZFS;
 
 namespace TestClient
@@ -74,7 +74,7 @@ namespace TestClient
 
 	public partial class Form1 : Form
     {
-        ServiceLink ListServerLink = new ServiceLink();
+        GameList ListServerLink = new GameList();
 
         BZFlag.Game.Client GameClient = null;
 
@@ -109,7 +109,7 @@ namespace TestClient
                 List<object> things = new List<object>();
                 foreach(var s in ListServerLink.ServerList)
                 {
-                    if (s.TotalPlayers > 0)
+                    if (s.Info.TotalPlayers > 0)
                         things.Add(s);
                 }
 
@@ -137,14 +137,14 @@ namespace TestClient
         private void ServerList_SelectedIndexChanged(object sender, EventArgs e)
         {
             ServerInfo.Text = string.Empty;
-            ServiceLink.ListServerData server = ServerList.SelectedItem as ServiceLink.ListServerData;
+            GameList.ListServerData server = ServerList.SelectedItem as GameList.ListServerData;
             if (server == null)
                 return;
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(server.Name);
             sb.AppendLine("Address : " + server.Address);
-            sb.AppendLine("Players : " + server.TotalPlayers.ToString());
+            sb.AppendLine("Players : " + server.Info.TotalPlayers.ToString());
             sb.AppendLine(server.Description);
 
             ServerInfo.Text = sb.ToString();
@@ -152,7 +152,7 @@ namespace TestClient
 
         private void Join_Click(object sender, EventArgs e)
         {
-            ServiceLink.ListServerData server = ServerList.SelectedItem as ServiceLink.ListServerData;
+			GameList.ListServerData server = ServerList.SelectedItem as GameList.ListServerData;
             if (server == null)
                 return;
 

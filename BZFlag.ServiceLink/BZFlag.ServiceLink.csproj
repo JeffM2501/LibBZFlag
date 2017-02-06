@@ -7,8 +7,8 @@
     <ProjectGuid>{310E93A9-1EC2-4909-B96B-C08F02B34F63}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BZFlag.Authentication</RootNamespace>
-    <AssemblyName>BZFlag.Authentication</AssemblyName>
+    <RootNamespace>BZFlag.Services</RootNamespace>
+    <AssemblyName>BZFlag.ServiceLink</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -41,7 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ServiceLink.cs" />
+    <Compile Include="ClientToken.cs" />
+    <Compile Include="GameInfo.cs" />
+    <Compile Include="Hosts.cs" />
+    <Compile Include="GameList.cs" />
+    <Compile Include="PublicServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebUtils.cs" />
   </ItemGroup>
