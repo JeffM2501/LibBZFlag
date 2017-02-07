@@ -12,23 +12,38 @@ namespace BZFlag.Data.Utils
 	{
 		protected UInt16 Code = 0;
 
-		private static byte[] Buffer = new byte[2048];
-		private static int BytesUsed = 0;
+		private static byte[] GlobalBuffer = new byte[2048];
+		protected int BytesUsed = 0;
+
+        protected byte[] Buffer = null;
 
 		public DynamicOutputBuffer()
 		{
 			BytesUsed = 4;
-		}
+            Buffer = GlobalBuffer;
+        }
 
 		public DynamicOutputBuffer( int code)
 		{
 			BytesUsed = 4;
-			Code = (UInt16)code;
+            Buffer = GlobalBuffer;
+            Code = (UInt16)code;
 			WriteUInt16(0, 0);
 			WriteUInt16(Code, 2);
 		}
 
-		public void SetCode(int code)
+        public DynamicOutputBuffer(bool useGlobal, int size)
+        {
+            BytesUsed = 0;
+
+            if (useGlobal)
+                Buffer = GlobalBuffer;
+            else
+                Buffer = new byte[size];
+        }
+
+
+        public void SetCode(int code)
 		{
 			Code = (UInt16)code;
 			WriteUInt16(Code, 2);
@@ -42,7 +57,14 @@ namespace BZFlag.Data.Utils
 			return outbuffer;
 		}
 
-		private void CheckBuffer(int toAdd)
+        public byte[] GetFinalBuffer()
+        {
+            byte[] outbuffer = new byte[BytesUsed];
+            Array.Copy(Buffer, outbuffer, BytesUsed);
+            return outbuffer;
+        }
+
+        private void CheckBuffer(int toAdd)
 		{
 			if (BytesUsed + toAdd > Buffer.Length)
 				Array.Resize(ref Buffer, Buffer.Length + 1024);
@@ -103,7 +125,12 @@ namespace BZFlag.Data.Utils
 			BytesUsed += 2;
 		}
 
-		public void WriteUInt32(UInt32 value)
+        public void WriteUInt32(int value)
+        {
+            WriteUInt32((UInt32)value);
+        }
+
+        public void WriteUInt32(UInt32 value)
 		{
 			CheckBuffer(4);
 
@@ -252,7 +279,21 @@ namespace BZFlag.Data.Utils
 			BytesUsed += actualSize + 2;
 		}
 
-		public void WriteNullTermString(string value)
+        public void WriteULongPascalString(string value)
+        {
+            int actualSize = value.Length;
+            if (actualSize > int.MaxValue)
+                actualSize = int.MaxValue;
+
+            CheckBuffer(actualSize + 4);
+
+            WriteUInt32((UInt32)actualSize);
+
+            Encoding.UTF8.GetBytes(value, 0, actualSize, Buffer, BytesUsed);
+            BytesUsed += actualSize;
+        }
+
+        public void WriteNullTermString(string value)
 		{
 			CheckBuffer(value.Length + 1);
 			Encoding.UTF8.GetBytes(value, 0, value.Length, Buffer, BytesUsed);

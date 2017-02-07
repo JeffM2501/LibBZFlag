@@ -32,6 +32,7 @@ namespace BZFlag.Game.Host
 
 			public byte[] PendingData = new byte[0];
 		}
+
 		protected List<PendingClient> PendingClients = new List<PendingClient>();
 
 		public event EventHandler<PendingClient> BZFSProtocolConnectionAccepted = null;
@@ -62,9 +63,13 @@ namespace BZFlag.Game.Host
 
 		protected void TCPClientAccepted(IAsyncResult ar)
 		{
+
 			PendingClient c = new PendingClient();
 			c.ClientConnection = Listener.EndAcceptTcpClient(ar);
-			Listener.BeginAcceptTcpClient(TCPClientAccepted, null);
+
+            Logger.Log2("TCP Connection accepted from " + c.ClientConnection.Client.RemoteEndPoint.ToString());
+
+            Listener.BeginAcceptTcpClient(TCPClientAccepted, null);
 
 			var address = ((IPEndPoint)c.ClientConnection.Client.RemoteEndPoint).Address.ToString();
 
@@ -112,15 +117,17 @@ namespace BZFlag.Game.Host
 					if (!c.DNSStarted)
 					{
 						var address = ((IPEndPoint)c.ClientConnection.Client.RemoteEndPoint).Address.ToString();
-						Dns.BeginGetHostEntry(address, DNSLookupCompleted, c);
+                        Logger.Log3("DNS Lookup started for " + address);
+                        Dns.BeginGetHostEntry(address, DNSLookupCompleted, c);
 						c.DNSStarted = true;
 					}
 					else if (!c.DNSPassed)
 					{
 						if(c.HostEntry != null)
 						{
-							// lookup the host in the ban list
-							var ban = Bans.FindHostBan(c.HostEntry.HostName);
+                            Logger.Log3("Ban-List Lookup started for " + c.HostEntry.HostName);
+                            // lookup the host in the ban list
+                            var ban = Bans.FindHostBan(c.HostEntry.HostName);
 							if(ban != null)
 								c.DNSPassed = true;
 							else
@@ -148,14 +155,16 @@ namespace BZFlag.Game.Host
 							{
 								c.ProtcolPassed = false;
 								DisconnectPendingClient(c);
-							}
+                                Logger.Log4("Disconnecting abnormal connection from " + c.ClientConnection.Client.RemoteEndPoint.ToString());
+                            }
 							else
 							{
 								if (Encoding.ASCII.GetString(buffer) == Protocol.BZFSHailString)
 								{
 									c.ProtcolPassed = true;
 									stream.Write(Protocol.DefaultBZFSVersion, 0, Protocol.DefaultBZFSVersion.Length);
-								}
+                                    Logger.Log4("BZFS connection from " + c.ClientConnection.Client.RemoteEndPoint.ToString());
+                                }
 							}
 						}
 					}
@@ -166,8 +175,9 @@ namespace BZFlag.Game.Host
 						{
 							RemovePendingClient(c);
 
-							// send them off to the next step
-							if(BZFSProtocolConnectionAccepted != null)
+                            Logger.Log4("Accepted BZFS connection from " + c.ClientConnection.Client.RemoteEndPoint.ToString());
+                            // send them off to the next step
+                            if (BZFSProtocolConnectionAccepted != null)
 								BZFSProtocolConnectionAccepted.Invoke(this, c);
 						}
 					}
@@ -189,7 +199,9 @@ namespace BZFlag.Game.Host
 				return;
 
 			c.HostEntry = results;
-		}
+
+            Logger.Log3("DNS Lookup completed for " + c.HostEntry.HostName);
+        }
 
 	}
 }

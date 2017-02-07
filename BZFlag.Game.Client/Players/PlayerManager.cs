@@ -11,6 +11,7 @@ using BZFlag.Data.Players;
 using BZFlag.Data.Flags;
 using BZFlag.Networking.Messages.BZFS.Control;
 
+
 namespace BZFlag.Game.Players
 {
 	public class PlayerManager
@@ -18,17 +19,18 @@ namespace BZFlag.Game.Players
 		public Dictionary<int, Player> PlayerList = new Dictionary<int, Player>();
 
         // Special Players
-        public readonly Player ServerPlayer = new Player(253, "Server");
-        public readonly Player AllPlayers = new Player(254, "Everyone");
+        public readonly Player ServerPlayer = new Player(PlayerConstants.ServerPlayerID, "Server");
+        public readonly Player AllPlayers = new Player(PlayerConstants.AllPlayersID, "Everyone");
 
-        public readonly Player RogueTeam = new Player(251, "Rogue", Data.Teams.TeamColors.RogueTeam);
-        public readonly Player RedTeam = new Player(250, "Red", Data.Teams.TeamColors.RedTeam);
-        public readonly Player GreenTeam = new Player(249, "Green", Data.Teams.TeamColors.GreenTeam);
-        public readonly Player BlueTeam = new Player(248, "Blue", Data.Teams.TeamColors.BlueTeam);
-        public readonly Player PurpleTeam = new Player(247, "Purple", Data.Teams.TeamColors.PurpleTeam);
-        public readonly Player ObserverTeam = new Player(246, "Observers", Data.Teams.TeamColors.ObserverTeam);
-        public readonly Player RabbitTeam = new Player(245, "Rabbits", Data.Teams.TeamColors.RabbitTeam);
-        public readonly Player HunterTeam = new Player(244, "Hunters", Data.Teams.TeamColors.HunterTeam);
+        public readonly Player RogueTeam = new Player(PlayerConstants.RogueTeamID, "Rogue", Data.Teams.TeamColors.RogueTeam);
+        public readonly Player RedTeam = new Player(PlayerConstants.RedTeamID, "Red", Data.Teams.TeamColors.RedTeam);
+        public readonly Player GreenTeam = new Player(PlayerConstants.GreenTeamID, "Green", Data.Teams.TeamColors.GreenTeam);
+        public readonly Player BlueTeam = new Player(PlayerConstants.BlueTeamID, "Blue", Data.Teams.TeamColors.BlueTeam);
+        public readonly Player PurpleTeam = new Player(PlayerConstants.PurpleTeamID, "Purple", Data.Teams.TeamColors.PurpleTeam);
+        public readonly Player ObserverTeam = new Player(PlayerConstants.ObserverTeamID, "Observers", Data.Teams.TeamColors.ObserverTeam);
+        public readonly Player RabbitTeam = new Player(PlayerConstants.RabbitTeamID, "Rabbits", Data.Teams.TeamColors.RabbitTeam);
+        public readonly Player HunterTeam = new Player(PlayerConstants.HunterTeamID, "Hunters", Data.Teams.TeamColors.HunterTeam);
+
         protected Dictionary<int, Player> SpecialPlayers = new Dictionary<int, Player>();
 
         public Player[] GetPlayerList() { return PlayerList.Values.ToArray(); }

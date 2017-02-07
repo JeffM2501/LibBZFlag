@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Binary\Constants.cs" />
+    <Compile Include="Binary\WorldPacker.cs" />
     <Compile Include="Binary\WorldUnpacker.cs" />
     <Compile Include="ParserFactory.cs" />
     <Compile Include="Parsers\Base.cs" />

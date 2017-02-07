@@ -6,7 +6,9 @@ using System.Net.Sockets;
 using System.Text;
 
 using BZFlag.Services;
-
+using BZFlag.Game.Host.Processors;
+using BZFlag.Game.Host.Players;
+using BZFlag.Data.Players;
 
 namespace BZFlag.Game.Host
 {
@@ -15,24 +17,21 @@ namespace BZFlag.Game.Host
 		public TCPConnectionManager TCPConnections = null;
         public UDPConnectionManager UDPConnections = new UDPConnectionManager();
 
-        protected List<PlayerProcessor> ConnectionHandlers = new List<PlayerProcessor>();
+        protected RestrictedAccessZone SecurityArea = new RestrictedAccessZone();
+     //   protected PlayerProcessor AcceptedGamePlayers = new PlayerProcessor();
 
         public ServerConfig ConfigData = new ServerConfig();
 
+        protected Dictionary<int,ServerPlayer> ConnectedPlayers = new Dictionary<int, ServerPlayer>();
+        protected int LastPlayerID = 0;
 
 		public PublicServer PubServer = new PublicServer();
 
-        public virtual void AcceptTCPConnection (TcpClient client)
-        {
-            ServerPlayer p = NewPlayerRecord(client);
-        }
-
-        public virtual ServerPlayer NewPlayerRecord(TcpClient client) {  return new ServerPlayer(client);}
-
-
         public Server( ServerConfig cfg )
         {
-			Logger.SetLogFilePath(cfg.LogFile);
+            Networking.Messages.NetworkMessage.IsOnServer = true;
+
+            Logger.SetLogFilePath(cfg.LogFile);
 			Logger.LogLevel = cfg.LogLevel;
 
             ConfigData = cfg;
@@ -49,9 +48,11 @@ namespace BZFlag.Game.Host
 				PubServer.RequestCompleted += PubServer_RequestCompleted;
 				PubServer.RequestErrored += PubServer_RequestErrored;
 			}
+
+            SecurityArea.PromotePlayer += SecurityArea_PromotePlayer;
         }
 
-		private void PubServer_RequestErrored(object sender, EventArgs e)
+        private void PubServer_RequestErrored(object sender, EventArgs e)
 		{
 			Logger.Log1("Public List Failed: " + PubServer.LastError);
 		}
@@ -61,7 +62,50 @@ namespace BZFlag.Game.Host
 			Logger.Log3("Public List Update Complete");
 		}
 
-		public void Listen()
+        protected int FindPlayerID()
+        {
+            LastPlayerID++;
+            if (LastPlayerID > PlayerConstants.MaxUseablePlayerID)
+                LastPlayerID = PlayerConstants.MinimumPlayerID;
+
+            lock (ConnectedPlayers)
+            {
+                if (!ConnectedPlayers.ContainsKey(LastPlayerID))
+                    return LastPlayerID;
+                else
+                {
+                    for (int i = PlayerConstants.MinimumPlayerID; i <= PlayerConstants.MaxUseablePlayerID; i++)
+                    {
+                        if (!ConnectedPlayers.ContainsKey(i))
+                        {
+                            LastPlayerID = i;
+                            return LastPlayerID;
+                        }
+                    }
+                }
+            }
+
+            // we are full up
+            LastPlayerID = 0;
+            return -1;
+        }
+
+        protected virtual ServerPlayer AcceptTCPConnection(TCPConnectionManager.PendingClient client)
+        {
+            ServerPlayer p = NewPlayerRecord(client);
+            p.PlayerID = FindPlayerID();
+            if (p.PlayerID < 0)
+                return null;
+
+            lock (ConnectedPlayers)
+                ConnectedPlayers.Add(p.PlayerID, p);
+
+            return p;
+        }
+
+        protected virtual ServerPlayer NewPlayerRecord(TCPConnectionManager.PendingClient client) { return new ServerPlayer(client); }
+
+        public void Listen()
         {
             int port = ConfigData.Port;
 
@@ -87,14 +131,42 @@ namespace BZFlag.Game.Host
             {
                 // do any monitoring we need done here....
 
+                ServerPlayer[] sp = null;
+                lock (ConnectedPlayers)
+                    sp = ConnectedPlayers.Values.ToArray();
 
-                System.Threading.Thread.Sleep(20);
+                // remove any deaded connections
+                foreach(var p in sp)
+                {
+                    if (!p.Active)
+                    {
+                        lock (ConnectedPlayers)
+                            ConnectedPlayers.Remove(p.PlayerID);
+                    }
+                }
+
+
+                System.Threading.Thread.Sleep(100);
             }
         }
 
         protected virtual void BZFSProtocolConnectionAccepted(object sender, TCPConnectionManager.PendingClient e)
         {
-           
+            var player = AcceptTCPConnection(e);
+            if (player == null) // could not make a player for some reason
+            {
+                e.ClientConnection.Client.Disconnect(false);
+                return;
+            }
+
+            // send them into the restricted zone until they validate
+
+            SecurityArea.AddPendingConnection(player);
+        }
+
+        private void SecurityArea_PromotePlayer(object sender, ServerPlayer e)
+        {
+            // they passed muster
         }
     }
 }

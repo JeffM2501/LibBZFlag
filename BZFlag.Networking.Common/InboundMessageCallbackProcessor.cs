@@ -27,4 +27,5 @@ namespace BZFlag.Networking
 			Handlers.Add(msg.Code, handler);
 		}
 	}
+
 }

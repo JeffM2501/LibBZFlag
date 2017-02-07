@@ -5,6 +5,9 @@ using System.Text;
 using BZFlag.Networking.Messages;
 using BZFlag.Networking;
 
+
+using BZFlag.Game.Host.Players;
+
 namespace BZFlag.Game.Host
 {
 	public class PlayerProcessor
@@ -28,12 +31,25 @@ namespace BZFlag.Game.Host
 			lock(Players)
                 Players.Add(player);
 
+            player.Disconnected += Player_Disconnected;
+
 			if(WorkerThread == null)
 			{
 				WorkerThread = new Thread(new ThreadStart(ProcessPendingPlayers));
 				WorkerThread.Start();
 			}
 		}
+
+        protected void RemovePlayer(ServerPlayer sp)
+        {
+            sp.Disconnected -= Player_Disconnected;
+        }
+
+        private void Player_Disconnected(object sender, Networking.Common.Peer e)
+        {
+            lock (Players)
+                Players.Remove(e as ServerPlayer);
+        }
 
         public virtual void ProcessClientMessage(ServerPlayer player, NetworkMessage msg)
         {

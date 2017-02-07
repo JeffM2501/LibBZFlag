@@ -8,7 +8,7 @@ using System.Text;
 using BZFlag.Networking.Messages;
 using BZFlag.Networking.Common;
 
-namespace BZFlag.Game
+namespace BZFlag.Game.Host.Players
 {
 	public class ServerPlayer : Peer
 	{
@@ -17,10 +17,12 @@ namespace BZFlag.Game
 
 		protected NetworkStream NetStream = null;
 
+        public TCPConnectionManager.PendingClient ConnectionData = null;
 
-		public ServerPlayer(TcpClient client)
+        public ServerPlayer(TCPConnectionManager.PendingClient pc)
 		{
-			Link(client);
+            ConnectionData = pc;
+            Link(ConnectionData.ClientConnection);
 		}
 	}
 }

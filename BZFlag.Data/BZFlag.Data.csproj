@@ -45,6 +45,7 @@
     <Compile Include="Flags\FlagUpdateData.cs" />
     <Compile Include="Game\GameAttributes.cs" />
     <Compile Include="Players\PlayerAttributes.cs" />
+    <Compile Include="Players\PlayerConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Teams\TeamColors.cs" />
     <Compile Include="Types\Color4F.cs" />

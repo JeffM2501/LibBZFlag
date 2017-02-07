@@ -7,6 +7,9 @@ using System.Threading;
 using BZFlag.Networking.Messages;
 using BZFlag.Networking;
 
+
+using BZFlag.Game.Host.Players;
+
 namespace BZFlag.Game.Host
 {
     public class UDPConnectionManager

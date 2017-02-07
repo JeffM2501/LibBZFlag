@@ -9,7 +9,7 @@ using BZFlag.Networking.Messages;
 
 namespace BZFlag.Networking.Common
 {
-	public class Peer
+	public class Peer : EventArgs
 	{
 		public InboundMessageBuffer InboundTCP = null;
 		public InboundMessageBuffer InboundUDP = null;
@@ -38,7 +38,11 @@ namespace BZFlag.Networking.Common
 		protected string HostName = string.Empty;
 		protected int HostPort = -1;
 
-		public class MessageReceivedEventArgs : EventArgs
+        public event EventHandler<Peer> Disconnected = null;
+
+        public bool Active { get; private set; }
+
+        public class MessageReceivedEventArgs : EventArgs
 		{
 			public Peer Recipient = null;
 			public NetworkMessage Message = null;
@@ -133,7 +137,8 @@ namespace BZFlag.Networking.Common
 
 		public void Link(TcpClient client)
 		{
-			TCP = client;
+            Active = true;
+            TCP = client;
 			Connected = true;
 			OutboundTCP.Start();
 			OutboundUDP.Start();
@@ -191,7 +196,10 @@ namespace BZFlag.Networking.Common
 
 			OutboundTCP.Clear();
 			OutboundUDP.Clear();
-		}
+
+            Active = false;
+
+        }
 
 		public void SendMessage(NetworkMessage msg)
 		{
@@ -343,5 +351,13 @@ namespace BZFlag.Networking.Common
 				Thread.Sleep(10);
 			}
 		}
+
+        public virtual void Disconnect()
+        {
+            if (Disconnected != null)
+                Disconnected.Invoke(this, this);
+
+            Shutdown();
+        }
 	}
 }

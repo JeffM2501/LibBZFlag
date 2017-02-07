@@ -47,11 +47,14 @@
     <Compile Include="Logger.cs" />
     <Compile Include="PlayerProcessor.cs" />
     <Compile Include="Players\Player.cs" />
+    <Compile Include="Processors\RestrictedAccessZone.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerConfig.cs" />
+    <Compile Include="ServerMessageDispatcher.cs" />
     <Compile Include="TCPConnectionManager.cs" />
     <Compile Include="UDPConnectionManager.cs" />
+    <Compile Include="World\GameWorld.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BZFlag.ServiceLink\BZFlag.ServiceLink.csproj">
@@ -75,6 +78,7 @@
       <Name>BZFlag.Networking.Common</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

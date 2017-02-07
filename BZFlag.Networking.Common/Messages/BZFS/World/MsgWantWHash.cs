@@ -1,11 +1,12 @@
-﻿using System;
+﻿using BZFlag.Data.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace BZFlag.Networking.Messages.BZFS.World
 {
-	public class MsgWantWHash : NoPackedDataNetworkMessage
+	public class MsgWantWHash : NetworkMessage
 	{
 		public bool IsRandomMap = false;
 
@@ -16,7 +17,17 @@ namespace BZFlag.Networking.Messages.BZFS.World
 			Code = CodeFromChars("wh");
 		}
 
-		public override void Unpack(byte[] data)
+        public override byte[] Pack()
+        {
+            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+
+            if (NetworkMessage.IsOnServer)
+                buffer.WriteNullTermString(WorldHash);
+        
+             return buffer.GetMessageBuffer();
+        }
+
+        public override void Unpack(byte[] data)
 		{
             Reset(data);
             string t = ReadNullTermString(true);
