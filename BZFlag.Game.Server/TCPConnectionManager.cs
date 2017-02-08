@@ -19,8 +19,9 @@ namespace BZFlag.Game.Host
 		public class PendingClient : EventArgs
 		{
 			public TcpClient ClientConnection = null;
+            public NetworkStream NetStream = null;
 
-			public bool Active = false;
+			public bool Active = true;
 
 			public bool DNSStarted = false;
 			public IPHostEntry HostEntry = null;
@@ -29,6 +30,7 @@ namespace BZFlag.Game.Host
 
 			public bool DataRecieved = false;
 			public bool ProtcolPassed = false;
+            public bool VersionPassed = false;
 
 			public byte[] PendingData = new byte[0];
 		}
@@ -50,7 +52,9 @@ namespace BZFlag.Game.Host
 
 		public void StartUp()
 		{
-			Listener.BeginAcceptTcpClient(TCPClientAccepted, null);
+            Listener.Start();
+
+            Listener.BeginAcceptTcpClient(TCPClientAccepted, null);
 		}
 
 		public void Shutdown()
@@ -66,6 +70,7 @@ namespace BZFlag.Game.Host
 
 			PendingClient c = new PendingClient();
 			c.ClientConnection = Listener.EndAcceptTcpClient(ar);
+            c.NetStream = c.ClientConnection.GetStream();
 
             Logger.Log2("TCP Connection accepted from " + c.ClientConnection.Client.RemoteEndPoint.ToString());
 
@@ -128,7 +133,7 @@ namespace BZFlag.Game.Host
                             Logger.Log3("Ban-List Lookup started for " + c.HostEntry.HostName);
                             // lookup the host in the ban list
                             var ban = Bans.FindHostBan(c.HostEntry.HostName);
-							if(ban != null)
+							if(ban == null)
 								c.DNSPassed = true;
 							else
 							{
@@ -141,6 +146,8 @@ namespace BZFlag.Game.Host
 					if (!c.Active)
 						continue;
 
+                    int available = c.ClientConnection.Available;
+
 					if (c.ClientConnection.Available >= Protocol.BZFSHail.Length)
 					{
 						if (!c.ProtcolPassed)
@@ -148,9 +155,7 @@ namespace BZFlag.Game.Host
 							c.DataRecieved = true;
 							byte[] buffer = new byte[Protocol.BZFSHail.Length];
 
-							var stream = c.ClientConnection.GetStream();
-
-							int read = stream.Read(buffer,0, buffer.Length);
+							int read = c.NetStream.Read(buffer,0, buffer.Length);
 							if (read != buffer.Length)
 							{
 								c.ProtcolPassed = false;
@@ -162,7 +167,8 @@ namespace BZFlag.Game.Host
 								if (Encoding.ASCII.GetString(buffer) == Protocol.BZFSHailString)
 								{
 									c.ProtcolPassed = true;
-									stream.Write(Protocol.DefaultBZFSVersion, 0, Protocol.DefaultBZFSVersion.Length);
+                                    c.NetStream.Write(Protocol.DefaultBZFSVersion, 0, Protocol.DefaultBZFSVersion.Length);
+                                    c.NetStream.Flush();
                                     Logger.Log4("BZFS connection from " + c.ClientConnection.Client.RemoteEndPoint.ToString());
                                 }
 							}
@@ -171,7 +177,7 @@ namespace BZFlag.Game.Host
 
 					if (c.Active)
 					{
-						if (c.DNSStarted && c.DNSPassed && c.DataRecieved && c.ProtcolPassed)
+						if (c.DNSStarted && c.DNSPassed && c.DataRecieved && c.ProtcolPassed && c.VersionPassed)
 						{
 							RemovePendingClient(c);
 

@@ -143,7 +143,13 @@ namespace BZFlag.Networking.Common
 			OutboundTCP.Start();
 			OutboundUDP.Start();
 
-			InboundMessageProcessor.Start();
+            if (InboundTCP == null)
+            {
+                InboundTCP = new InboundMessageBuffer(false);
+                InboundUDP = new InboundMessageBuffer(true);
+            }
+
+            InboundMessageProcessor.Start();
 
 			TCPNetworkPollThread = new Thread(new ThreadStart(PollTCP));
 			TCPNetworkPollThread.Start();

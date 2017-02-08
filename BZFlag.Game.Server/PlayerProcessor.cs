@@ -15,6 +15,9 @@ namespace BZFlag.Game.Host
 		protected Thread WorkerThread = null;
 		private List<ServerPlayer> Players = new List<ServerPlayer>();
 
+        protected MessageManager MessageProcessor = null;
+
+
         public int SleepTime = 100;
 		public static int MaxMessagesPerClientCycle = 10;
 
@@ -74,7 +77,7 @@ namespace BZFlag.Game.Host
 						if(buffer == null)
 							break;
 		
-						NetworkMessage msg = SecurityJailMessageFacotry.Factory.Unpack(buffer.ID, buffer.Data);
+						NetworkMessage msg = MessageProcessor.Unpack(buffer.ID, buffer.Data);
 						msg.Tag = player;
 						msg.FromUDP = false;
 

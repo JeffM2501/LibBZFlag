@@ -32,7 +32,7 @@ namespace BZFlag.Game.Host
             Networking.Messages.NetworkMessage.IsOnServer = true;
 
             Logger.SetLogFilePath(cfg.LogFile);
-			Logger.LogLevel = cfg.LogLevel;
+			Logger.LogLevel = cfg.LogLevel = 4;
 
             ConfigData = cfg;
 
@@ -114,9 +114,13 @@ namespace BZFlag.Game.Host
             TCPConnections = new TCPConnectionManager(port, this);
             TCPConnections.BZFSProtocolConnectionAccepted += BZFSProtocolConnectionAccepted;
 
-            UDPConnections = new UDPConnectionManager();
+            TCPConnections.StartUp();
 
-			if(ConfigData.ListPublicly)
+            UDPConnections = new UDPConnectionManager();
+            UDPConnections.Listen(port);
+
+
+            if (ConfigData.ListPublicly)
 			{
 				PubServer.UpdateMasterServer();
 				Logger.Log1("Listening on port " + port.ToString());

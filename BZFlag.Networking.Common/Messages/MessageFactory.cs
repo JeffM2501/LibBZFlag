@@ -21,8 +21,56 @@ namespace BZFlag.Networking.Messages
 
 		static ClientMessageFactory()
 		{
-			Factory.RegisterBSFSClientMessages();
-		}
+            Factory.RegisterMessageType(new MsgEnter());
+            Factory.RegisterMessageType(new MsgExit());
+            Factory.RegisterMessageType(new MsgQueryGame());
+            Factory.RegisterMessageType(new MsgSuperKill());
+            Factory.RegisterMessageType(new MsgWantWHash());
+            Factory.RegisterMessageType(new MsgCacheURL());
+            Factory.RegisterMessageType(new MsgNegotiateFlags());
+            Factory.RegisterMessageType(new MsgGameTime());
+            Factory.RegisterMessageType(new MsgMessage());
+            Factory.RegisterMessageType(new MsgAccept());
+            Factory.RegisterMessageType(new MsgReject());
+            Factory.RegisterMessageType(new MsgSetVars());
+            Factory.RegisterMessageType(new MsgTeamUpdate());
+            Factory.RegisterMessageType(new MsgUDPLinkRequest());
+            Factory.RegisterMessageType(new MsgUDPLinkEstablished());
+            Factory.RegisterMessageType(new MsgLagPing());
+            Factory.RegisterMessageType(new MsgFlagUpdate());
+            Factory.RegisterMessageType(new MsgAddPlayer());
+            Factory.RegisterMessageType(new MsgRemovePlayer());
+            Factory.RegisterMessageType(new MsgPlayerInfo());
+            Factory.RegisterMessageType(new MsgGetWorld());
+            Factory.RegisterMessageType(new MsgPlayerUpdateSmall());
+            Factory.RegisterMessageType(new MsgPlayerUpdate());
+            Factory.RegisterMessageType(new MsgQueryPlayers());
+            Factory.RegisterMessageType(new MsgScore());
+            Factory.RegisterMessageType(new MsgAlive());
+            Factory.RegisterMessageType(new MsgShotBegin());
+            Factory.RegisterMessageType(new MsgShotEnd());
+            Factory.RegisterMessageType(new MsgDropFlag());
+            Factory.RegisterMessageType(new MsgGrabFlag());
+            Factory.RegisterMessageType(new MsgTransferFlag());
+            Factory.RegisterMessageType(new MsgGMUpdate());
+            Factory.RegisterMessageType(new MsgKilled());
+            Factory.RegisterMessageType(new MsgTeleport());
+            Factory.RegisterMessageType(new MsgCaptureFlag());
+            Factory.RegisterMessageType(new MsgNearFlag());
+            Factory.RegisterMessageType(new MsgTimeUpdate());
+            Factory.RegisterMessageType(new MsgScoreOver());
+            Factory.RegisterMessageType(new MsgPause());
+            Factory.RegisterMessageType(new MsgAutoPilot());
+            Factory.RegisterMessageType(new MsgFlagType());
+            Factory.RegisterMessageType(new MsgNewRabbit());
+            Factory.RegisterMessageType(new MsgHandicap());
+            Factory.RegisterMessageType(new MsgCustomSound());
+            Factory.RegisterMessageType(new MsgWantSettings());
+            Factory.RegisterMessageType(new MsgGameSettings());
+            Factory.RegisterMessageType(new MsgFetchResources());
+            Factory.RegisterMessageType(new MsgAdminInfo());
+            Factory.RegisterMessageType(new MsgReplayReset());
+        }
 	}
 
 	public static class SecurityJailMessageFacotry
@@ -92,57 +140,5 @@ namespace BZFlag.Networking.Messages
 			return msg;
 		}
 
-		public void  RegisterBSFSClientMessages()
-		{
-			RegisterMessageType(new MsgEnter());
-			RegisterMessageType(new MsgExit());
-            RegisterMessageType(new MsgQueryGame());
-			RegisterMessageType(new MsgSuperKill());
-			RegisterMessageType(new MsgWantWHash());
-            RegisterMessageType(new MsgCacheURL());
-			RegisterMessageType(new MsgNegotiateFlags());
-			RegisterMessageType(new MsgGameTime());
-			RegisterMessageType(new MsgMessage());
-			RegisterMessageType(new MsgAccept());
-			RegisterMessageType(new MsgReject());
-			RegisterMessageType(new MsgSetVars());
-			RegisterMessageType(new MsgTeamUpdate());
-			RegisterMessageType(new MsgUDPLinkRequest());
-            RegisterMessageType(new MsgUDPLinkEstablished());
-            RegisterMessageType(new MsgLagPing());
-            RegisterMessageType(new MsgFlagUpdate());
-			RegisterMessageType(new MsgAddPlayer());
-			RegisterMessageType(new MsgRemovePlayer());
-			RegisterMessageType(new MsgPlayerInfo());
-			RegisterMessageType(new MsgGetWorld());
-            RegisterMessageType(new MsgPlayerUpdateSmall());
-            RegisterMessageType(new MsgPlayerUpdate());
-            RegisterMessageType(new MsgQueryPlayers());
-            RegisterMessageType(new MsgScore());
-			RegisterMessageType(new MsgAlive());
-			RegisterMessageType(new MsgShotBegin());
-			RegisterMessageType(new MsgShotEnd());
-			RegisterMessageType(new MsgDropFlag());
-			RegisterMessageType(new MsgGrabFlag());
-			RegisterMessageType(new MsgTransferFlag());
-			RegisterMessageType(new MsgGMUpdate());
-            RegisterMessageType(new MsgKilled());
-            RegisterMessageType(new MsgTeleport());
-            RegisterMessageType(new MsgCaptureFlag());
-            RegisterMessageType(new MsgNearFlag());
-            RegisterMessageType(new MsgTimeUpdate());
-            RegisterMessageType(new MsgScoreOver());
-            RegisterMessageType(new MsgPause());
-            RegisterMessageType(new MsgAutoPilot());
-            RegisterMessageType(new MsgFlagType());
-            RegisterMessageType(new MsgNewRabbit());
-            RegisterMessageType(new MsgHandicap());
-            RegisterMessageType(new MsgCustomSound());
-            RegisterMessageType(new MsgWantSettings());
-            RegisterMessageType(new MsgGameSettings());
-            RegisterMessageType(new MsgFetchResources());
-            RegisterMessageType(new MsgAdminInfo());
-            RegisterMessageType(new MsgReplayReset());
-		}
 	}
 }

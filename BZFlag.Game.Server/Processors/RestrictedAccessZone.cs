@@ -14,15 +14,18 @@ namespace BZFlag.Game.Host.Processors
     {
         public event EventHandler<ServerPlayer> PromotePlayer = null;
 
-        protected ServerMessageDispatcher MessageProcessor = new ServerMessageDispatcher();
+        protected ServerMessageDispatcher MessageDispatch = new ServerMessageDispatcher();
+
         public RestrictedAccessZone()
         {
-            MessageProcessor.Add(new MsgWantWHash(), HandleWantWorldHash);
+            MessageProcessor = SecurityJailMessageFacotry.Factory;
+
+            MessageDispatch.Add(new MsgWantWHash(), HandleWantWorldHash);
         }
 
         public override void ProcessClientMessage(ServerPlayer player, NetworkMessage msg)
         {
-            if (!MessageProcessor.DispatchMessage(player, msg))
+            if (!MessageDispatch.DispatchMessage(player, msg))
             {
                 Logger.Log1("Restricted Access Zone unhandled message " + msg.Code);
             }
