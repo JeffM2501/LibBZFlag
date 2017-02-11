@@ -148,9 +148,9 @@ namespace BZFlag.Game.Host
 
                     int available = c.ClientConnection.Available;
 
-					if (c.ClientConnection.Available >= Protocol.BZFSHail.Length)
+					if (c.ClientConnection.Available > 0)
 					{
-						if (!c.ProtcolPassed)
+						if (!c.ProtcolPassed && c.ClientConnection.Available >= Protocol.BZFSHail.Length)
 						{
 							c.DataRecieved = true;
 							byte[] buffer = new byte[Protocol.BZFSHail.Length];
@@ -169,7 +169,8 @@ namespace BZFlag.Game.Host
 									c.ProtcolPassed = true;
                                     c.NetStream.Write(Protocol.DefaultBZFSVersion, 0, Protocol.DefaultBZFSVersion.Length);
                                     c.NetStream.Flush();
-                                    Logger.Log4("BZFS connection from " + c.ClientConnection.Client.RemoteEndPoint.ToString());
+                                    c.VersionPassed = true;
+                                    Logger.Log4("BZFS header from " + c.ClientConnection.Client.RemoteEndPoint.ToString());
                                 }
 							}
 						}

@@ -51,6 +51,14 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 		public override void Unpack(byte[] data)
 		{
             Reset(data);
-		}
+
+            PlayerType = (PlayerTypes)ReadUInt16();
+            PlayerTeam = (TeamColors)ReadInt16();
+
+            Callsign = ReadFixedSizeString(Constants.CallsignLen);
+            Motto = ReadFixedSizeString(Constants.MottoLen);
+            Token = ReadFixedSizeString(Constants.TokenLen);
+            Version = ReadFixedSizeString(Constants.VersionLen);
+        }
 	}
 }

@@ -7,6 +7,7 @@ using BZFlag.Networking.Messages;
 using BZFlag.Game.Host.Players;
 using BZFlag.Networking;
 using BZFlag.Networking.Messages.BZFS.World;
+using BZFlag.Networking.Messages.BZFS.Player;
 
 namespace BZFlag.Game.Host.Processors
 {
@@ -21,6 +22,7 @@ namespace BZFlag.Game.Host.Processors
             MessageProcessor = SecurityJailMessageFacotry.Factory;
 
             MessageDispatch.Add(new MsgWantWHash(), HandleWantWorldHash);
+            MessageDispatch.Add(new MsgEnter(), HandleEnter);
         }
 
         public override void ProcessClientMessage(ServerPlayer player, NetworkMessage msg)
@@ -36,6 +38,15 @@ namespace BZFlag.Game.Host.Processors
             RemovePlayer(sp);
             if (PromotePlayer != null)
                 PromotePlayer.Invoke(this,sp);
+        }
+        private void HandleEnter(ServerPlayer player, NetworkMessage msg)
+        {
+            MsgEnter enter = msg as MsgEnter;
+            if (enter == null)
+                return;
+
+            hash.WorldHash = "NOPE!";
+            player.SendMessage(hash);
         }
 
         private void HandleWantWorldHash(ServerPlayer player, NetworkMessage msg)

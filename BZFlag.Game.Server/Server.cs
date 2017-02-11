@@ -163,8 +163,11 @@ namespace BZFlag.Game.Host
                 return;
             }
 
-            // send them into the restricted zone until they validate
+            // send them the player ID, so they can give us data
+            player.SendDirectMessage(true, new byte[] { (byte)player.PlayerID });
 
+
+            // send them into the restricted zone until they validate
             SecurityArea.AddPendingConnection(player);
         }
 
