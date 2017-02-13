@@ -8,6 +8,7 @@ using BZFlag.Game.Host.Players;
 using BZFlag.Networking;
 using BZFlag.Networking.Messages.BZFS.World;
 using BZFlag.Networking.Messages.BZFS.Player;
+using BZFlag.Networking.Messages.BZFS.Control;
 
 namespace BZFlag.Game.Host.Processors
 {
@@ -17,7 +18,7 @@ namespace BZFlag.Game.Host.Processors
 
         protected ServerMessageDispatcher MessageDispatch = new ServerMessageDispatcher();
 
-        public RestrictedAccessZone()
+        public RestrictedAccessZone(ServerConfig cfg) : base(cfg)
         {
             MessageProcessor = SecurityJailMessageFacotry.Factory;
 
@@ -45,8 +46,21 @@ namespace BZFlag.Game.Host.Processors
             if (enter == null)
                 return;
 
-            hash.WorldHash = "NOPE!";
-            player.SendMessage(hash);
+			if (enter.Callsign == string.Empty || enter.Callsign.Length < 3)
+			{
+				player.SendMessage(new MsgReject(MsgReject.RejectionCodes.RejectBadCallsign, "Invalid callsign"));
+				return;
+			}
+
+
+			player.Callsign = enter.Callsign;
+			player.Motto = enter.Motto;
+			player.Token = enter.Token;
+
+			MsgAccept accept = new MsgAccept();
+			accept.PlayerID = player.PlayerID;
+
+            player.SendMessage(accept);
         }
 
         private void HandleWantWorldHash(ServerPlayer player, NetworkMessage msg)

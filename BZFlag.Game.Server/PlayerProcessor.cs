@@ -21,6 +21,13 @@ namespace BZFlag.Game.Host
         public int SleepTime = 100;
 		public static int MaxMessagesPerClientCycle = 10;
 
+		ServerConfig Config = null;
+
+		public PlayerProcessor(ServerConfig cfg)
+		{
+			Config = cfg;
+		}
+
 		public void Shutdown()
 		{
 			if(WorkerThread != null)

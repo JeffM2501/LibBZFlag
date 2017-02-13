@@ -34,6 +34,13 @@ namespace BZFlag.Networking.Messages.BZFS.Control
 			Code = CodeFromChars("rj");
 		}
 
+		public MsgReject(RejectionCodes rc, string reason)
+		{
+			Code = CodeFromChars("rj");
+			ReasonCode = rc;
+			ReasonMessage = reason;
+		}
+
 		public override byte[] Pack()
 		{
 			throw new NotImplementedException();

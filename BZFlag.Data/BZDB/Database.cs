@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BZFlag.Data.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,22 @@ namespace BZFlag.Data.BZDB
 
 	public class Database
 	{
-		protected Dictionary<string, string> RawBZDBVariables = new Dictionary<string, string>();
+		public class DatabaseItem
+		{
+			public string Key = string.Empty;
+			public string Value = string.Empty;
+
+			public double DoubleValue = double.MinValue;
+			public Vector3F VectorValue = Vector3F.Zero;
+			public bool IsComputation = false;
+
+			public List<DatabaseItem> DependentItems = new List<DatabaseItem>();
+			public event EventHandler Changed = null;
+
+			public bool Trasmit = true;
+		}
+
+		protected Dictionary<string, DatabaseItem> RawBZDBVariables = new Dictionary<string, DatabaseItem>();
 
     
 		public class DatabaseChangedEventArgs : EventArgs
@@ -35,33 +51,40 @@ namespace BZFlag.Data.BZDB
                 NotificationEvents[name] = handler;
         }
 
-        public string GetValue(string key)
+        public string GetValueS(string key)
         {
             if (RawBZDBVariables.ContainsKey(key))
-                return RawBZDBVariables[key];
+                return RawBZDBVariables[key].Value;
             return string.Empty;
         }
 
         public double GetValueD(string key)
         {
-            double v = 0;
-            double.TryParse(GetValue(key), out v);
-
-            return v;
-        }
+			if(RawBZDBVariables.ContainsKey(key))
+				return RawBZDBVariables[key].DoubleValue;
+			return double.MinValue;
+		}
 
         public float GetValueF(string key)
         {
-            float v = 0;
-            float.TryParse(GetValue(key), out v);
-
-            return v;
+            return (float)GetValueD(key);
         }
 
         public bool GetValueB(string key)
         {
-            return GetValue(key) == "1";
+            return GetValueS(key) == "1";
         }
+
+		internal bool ChangeValue(string key, string value)
+		{
+			DatabaseChangedEventArgs args = new DatabaseChangedEventArgs();
+			if(RawBZDBVariables.ContainsKey(key))
+			{
+				args.OldValue = RawBZDBVariables[key].Value;
+			}
+			else
+				RawBZDBVariables.Add(key, string.Empty);
+		}
 
         public void SetValue(string key, string value)
 		{

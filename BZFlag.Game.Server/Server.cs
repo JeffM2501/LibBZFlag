@@ -9,6 +9,8 @@ using BZFlag.Services;
 using BZFlag.Game.Host.Processors;
 using BZFlag.Game.Host.Players;
 using BZFlag.Data.Players;
+using BZFlag.Game.Host.API;
+using System.Reflection;
 
 namespace BZFlag.Game.Host
 {
@@ -17,8 +19,10 @@ namespace BZFlag.Game.Host
 		public TCPConnectionManager TCPConnections = null;
         public UDPConnectionManager UDPConnections = new UDPConnectionManager();
 
-        protected RestrictedAccessZone SecurityArea = new RestrictedAccessZone();
-     //   protected PlayerProcessor AcceptedGamePlayers = new PlayerProcessor();
+		protected RestrictedAccessZone SecurityArea = null;
+		//   protected PlayerProcessor AcceptedGamePlayers = new PlayerProcessor();
+
+		internal BZFlag.Data.BZDB.Database BZDatabase = new BZFlag.Data.BZDB.Database();
 
         public ServerConfig ConfigData = new ServerConfig();
 
@@ -36,7 +40,42 @@ namespace BZFlag.Game.Host
 
             ConfigData = cfg;
 
-			if (ConfigData.ListPublicly)
+			SetupBZDB();
+			SetupAPI();
+			SetupPublicListing();
+
+			SecurityArea = new RestrictedAccessZone(ConfigData);
+			SecurityArea.PromotePlayer += SecurityArea_PromotePlayer;
+        }
+
+		private void SetupBZDB()
+		{
+			BZFlag.Game.Host.BZDB.Defaults.Setup(BZDatabase);
+		}
+
+		private void SetupAPI()
+		{
+			API.Functions.ServerInstnace = this;
+
+			PluginLoader.LoadFromAssembly(Assembly.GetExecutingAssembly());
+			foreach(var f in ConfigData.PlugIns)
+			{
+				try
+				{
+					var a = Assembly.LoadFile(f);
+					if(a != null)
+						PluginLoader.LoadFromAssembly(a);
+				}
+				catch(System.Exception ex)
+				{
+					Logger.Log1("Unable to load plug-in " + f + " :" + ex.ToString());
+				}
+			}
+		}
+
+		private void SetupPublicListing()
+		{
+			if(ConfigData.ListPublicly)
 			{
 				PubServer.Address = ConfigData.PublicHost;
 				PubServer.Description = ConfigData.PublicTitle;
@@ -48,9 +87,7 @@ namespace BZFlag.Game.Host
 				PubServer.RequestCompleted += PubServer_RequestCompleted;
 				PubServer.RequestErrored += PubServer_RequestErrored;
 			}
-
-            SecurityArea.PromotePlayer += SecurityArea_PromotePlayer;
-        }
+		}
 
         private void PubServer_RequestErrored(object sender, EventArgs e)
 		{

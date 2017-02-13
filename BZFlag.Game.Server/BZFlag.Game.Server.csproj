@@ -42,7 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\Functions.cs" />
+    <Compile Include="API\Plugins.cs" />
     <Compile Include="BanList.cs" />
+    <Compile Include="BZDB\Defaults.cs" />
     <Compile Include="BZFS.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="PlayerProcessor.cs" />
