@@ -8,7 +8,7 @@ namespace BZFlag.Data.Types
 {
     public class Vector2F : IEnumerable<float>
     {
-        protected float[] Pos = new float[] { 0, 0};
+        protected float[] Pos = new float[] { 0, 0 };
 
         public float X
         {

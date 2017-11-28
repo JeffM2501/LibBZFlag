@@ -11,9 +11,9 @@ using BZFlag.IO.BZW.Parsers;
 
 namespace BZFlag.IO.BZW
 {
-	public static class Writer
-	{
-        private static BasicObjectParser ParserFromObject( BasicObject obj)
+    public static class Writer
+    {
+        private static BasicObjectParser ParserFromObject(BasicObject obj)
         {
             BasicObjectParser parser = ParserFactory.Create(obj.ObjectType.ToUpperInvariant());
             parser.Object = obj;
@@ -21,18 +21,18 @@ namespace BZFlag.IO.BZW
         }
 
         public static bool WriteMap(StreamWriter outStream, WorldMap map)
-		{
-			WriteObject(outStream, map.WorldInfo);
-			WriteObject(outStream, map.WorldOptions);
+        {
+            WriteObject(outStream, map.WorldInfo);
+            WriteObject(outStream, map.WorldOptions);
 
-			foreach(var o in map.Objects)
-				WriteObject(outStream, o);
+            foreach (var o in map.Objects)
+                WriteObject(outStream, o);
 
-			return true;
-		}
+            return true;
+        }
 
-		private static void WriteObject(StreamWriter outStream, BasicObject obj)
-		{
+        private static void WriteObject(StreamWriter outStream, BasicObject obj)
+        {
             BasicObjectParser parser = ParserFromObject(obj);
             if (parser == null)
                 return;
@@ -40,14 +40,14 @@ namespace BZFlag.IO.BZW
             string keyword = parser.BuildCode();
 
             if (parser.Code.Count == 0)
-				return;
+                return;
 
-			outStream.WriteLine(keyword);
-			foreach(var s in parser.Code)
-				outStream.WriteLine(s);
+            outStream.WriteLine(keyword);
+            foreach (var s in parser.Code)
+                outStream.WriteLine(s);
 
-			outStream.WriteLine(parser.ObjectTerminator);
-			outStream.WriteLine();
-		}
-	}
+            outStream.WriteLine(parser.ObjectTerminator);
+            outStream.WriteLine();
+        }
+    }
 }

@@ -16,88 +16,88 @@ namespace BZFlag.Game.Host
 {
     public class Server
     {
-		public TCPConnectionManager TCPConnections = null;
+        public TCPConnectionManager TCPConnections = null;
         public UDPConnectionManager UDPConnections = new UDPConnectionManager();
 
-		protected RestrictedAccessZone SecurityArea = null;
-		//   protected PlayerProcessor AcceptedGamePlayers = new PlayerProcessor();
+        protected RestrictedAccessZone SecurityArea = null;
+        //   protected PlayerProcessor AcceptedGamePlayers = new PlayerProcessor();
 
-		internal BZFlag.Data.BZDB.Database BZDatabase = new BZFlag.Data.BZDB.Database();
+        internal BZFlag.Data.BZDB.Database BZDatabase = new BZFlag.Data.BZDB.Database();
 
         public ServerConfig ConfigData = new ServerConfig();
 
-        protected Dictionary<int,ServerPlayer> ConnectedPlayers = new Dictionary<int, ServerPlayer>();
+        protected Dictionary<int, ServerPlayer> ConnectedPlayers = new Dictionary<int, ServerPlayer>();
         protected int LastPlayerID = 0;
 
-		public PublicServer PubServer = new PublicServer();
+        public PublicServer PubServer = new PublicServer();
 
-        public Server( ServerConfig cfg )
+        public Server(ServerConfig cfg)
         {
             Networking.Messages.NetworkMessage.IsOnServer = true;
 
             Logger.SetLogFilePath(cfg.LogFile);
-			Logger.LogLevel = cfg.LogLevel = 4;
+            Logger.LogLevel = cfg.LogLevel = 4;
 
             ConfigData = cfg;
 
-			SetupBZDB();
-			SetupAPI();
-			SetupPublicListing();
+            SetupBZDB();
+            SetupAPI();
+            SetupPublicListing();
 
-			SecurityArea = new RestrictedAccessZone(ConfigData);
-			SecurityArea.PromotePlayer += SecurityArea_PromotePlayer;
+            SecurityArea = new RestrictedAccessZone(ConfigData);
+            SecurityArea.PromotePlayer += SecurityArea_PromotePlayer;
         }
 
-		private void SetupBZDB()
-		{
-			BZFlag.Game.Host.BZDB.Defaults.Setup(BZDatabase);
-		}
+        private void SetupBZDB()
+        {
+            BZFlag.Game.Host.BZDB.Defaults.Setup(BZDatabase);
+        }
 
-		private void SetupAPI()
-		{
-			API.Functions.ServerInstnace = this;
+        private void SetupAPI()
+        {
+            API.Functions.ServerInstnace = this;
 
-			PluginLoader.LoadFromAssembly(Assembly.GetExecutingAssembly());
-			foreach(var f in ConfigData.PlugIns)
-			{
-				try
-				{
-					var a = Assembly.LoadFile(f);
-					if(a != null)
-						PluginLoader.LoadFromAssembly(a);
-				}
-				catch(System.Exception ex)
-				{
-					Logger.Log1("Unable to load plug-in " + f + " :" + ex.ToString());
-				}
-			}
-		}
+            PluginLoader.LoadFromAssembly(Assembly.GetExecutingAssembly());
+            foreach (var f in ConfigData.PlugIns)
+            {
+                try
+                {
+                    var a = Assembly.LoadFile(f);
+                    if (a != null)
+                        PluginLoader.LoadFromAssembly(a);
+                }
+                catch (System.Exception ex)
+                {
+                    Logger.Log1("Unable to load plug-in " + f + " :" + ex.ToString());
+                }
+            }
+        }
 
-		private void SetupPublicListing()
-		{
-			if(ConfigData.ListPublicly)
-			{
-				PubServer.Address = ConfigData.PublicHost;
-				PubServer.Description = ConfigData.PublicTitle;
-				PubServer.Name = ConfigData.PublicHost;
-				PubServer.Port = ConfigData.Port;
-				PubServer.Key = ConfigData.PublicListKey;
-				PubServer.AdvertGroups = string.Join(",", ConfigData.PublicAdvertizeGroups.ToArray());
+        private void SetupPublicListing()
+        {
+            if (ConfigData.ListPublicly)
+            {
+                PubServer.Address = ConfigData.PublicHost;
+                PubServer.Description = ConfigData.PublicTitle;
+                PubServer.Name = ConfigData.PublicHost;
+                PubServer.Port = ConfigData.Port;
+                PubServer.Key = ConfigData.PublicListKey;
+                PubServer.AdvertGroups = string.Join(",", ConfigData.PublicAdvertizeGroups.ToArray());
 
-				PubServer.RequestCompleted += PubServer_RequestCompleted;
-				PubServer.RequestErrored += PubServer_RequestErrored;
-			}
-		}
+                PubServer.RequestCompleted += PubServer_RequestCompleted;
+                PubServer.RequestErrored += PubServer_RequestErrored;
+            }
+        }
 
         private void PubServer_RequestErrored(object sender, EventArgs e)
-		{
-			Logger.Log1("Public List Failed: " + PubServer.LastError);
-		}
+        {
+            Logger.Log1("Public List Failed: " + PubServer.LastError);
+        }
 
-		private void PubServer_RequestCompleted(object sender, EventArgs e)
-		{
-			Logger.Log3("Public List Update Complete");
-		}
+        private void PubServer_RequestCompleted(object sender, EventArgs e)
+        {
+            Logger.Log3("Public List Update Complete");
+        }
 
         protected int FindPlayerID()
         {
@@ -146,7 +146,7 @@ namespace BZFlag.Game.Host
         {
             int port = ConfigData.Port;
 
-			Logger.Log1("Listening on port " + port.ToString());
+            Logger.Log1("Listening on port " + port.ToString());
 
             TCPConnections = new TCPConnectionManager(port, this);
             TCPConnections.BZFSProtocolConnectionAccepted += BZFSProtocolConnectionAccepted;
@@ -158,17 +158,17 @@ namespace BZFlag.Game.Host
 
 
             if (ConfigData.ListPublicly)
-			{
-				PubServer.UpdateMasterServer();
-				Logger.Log1("Listening on port " + port.ToString());
-			}
+            {
+                PubServer.UpdateMasterServer();
+                Logger.Log1("Listening on port " + port.ToString());
+            }
         }
 
         public void Run()
         {
             Listen();
 
-            while(true)
+            while (true)
             {
                 // do any monitoring we need done here....
 
@@ -177,7 +177,7 @@ namespace BZFlag.Game.Host
                     sp = ConnectedPlayers.Values.ToArray();
 
                 // remove any deaded connections
-                foreach(var p in sp)
+                foreach (var p in sp)
                 {
                     if (!p.Active)
                     {

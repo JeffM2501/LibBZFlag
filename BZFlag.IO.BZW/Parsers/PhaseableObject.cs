@@ -7,35 +7,35 @@ using BZFlag.Map.Elements.Shapes;
 
 namespace BZFlag.IO.BZW.Parsers
 {
-	public abstract class PhaseableObjectParser : PositionableObjectParser
+    public abstract class PhaseableObjectParser : PositionableObjectParser
     {
-		public override bool AddCodeLine(string command, string line)
-		{
+        public override bool AddCodeLine(string command, string line)
+        {
             PhaseableObject p = Object as PhaseableObject;
             if (p == null)
-                return base.AddCodeLine(command,line);
+                return base.AddCodeLine(command, line);
 
-			if(command == "PASSABLE")
-				p.Passable = true;
-			else if(command == "DRIVETHROUGH")
-				p.DriveThrough = true;
-			else if(command == "SHOOTTHROUGH")
-				p.ShootThrough = true;
-			else if(command == "RICOCHET")
-				p.Ricochet = true;
-			else
-				base.AddCodeLine(command, line);
+            if (command == "PASSABLE")
+                p.Passable = true;
+            else if (command == "DRIVETHROUGH")
+                p.DriveThrough = true;
+            else if (command == "SHOOTTHROUGH")
+                p.ShootThrough = true;
+            else if (command == "RICOCHET")
+                p.Ricochet = true;
+            else
+                base.AddCodeLine(command, line);
 
-			return true;
-		}
+            return true;
+        }
 
         public override void Finish()
         {
 
         }
 
-		public override string BuildCode()
-		{
+        public override string BuildCode()
+        {
             PhaseableObject p = Object as PhaseableObject;
             if (p == null)
                 return base.BuildCode();
@@ -57,6 +57,6 @@ namespace BZFlag.IO.BZW.Parsers
                 AddCode(1, "ricochet");
 
             return name;
-		}
-	}
+        }
+    }
 }

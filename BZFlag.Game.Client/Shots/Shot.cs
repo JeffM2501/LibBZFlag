@@ -6,32 +6,32 @@ using BZFlag.Data.Teams;
 
 namespace BZFlag.Game.Shots
 {
-	public class Shot : EventArgs
-	{
-		public int GlobalID = int.MinValue;
-		public int BZFSShotID = int.MinValue;
+    public class Shot : EventArgs
+    {
+        public int GlobalID = int.MinValue;
+        public int BZFSShotID = int.MinValue;
 
         public bool Active = true;
 
-		public Player Owner = null;
+        public Player Owner = null;
 
-		public double TimeSent = 0;
+        public double TimeSent = 0;
 
-		public Vector3F InitalPosition = Vector3F.Zero;
-		public Vector3F InitalVelocity = Vector3F.Zero;
+        public Vector3F InitalPosition = Vector3F.Zero;
+        public Vector3F InitalVelocity = Vector3F.Zero;
 
-		public float DeltaTime = 0;
+        public float DeltaTime = 0;
 
-		public TeamColors Team = TeamColors.NoTeam;
-		public string Flag = string.Empty;
+        public TeamColors Team = TeamColors.NoTeam;
+        public string Flag = string.Empty;
 
-		public float Lifetime = float.MinValue;
+        public float Lifetime = float.MinValue;
 
-		public Vector3F Position = Vector3F.Zero;
-		public Vector3F Velocity = Vector3F.Zero;
+        public Vector3F Position = Vector3F.Zero;
+        public Vector3F Velocity = Vector3F.Zero;
 
-		public double LastUpdate = 0;
-		public Player Target = null;
+        public double LastUpdate = 0;
+        public Player Target = null;
 
         public ShotPath Path = null;
 
@@ -45,7 +45,7 @@ namespace BZFlag.Game.Shots
             {
                 while (CurrentSegment != null)
                 {
-                    foreach(ShotPath.Segment seg in Path.Segments)
+                    foreach (ShotPath.Segment seg in Path.Segments)
                     {
                         if (seg.StartT <= time && seg.EndT >= time)
                         {
@@ -70,5 +70,5 @@ namespace BZFlag.Game.Shots
             Position = CurrentSegment.StartPoint + (vecDelta * tParam);
 
         }
-	}
+    }
 }

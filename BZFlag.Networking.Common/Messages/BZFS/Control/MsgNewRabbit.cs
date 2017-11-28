@@ -10,7 +10,7 @@ namespace BZFlag.Networking.Messages.BZFS.Control
     public class MsgNewRabbit : NetworkMessage
     {
         public int PlayerID = -1;
- 
+
         public MsgNewRabbit()
         {
             Code = CodeFromChars("nR");

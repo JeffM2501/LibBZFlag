@@ -74,7 +74,7 @@ namespace BZFlag.IO.BZW.Parsers
 
             string name = base.BuildCode();
 
-            foreach( var f in p.ZoneFlags)
+            foreach (var f in p.ZoneFlags)
                 AddCode(1, "zoneflag", f);
 
             foreach (var f in p.Flags)

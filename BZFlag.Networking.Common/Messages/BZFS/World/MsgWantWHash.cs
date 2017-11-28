@@ -6,16 +6,16 @@ using System.Text;
 
 namespace BZFlag.Networking.Messages.BZFS.World
 {
-	public class MsgWantWHash : NetworkMessage
-	{
-		public bool IsRandomMap = false;
+    public class MsgWantWHash : NetworkMessage
+    {
+        public bool IsRandomMap = false;
 
-		public string WorldHash = string.Empty;
+        public string WorldHash = string.Empty;
 
-		public MsgWantWHash()
-		{
-			Code = CodeFromChars("wh");
-		}
+        public MsgWantWHash()
+        {
+            Code = CodeFromChars("wh");
+        }
 
         public override byte[] Pack()
         {
@@ -23,19 +23,19 @@ namespace BZFlag.Networking.Messages.BZFS.World
 
             if (NetworkMessage.IsOnServer)
                 buffer.WriteNullTermString(WorldHash);
-        
-             return buffer.GetMessageBuffer();
+
+            return buffer.GetMessageBuffer();
         }
 
         public override void Unpack(byte[] data)
-		{
+        {
             Reset(data);
             string t = ReadNullTermString(true);
-			if(t.Length > 0)
-			{
-				IsRandomMap = t[0] == 't';
-				WorldHash = t.Substring(1).TrimEnd('\0');
-			}
-		}
-	}
+            if (t.Length > 0)
+            {
+                IsRandomMap = t[0] == 't';
+                WorldHash = t.Substring(1).TrimEnd('\0');
+            }
+        }
+    }
 }

@@ -8,24 +8,24 @@ using BZFlag.Networking.Messages;
 
 namespace BZFlag.Networking
 {
-	public class InboundMessageCallbackProcessor
-	{
-		public delegate void MessageHandler(NetworkMessage msg);
-		protected static Dictionary<int, MessageHandler> Handlers = new Dictionary<int, MessageHandler>();
+    public class InboundMessageCallbackProcessor
+    {
+        public delegate void MessageHandler(NetworkMessage msg);
+        protected static Dictionary<int, MessageHandler> Handlers = new Dictionary<int, MessageHandler>();
 
-		public bool DispatchMessage(NetworkMessage Message)
-		{
-			if(!Handlers.ContainsKey(Message.Code))
-				return false;
+        public bool DispatchMessage(NetworkMessage Message)
+        {
+            if (!Handlers.ContainsKey(Message.Code))
+                return false;
 
-			Handlers[Message.Code](Message);
-			return true;
-		}
+            Handlers[Message.Code](Message);
+            return true;
+        }
 
-		public void Add(NetworkMessage msg, MessageHandler handler)
-		{
-			Handlers.Add(msg.Code, handler);
-		}
-	}
+        public void Add(NetworkMessage msg, MessageHandler handler)
+        {
+            Handlers.Add(msg.Code, handler);
+        }
+    }
 
 }

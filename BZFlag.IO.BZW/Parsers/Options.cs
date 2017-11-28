@@ -7,8 +7,8 @@ using BZFlag.Map.Elements;
 
 namespace BZFlag.IO.BZW.Parsers
 {
-	public class OptionsParser : BasicObjectParser
-	{
+    public class OptionsParser : BasicObjectParser
+    {
         public OptionsParser()
         {
             Object = new Options();
@@ -20,23 +20,23 @@ namespace BZFlag.IO.BZW.Parsers
         }
 
         public override bool AddCodeLine(string command, string line)
-		{
+        {
             base.AddCodeLine(command, line);
-			return true;
-		}
+            return true;
+        }
 
-		public override string BuildCode()
-		{
+        public override string BuildCode()
+        {
             Options p = Object as Options;
             if (p == null)
                 return base.BuildCode();
 
             Code.Clear();
 
-			foreach(var s in p.Attributes)
-				AddCode(1, s);
+            foreach (var s in p.Attributes)
+                AddCode(1, s);
 
-			return p.ObjectType;
-		}
-	}
+            return p.ObjectType;
+        }
+    }
 }

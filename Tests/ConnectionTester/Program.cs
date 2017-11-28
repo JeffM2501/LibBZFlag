@@ -7,25 +7,25 @@ using System.Threading;
 
 namespace ConnectionTester
 {
-	class Program
-	{
-		public static bool testClient = false;
+    class Program
+    {
+        public static bool testClient = false;
 
-		public static bool useSimple = true;
-		static void Main(string[] args)
-		{
-			if (testClient)
-			{
-				if(useSimple)
-					SimpleLogger.Run(args);
-				else
-					new ClientTester(args).Run();
-			}
-			else
-			{
-				if(useSimple)
-					SimpleHoster.Run(args);
-			}
-		}
+        public static bool useSimple = true;
+        static void Main(string[] args)
+        {
+            if (testClient)
+            {
+                if (useSimple)
+                    SimpleLogger.Run(args);
+                else
+                    new ClientTester(args).Run();
+            }
+            else
+            {
+                if (useSimple)
+                    SimpleHoster.Run(args);
+            }
+        }
     }
 }

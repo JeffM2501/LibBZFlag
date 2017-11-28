@@ -110,17 +110,17 @@ namespace BZFlag.Data.Flags
                             "Tank can't stop bouncing."));
         }
 
-		public void Add(FlagType f)
-		{
-			FlagList.Add(f.FlagAbbv, f);
-		}
+        public void Add(FlagType f)
+        {
+            FlagList.Add(f.FlagAbbv, f);
+        }
 
-		public FlagType GetFromAbriv(string abriviation)
-		{
-			if(!FlagList.ContainsKey(abriviation))
-				return null;
+        public FlagType GetFromAbriv(string abriviation)
+        {
+            if (!FlagList.ContainsKey(abriviation))
+                return null;
 
-			return FlagList[abriviation];
-		}
-	}
+            return FlagList[abriviation];
+        }
+    }
 }

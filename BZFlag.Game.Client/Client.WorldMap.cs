@@ -17,25 +17,25 @@ using BZFlag.Data.BZDB;
 
 namespace BZFlag.Game
 {
-	public partial class Client
-	{
-		private WorldUnpacker Unpacker = null;
+    public partial class Client
+    {
+        private WorldUnpacker Unpacker = null;
 
-		private string WorldURL = string.Empty;
+        private string WorldURL = string.Empty;
 
-		public class WorldDownloadProgressEventArgs : EventArgs
-		{
-			public float Paramater = 0;
+        public class WorldDownloadProgressEventArgs : EventArgs
+        {
+            public float Paramater = 0;
 
-			public WorldDownloadProgressEventArgs(float p)
-			{
-				Paramater = p;
-			}
-		}
-		public event EventHandler<WorldDownloadProgressEventArgs> WorldDownloadProgress = null;
+            public WorldDownloadProgressEventArgs(float p)
+            {
+                Paramater = p;
+            }
+        }
+        public event EventHandler<WorldDownloadProgressEventArgs> WorldDownloadProgress = null;
 
-		protected string WorldHash = string.Empty;
-		protected BZWCache WorldCache = null;
+        protected string WorldHash = string.Empty;
+        protected BZWCache WorldCache = null;
 
         protected void SetMap(WorldMap map)
         {
@@ -43,110 +43,110 @@ namespace BZFlag.Game
             ShotMan.Map = map;
         }
 
-		private void HandleWorldHash(NetworkMessage msg)
-		{
-			MsgWantWHash hash = msg as MsgWantWHash;
-			WorldHash = hash.WorldHash;
+        private void HandleWorldHash(NetworkMessage msg)
+        {
+            MsgWantWHash hash = msg as MsgWantWHash;
+            WorldHash = hash.WorldHash;
 
-			bool getWorld = true;
+            bool getWorld = true;
 
-			if (Params.CacheFolder != null)
-			{
-				WorldCache = new BZWCache(Params.CacheFolder);
-				if (WorldCache.CheckCacheForHash(hash.WorldHash))
-				{
+            if (Params.CacheFolder != null)
+            {
+                WorldCache = new BZWCache(Params.CacheFolder);
+                if (WorldCache.CheckCacheForHash(hash.WorldHash))
+                {
                     SetMap(WorldCache.ReadMapFromCache(hash.WorldHash));
-					if(Map != null)
-						getWorld = false;
-				}
-			}
+                    if (Map != null)
+                        getWorld = false;
+                }
+            }
 
-			if (getWorld && WorldURL != string.Empty)
-			{
-				if(WorldDownloadProgress != null)
-					WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs(0));
+            if (getWorld && WorldURL != string.Empty)
+            {
+                if (WorldDownloadProgress != null)
+                    WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs(0));
 
-				// try to download it from the interwebs
-				WebClient worldWWW = new WebClient();
-				worldWWW.DownloadDataCompleted += worldWWW_DownloadDataCompleted;
-				worldWWW.DownloadProgressChanged += worldWWW_DownloadProgressChanged;
-				worldWWW.DownloadDataAsync(new Uri(WorldURL));
-			}
+                // try to download it from the interwebs
+                WebClient worldWWW = new WebClient();
+                worldWWW.DownloadDataCompleted += worldWWW_DownloadDataCompleted;
+                worldWWW.DownloadProgressChanged += worldWWW_DownloadProgressChanged;
+                worldWWW.DownloadDataAsync(new Uri(WorldURL));
+            }
 
-			if(getWorld)
-				SendGetWorld();
-			else
-				SendEnter();
-		}
+            if (getWorld)
+                SendGetWorld();
+            else
+                SendEnter();
+        }
 
-		protected void SendGetWorld()
-		{
-			if(WorldDownloadProgress != null)
-				WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs(0));
-			Unpacker = new WorldUnpacker();
-			NetClient.SendMessage(new MsgGetWorld(0));
-		}
+        protected void SendGetWorld()
+        {
+            if (WorldDownloadProgress != null)
+                WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs(0));
+            Unpacker = new WorldUnpacker();
+            NetClient.SendMessage(new MsgGetWorld(0));
+        }
 
-		private void worldWWW_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-		{
-			if(WorldDownloadProgress != null)
-				WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs(e.ProgressPercentage/100.0f));
-		}
+        private void worldWWW_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            if (WorldDownloadProgress != null)
+                WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs(e.ProgressPercentage / 100.0f));
+        }
 
-		private void worldWWW_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
-		{
-			if(WorldDownloadProgress != null)
-				WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs(1.0f));
+        private void worldWWW_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
+        {
+            if (WorldDownloadProgress != null)
+                WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs(1.0f));
 
-			if(e.Cancelled || e.Error != null)
-				SendGetWorld();
-			else
-			{
-				WorldUnpacker unpacker = new WorldUnpacker(e.Result);
+            if (e.Cancelled || e.Error != null)
+                SendGetWorld();
+            else
+            {
+                WorldUnpacker unpacker = new WorldUnpacker(e.Result);
                 SetMap(unpacker.Unpack());
-				if (Map == null)
-					SendGetWorld();
-				else
-				{
-					WorldCache.SaveMapToCache(WorldHash, unpacker.GetBuffer());
-					SendEnter();
-				}
-			}
-		}
+                if (Map == null)
+                    SendGetWorld();
+                else
+                {
+                    WorldCache.SaveMapToCache(WorldHash, unpacker.GetBuffer());
+                    SendEnter();
+                }
+            }
+        }
 
-		private void HandleGetWorld(NetworkMessage msg)
-		{
-			MsgGetWorld wldChunk = msg as MsgGetWorld;
+        private void HandleGetWorld(NetworkMessage msg)
+        {
+            MsgGetWorld wldChunk = msg as MsgGetWorld;
 
-			Unpacker.AddData(wldChunk.Data);
+            Unpacker.AddData(wldChunk.Data);
 
-			if(wldChunk.Offset > 0)
-			{
-				if(WorldDownloadProgress != null)
-					WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs((float)Unpacker.Size() / (float)(((UInt32)wldChunk.Offset + Unpacker.Size()))));
-				NetClient.SendMessage(new MsgGetWorld((UInt32)Unpacker.Size()));
-			}
-			else
-			{
-				if(WorldDownloadProgress != null)
-					WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs(1));
+            if (wldChunk.Offset > 0)
+            {
+                if (WorldDownloadProgress != null)
+                    WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs((float)Unpacker.Size() / (float)(((UInt32)wldChunk.Offset + Unpacker.Size()))));
+                NetClient.SendMessage(new MsgGetWorld((UInt32)Unpacker.Size()));
+            }
+            else
+            {
+                if (WorldDownloadProgress != null)
+                    WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs(1));
 
                 SetMap(Unpacker.Unpack());
-				WorldCache.SaveMapToCache(WorldHash, Unpacker.GetBuffer());
-				SendEnter();
-			}
-		}
+                WorldCache.SaveMapToCache(WorldHash, Unpacker.GetBuffer());
+                SendEnter();
+            }
+        }
 
-		private void HandleWorldCacheURL(NetworkMessage msg)
-		{
-			if(WorldURL != string.Empty)
-				return;
+        private void HandleWorldCacheURL(NetworkMessage msg)
+        {
+            if (WorldURL != string.Empty)
+                return;
 
-			MsgCacheURL url = msg as MsgCacheURL;
-			WorldURL = url.URL;
+            MsgCacheURL url = msg as MsgCacheURL;
+            WorldURL = url.URL;
 
-			NetClient.SendMessage(new MsgWantWHash()); // fastmap servers send the world cache before the hash, so send the hash request again so they know we wants it
-		}
+            NetClient.SendMessage(new MsgWantWHash()); // fastmap servers send the world cache before the hash, so send the hash request again so they know we wants it
+        }
 
         public class TeleportEventArgs : EventArgs
         {

@@ -9,61 +9,61 @@ using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages.BZFS.Shots
 {
-	public class MsgShotBegin : NetworkMessage
-	{
-		public float TimeSent = 0;
-		public int PlayerID = -1;
-		public int ShotID = -1;
+    public class MsgShotBegin : NetworkMessage
+    {
+        public float TimeSent = 0;
+        public int PlayerID = -1;
+        public int ShotID = -1;
 
-		public Vector3F Position = Vector3F.Zero;
-		public Vector3F Velocity = Vector3F.Zero;
+        public Vector3F Position = Vector3F.Zero;
+        public Vector3F Velocity = Vector3F.Zero;
 
-		public float DeltaTime = 0;
+        public float DeltaTime = 0;
 
-		public TeamColors Team = TeamColors.NoTeam;
-		public string Flag = string.Empty;
+        public TeamColors Team = TeamColors.NoTeam;
+        public string Flag = string.Empty;
 
-		public float Lifetime = float.MinValue;
+        public float Lifetime = float.MinValue;
 
-		public MsgShotBegin()
-		{
-			Code = CodeFromChars("sb");
-		}
+        public MsgShotBegin()
+        {
+            Code = CodeFromChars("sb");
+        }
 
-		public override byte[] Pack()
-		{
-			DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
-			buffer.WriteFloat(TimeSent);
-			buffer.WriteByte(PlayerID);
-			buffer.WriteInt16(ShotID);
-			buffer.WriteVector3F(Position);
-			buffer.WriteVector3F(Velocity);
-			buffer.WriteFloat(DeltaTime);
+        public override byte[] Pack()
+        {
+            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+            buffer.WriteFloat(TimeSent);
+            buffer.WriteByte(PlayerID);
+            buffer.WriteInt16(ShotID);
+            buffer.WriteVector3F(Position);
+            buffer.WriteVector3F(Velocity);
+            buffer.WriteFloat(DeltaTime);
 
-			buffer.WriteInt16((UInt16)Team);
+            buffer.WriteInt16((UInt16)Team);
 
-			buffer.WriteFixedSizeString(Flag, 2);
-			buffer.WriteFloat(Lifetime);
+            buffer.WriteFixedSizeString(Flag, 2);
+            buffer.WriteFloat(Lifetime);
 
-			return buffer.GetMessageBuffer();
-		}
+            return buffer.GetMessageBuffer();
+        }
 
-		public override void Unpack(byte[] data)
+        public override void Unpack(byte[] data)
         {
             Reset(data);
 
-			TimeSent = ReadFloat();
-			PlayerID = ReadByte();
-			ShotID = ReadUInt16();
+            TimeSent = ReadFloat();
+            PlayerID = ReadByte();
+            ShotID = ReadUInt16();
 
-			Position = ReadVector3F();
-			Velocity = ReadVector3F();
+            Position = ReadVector3F();
+            Velocity = ReadVector3F();
 
-			DeltaTime = ReadFloat();
-			Team = (TeamColors)ReadInt16();
+            DeltaTime = ReadFloat();
+            Team = (TeamColors)ReadInt16();
 
-			Flag = ReadFixedSizeString(2);
-			Lifetime = ReadFloat();
-		}
-	}
+            Flag = ReadFixedSizeString(2);
+            Lifetime = ReadFloat();
+        }
+    }
 }

@@ -9,10 +9,10 @@ using BZFlag.IO.BZW;
 
 namespace BZFlag.IO.BZW.Parsers
 {
-	public abstract class PositionableObjectParser : BasicObjectParser
-	{
+    public abstract class PositionableObjectParser : BasicObjectParser
+    {
         public override bool AddCodeLine(string command, string line)
-		{
+        {
             PositionableObject p = Object as PositionableObject;
             if (p == null)
                 return base.AddCodeLine(command, line);
@@ -29,28 +29,28 @@ namespace BZFlag.IO.BZW.Parsers
                 p.Attributes.Add(line);
 
             return true;
-		}
+        }
 
-		public override void Finish()
-		{
+        public override void Finish()
+        {
 
-		}
+        }
 
-		public override string BuildCode()
-		{
+        public override string BuildCode()
+        {
             PositionableObject p = Object as PositionableObject;
             if (p == null)
                 return base.BuildCode();
 
             Code.Clear();
-			if(p.Name != string.Empty)
-				AddCode(1, "name", p.Name);
+            if (p.Name != string.Empty)
+                AddCode(1, "name", p.Name);
 
-			AddCode(1, "position", p.Position);
-			AddCode(1, "rotation", p.Rotation);
-			AddCode(1, "size", p.Size);
+            AddCode(1, "position", p.Position);
+            AddCode(1, "rotation", p.Rotation);
+            AddCode(1, "size", p.Size);
 
             return p.ObjectType;
-		}
-	}
+        }
+    }
 }

@@ -7,7 +7,7 @@ namespace BZFlag.Networking.Messages.BZFS.Control
 {
     public class MsgHandicap : NetworkMessage
     {
-        public Dictionary<int,int> Handicaps = new Dictionary<int, int>();
+        public Dictionary<int, int> Handicaps = new Dictionary<int, int>();
 
         public MsgHandicap()
         {

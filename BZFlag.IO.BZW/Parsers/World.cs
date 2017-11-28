@@ -7,8 +7,8 @@ using BZFlag.Map.Elements;
 
 namespace BZFlag.IO.BZW.Parsers
 {
-	public class WorldParser : BasicObjectParser
-	{
+    public class WorldParser : BasicObjectParser
+    {
         public WorldParser()
         {
             Object = new World();
@@ -20,7 +20,7 @@ namespace BZFlag.IO.BZW.Parsers
         }
 
         public override bool AddCodeLine(string command, string line)
-		{
+        {
             World w = Object as World;
             if (w == null)
                 return base.AddCodeLine(command, line);
@@ -38,32 +38,32 @@ namespace BZFlag.IO.BZW.Parsers
             else
                 w.Attributes.Add(line);
 
-			return true;
-		}
+            return true;
+        }
 
-		public override string BuildCode()
-		{
-			Code.Clear();
+        public override string BuildCode()
+        {
+            Code.Clear();
 
             World w = Object as World;
             if (w == null)
                 return base.BuildCode();
 
             if (w.Name != string.Empty)
-				AddCode(1, "name", w.Name);
+                AddCode(1, "name", w.Name);
 
-			AddCode(1,"size", w.Size);
-			AddCode(1, "flagHeight", w.FlagHeight);
-			if (w.NoWalls)
-				AddCode(1, "noWalls");
+            AddCode(1, "size", w.Size);
+            AddCode(1, "flagHeight", w.FlagHeight);
+            if (w.NoWalls)
+                AddCode(1, "noWalls");
 
-			if(w.FreeCTFSpawns)
-				AddCode(1, "freeCTFSpawns");
+            if (w.FreeCTFSpawns)
+                AddCode(1, "freeCTFSpawns");
 
-			foreach(var s in  w.Attributes)
-				AddCode(2, s);
+            foreach (var s in w.Attributes)
+                AddCode(2, s);
 
             return w.ObjectType;
-		}
-	}
+        }
+    }
 }

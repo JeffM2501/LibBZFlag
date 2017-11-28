@@ -7,8 +7,8 @@ using BZFlag.Map.Elements.Shapes;
 
 namespace BZFlag.IO.BZW.Parsers
 {
-	public class TeleporterParser : PositionableObjectParser
-	{
+    public class TeleporterParser : PositionableObjectParser
+    {
         public TeleporterParser()
         {
             Object = new Teleporter();
@@ -34,7 +34,7 @@ namespace BZFlag.IO.BZW.Parsers
         }
 
         public override bool AddCodeLine(string command, string line)
-		{
+        {
             Teleporter p = Object as Teleporter;
             if (p == null)
                 return base.AddCodeLine(command, line);
@@ -50,17 +50,17 @@ namespace BZFlag.IO.BZW.Parsers
             else if (!base.AddCodeLine(command, line))
                 return false;
 
-			return true;
-		}
+            return true;
+        }
 
-		public override string BuildCode()
-		{
+        public override string BuildCode()
+        {
             Teleporter p = Object as Teleporter;
             if (p == null)
                 base.BuildCode();
 
             Code.Clear();
-    
+
             AddCode(1, "position", p.Position);
             AddCode(1, "rotation", p.Rotation);
             AddCode(1, "size", p.Size);
@@ -75,7 +75,7 @@ namespace BZFlag.IO.BZW.Parsers
             if (p.Name != string.Empty)
                 t += " " + p.Name;
 
-			return t;
-		}
-	}
+            return t;
+        }
+    }
 }

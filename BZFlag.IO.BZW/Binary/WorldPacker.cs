@@ -75,7 +75,7 @@ namespace BZFlag.IO.BZW.Binary
 
             WriteUInt32(items.Count);
 
-            foreach(var link in items)
+            foreach (var link in items)
             {
                 WriteULongPascalString(link.From.TargetName);
                 WriteULongPascalString(link.To.TargetName);
@@ -91,12 +91,12 @@ namespace BZFlag.IO.BZW.Binary
             WritePyramids(FindAllObjectsOfType<Pyramid>());
             WriteBases(FindAllObjectsOfType<Base>());
 
-		    WriteInt32(0); // teleType,
+            WriteInt32(0); // teleType,
             WriteInt32(0); // meshType,
             WriteInt32(0); // arcType,
-			WriteInt32(0); // coneType,
-			WriteInt32(0); // sphereType,
-			WriteInt32(0); // tetraType,
+            WriteInt32(0); // coneType,
+            WriteInt32(0); // sphereType,
+            WriteInt32(0); // tetraType,
 
             WriteInt32(0); // groups
 
@@ -177,7 +177,7 @@ namespace BZFlag.IO.BZW.Binary
         {
             WriteInt32(walls.Count);
 
-            foreach(var wall in walls)
+            foreach (var wall in walls)
             {
                 WriteVector3F(wall.Position);
                 WriteFloat(wall.Rotation);
@@ -206,7 +206,7 @@ namespace BZFlag.IO.BZW.Binary
             WriteULongPascalString(t.Name);
             WriteInt32(t.Transforms.Count);
 
-            foreach(var data in t.Transforms)
+            foreach (var data in t.Transforms)
             {
                 WriteByte((byte)data.XFormType);
 
@@ -278,7 +278,7 @@ namespace BZFlag.IO.BZW.Binary
 
                 WriteByte((byte)mat.Textures.Count);
 
-                foreach(var tx in mat.Textures)
+                foreach (var tx in mat.Textures)
                 {
                     WriteULongPascalString(tx.Name);
                     WriteInt32(tx.MatrixID);
@@ -308,8 +308,8 @@ namespace BZFlag.IO.BZW.Binary
         {
             List<TextureMatrix> items = FindAllObjectsOfType<TextureMatrix>();
             WriteInt32(items.Count);
-     
-            foreach(var tx in items)
+
+            foreach (var tx in items)
             {
                 WriteULongPascalString(tx.Name);
 
@@ -347,7 +347,7 @@ namespace BZFlag.IO.BZW.Binary
             List<DynamicColor> colors = FindAllObjectsOfType<DynamicColor>();
 
             WriteInt32(colors.Count);
-            foreach(DynamicColor color in colors)
+            foreach (DynamicColor color in colors)
             {
                 WriteULongPascalString(color.Name);
 
@@ -357,7 +357,7 @@ namespace BZFlag.IO.BZW.Binary
 
 
                     WriteFloat(chan.MinValue);
-                    WriteFloat(chan.MinValue );
+                    WriteFloat(chan.MinValue);
 
                     WriteUInt32(chan.Sinusoids.Count);
 
@@ -368,7 +368,7 @@ namespace BZFlag.IO.BZW.Binary
                         WriteFloat(p.Weight);
                     }
 
-    
+
                     WriteUInt32(chan.ClampUps.Count);
                     foreach (var p in chan.ClampUps)
                     {
@@ -402,7 +402,7 @@ namespace BZFlag.IO.BZW.Binary
         {
             List<T> objects = new List<T>();
 
-            foreach(var i in MapData.Objects)
+            foreach (var i in MapData.Objects)
             {
                 if (i.GetType() == typeof(T))
                     objects.Add(i as T);

@@ -15,14 +15,14 @@ namespace BZFlag.Services
                              .ToArray();
         }
 
-		public static  string ByteArrayToString(byte[] bytes)
-		{
-			StringBuilder sb = new StringBuilder();
-			foreach(byte b in bytes)
-			{
-				sb.Append(b.ToString("x2"));
-			}
-			return sb.ToString();
-		}
-	}
+        public static string ByteArrayToString(byte[] bytes)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (byte b in bytes)
+            {
+                sb.Append(b.ToString("x2"));
+            }
+            return sb.ToString();
+        }
+    }
 }

@@ -10,9 +10,9 @@ using BZFlag.IO.BZW;
 
 namespace BZFlag.IO.BZW.Parsers
 {
-	public class BasicObjectParser
-	{
-		public virtual string ObjectTerminator {  get { return "end"; } }
+    public class BasicObjectParser
+    {
+        public virtual string ObjectTerminator { get { return "end"; } }
 
         public List<string> Code = new List<string>(); // output code
 
@@ -40,62 +40,62 @@ namespace BZFlag.IO.BZW.Parsers
         }
 
         public virtual bool AddCodeLine(string command, string line)
-		{
-            
-			if(command == "NAME")
+        {
+
+            if (command == "NAME")
             {
                 Object.Name = Reader.GetRestOfWords(line);
                 return true;
             }
             Object.Attributes.Add(line);
-			return false;
-		}
+            return false;
+        }
 
-		public virtual string BuildCode()
-		{
-			Code.Clear();
+        public virtual string BuildCode()
+        {
+            Code.Clear();
 
             string t = Object.ObjectType;
             if (Object.TypeParams != null)
                 t += " " + Object.TypeParams;
 
             return t;
-		}
+        }
 
-		protected StringBuilder GetIndent(int indent)
-		{
-			StringBuilder sb = new StringBuilder();
-			for(int i = 0; i < indent; i++)
-				sb.Append("\t");
+        protected StringBuilder GetIndent(int indent)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < indent; i++)
+                sb.Append("\t");
 
-			return sb;
-		}
+            return sb;
+        }
 
-		public void AddCode(int indent, string name, string value)
-		{
+        public void AddCode(int indent, string name, string value)
+        {
             if (name == string.Empty || value == string.Empty)
                 return;
 
-			StringBuilder sb = GetIndent(indent);
-			sb.Append(name);
-			if (value != string.Empty)
-			{
-				sb.Append(" ");
-				sb.Append(value);
-			}
+            StringBuilder sb = GetIndent(indent);
+            sb.Append(name);
+            if (value != string.Empty)
+            {
+                sb.Append(" ");
+                sb.Append(value);
+            }
 
-			Code.Add(sb.ToString());
-		}
+            Code.Add(sb.ToString());
+        }
 
-		public void AddCode(int indent, string name, float value)
-		{
-			AddCode(indent,name,value.ToString());
-		}
+        public void AddCode(int indent, string name, float value)
+        {
+            AddCode(indent, name, value.ToString());
+        }
 
-		public void AddCode(int indent, string name, bool value)
-		{
-			AddCode(indent, name, value ? "1" : "0");
-		}
+        public void AddCode(int indent, string name, bool value)
+        {
+            AddCode(indent, name, value ? "1" : "0");
+        }
 
         public void AddCode(int indent, string name)
         {
@@ -108,17 +108,17 @@ namespace BZFlag.IO.BZW.Parsers
         }
 
         public void AddCode(int indent, string name, float[] values)
-		{
-			StringBuilder sb = new StringBuilder();
-			for(int i = 0; i < values.Length; i++)
-			{
-				sb.Append(values[i].ToString());
-				if(i != values.Length - 1)
-					sb.Append(" ");
-			}
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < values.Length; i++)
+            {
+                sb.Append(values[i].ToString());
+                if (i != values.Length - 1)
+                    sb.Append(" ");
+            }
 
-			AddCode(indent, name, sb.ToString());
-		}
+            AddCode(indent, name, sb.ToString());
+        }
 
         public void AddCode(int indent, string name, Vector4F value)
         {

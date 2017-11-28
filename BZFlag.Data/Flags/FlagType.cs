@@ -32,39 +32,39 @@ namespace BZFlag.Data.Flags
         NumQualities
     };
 
-	public class FlagType
-	{
-		public string FlagName = string.Empty;
-		public string FlagAbbv = string.Empty;
-		public string FlagHelp = string.Empty;
-		public FlagEndurances FlagEndurance = FlagEndurances.FlagNormal;
-		public FlagQualities FlagQuality = FlagQualities.FlagGood;
-		public ShotTypes FlagShot = ShotTypes.NormalShot;
-		public TeamColors FlagTeam = TeamColors.AutomaticTeam;
-		public bool Custom = false;
+    public class FlagType
+    {
+        public string FlagName = string.Empty;
+        public string FlagAbbv = string.Empty;
+        public string FlagHelp = string.Empty;
+        public FlagEndurances FlagEndurance = FlagEndurances.FlagNormal;
+        public FlagQualities FlagQuality = FlagQualities.FlagGood;
+        public ShotTypes FlagShot = ShotTypes.NormalShot;
+        public TeamColors FlagTeam = TeamColors.AutomaticTeam;
+        public bool Custom = false;
 
-		public FlagType(string name, string abbv, FlagEndurances _endurance, ShotTypes sType, FlagQualities quality, TeamColors team, string help, bool _custom )
-		{
-			FlagName = name;
-			FlagAbbv = abbv;
-			FlagEndurance = _endurance;
-			FlagShot = sType;
-			FlagQuality = quality;
-			FlagTeam = team;
-			FlagHelp = help;
-			Custom = _custom;
-		}
+        public FlagType(string name, string abbv, FlagEndurances _endurance, ShotTypes sType, FlagQualities quality, TeamColors team, string help, bool _custom)
+        {
+            FlagName = name;
+            FlagAbbv = abbv;
+            FlagEndurance = _endurance;
+            FlagShot = sType;
+            FlagQuality = quality;
+            FlagTeam = team;
+            FlagHelp = help;
+            Custom = _custom;
+        }
 
-		public FlagType(string name, string abbv, FlagEndurances _endurance, ShotTypes sType, FlagQualities quality, TeamColors team, string help)
-		{
-			FlagName = name;
-			FlagAbbv = abbv;
-			FlagEndurance = _endurance;
-			FlagShot = sType;
-			FlagQuality = quality;
-			FlagTeam = team;
-			FlagHelp = help;
-			Custom = false;
-		}
-	}
+        public FlagType(string name, string abbv, FlagEndurances _endurance, ShotTypes sType, FlagQualities quality, TeamColors team, string help)
+        {
+            FlagName = name;
+            FlagAbbv = abbv;
+            FlagEndurance = _endurance;
+            FlagShot = sType;
+            FlagQuality = quality;
+            FlagTeam = team;
+            FlagHelp = help;
+            Custom = false;
+        }
+    }
 }

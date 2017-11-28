@@ -6,8 +6,8 @@ using BZFlag.Map.Elements.Shapes;
 
 namespace BZFlag.Map
 {
-	public class WorldMap
-	{
+    public class WorldMap
+    {
         public class PhysicalConstants
         {
             public float Gravity = -9.7f;
@@ -18,13 +18,13 @@ namespace BZFlag.Map
 
         public List<BasicObject> Objects = new List<BasicObject>();
 
-		public World WorldInfo = new World();
-		public Options WorldOptions = new Options();
+        public World WorldInfo = new World();
+        public Options WorldOptions = new Options();
 
-		public void IntForLoad()
-		{
-			Teleporter.TeleporterCount = 0;
-		}
+        public void IntForLoad()
+        {
+            Teleporter.TeleporterCount = 0;
+        }
 
         protected List<Teleporter> TeleporterCache = new List<Teleporter>();
 
@@ -32,7 +32,7 @@ namespace BZFlag.Map
         {
             // check to see if all the teleporters have names and if not fix any links
 
-            foreach(BasicObject obj in Objects)
+            foreach (BasicObject obj in Objects)
             {
                 Teleporter tp = obj as Teleporter;
                 if (tp == null)
@@ -44,7 +44,7 @@ namespace BZFlag.Map
                     tp.Name = "teleporter_" + tp.Index.ToString();
             }
         }
-       
+
         public void CacheRuntimeObjects()
         {
             foreach (BasicObject obj in Objects)
@@ -83,20 +83,20 @@ namespace BZFlag.Map
         }
 
         public void AddObject(BasicObject obj)
-		{
+        {
 
-			if(obj as World != null)
-				WorldInfo = obj as World;
-			else if(obj as Options != null)
-				WorldOptions = obj as Options;
-			else
-				Objects.Add(obj);
-		}
+            if (obj as World != null)
+                WorldInfo = obj as World;
+            else if (obj as Options != null)
+                WorldOptions = obj as Options;
+            else
+                Objects.Add(obj);
+        }
 
-		public void AddObjects(IEnumerable<BasicObject> lst)
-		{
-			foreach(var o in lst)
-				AddObject(o);
-		}
-	}
+        public void AddObjects(IEnumerable<BasicObject> lst)
+        {
+            foreach (var o in lst)
+                AddObject(o);
+        }
+    }
 }

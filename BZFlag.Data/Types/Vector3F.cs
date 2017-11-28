@@ -62,8 +62,8 @@ namespace BZFlag.Data.Types
         public Vector3F(float[] v, int start = 0)
         {
             Pos[0] = v[start];
-            Pos[1] = v[start+1];
-            Pos[2] = v[start+2];
+            Pos[1] = v[start + 1];
+            Pos[2] = v[start + 2];
         }
 
         public Vector3F(Vector2F v)
@@ -72,21 +72,21 @@ namespace BZFlag.Data.Types
             Pos[1] = v.Y;
         }
 
-		public Vector3F(Vector3F v)
-		{
-			Pos[0] = v.X;
-			Pos[1] = v.Y;
-			Pos[2] = v.Z;
-		}
-
-		public Vector3F(Vector4F v)
+        public Vector3F(Vector3F v)
         {
             Pos[0] = v.X;
             Pos[1] = v.Y;
             Pos[2] = v.Z;
         }
 
-        public static Vector3F operator + (Vector3F lhs, Vector3F rhs)
+        public Vector3F(Vector4F v)
+        {
+            Pos[0] = v.X;
+            Pos[1] = v.Y;
+            Pos[2] = v.Z;
+        }
+
+        public static Vector3F operator +(Vector3F lhs, Vector3F rhs)
         {
             return new Vector3F(lhs.X + rhs.X, lhs.Y + rhs.Y, lhs.Z + rhs.Z);
         }
@@ -108,10 +108,10 @@ namespace BZFlag.Data.Types
 
         public static Vector3F operator *(double lhs, Vector3F rhs)
         {
-            return new Vector3F((float)(lhs * rhs.X), (float)(lhs * rhs.Y), (float)(lhs* rhs.Z ));
+            return new Vector3F((float)(lhs * rhs.X), (float)(lhs * rhs.Y), (float)(lhs * rhs.Z));
         }
 
-        public bool IsZero ()
+        public bool IsZero()
         {
             return Pos[0] == 0.0f && Pos[1] == 0.0f && Pos[2] == 0.0f;
         }

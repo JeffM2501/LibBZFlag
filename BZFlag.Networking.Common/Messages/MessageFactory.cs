@@ -15,12 +15,12 @@ using BZFlag.Networking.Messages.BZFS.Control;
 
 namespace BZFlag.Networking.Messages
 {
-	public static class ClientMessageFactory
-	{
-		public static MessageManager Factory = new MessageManager();
+    public static class ClientMessageFactory
+    {
+        public static MessageManager Factory = new MessageManager();
 
-		static ClientMessageFactory()
-		{
+        static ClientMessageFactory()
+        {
             Factory.RegisterMessageType(new MsgEnter());
             Factory.RegisterMessageType(new MsgExit());
             Factory.RegisterMessageType(new MsgQueryGame());
@@ -71,74 +71,74 @@ namespace BZFlag.Networking.Messages
             Factory.RegisterMessageType(new MsgAdminInfo());
             Factory.RegisterMessageType(new MsgReplayReset());
         }
-	}
+    }
 
-	public static class SecurityJailMessageFacotry
-	{
-		public static MessageManager Factory = new MessageManager();
+    public static class SecurityJailMessageFacotry
+    {
+        public static MessageManager Factory = new MessageManager();
 
-		static SecurityJailMessageFacotry()
-		{
-			Factory.RegisterMessageType(new MsgEnter());
-			Factory.RegisterMessageType(new MsgExit());
+        static SecurityJailMessageFacotry()
+        {
+            Factory.RegisterMessageType(new MsgEnter());
+            Factory.RegisterMessageType(new MsgExit());
 
-			Factory.RegisterMessageType(new MsgQueryGame());
-			Factory.RegisterMessageType(new MsgQueryPlayers());
+            Factory.RegisterMessageType(new MsgQueryGame());
+            Factory.RegisterMessageType(new MsgQueryPlayers());
 
-			Factory.RegisterMessageType(new MsgWantWHash());
-			Factory.RegisterMessageType(new MsgGetWorld());
+            Factory.RegisterMessageType(new MsgWantWHash());
+            Factory.RegisterMessageType(new MsgGetWorld());
 
-			Factory.RegisterMessageType(new MsgWantSettings());
-			Factory.RegisterMessageType(new MsgNegotiateFlags());
+            Factory.RegisterMessageType(new MsgWantSettings());
+            Factory.RegisterMessageType(new MsgNegotiateFlags());
 
-			Factory.RegisterMessageType(new MsgUDPLinkRequest());
-			Factory.RegisterMessageType(new MsgUDPLinkEstablished());
-		}
-	}
+            Factory.RegisterMessageType(new MsgUDPLinkRequest());
+            Factory.RegisterMessageType(new MsgUDPLinkEstablished());
+        }
+    }
 
-	public class MessageManager
-	{
-		private Dictionary<int, Type> MessageTypes = new Dictionary<int, Type>();
+    public class MessageManager
+    {
+        private Dictionary<int, Type> MessageTypes = new Dictionary<int, Type>();
 
-		public void RegisterMessageType(int code, Type t)
-		{
-			if(t.IsAbstract || !t.IsSubclassOf(typeof(NetworkMessage)))
-				return;
+        public void RegisterMessageType(int code, Type t)
+        {
+            if (t.IsAbstract || !t.IsSubclassOf(typeof(NetworkMessage)))
+                return;
 
-			lock(MessageTypes)
-			{
-				if (!MessageTypes.ContainsKey(code))
-					MessageTypes.Add(code, t);
-			}	
-		}
+            lock (MessageTypes)
+            {
+                if (!MessageTypes.ContainsKey(code))
+                    MessageTypes.Add(code, t);
+            }
+        }
 
-		public void RegisterMessageType(NetworkMessage m)
-		{
-			RegisterMessageType(m.Code, m.GetType());
-		}
+        public void RegisterMessageType(NetworkMessage m)
+        {
+            RegisterMessageType(m.Code, m.GetType());
+        }
 
         public NetworkMessage Unpack(int code, byte[] buffer)
         {
             return Unpack(code, buffer, false);
         }
 
-        public  NetworkMessage Unpack(int code, byte[] buffer, bool udp)
-		{
-			Type t = null;
-			lock(MessageTypes)
-			{
-				if(!MessageTypes.ContainsKey(code))
-					return new UnknownMessage(code, buffer);
+        public NetworkMessage Unpack(int code, byte[] buffer, bool udp)
+        {
+            Type t = null;
+            lock (MessageTypes)
+            {
+                if (!MessageTypes.ContainsKey(code))
+                    return new UnknownMessage(code, buffer);
 
-				t = MessageTypes[code];
-			}
+                t = MessageTypes[code];
+            }
 
-			NetworkMessage msg = Activator.CreateInstance(t) as NetworkMessage;
-			msg.Code = code;
-			msg.Unpack(buffer);
+            NetworkMessage msg = Activator.CreateInstance(t) as NetworkMessage;
+            msg.Code = code;
+            msg.Unpack(buffer);
             msg.FromUDP = udp;
-			return msg;
-		}
+            return msg;
+        }
 
-	}
+    }
 }

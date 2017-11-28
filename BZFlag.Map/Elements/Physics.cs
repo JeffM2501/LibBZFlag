@@ -11,9 +11,9 @@ namespace BZFlag.Map.Elements
     {
         public Vector3F Linear = new Vector3F();
         public Vector3F Angular = new Vector3F();
-		public Vector3F Radial = new Vector3F();
+        public Vector3F Radial = new Vector3F();
 
-		public float Slide = 0;
+        public float Slide = 0;
         public string Death = string.Empty;
 
         public Physics()

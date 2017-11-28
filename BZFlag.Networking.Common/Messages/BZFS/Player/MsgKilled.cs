@@ -59,7 +59,7 @@ namespace BZFlag.Networking.Messages.BZFS.Player
                 Reason = (BlowedUpReasons)r;
 
             ShotID = ReadInt16();
-            FlagAbreviation = ReadFixedSizeString( 2);
+            FlagAbreviation = ReadFixedSizeString(2);
 
             if (Reason == BlowedUpReasons.DeathTouch)
                 PhysicsDriverID = ReadInt32();

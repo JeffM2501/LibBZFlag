@@ -7,8 +7,8 @@ using BZFlag.Map.Elements;
 
 namespace BZFlag.IO.BZW.Parsers
 {
-	public class LinkParser : BasicObjectParser
-	{
+    public class LinkParser : BasicObjectParser
+    {
         public LinkParser()
         {
             Object = new Link();
@@ -19,21 +19,21 @@ namespace BZFlag.IO.BZW.Parsers
             Object = obj;
         }
 
-        
+
         protected bool IsWildcardCharacter(char c)
         {
             return c == '*' || c == '?';
         }
 
-		protected bool IsWildcardCharacter(string str)
-		{
-			return str != string.Empty && IsWildcardCharacter(str[0]);
-		}
+        protected bool IsWildcardCharacter(string str)
+        {
+            return str != string.Empty && IsWildcardCharacter(str[0]);
+        }
 
-		public Link.PorterLink ImportPorterLink(string code)
+        public Link.PorterLink ImportPorterLink(string code)
         {
             Link.PorterLink l = new Link.PorterLink();
-       
+
             if (code == string.Empty)
             {
                 l.Wildcard = true;
@@ -98,8 +98,8 @@ namespace BZFlag.IO.BZW.Parsers
             return Code;
         }
 
-		public override bool AddCodeLine(string command, string line)
-		{
+        public override bool AddCodeLine(string command, string line)
+        {
             Link l = Object as Link;
             if (l == null)
                 return base.AddCodeLine(command, line);
@@ -114,10 +114,10 @@ namespace BZFlag.IO.BZW.Parsers
                 l.Attributes.Add(line);
 
             return true;
-		}
+        }
 
-		public override string BuildCode()
-		{
+        public override string BuildCode()
+        {
             Link l = Object as Link;
             if (l == null)
                 return base.BuildCode();
@@ -125,14 +125,14 @@ namespace BZFlag.IO.BZW.Parsers
             Code.Clear();
 
             if (l.Name != string.Empty)
-			    AddCode(1, "name", l.Name);
+                AddCode(1, "name", l.Name);
 
             AddCode(1, "from", GetPorterLinkCode(l.From));
             AddCode(1, "to", GetPorterLinkCode(l.To));
             foreach (var s in l.Attributes)
-				AddCode(2, s);
+                AddCode(2, s);
 
-			return l.ObjectType;
-		}
-	}
+            return l.ObjectType;
+        }
+    }
 }

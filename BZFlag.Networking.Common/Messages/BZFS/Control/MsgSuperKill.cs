@@ -5,11 +5,11 @@ using System.Text;
 
 namespace BZFlag.Networking.Messages.BZFS.Control
 {
-	public class MsgSuperKill : NoPackedDataNetworkMessage
-	{
-		public MsgSuperKill()
-		{
-			Code = CodeFromChars("sk");
-		}
-	}
+    public class MsgSuperKill : NoPackedDataNetworkMessage
+    {
+        public MsgSuperKill()
+        {
+            Code = CodeFromChars("sk");
+        }
+    }
 }

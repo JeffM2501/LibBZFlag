@@ -22,7 +22,7 @@ namespace BZFlag.Data.Players
         public static readonly int MaxUseablePlayerID = 243;
         public static readonly int MinimumPlayerID = 1;
 
-        public static bool PlayerIDIsUseable (int id)
+        public static bool PlayerIDIsUseable(int id)
         {
             return id >= MinimumPlayerID && id <= MaxUseablePlayerID;
         }

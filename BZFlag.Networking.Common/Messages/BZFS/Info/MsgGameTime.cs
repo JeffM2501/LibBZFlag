@@ -7,26 +7,26 @@ using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages.BZFS.Info
 {
-	public class MsgGameTime : NetworkMessage
-	{
-		public Int64 NetTime = Int64.MinValue;
+    public class MsgGameTime : NetworkMessage
+    {
+        public Int64 NetTime = Int64.MinValue;
 
-		public MsgGameTime()
-		{
-			Code = CodeFromChars("gt");
-		}
+        public MsgGameTime()
+        {
+            Code = CodeFromChars("gt");
+        }
 
-		public override byte[] Pack()
-		{
-			DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
-			buffer.WriteInt64(NetTime);
-			return buffer.GetMessageBuffer();
-		}
+        public override byte[] Pack()
+        {
+            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+            buffer.WriteInt64(NetTime);
+            return buffer.GetMessageBuffer();
+        }
 
-		public override void Unpack(byte[] data)
-		{
-			Reset(data);
-			NetTime = ReadInt64();
-		}
-	}
+        public override void Unpack(byte[] data)
+        {
+            Reset(data);
+            NetTime = ReadInt64();
+        }
+    }
 }

@@ -28,7 +28,7 @@ namespace BZFlag.Networking.Messages.BZFS.Info
         }
 
         public List<Resource> Resources = new List<Resource>();
-        
+
 
         public MsgFetchResources()
         {
@@ -46,7 +46,7 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 
             int count = ReadUInt16();
 
-            for(int i =0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 Resource res = new Resource();
                 res.ResType = (ResourceTypes)ReadUInt16();

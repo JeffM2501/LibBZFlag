@@ -10,7 +10,7 @@ using BZFlag.Map.Elements.Shapes;
 namespace BZFlag.IO.BZW.Parsers
 {
     public class BaseParser : BoxParser
-	{
+    {
 
 
         public BaseParser()
@@ -24,35 +24,35 @@ namespace BZFlag.IO.BZW.Parsers
         }
 
         public override bool AddCodeLine(string command, string line)
-		{
+        {
             Base p = Object as Base;
             if (p == null)
                 return base.AddCodeLine(command, line);
 
             if (command == "COLOR")
-			{
-				int c = 0;
-				int.TryParse(Reader.GetRestOfWords(line), out c);
+            {
+                int c = 0;
+                int.TryParse(Reader.GetRestOfWords(line), out c);
 
-				p.TeamColor = (TeamColors)c;
-			}
-			else if(!base.AddCodeLine(command, line))
-				return false;
+                p.TeamColor = (TeamColors)c;
+            }
+            else if (!base.AddCodeLine(command, line))
+                return false;
 
-			return true;
-		}
+            return true;
+        }
 
-		public override string BuildCode()
-		{
+        public override string BuildCode()
+        {
             Base p = Object as Base;
             if (p == null)
                 return base.BuildCode();
 
             string name = base.BuildCode();
 
-			AddCode(1, "color", (int)p.TeamColor);
+            AddCode(1, "color", (int)p.TeamColor);
 
             return name;
-		}
-	}
+        }
+    }
 }

@@ -8,34 +8,34 @@ using BZFlag.IO.BZW;
 
 namespace ReaderTest
 {
-	class Program
-	{
-		static void Main(string[] args)
-		{
-			if (args.Length == 0)
-			{
-				Console.WriteLine("Need a bzw filename");
-				return;
-			}
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            if (args.Length == 0)
+            {
+                Console.WriteLine("Need a bzw filename");
+                return;
+            }
 
-			FileInfo file = new FileInfo(args[0]);
-			StreamReader sr = file.OpenText();
+            FileInfo file = new FileInfo(args[0]);
+            StreamReader sr = file.OpenText();
 
-			var map = Reader.ReadMap(sr);
-			sr.Close();
+            var map = Reader.ReadMap(sr);
+            sr.Close();
 
-			FileInfo newFile = new FileInfo(file.FullName + "_Parsed");
+            FileInfo newFile = new FileInfo(file.FullName + "_Parsed");
 
-			if(newFile.Exists)
-				newFile.Delete();
+            if (newFile.Exists)
+                newFile.Delete();
 
-			Stream s = newFile.OpenWrite();
-			StreamWriter sw = new StreamWriter(s);
+            Stream s = newFile.OpenWrite();
+            StreamWriter sw = new StreamWriter(s);
 
-			Writer.WriteMap(sw, map);
-			sw.Close();
-			s.Close();
-		}
+            Writer.WriteMap(sw, map);
+            sw.Close();
+            s.Close();
+        }
 
-	}
+    }
 }

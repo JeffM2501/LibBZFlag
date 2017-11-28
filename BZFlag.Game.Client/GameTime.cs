@@ -167,5 +167,5 @@ namespace BZFlag.Game
             LastStep = thisStep;
         }
 
-	}
+    }
 }

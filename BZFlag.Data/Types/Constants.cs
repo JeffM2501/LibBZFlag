@@ -5,13 +5,13 @@ using System.Text;
 
 namespace BZFlag.Data.Types
 {
-	public static class Constants
-	{
+    public static class Constants
+    {
         // string buffer sizes
-		public static readonly int CallsignLen = 32;
-		public static readonly int MottoLen = 128;
-		public static readonly int TokenLen = 22;
-		public static readonly int VersionLen = 60;
+        public static readonly int CallsignLen = 32;
+        public static readonly int MottoLen = 128;
+        public static readonly int TokenLen = 22;
+        public static readonly int VersionLen = 60;
 
         // update compression constants
         public static readonly float SmallScale = 32766.0f; // the full scale of a int16_t  (less 1.0 for safety)

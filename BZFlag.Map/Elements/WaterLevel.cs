@@ -5,14 +5,14 @@ using System.Text;
 
 namespace BZFlag.Map.Elements
 {
-	public class WaterLevel : BasicObject
-	{
-		public float Height = -1;
-		public int MaterialID = -1;
+    public class WaterLevel : BasicObject
+    {
+        public float Height = -1;
+        public int MaterialID = -1;
 
-		public WaterLevel()
-		{
-			ObjectType = "WaterLevel";
-		}
-	}
+        public WaterLevel()
+        {
+            ObjectType = "WaterLevel";
+        }
+    }
 }

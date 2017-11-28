@@ -10,45 +10,45 @@ using BZFlag.Game.Host.Players;
 
 namespace BZFlag.Game.Host
 {
-	public class PlayerProcessor
-	{
-		protected Thread WorkerThread = null;
-		private List<ServerPlayer> Players = new List<ServerPlayer>();
+    public class PlayerProcessor
+    {
+        protected Thread WorkerThread = null;
+        private List<ServerPlayer> Players = new List<ServerPlayer>();
 
         protected MessageManager MessageProcessor = null;
 
 
         public int SleepTime = 100;
-		public static int MaxMessagesPerClientCycle = 10;
+        public static int MaxMessagesPerClientCycle = 10;
 
-		ServerConfig Config = null;
+        ServerConfig Config = null;
 
-		public PlayerProcessor(ServerConfig cfg)
-		{
-			Config = cfg;
-		}
+        public PlayerProcessor(ServerConfig cfg)
+        {
+            Config = cfg;
+        }
 
-		public void Shutdown()
-		{
-			if(WorkerThread != null)
-				WorkerThread.Abort();
+        public void Shutdown()
+        {
+            if (WorkerThread != null)
+                WorkerThread.Abort();
 
-			WorkerThread = null;
-		}
+            WorkerThread = null;
+        }
 
-		public void AddPendingConnection(ServerPlayer player)
-		{
-			lock(Players)
+        public void AddPendingConnection(ServerPlayer player)
+        {
+            lock (Players)
                 Players.Add(player);
 
             player.Disconnected += Player_Disconnected;
 
-			if(WorkerThread == null)
-			{
-				WorkerThread = new Thread(new ThreadStart(ProcessPendingPlayers));
-				WorkerThread.Start();
-			}
-		}
+            if (WorkerThread == null)
+            {
+                WorkerThread = new Thread(new ThreadStart(ProcessPendingPlayers));
+                WorkerThread.Start();
+            }
+        }
 
         protected void RemovePlayer(ServerPlayer sp)
         {
@@ -66,40 +66,40 @@ namespace BZFlag.Game.Host
 
         }
 
-		protected void ProcessPendingPlayers()
-		{
-			ServerPlayer[] locals = null;
+        protected void ProcessPendingPlayers()
+        {
+            ServerPlayer[] locals = null;
 
-			lock(Players)
+            lock (Players)
                 locals = Players.ToArray();
 
-			while(locals.Length > 0)
-			{
-				foreach(ServerPlayer player in locals)
-				{
-					int count = 0; 
-					while (count < MaxMessagesPerClientCycle)
-					{
-						InboundMessageBuffer.CompletedMessage buffer = player.InboundTCP.GetMessage();
-						if(buffer == null)
-							break;
-		
-						NetworkMessage msg = MessageProcessor.Unpack(buffer.ID, buffer.Data);
-						msg.Tag = player;
-						msg.FromUDP = false;
+            while (locals.Length > 0)
+            {
+                foreach (ServerPlayer player in locals)
+                {
+                    int count = 0;
+                    while (count < MaxMessagesPerClientCycle)
+                    {
+                        InboundMessageBuffer.CompletedMessage buffer = player.InboundTCP.GetMessage();
+                        if (buffer == null)
+                            break;
+
+                        NetworkMessage msg = MessageProcessor.Unpack(buffer.ID, buffer.Data);
+                        msg.Tag = player;
+                        msg.FromUDP = false;
 
                         ProcessClientMessage(player, msg);
 
-						count++;
-					}
-					
-				}
-				Thread.Sleep(SleepTime);
-				lock(Players)
-                    locals = Players.ToArray();
-			}
+                        count++;
+                    }
 
-			WorkerThread = null;
-		}
-	}
+                }
+                Thread.Sleep(SleepTime);
+                lock (Players)
+                    locals = Players.ToArray();
+            }
+
+            WorkerThread = null;
+        }
+    }
 }

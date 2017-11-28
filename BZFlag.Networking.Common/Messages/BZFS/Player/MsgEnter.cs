@@ -10,46 +10,46 @@ using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages.BZFS.Player
 {
-	public class MsgEnter : NetworkMessage
-	{
-		public PlayerTypes PlayerType = PlayerTypes.TankPlayer;
-		public TeamColors PlayerTeam = TeamColors.ObserverTeam;
+    public class MsgEnter : NetworkMessage
+    {
+        public PlayerTypes PlayerType = PlayerTypes.TankPlayer;
+        public TeamColors PlayerTeam = TeamColors.ObserverTeam;
 
-		public string Callsign = string.Empty;
-		public string Motto = string.Empty;
-		public string Token = string.Empty;
-		public string Version = "2.4.9";
+        public string Callsign = string.Empty;
+        public string Motto = string.Empty;
+        public string Token = string.Empty;
+        public string Version = "2.4.9";
 
-		public MsgEnter()
-		{
-			Code = CodeFromChars("en");
+        public MsgEnter()
+        {
+            Code = CodeFromChars("en");
 
-			Version += DateTime.Now.Year.ToString();
-			Version += DateTime.Now.Month.ToString("D2");
-			Version += DateTime.Now.Day.ToString("D2");
-			Version += "-DEVEL";
-			Version += "-" + System.Environment.OSVersion.Platform.ToString();
-			Version += "VC14mgd";
-			Version += "-CLI";
-		}
+            Version += DateTime.Now.Year.ToString();
+            Version += DateTime.Now.Month.ToString("D2");
+            Version += DateTime.Now.Day.ToString("D2");
+            Version += "-DEVEL";
+            Version += "-" + System.Environment.OSVersion.Platform.ToString();
+            Version += "VC14mgd";
+            Version += "-CLI";
+        }
 
-		public override byte[] Pack()
-		{
-			DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+        public override byte[] Pack()
+        {
+            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
 
-			buffer.WriteUInt16((UInt16)PlayerType);
-			buffer.WriteInt16((Int16)PlayerTeam);
+            buffer.WriteUInt16((UInt16)PlayerType);
+            buffer.WriteInt16((Int16)PlayerTeam);
 
-			buffer.WriteFixedSizeString(Callsign, Constants.CallsignLen);
-			buffer.WriteFixedSizeString(Motto, Constants.MottoLen);
-			buffer.WriteFixedSizeString(Token, Constants.TokenLen);
-			buffer.WriteFixedSizeString(Version, Constants.VersionLen);
+            buffer.WriteFixedSizeString(Callsign, Constants.CallsignLen);
+            buffer.WriteFixedSizeString(Motto, Constants.MottoLen);
+            buffer.WriteFixedSizeString(Token, Constants.TokenLen);
+            buffer.WriteFixedSizeString(Version, Constants.VersionLen);
 
-			return buffer.GetMessageBuffer();
-		}
+            return buffer.GetMessageBuffer();
+        }
 
-		public override void Unpack(byte[] data)
-		{
+        public override void Unpack(byte[] data)
+        {
             Reset(data);
 
             PlayerType = (PlayerTypes)ReadUInt16();
@@ -60,5 +60,5 @@ namespace BZFlag.Networking.Messages.BZFS.Player
             Token = ReadFixedSizeString(Constants.TokenLen);
             Version = ReadFixedSizeString(Constants.VersionLen);
         }
-	}
+    }
 }

@@ -29,7 +29,7 @@ namespace BZFlag.IO.BZW
             return v;
         }
 
-        public static Vector3F ReadVector3F( string line)
+        public static Vector3F ReadVector3F(string line)
         {
             Vector3F v = new Vector3F();
 

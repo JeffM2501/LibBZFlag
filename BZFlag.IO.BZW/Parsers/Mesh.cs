@@ -10,7 +10,7 @@ namespace BZFlag.IO.BZW.Parsers
 {
     public class MeshParser : PositionableObjectParser
     {
-       public Mesh.Transformation ParseTransformation( string type, string data)
+        public Mesh.Transformation ParseTransformation(string type, string data)
         {
             Mesh.Transformation t = new Mesh.Transformation();
 
@@ -71,7 +71,7 @@ namespace BZFlag.IO.BZW.Parsers
             else if (command == "OUTSIDE")
                 p.OutsidePoints.Add(Utilities.ReadVector3F(nub));
             else if (command == "SHIFT" || command == "SPIN" || command == "SCALE" || command == "SHEAR")
-                p.Transforms.Add(ParseTransformation(command,nub));
+                p.Transforms.Add(ParseTransformation(command, nub));
             else if (command == "FACE")
             {
                 if (TempFace != null)
@@ -147,7 +147,7 @@ namespace BZFlag.IO.BZW.Parsers
             Mesh m = Object as Mesh;
             if (m == null)
                 return base.BuildCode();
-                string name = base.BuildCode();
+            string name = base.BuildCode();
 
             foreach (var p in m.InsidePoints)
                 AddCode(1, "inside", p);
@@ -190,11 +190,11 @@ namespace BZFlag.IO.BZW.Parsers
             if (m.SmoothBounce)
                 AddCode(1, "smoothbounce");
 
-            foreach(var face in m.Faces)
+            foreach (var face in m.Faces)
             {
                 AddCode(1, "face");
 
-                AddCode(2, "vertices", string.Join(" ",Utilities.GetStringList<int>(face.Vertecies)));
+                AddCode(2, "vertices", string.Join(" ", Utilities.GetStringList<int>(face.Vertecies)));
                 AddCode(2, "normals", string.Join(" ", Utilities.GetStringList<int>(face.Normals)));
                 AddCode(2, "texcoords", string.Join(" ", Utilities.GetStringList<int>(face.UVs)));
 
@@ -220,7 +220,7 @@ namespace BZFlag.IO.BZW.Parsers
                 AddCode(1, "endface");
             }
 
-           return name;
+            return name;
         }
     }
 }

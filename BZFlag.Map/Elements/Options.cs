@@ -5,11 +5,11 @@ using System.Text;
 
 namespace BZFlag.Map.Elements
 {
-	public class Options : BasicObject
-	{
-		public Options()
-		{
-			ObjectType = "Options";
-		}
-	}
+    public class Options : BasicObject
+    {
+        public Options()
+        {
+            ObjectType = "Options";
+        }
+    }
 }

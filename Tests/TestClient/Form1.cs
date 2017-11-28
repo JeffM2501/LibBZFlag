@@ -17,81 +17,81 @@ using BZFlag.Networking.Messages.BZFS;
 
 namespace TestClient
 {
-	public class Config
-	{
-		public string Callsign = string.Empty;
-		public string Motto = string.Empty;
-		public string Password = string.Empty;
+    public class Config
+    {
+        public string Callsign = string.Empty;
+        public string Motto = string.Empty;
+        public string Password = string.Empty;
 
-		public void Save()
-		{
-			FileInfo file = new FileInfo(Path.Combine(Application.UserAppDataPath, "settings.xml"));
-			if(file.Exists)
-				file.Delete();
+        public void Save()
+        {
+            FileInfo file = new FileInfo(Path.Combine(Application.UserAppDataPath, "settings.xml"));
+            if (file.Exists)
+                file.Delete();
 
-			XmlSerializer xml = new XmlSerializer(this.GetType());
-			FileStream fs = file.OpenWrite();
-			xml.Serialize(fs, this);
-			fs.Close();
-		}
+            XmlSerializer xml = new XmlSerializer(this.GetType());
+            FileStream fs = file.OpenWrite();
+            xml.Serialize(fs, this);
+            fs.Close();
+        }
 
-		public static Config Load()
-		{
-			FileInfo file = new FileInfo(Path.Combine(Application.UserAppDataPath, "settings.xml"));
-			if(!file.Exists)
-				return new Config();
+        public static Config Load()
+        {
+            FileInfo file = new FileInfo(Path.Combine(Application.UserAppDataPath, "settings.xml"));
+            if (!file.Exists)
+                return new Config();
 
-			XmlSerializer xml = new XmlSerializer(typeof(Config));
-			FileStream fs = file.OpenRead();
-			Config cfg = xml.Deserialize(fs) as Config;
-			fs.Close();
+            XmlSerializer xml = new XmlSerializer(typeof(Config));
+            FileStream fs = file.OpenRead();
+            Config cfg = xml.Deserialize(fs) as Config;
+            fs.Close();
 
-			if(cfg == null)
-				return new Config();
+            if (cfg == null)
+                return new Config();
 
-			return cfg;
-		}
+            return cfg;
+        }
 
-		public string GetPassword()
-		{
-			if(Password == string.Empty)
-				return Password;
+        public string GetPassword()
+        {
+            if (Password == string.Empty)
+                return Password;
 
-			return Encoding.UTF8.GetString(ProtectedData.Unprotect(Convert.FromBase64String(Password),null, DataProtectionScope.CurrentUser));
-		}
+            return Encoding.UTF8.GetString(ProtectedData.Unprotect(Convert.FromBase64String(Password), null, DataProtectionScope.CurrentUser));
+        }
 
-		public void SetPassword(string pass)
-		{
-			if(pass == string.Empty)
-			{
-				Password = pass;
-				return;
-			}
+        public void SetPassword(string pass)
+        {
+            if (pass == string.Empty)
+            {
+                Password = pass;
+                return;
+            }
 
-			Password = Convert.ToBase64String(ProtectedData.Protect(Encoding.UTF8.GetBytes(pass), null, DataProtectionScope.CurrentUser));
-		}
-	}
+            Password = Convert.ToBase64String(ProtectedData.Protect(Encoding.UTF8.GetBytes(pass), null, DataProtectionScope.CurrentUser));
+        }
+    }
 
-	public partial class Form1 : Form
+    public partial class Form1 : Form
     {
         GameList ListServerLink = new GameList();
 
         BZFlag.Game.Client GameClient = null;
 
-		protected Config UserConfig = new Config();
+        protected Config UserConfig = new Config();
 
-		public Form1()
+        public Form1()
         {
             InitializeComponent();
             ListServerLink.RequestCompleted += ListServerLink_RequestCompleted;
 
-			UserConfig = Config.Load();
+            UserConfig = Config.Load();
 
-			Callsign.Text = UserConfig.Callsign;
-			Motto.Text = UserConfig.Motto;
-			Password.Text = UserConfig.GetPassword();
+            Callsign.Text = UserConfig.Callsign;
+            Motto.Text = UserConfig.Motto;
+            Password.Text = UserConfig.GetPassword();
 
-			SendChatLine_TextChanged(this, EventArgs.Empty);
+            SendChatLine_TextChanged(this, EventArgs.Empty);
             CheckLogin();
         }
 
@@ -107,7 +107,7 @@ namespace TestClient
             if (OnlyFilledServers.Checked)
             {
                 List<object> things = new List<object>();
-                foreach(var s in ListServerLink.ServerList)
+                foreach (var s in ListServerLink.ServerList)
                 {
                     if (s.Info.TotalPlayers > 0)
                         things.Add(s);
@@ -127,10 +127,10 @@ namespace TestClient
         {
             ListServerLink.GetList(Callsign.Text, Password.Text);
 
-			UserConfig.Callsign = Callsign.Text;
-			UserConfig.Motto = Motto.Text;
-			UserConfig.SetPassword(Password.Text);
-			UserConfig.Save();
+            UserConfig.Callsign = Callsign.Text;
+            UserConfig.Motto = Motto.Text;
+            UserConfig.SetPassword(Password.Text);
+            UserConfig.Save();
         }
 
 
@@ -152,7 +152,7 @@ namespace TestClient
 
         private void Join_Click(object sender, EventArgs e)
         {
-			GameList.ListServerData server = ServerList.SelectedItem as GameList.ListServerData;
+            GameList.ListServerData server = ServerList.SelectedItem as GameList.ListServerData;
             if (server == null)
                 return;
 
@@ -180,7 +180,7 @@ namespace TestClient
             GameClient.ClientAccepted += GameClient_ClientAccepted;
             GameClient.WorldDownloadProgress += GameClient_WorldDownloadProgress;
 
-        //    GameClient.FlagCreated += GameClient_FlagCreated;
+            //    GameClient.FlagCreated += GameClient_FlagCreated;
 
             timer1.Start();
         }
@@ -192,7 +192,7 @@ namespace TestClient
 
         private void GameClient_FlagCreated(object sender, BZFlag.Game.Flags.FlagInstance e)
         {
-            AddLogLine("Flag Created " + e.ID.ToString()); 
+            AddLogLine("Flag Created " + e.ID.ToString());
         }
 
         private void GameClient_WorldDownloadProgress(object sender, BZFlag.Game.Client.WorldDownloadProgressEventArgs e)
@@ -226,7 +226,7 @@ namespace TestClient
 
         private void Chat_ChatMessageReceived(object sender, BZFlag.Game.Chat.ChatSystem.ChatMessageEventArgs e)
         {
-            var from = GameClient.PlayerList.GetPlayerByID(e.Message.From,true);
+            var from = GameClient.PlayerList.GetPlayerByID(e.Message.From, true);
             if (from == null)
             {
                 AddChatLine(string.Format("{0}-{1}", e.Message.From, e.Message.Message));

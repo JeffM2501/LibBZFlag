@@ -21,7 +21,8 @@ namespace BZFlag.Data.Players
         Unknown = Byte.MaxValue,
     };
 
-    [Flags] public enum PlayerStatuses
+    [Flags]
+    public enum PlayerStatuses
     {           // bit masks
         DeadStatus = 0,     // not alive, not paused, etc.
         Alive = (1 << 0),   // player is alive
@@ -37,7 +38,8 @@ namespace BZFlag.Data.Players
         PlaySound = (1 << 10),	// play one or more sounds
     };
 
-    [Flags] public enum PlayerStatusSounds
+    [Flags]
+    public enum PlayerStatusSounds
     {
         NoSounds = 0,
         JumpSound = (1 << 0),
@@ -59,12 +61,13 @@ namespace BZFlag.Data.Players
         Unknown = 255,
     };
 
-	[Flags] public enum PlayerAttributes
-	{
-		Unknown = 0,
-		IsRegistered = 0x02,
-		IsVerified = 0x04,
-		IsAdmin = 0x08,
-	};
+    [Flags]
+    public enum PlayerAttributes
+    {
+        Unknown = 0,
+        IsRegistered = 0x02,
+        IsVerified = 0x04,
+        IsAdmin = 0x08,
+    };
 
 }

@@ -9,36 +9,36 @@ using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages
 {
-	public abstract class NetworkMessage : DynamicBufferReader
+    public abstract class NetworkMessage : DynamicBufferReader
     {
-		public static bool IsOnServer = false;
-		
-		public bool IsServer()
-		{
-			return IsOnServer;
-		}
-			
-		public int Code = int.MinValue;
-		public string CodeAbreviation = string.Empty;
+        public static bool IsOnServer = false;
 
-		public bool FromUDP = false;
-		public object Tag = null;
+        public bool IsServer()
+        {
+            return IsOnServer;
+        }
 
-		public abstract void Unpack(byte[] data);
-		public abstract byte[] Pack();
+        public int Code = int.MinValue;
+        public string CodeAbreviation = string.Empty;
 
-		public int CodeFromChars(string msgCode)
-		{
-			if(msgCode.Length < 2)
-				msgCode = " " + msgCode;
+        public bool FromUDP = false;
+        public object Tag = null;
 
-			CodeAbreviation = msgCode;
+        public abstract void Unpack(byte[] data);
+        public abstract byte[] Pack();
 
-			byte[] b = Encoding.ASCII.GetBytes(msgCode.Substring(0, 2));
-			if(BitConverter.IsLittleEndian)
-				Array.Reverse(b);
-			return (int)BitConverter.ToUInt16(b,0);
-		}
+        public int CodeFromChars(string msgCode)
+        {
+            if (msgCode.Length < 2)
+                msgCode = " " + msgCode;
+
+            CodeAbreviation = msgCode;
+
+            byte[] b = Encoding.ASCII.GetBytes(msgCode.Substring(0, 2));
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(b);
+            return (int)BitConverter.ToUInt16(b, 0);
+        }
 
         protected float ReadSmallDist()
         {
@@ -52,7 +52,7 @@ namespace BZFlag.Networking.Messages
 
         protected float ReadSmallScale()
         {
-            return ((float)ReadInt16() )/Constants.SmallScale;
+            return ((float)ReadInt16()) / Constants.SmallScale;
         }
 
         protected float ReadSmallVel()
@@ -74,43 +74,43 @@ namespace BZFlag.Networking.Messages
             return new Vector3F(ReadSmallVel(), ReadSmallVel(), ReadSmallVel());
         }
 
-		protected FlagUpdateData ReadFlagUpdateData()
-		{
-			FlagUpdateData flag = new FlagUpdateData();
-			flag.FlagID = ReadUInt16();
-			flag.Abreviation = ReadFixedSizeString( 2);
-			flag.Status = (FlagStatuses)ReadUInt16();
-			flag.Endurance = (FlagEndurances)ReadUInt16();
-			flag.Owner = ReadByte();
-			flag.Postion = ReadVector3F();
-			flag.LaunchPosition = ReadVector3F();
-			flag.LandingPostion = ReadVector3F();
-			flag.FlightTime = ReadFloat();
-			flag.FlightEnd = ReadFloat();
-			flag.InitalVelocity = ReadFloat();
+        protected FlagUpdateData ReadFlagUpdateData()
+        {
+            FlagUpdateData flag = new FlagUpdateData();
+            flag.FlagID = ReadUInt16();
+            flag.Abreviation = ReadFixedSizeString(2);
+            flag.Status = (FlagStatuses)ReadUInt16();
+            flag.Endurance = (FlagEndurances)ReadUInt16();
+            flag.Owner = ReadByte();
+            flag.Postion = ReadVector3F();
+            flag.LaunchPosition = ReadVector3F();
+            flag.LandingPostion = ReadVector3F();
+            flag.FlightTime = ReadFloat();
+            flag.FlightEnd = ReadFloat();
+            flag.InitalVelocity = ReadFloat();
 
-			return flag;
-		}
-	}
+            return flag;
+        }
+    }
 
-	public class UnknownMessage : NetworkMessage
-	{
-		public byte[] DataBuffer = null;
+    public class UnknownMessage : NetworkMessage
+    {
+        public byte[] DataBuffer = null;
 
-		public UnknownMessage(int code, byte[] b)
-		{
-			DataBuffer = b;
-			Code = code;
-		}
+        public UnknownMessage(int code, byte[] b)
+        {
+            DataBuffer = b;
+            Code = code;
+        }
 
-		public override byte[] Pack()
-		{
-			throw new NotImplementedException();
-		}
+        public override byte[] Pack()
+        {
+            throw new NotImplementedException();
+        }
 
-		public override void Unpack(byte[] data)
-		{
-			DataBuffer = data;
-		}
-	}
+        public override void Unpack(byte[] data)
+        {
+            DataBuffer = data;
+        }
+    }
 }

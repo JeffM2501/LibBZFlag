@@ -22,7 +22,7 @@ namespace BZFlag.Game.Host.World
 
             BZFlag.IO.BZW.Reader.ReadMap(fs);
             fs.Close();
-            
+
 
         }
     }

@@ -29,11 +29,11 @@ namespace BZFlag.Map.Elements.Shapes
             public bool Passable = false;
             public bool ShootThrough = false;
             public bool DriveThrough = false;
-			public bool Ricochet = false;
+            public bool Ricochet = false;
 
-			public int MaterialID = -1;
-			public int PhysicsDriverID = -1;
-		}
+            public int MaterialID = -1;
+            public int PhysicsDriverID = -1;
+        }
 
         public List<Face> Faces = new List<Face>();
 

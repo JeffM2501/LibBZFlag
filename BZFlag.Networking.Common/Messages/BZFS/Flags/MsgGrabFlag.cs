@@ -8,33 +8,33 @@ using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages.BZFS.Flags
 {
-	public class MsgGrabFlag : NetworkMessage
-	{
-		public int PlayerID = -1;
-		public FlagUpdateData FlagData = new FlagUpdateData();
+    public class MsgGrabFlag : NetworkMessage
+    {
+        public int PlayerID = -1;
+        public FlagUpdateData FlagData = new FlagUpdateData();
 
 
-		public MsgGrabFlag()
-		{
-			Code = CodeFromChars("gf");
-		}
+        public MsgGrabFlag()
+        {
+            Code = CodeFromChars("gf");
+        }
 
-		public override byte[] Pack()
-		{
-			DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+        public override byte[] Pack()
+        {
+            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
 
-			buffer.WriteByte(PlayerID);
-			buffer.WriteFlagUpdateData(FlagData);
+            buffer.WriteByte(PlayerID);
+            buffer.WriteFlagUpdateData(FlagData);
 
-			return buffer.GetMessageBuffer();
-		}
+            return buffer.GetMessageBuffer();
+        }
 
-		public override void Unpack(byte[] data)
-		{
-			Reset(data);
+        public override void Unpack(byte[] data)
+        {
+            Reset(data);
 
-			PlayerID = ReadByte();
-			FlagData = ReadFlagUpdateData();
-		}
-	}
+            PlayerID = ReadByte();
+            FlagData = ReadFlagUpdateData();
+        }
+    }
 }

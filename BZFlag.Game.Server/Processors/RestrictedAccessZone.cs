@@ -38,7 +38,7 @@ namespace BZFlag.Game.Host.Processors
         {
             RemovePlayer(sp);
             if (PromotePlayer != null)
-                PromotePlayer.Invoke(this,sp);
+                PromotePlayer.Invoke(this, sp);
         }
         private void HandleEnter(ServerPlayer player, NetworkMessage msg)
         {
@@ -46,19 +46,19 @@ namespace BZFlag.Game.Host.Processors
             if (enter == null)
                 return;
 
-			if (enter.Callsign == string.Empty || enter.Callsign.Length < 3)
-			{
-				player.SendMessage(new MsgReject(MsgReject.RejectionCodes.RejectBadCallsign, "Invalid callsign"));
-				return;
-			}
+            if (enter.Callsign == string.Empty || enter.Callsign.Length < 3)
+            {
+                player.SendMessage(new MsgReject(MsgReject.RejectionCodes.RejectBadCallsign, "Invalid callsign"));
+                return;
+            }
 
 
-			player.Callsign = enter.Callsign;
-			player.Motto = enter.Motto;
-			player.Token = enter.Token;
+            player.Callsign = enter.Callsign;
+            player.Motto = enter.Motto;
+            player.Token = enter.Token;
 
-			MsgAccept accept = new MsgAccept();
-			accept.PlayerID = player.PlayerID;
+            MsgAccept accept = new MsgAccept();
+            accept.PlayerID = player.PlayerID;
 
             player.SendMessage(accept);
         }

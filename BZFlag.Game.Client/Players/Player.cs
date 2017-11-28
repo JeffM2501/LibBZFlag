@@ -14,45 +14,45 @@ using BZFlag.Map.Elements.Shapes;
 
 namespace BZFlag.Game.Players
 {
-	public class Player : EventArgs
-	{
-		public int PlayerID = -1;
+    public class Player : EventArgs
+    {
+        public int PlayerID = -1;
 
-		public PlayerTypes PlayerType = PlayerTypes.Unknown;
+        public PlayerTypes PlayerType = PlayerTypes.Unknown;
 
-		public TeamColors Team = TeamColors.NoTeam;
+        public TeamColors Team = TeamColors.NoTeam;
 
-		public string Callsign = string.Empty;
-		public string Motto = string.Empty;
+        public string Callsign = string.Empty;
+        public string Motto = string.Empty;
 
-		public int Wins = 0;
-		public int Losses = 0;
-		public int TeamKills = 0;
+        public int Wins = 0;
+        public int Losses = 0;
+        public int TeamKills = 0;
 
         public int Handicap = 0;
         public byte[] IPAddress = new byte[0];
 
-		public PlayerAttributes Attributes = PlayerAttributes.Unknown;
+        public PlayerAttributes Attributes = PlayerAttributes.Unknown;
 
-		public MsgPlayerUpdateBase LastUpdate = null;
+        public MsgPlayerUpdateBase LastUpdate = null;
 
-		// infered values from updates
-		public double PlayerSpawnTime = -1;
-		public bool Active = false;
+        // infered values from updates
+        public double PlayerSpawnTime = -1;
+        public bool Active = false;
         public bool Teleporting = false;
 
         public bool AutoPilot = false;
         public bool Paused = false;
         public bool IsRabbit = false;
 
-		// DR values
-		public Vector3F Position = Vector3F.Zero;
-		public float Azimuth = 0;
+        // DR values
+        public Vector3F Position = Vector3F.Zero;
+        public float Azimuth = 0;
 
-		// state values
-		public FlagInstance CurrentFlag = null;
+        // state values
+        public FlagInstance CurrentFlag = null;
 
-		public Dictionary<int, Shot> ShotList = new Dictionary<int, Shot>();
+        public Dictionary<int, Shot> ShotList = new Dictionary<int, Shot>();
 
         public double TeleportStartTime = -1;
         public Teleporter PortSource = null;
@@ -87,14 +87,14 @@ namespace BZFlag.Game.Players
             Teleporting = to != null;
         }
 
-		public bool SetFlag(FlagInstance flag)
-		{
-			if(flag == CurrentFlag)
-				return false;
+        public bool SetFlag(FlagInstance flag)
+        {
+            if (flag == CurrentFlag)
+                return false;
 
-			CurrentFlag = flag;
-			return true;
-		}
+            CurrentFlag = flag;
+            return true;
+        }
 
         public void Update(double now, double delta)
         {
@@ -104,23 +104,23 @@ namespace BZFlag.Game.Players
             Azimuth = LastUpdate.Azimuth + (float)(LastUpdate.AngularVelocity * deltaFromUpdate);
         }
 
-		public int AddShot(Shot shot)
-		{
-			if (ShotList.ContainsKey(shot.BZFSShotID))
-			{
-				Shot oldShot = ShotList[shot.BZFSShotID];
-				ShotList[shot.BZFSShotID] = shot;
-				return oldShot.GlobalID;
-			}
+        public int AddShot(Shot shot)
+        {
+            if (ShotList.ContainsKey(shot.BZFSShotID))
+            {
+                Shot oldShot = ShotList[shot.BZFSShotID];
+                ShotList[shot.BZFSShotID] = shot;
+                return oldShot.GlobalID;
+            }
 
-			ShotList.Add(shot.BZFSShotID, shot);
-			return shot.GlobalID;
-		}
+            ShotList.Add(shot.BZFSShotID, shot);
+            return shot.GlobalID;
+        }
 
-		public void RemoveShot(Shot shot)
-		{
-			if(ShotList.ContainsKey(shot.BZFSShotID) && ShotList[shot.BZFSShotID] == shot)
-				ShotList.Remove(shot.BZFSShotID);
-		}
-	}
+        public void RemoveShot(Shot shot)
+        {
+            if (ShotList.ContainsKey(shot.BZFSShotID) && ShotList[shot.BZFSShotID] == shot)
+                ShotList.Remove(shot.BZFSShotID);
+        }
+    }
 }

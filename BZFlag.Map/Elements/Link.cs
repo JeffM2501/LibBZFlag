@@ -5,8 +5,8 @@ using System.Text;
 
 namespace BZFlag.Map.Elements
 {
-	public class Link : BasicObject
-	{
+    public class Link : BasicObject
+    {
         public class PorterLink
         {
             public bool Wildcard = false;
@@ -20,8 +20,8 @@ namespace BZFlag.Map.Elements
         public PorterLink To = new PorterLink();
 
         public Link()
-		{
-			ObjectType = "Link";
-		}
-	}
+        {
+            ObjectType = "Link";
+        }
+    }
 }

@@ -24,17 +24,17 @@ namespace BZFlag.Game.Host
         }
 
         protected Dictionary<IPAddress, HandlerData> AcceptableClients = new Dictionary<IPAddress, HandlerData>();
-		public bool AllowAll = false;
+        public bool AllowAll = false;
 
-		public class OutOfBandUDPEventArgs : EventArgs
-		{
-			public byte[] DataBuffer = null;
-			public IPEndPoint Source = null;
-		}
+        public class OutOfBandUDPEventArgs : EventArgs
+        {
+            public byte[] DataBuffer = null;
+            public IPEndPoint Source = null;
+        }
 
-		public event EventHandler<OutOfBandUDPEventArgs> OutOfBandUDPMessage = null;
+        public event EventHandler<OutOfBandUDPEventArgs> OutOfBandUDPMessage = null;
 
-		protected UdpClient UDPHost = null;
+        protected UdpClient UDPHost = null;
 
         protected InboundMessageBuffer MsgBuffer = new InboundMessageBuffer(true);  // if we ever have to buffer across packets, then this is one per endpoint
 
@@ -61,7 +61,7 @@ namespace BZFlag.Game.Host
 
         public void ClearMessageHandler(IPAddress address)
         {
-            lock(AcceptableClients)
+            lock (AcceptableClients)
             {
                 if (AcceptableClients.ContainsKey(address))
                     AcceptableClients.Remove(address);
@@ -70,36 +70,36 @@ namespace BZFlag.Game.Host
 
         public void Listen(int port)
         {
-			UDPHost = new UdpClient(port);
-		//	UDPHost.Connect(port);
+            UDPHost = new UdpClient(port);
+            //	UDPHost.Connect(port);
 
 
-			StartUDPListen();
+            StartUDPListen();
 
-		}
+        }
 
-		protected void StartUDPListen()
-		{
-			new Thread(new ThreadStart(ReceiveOne)).Start();
-		}
+        protected void StartUDPListen()
+        {
+            new Thread(new ThreadStart(ReceiveOne)).Start();
+        }
 
-		protected void ReceiveOne()
-		{
-			byte[] data = null;
-			IPEndPoint source = new IPEndPoint(IPAddress.Any, 5154);
-			try
-			{
-			
-				data = UDPHost.Receive(ref source);
-			}
-			catch (System.Exception /*ex*/)
-			{
-				
-			}
-			
-			StartUDPListen();
-			ProcessUDPPackets(source,data);
-		}
+        protected void ReceiveOne()
+        {
+            byte[] data = null;
+            IPEndPoint source = new IPEndPoint(IPAddress.Any, 5154);
+            try
+            {
+
+                data = UDPHost.Receive(ref source);
+            }
+            catch (System.Exception /*ex*/)
+            {
+
+            }
+
+            StartUDPListen();
+            ProcessUDPPackets(source, data);
+        }
 
         public void Shutdown()
         {
@@ -111,13 +111,13 @@ namespace BZFlag.Game.Host
         {
             if (AcceptableClients.ContainsKey(ep.Address))
                 MsgBuffer.AddData(data, AcceptableClients[ep.Address]);
-			else if (AllowAll && OutOfBandUDPMessage != null)
-			{
-				OutOfBandUDPEventArgs args = new OutOfBandUDPEventArgs();
-				args.DataBuffer = data;
-				args.Source = ep;
-				OutOfBandUDPMessage.Invoke(this, args);
-			}
+            else if (AllowAll && OutOfBandUDPMessage != null)
+            {
+                OutOfBandUDPEventArgs args = new OutOfBandUDPEventArgs();
+                args.DataBuffer = data;
+                args.Source = ep;
+                OutOfBandUDPMessage.Invoke(this, args);
+            }
         }
 
         private void MsgBuffer_CompleteMessageRecived(object sender, EventArgs e)

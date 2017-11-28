@@ -6,24 +6,24 @@ using System.Text;
 
 namespace BZFlag.Map.Elements
 {
-	public class BasicObject
-	{
-		public string ObjectType = string.Empty;
+    public class BasicObject
+    {
+        public string ObjectType = string.Empty;
         public string TypeParams = string.Empty;
 
-		public string Name = string.Empty;
+        public string Name = string.Empty;
 
-		public string GUID = string.Empty;
+        public string GUID = string.Empty;
 
         public List<string> Attributes = new List<string>();
 
         private static Random RNG = new Random();
 
-		public BasicObject()
-		{
-			ObjectType = "Unknown";
+        public BasicObject()
+        {
+            ObjectType = "Unknown";
 
-			GUID = RNG.Next().ToString() + RNG.Next().ToString() + RNG.Next().ToString();
-		}
+            GUID = RNG.Next().ToString() + RNG.Next().ToString() + RNG.Next().ToString();
+        }
     }
 }

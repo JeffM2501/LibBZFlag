@@ -7,7 +7,7 @@ using BZFlag.Map.Elements.Shapes;
 
 namespace BZFlag.IO.BZW.Parsers
 {
-	public class BoxParser : PhaseableObjectParser
+    public class BoxParser : PhaseableObjectParser
     {
         public BoxParser()
         {
@@ -18,5 +18,5 @@ namespace BZFlag.IO.BZW.Parsers
         {
             Object = obj;
         }
-	}
+    }
 }

@@ -22,13 +22,13 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
             throw new NotImplementedException();
         }
 
-		public override void Unpack(byte[] data)
+        public override void Unpack(byte[] data)
         {
             Reset(data);
 
             int count = ReadUInt16();
             for (int i = 0; i < count; i++)
-				FlagUpdates.Add(ReadFlagUpdateData());
+                FlagUpdates.Add(ReadFlagUpdateData());
         }
     }
 }

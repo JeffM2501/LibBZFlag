@@ -11,26 +11,26 @@ namespace BZFlag.Game.Host
         public int Port = 5154;
 
 
-		// plugins
-		public List<string> PlugIns = new List<string>();
+        // plugins
+        public List<string> PlugIns = new List<string>();
 
 
-		public string LogFile = string.Empty;
-		public int LogLevel = 1;
+        public string LogFile = string.Empty;
+        public int LogLevel = 1;
 
-		// external files
+        // external files
         public string MapFile = string.Empty;
         public string BanListFile = string.Empty;
 
 
-		// public data
-		public bool ListPublicly = false;
-		public string PublicHost = string.Empty;
-		public string PublicListKey = string.Empty;
-		public List<string> PublicAdvertizeGroups = new List<string>();
-		public string PublicTitle = string.Empty;
+        // public data
+        public bool ListPublicly = false;
+        public string PublicHost = string.Empty;
+        public string PublicListKey = string.Empty;
+        public List<string> PublicAdvertizeGroups = new List<string>();
+        public string PublicTitle = string.Empty;
 
-		// authentication data
+        // authentication data
 
 
         public static ServerConfig Read(string filepath)
