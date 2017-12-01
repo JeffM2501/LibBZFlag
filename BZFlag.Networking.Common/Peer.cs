@@ -155,6 +155,9 @@ namespace BZFlag.Networking.Common
             TCPNetworkPollThread.Start();
         }
 
+
+        IPEndPoint ServerUDPEndoint = null;
+
         public void ConnectToUDP()
         {
             if (HostName == string.Empty || HostPort < 0)
@@ -162,7 +165,8 @@ namespace BZFlag.Networking.Common
 
             UDP = new UdpClient(HostName, HostPort);
 
-            UDP.DontFragment = false;
+
+            ServerUDPEndoint = TCP.Client.RemoteEndPoint as IPEndPoint;
 
             UDPNetworkPollThread = new Thread(new ThreadStart(PollUDP));
             UDPNetworkPollThread.Start();
@@ -331,6 +335,9 @@ namespace BZFlag.Networking.Common
             }
         }
 
+
+        protected Socket UDPSendingsocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
         protected virtual void PollUDP()
         {
             while (true)
@@ -338,7 +345,9 @@ namespace BZFlag.Networking.Common
                 byte[] outbound = OutboundUDP.Pop();
                 while (outbound != null)
                 {
-                    UDP.Send(outbound, outbound.Length);
+
+                    UDPSendingsocket.SendTo(outbound, ServerUDPEndoint);
+                   // UDP.Send(outbound, outbound.Length);
                     outbound = OutboundUDP.Pop();
                 }
 
