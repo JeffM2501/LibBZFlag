@@ -119,6 +119,17 @@ namespace BZFlag.Services
                         data.Version = dataParts[1];
                         data.Info.ReadFromString(dataParts[2]);
                         data.Address = dataParts[3];
+
+                        data.Host = data.Address;
+                        data.Port = 5154;
+                        if (dataParts[0].Contains(":"))
+                        {
+                            string[] portParts = dataParts[0].Split(":".ToCharArray(), 2);
+
+                            data.Host = portParts[0];
+                            int.TryParse(portParts[1], out data.Port);
+                        }
+
                         if (dataParts.Length > 4)
                             data.Description = dataParts[4];
 

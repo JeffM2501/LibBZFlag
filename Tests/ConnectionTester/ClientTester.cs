@@ -19,7 +19,27 @@ namespace ConnectionTester
         GameList Link = new GameList();
         bool GotList = false;
 
-        public StreamWriter LogStream = new StreamWriter("log.txt");
+
+        public string Callsign = "Billy D. Bugger";
+        public string Motto = "I live to test";
+        public string Version = string.Empty;
+        public string Host = string.Empty;
+        public int Port = 5154;
+
+        public string LogFileName = "log.txt";
+
+        public bool UseThread = false;
+        protected Thread Worker = null;
+
+        public void Kill()
+        {
+            if (Worker != null)
+                Worker.Abort();
+
+            Worker = null;
+        }
+
+        public StreamWriter LogStream = null; 
         public void WriteLine(string text)
         {
             Console.WriteLine(text);
@@ -40,27 +60,24 @@ namespace ConnectionTester
             LogStream.Write(text);
         }
 
-        public ClientTester(string[] args)
+        public ClientTester()
         {
             Link.RequestCompleted += Link_RequestCompleted;
             Link.RequestErrored += Link_RequestErrored;
+        }
+
+        public virtual void Startup()
+        {
+            LogStream = new StreamWriter(LogFileName);
 
             StartupParams.DesiredTeam = TeamColors.ObserverTeam;
 
-            if (args.Length > 0)
-                StartupParams.Callsign = args[0];
-            else
-                StartupParams.Callsign = "Billy D. Bugger";
+            StartupParams.Callsign = Callsign;
+            StartupParams.Motto = Motto;
+            StartupParams.VersionOveride = Version;
 
-            GetList(args.Length > 1 ? args[1] : string.Empty);
-
-            var server = Link.FindServerWithMostPlayers();
-            if (server == null || false)
-                server = new GameList.ListServerData("bzflag.allejo.io", 5170);
-
-            StartupParams.Host = server.Host;
-            StartupParams.Port = server.Port;
-            StartupParams.Motto = "Testing 1...2..3.";
+            StartupParams.Host = Host;
+            StartupParams.Port = Port;
         }
 
         private void GetList(string pass)
@@ -87,6 +104,8 @@ namespace ConnectionTester
 
         public void Run()
         {
+            Startup();
+
             GameClient = new Client(StartupParams);
             GameClient.HostIsNotBZFlag += GameClient_HostIsNotBZFlag;
 
@@ -120,11 +139,27 @@ namespace ConnectionTester
             GameClient.ShotMan.ShotRemoved += ShotMan_ShotRemoved;
             GameClient.ShotMan.ShotUpdated += ShotMan_ShotUpdated;
 
+            if (UseThread)
+            {
+                Worker = new Thread(new ThreadStart(ProcessUpdate));
+                Worker.Start();
+            }
+            else
+                ProcessUpdate();
+        }
+
+        protected void ProcessUpdate()
+        {
             while (true)
             {
-                GameClient.Update();
+                Update();
                 Thread.Sleep(50);
             }
+        }
+
+        public void Update()
+        {
+            GameClient.Update();
         }
 
         private void GameClient_UDPLinkEstablished(object sender, EventArgs e)

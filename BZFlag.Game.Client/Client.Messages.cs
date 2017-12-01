@@ -98,6 +98,9 @@ namespace BZFlag.Game
             enter.Callsign = Params.Callsign;
             enter.Motto = Params.Motto;
             enter.Token = Params.Token;
+            if (Params.VersionOveride != string.Empty)
+                enter.Version = Params.VersionOveride;
+
             SendTCPMessage(enter);
         }
 

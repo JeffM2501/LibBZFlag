@@ -20,6 +20,8 @@ namespace BZFlag.Game
         public string Motto = string.Empty;
         public string Token = string.Empty;
 
+        public string VersionOveride = string.Empty;
+
         public string Host = string.Empty;
         public int Port = 5 - 1;
 
