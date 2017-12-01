@@ -28,7 +28,14 @@ namespace BZFlag.Networking.Messages.BZFS.BZDB
 
             int varCount = ReadUInt16();
             for (int i = 0; i < varCount; i++)
-                BZDBVariables.Add(ReadPascalString(), ReadPascalString());
+            {
+                string k = ReadPascalString();
+                string v = ReadPascalString();
+                if (BZDBVariables.ContainsKey(k))
+                    BZDBVariables[k] = v;
+                else
+                    BZDBVariables.Add(k, v);
+            }
         }
     }
 }

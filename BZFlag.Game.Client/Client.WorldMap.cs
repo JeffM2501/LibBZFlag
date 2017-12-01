@@ -118,6 +118,9 @@ namespace BZFlag.Game
         {
             MsgGetWorld wldChunk = msg as MsgGetWorld;
 
+            if (Unpacker == null)
+                Unpacker = new WorldUnpacker();
+
             Unpacker.AddData(wldChunk.Data);
 
             if (wldChunk.Offset > 0)

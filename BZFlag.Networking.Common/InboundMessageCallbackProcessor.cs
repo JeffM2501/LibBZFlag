@@ -11,7 +11,7 @@ namespace BZFlag.Networking
     public class InboundMessageCallbackProcessor
     {
         public delegate void MessageHandler(NetworkMessage msg);
-        protected static Dictionary<int, MessageHandler> Handlers = new Dictionary<int, MessageHandler>();
+        protected  Dictionary<int, MessageHandler> Handlers = new Dictionary<int, MessageHandler>();
 
         public bool DispatchMessage(NetworkMessage Message)
         {

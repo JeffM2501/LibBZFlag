@@ -220,6 +220,9 @@ namespace BZFlag.Data.Utils
             {
                 int start = BufferOffset;
                 BufferOffset = Buffer.Length;
+                if (BufferOffset == 0)
+                    return string.Empty;
+
                 return Encoding.UTF8.GetString(Buffer, start, BufferOffset - start - 1);
             }
             else
