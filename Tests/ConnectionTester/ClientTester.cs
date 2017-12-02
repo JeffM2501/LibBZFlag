@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Threading;
 using System.IO;
@@ -70,7 +70,7 @@ namespace ConnectionTester
         {
             LogStream = new StreamWriter(LogFileName);
 
-            StartupParams.DesiredTeam = TeamColors.ObserverTeam;
+        //    StartupParams.DesiredTeam = TeamColors.ObserverTeam;
 
             StartupParams.Callsign = Callsign;
             StartupParams.Motto = Motto;
@@ -154,6 +154,12 @@ namespace ConnectionTester
             {
                 Update();
                 Thread.Sleep(50);
+
+                if (GameClient.NetClient.ConnectionError != string.Empty)
+                {
+                    WriteLine("Connection Failure " + GameClient.NetClient.ConnectionError);
+                    return;
+                }
             }
         }
 

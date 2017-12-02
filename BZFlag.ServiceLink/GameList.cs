@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -17,7 +17,7 @@ namespace BZFlag.Services
         public class ListServerData
         {
             public string Name = string.Empty;
-            public string Address = string.Empty;
+            public IPAddress Address = IPAddress.None;
             public string Version = string.Empty;
             public string Description = string.Empty;
 
@@ -30,7 +30,7 @@ namespace BZFlag.Services
             public ListServerData(string host, int port)
             {
                 Name = host + ":" + port.ToString();
-                Address = Host;
+                Address = IPAddress.None;
                 Host = host;
                 Port = port;
             }
@@ -118,9 +118,9 @@ namespace BZFlag.Services
                         data.Name = dataParts[0];
                         data.Version = dataParts[1];
                         data.Info.ReadFromString(dataParts[2]);
-                        data.Address = dataParts[3];
+                        IPAddress.TryParse(dataParts[3], out data.Address);
 
-                        data.Host = data.Address;
+                        data.Host = dataParts[3];
                         data.Port = 5154;
                         if (dataParts[0].Contains(":"))
                         {

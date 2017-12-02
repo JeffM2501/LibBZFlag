@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Text;
@@ -18,6 +18,8 @@ namespace BZFlag.Networking.Common
 
         public OutboundMessageBuffer OutboundTCP = new OutboundMessageBuffer();
         public OutboundMessageBuffer OutboundUDP = new OutboundMessageBuffer();
+
+        public string ConnectionError = string.Empty;
 
         protected TcpClient TCP = null;
 
@@ -127,7 +129,19 @@ namespace BZFlag.Networking.Common
             HostName = server;
             HostPort = port;
 
-            TCP = new TcpClient(server, port);
+            ConnectionError = string.Empty;
+            try
+            {
+                TCP = new TcpClient(server, port);
+            }
+            catch (Exception ex)
+            {
+
+                TCP = null;
+                ConnectionError = ex.ToString();
+                return;
+
+            }
 
             InboundMessageProcessor.Start();
 

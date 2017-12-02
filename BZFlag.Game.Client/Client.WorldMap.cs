@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -135,7 +135,8 @@ namespace BZFlag.Game
                     WorldDownloadProgress.Invoke(this, new WorldDownloadProgressEventArgs(1));
 
                 SetMap(Unpacker.Unpack());
-                WorldCache.SaveMapToCache(WorldHash, Unpacker.GetBuffer());
+                if (WorldCache != null)
+                    WorldCache.SaveMapToCache(WorldHash, Unpacker.GetBuffer());
                 SendEnter();
             }
         }
@@ -181,7 +182,8 @@ namespace BZFlag.Game
 
         protected void HandleGravityChanged(object sender, EventArgs e)
         {
-            Map.Constants.Gravity = BZDatabase.GetValueF(BZDBVarNames.Gravity);
+            if (Map != null)
+                Map.Constants.Gravity = BZDatabase.GetValueF(BZDBVarNames.Gravity);
         }
     }
 }
