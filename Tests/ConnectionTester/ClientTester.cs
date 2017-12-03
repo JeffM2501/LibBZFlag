@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Text;
 using System.Threading;
 using System.IO;
@@ -7,6 +7,8 @@ using BZFlag.Game;
 using BZFlag.Services;
 using BZFlag.Data.Teams;
 using BZFlag.Game.Players;
+using BZFlag.Networking.Messages.BZFS.Player;
+using BZFlag.Data.Types;
 
 namespace ConnectionTester
 {
@@ -18,6 +20,8 @@ namespace ConnectionTester
 
         GameList Link = new GameList();
         bool GotList = false;
+
+        protected Vector3F Position = Vector3F.Zero;
 
 
         public string Callsign = "Billy D. Bugger";
@@ -70,7 +74,25 @@ namespace ConnectionTester
         {
             LogStream = new StreamWriter(LogFileName);
 
-        //    StartupParams.DesiredTeam = TeamColors.ObserverTeam;
+            Random rng = new Random();
+            switch(rng.Next(4))
+            {
+                case 0:
+                    StartupParams.DesiredTeam = TeamColors.RedTeam;
+                    break;
+
+                case 1:
+                    StartupParams.DesiredTeam = TeamColors.GreenTeam;
+                    break;
+
+                case 2:
+                    StartupParams.DesiredTeam = TeamColors.BlueTeam;
+                    break;
+
+                case 3:
+                    StartupParams.DesiredTeam = TeamColors.PurpleTeam;
+                    break;
+            }
 
             StartupParams.Callsign = Callsign;
             StartupParams.Motto = Motto;
@@ -78,6 +100,9 @@ namespace ConnectionTester
 
             StartupParams.Host = Host;
             StartupParams.Port = Port;
+
+    
+            Position = new Vector3F(((float)rng.NextDouble() * 200.0f) - 100.0f, ((float)rng.NextDouble() * 200.0f) - 100.0f, 0);
         }
 
         private void GetList(string pass)
@@ -118,10 +143,12 @@ namespace ConnectionTester
 
             GameClient.PlayerList.SelfAdded += GameClient_SelfAdded;
             GameClient.PlayerList.PlayerAdded += GameClient_PlayerAdded;
+     
             GameClient.PlayerList.PlayerRemoved += GameClient_PlayerRemoved;
             GameClient.PlayerList.PlayerStateUpdated += GameClient_PlayerStateUpdated;
             GameClient.PlayerList.PlayerInfoUpdated += GameClient_PlayerInfoUpdated;
             GameClient.PlayerList.PlayerSpawned += GameClient_PlayerSpawned;
+            GameClient.PlayerList.SelfSpawned += this.GameClient_SelfSpawned;
             GameClient.PlayerList.PlayerKilled += GameClient_PlayerKilled;
 
             GameClient.ReceivedUnknownMessage += GameClient_ReceivedUnknownMessage;
@@ -148,6 +175,15 @@ namespace ConnectionTester
                 ProcessUpdate();
         }
 
+        public bool SendUpdates = false;
+        protected int UpdateOrder = 1;
+        protected float UpdateTimeStamp = 1;
+
+        private void GameClient_SelfSpawned(object sender, Player e)
+        {
+            SendUpdates = true;
+        }
+
         protected void ProcessUpdate()
         {
             while (true)
@@ -165,6 +201,20 @@ namespace ConnectionTester
 
         public void Update()
         {
+            if (SendUpdates)
+            {
+                MsgPlayerUpdate upd = new MsgPlayerUpdate();
+                upd.PlayerID = GameClient.PlayerList.LocalPlayerID;
+                upd.Position = Position;
+                upd.Azimuth = 32;
+                upd.Status = BZFlag.Data.Players.PlayerStatuses.Alive;
+                upd.Order = UpdateOrder;
+                UpdateOrder++;
+                upd.TimeStamp = UpdateTimeStamp;
+                UpdateTimeStamp += 0.01f;
+
+                GameClient.SendMessage(upd);
+            }
             GameClient.Update();
         }
 
@@ -201,6 +251,11 @@ namespace ConnectionTester
         private void GameClient_ClientAccepted(object sender, EventArgs e)
         {
             WriteLine("Client Accepted " + GameClient.PlayerList.LocalPlayerID.ToString());
+
+            BZFlag.Networking.Messages.BZFS.Player.MsgAlive spawn = new BZFlag.Networking.Messages.BZFS.Player.MsgAlive();
+            spawn.IsSpawn = true;
+
+            GameClient.SendMessage(spawn);
         }
 
         private void GameClient_PlayerRemoved(object sender, Player player)

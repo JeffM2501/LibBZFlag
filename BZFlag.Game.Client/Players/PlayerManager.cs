@@ -68,6 +68,7 @@ namespace BZFlag.Game.Players
         public event EventHandler<Player> PlayerRemoved = null;
 
         public event EventHandler<Player> PlayerSpawned = null;
+        public event EventHandler<Player> SelfSpawned = null;
 
         public class KilledEventArgs : EventArgs
         {
@@ -228,8 +229,10 @@ namespace BZFlag.Game.Players
             player.Position = alive.Position;
             player.Azimuth = alive.Azimuth;
 
-            if (PlayerSpawned != null)
-                PlayerSpawned.Invoke(this, player);
+            if (alive.PlayerID == LocalPlayerID)
+                SelfSpawned?.Invoke(this, player);
+
+            PlayerSpawned?.Invoke(this, player);
         }
 
         public void HandleKilled(NetworkMessage msg)

@@ -315,5 +315,21 @@ namespace BZFlag.Data.Utils
             WriteFloat(flag.FlightEnd);
             WriteFloat(flag.InitalVelocity);
         }
+
+        public void WriteSmallScale(float val)
+        {
+            WriteInt16((Int16)(val * Constants.SmallScale));
+        }
+
+
+        public void WriteSmallVel(float val)
+        {
+            WriteSmallScale(val / Constants.SmallMaxVel);
+        }
+
+        public void WriteSmallAngVel(float val)
+        {
+            WriteSmallScale(val / Constants.SmallMaxAngVel);
+        }
     }
 }

@@ -65,6 +65,24 @@ namespace BZFlag.Networking.Messages.BZFS.Player
             buffer.WriteInt16((Int16)Status);
         }
 
+        protected void PackFooter(DynamicOutputBuffer buffer)
+        {
+            if (Status == PlayerStatuses.JumpJets)
+                buffer.WriteSmallScale(JumpSquish);				//2
+
+            if (Status == PlayerStatuses.OnDriver)
+               buffer.WriteInt32(OnDriver);						//4
+
+            if (Status == PlayerStatuses.UserInputs)
+            {
+                buffer.WriteSmallVel(UserSpeed);					//6
+                buffer.WriteSmallAngVel(UserAngVel);				//8
+            }
+
+            if (Status == PlayerStatuses.PlaySound)
+                buffer.WriteByte((byte)Sounds);	                //9
+        }
+
         public override byte[] Pack()
         {
             throw new NotImplementedException();
@@ -85,7 +103,18 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 
         public override byte[] Pack()
         {
-            throw new NotImplementedException();
+            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+
+            PackHeader(buffer);
+
+            buffer.WriteVector3F(Position);
+            buffer.WriteVector3F(Velocity);
+
+            buffer.WriteFloat(Azimuth);
+            buffer.WriteFloat(AngularVelocity);
+
+            PackFooter(buffer);
+            return buffer.GetMessageBuffer();
         }
 
         public override void Unpack(byte[] data)
