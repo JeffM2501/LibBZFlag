@@ -14,6 +14,8 @@ namespace BZFlag.Networking.Messages.BZFS.Player
         public Vector3F Position = Vector3F.Zero;
         public float Azimuth = 0;
 
+        public bool IsSpawn = false;
+
         public MsgAlive()
         {
             Code = CodeFromChars("al");
@@ -21,15 +23,28 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 
         public override byte[] Pack()
         {
-            return new DynamicOutputBuffer(Code).GetMessageBuffer();
+            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+            if (!IsSpawn)
+            {
+                buffer.WriteByte(PlayerID);
+                buffer.WriteVector3F(Position);
+                buffer.WriteFloat(Azimuth);
+            }
+
+            return buffer.GetMessageBuffer();
         }
 
         public override void Unpack(byte[] data)
         {
             Reset(data);
-            PlayerID = ReadByte();
-            Position = ReadVector3F();
-            Azimuth = ReadFloat();
+            if (data.Length == 0)
+                IsSpawn = true;
+            else
+            {
+                PlayerID = ReadByte();
+                Position = ReadVector3F();
+                Azimuth = ReadFloat();
+            }
         }
     }
 }
