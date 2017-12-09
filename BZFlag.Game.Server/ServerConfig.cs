@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
@@ -31,6 +31,10 @@ namespace BZFlag.Game.Host
         public string PublicTitle = string.Empty;
 
         // authentication data
+        public bool AllowAnonUsers = false;
+
+        public List<string> SecurityGroups = new List<string>();
+        
 
 
         public static ServerConfig Read(string filepath)

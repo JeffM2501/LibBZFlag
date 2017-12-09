@@ -1,4 +1,4 @@
-using BZFlag.Networking;
+﻿using BZFlag.Networking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -151,7 +151,10 @@ namespace BZFlag.Game.Host
             TCPConnections = new TCPConnectionManager(port, this);
             TCPConnections.BZFSProtocolConnectionAccepted += BZFSProtocolConnectionAccepted;
 
+            SecurityArea.Bans = TCPConnections.Bans;
+
             TCPConnections.StartUp();
+
 
             UDPConnections = new UDPConnectionManager();
             UDPConnections.Listen(port);

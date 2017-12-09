@@ -33,6 +33,14 @@ namespace BZFlag.Game.Host
             public bool VersionPassed = false;
 
             public byte[] PendingData = new byte[0];
+
+            public string GetIPAsString()
+            {
+                if (ClientConnection == null)
+                    return string.Empty;
+
+                return ((IPEndPoint)ClientConnection.Client.RemoteEndPoint).Address.ToString();
+            }
         }
 
         protected List<PendingClient> PendingClients = new List<PendingClient>();
@@ -76,9 +84,7 @@ namespace BZFlag.Game.Host
 
             Listener.BeginAcceptTcpClient(TCPClientAccepted, null);
 
-            var address = ((IPEndPoint)c.ClientConnection.Client.RemoteEndPoint).Address.ToString();
-
-            var ban = Bans.FindIPBan(address);
+            var ban = Bans.FindIPBan(c.GetIPAsString());
             if (ban != null)
             {
                 c.ClientConnection.Close();

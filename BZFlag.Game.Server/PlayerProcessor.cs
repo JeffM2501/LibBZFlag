@@ -7,6 +7,7 @@ using BZFlag.Networking;
 
 
 using BZFlag.Game.Host.Players;
+using BZFlag.Networking.Messages.BZFS.Player;
 
 namespace BZFlag.Game.Host
 {
@@ -21,11 +22,19 @@ namespace BZFlag.Game.Host
         public int SleepTime = 100;
         public static int MaxMessagesPerClientCycle = 10;
 
-        ServerConfig Config = null;
+        protected ServerConfig Config = null;
 
         public PlayerProcessor(ServerConfig cfg)
         {
             Config = cfg;
+        }
+
+        public event EventHandler<ServerPlayer> PromotePlayer = null;
+        protected void Promote(ServerPlayer sp)
+        {
+            RemovePlayer(sp);
+            if (PromotePlayer != null)
+                PromotePlayer.Invoke(this, sp);
         }
 
         public void Shutdown()
@@ -36,12 +45,19 @@ namespace BZFlag.Game.Host
             WorkerThread = null;
         }
 
+        protected virtual void PlayerAdded(ServerPlayer player)
+        {
+
+        }
+
         public void AddPendingConnection(ServerPlayer player)
         {
             lock (Players)
                 Players.Add(player);
 
             player.Disconnected += Player_Disconnected;
+
+            PlayerAdded(player);
 
             if (WorkerThread == null)
             {
@@ -59,11 +75,6 @@ namespace BZFlag.Game.Host
         {
             lock (Players)
                 Players.Remove(e as ServerPlayer);
-        }
-
-        public virtual void ProcessClientMessage(ServerPlayer player, NetworkMessage msg)
-        {
-
         }
 
         protected void ProcessPendingPlayers()
@@ -100,6 +111,37 @@ namespace BZFlag.Game.Host
             }
 
             WorkerThread = null;
+        }
+
+        // basic message dispatch
+        protected ServerMessageDispatcher MessageDispatch = new ServerMessageDispatcher();
+
+        protected void RegisterCommonHandlers()
+        {
+            MessageDispatch.Add(new MsgExit(), HandleExit);
+        }
+
+        public virtual void ProcessClientMessage(ServerPlayer player, NetworkMessage msg)
+        {
+            if (!MessageDispatch.DispatchMessage(player, msg))
+                HandleUnknownMessage(player, msg);
+        }
+
+        protected virtual void HandleUnknownMessage(ServerPlayer player, NetworkMessage msg)
+        {
+            Logger.Log1("PlayerProcessor unhandled message " + msg.Code);
+        }
+
+        // common message handlers
+
+        protected void HandleExit(ServerPlayer player, NetworkMessage msg)
+        {
+            MsgExit enter = msg as MsgExit;
+            if (enter == null)
+                return;
+
+            RemovePlayer(player);
+            player.Disconnect();
         }
     }
 }

@@ -16,6 +16,7 @@ namespace BZFlag.Game.Security
 
         protected List<BanRecord> Hostbans = new List<BanRecord>();
         protected List<BanRecord> IPBans = new List<BanRecord>();
+        protected List<BanRecord> IDBans = new List<BanRecord>();
 
         public BanRecord FindHostBan(string host)
         {
@@ -25,6 +26,11 @@ namespace BZFlag.Game.Security
         public BanRecord FindIPBan(string ip)
         {
             return TrivialLookupBan(IPBans, ip);
+        }
+
+        public BanRecord FindIDBan(string ip)
+        {
+            return TrivialLookupBan(IDBans, ip);
         }
 
         public void AddHostBans(IEnumerable<BanRecord> bans)

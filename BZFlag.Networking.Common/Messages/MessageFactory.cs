@@ -96,6 +96,28 @@ namespace BZFlag.Networking.Messages
         }
     }
 
+    public static class StagingMessageFacotry
+    {
+        public static MessageManager Factory = new MessageManager();
+
+        static StagingMessageFacotry()
+        {
+            Factory.RegisterMessageType(new MsgExit());
+
+            Factory.RegisterMessageType(new MsgQueryGame());
+            Factory.RegisterMessageType(new MsgQueryPlayers());
+
+            Factory.RegisterMessageType(new MsgWantWHash());
+            Factory.RegisterMessageType(new MsgGetWorld());
+
+            Factory.RegisterMessageType(new MsgWantSettings());
+            Factory.RegisterMessageType(new MsgNegotiateFlags());
+
+            Factory.RegisterMessageType(new MsgUDPLinkRequest());
+            Factory.RegisterMessageType(new MsgUDPLinkEstablished());
+        }
+    }
+
     public class MessageManager
     {
         private Dictionary<int, Type> MessageTypes = new Dictionary<int, Type>();
