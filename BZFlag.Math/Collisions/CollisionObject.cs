@@ -18,9 +18,12 @@ namespace BZFlag.LinearMath.Collisions
 
         public virtual ContainmentType CollideSphere(Sphere sphere)
         {
-
+            return ContainmentType.Disjoint;
         }
 
         public virtual ContainmentType CollideBox()
+        {
+            return ContainmentType.Disjoint;
+        }
     }
 }

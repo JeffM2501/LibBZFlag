@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +9,7 @@ using BZFlag.Networking;
 using BZFlag.Networking.Messages.BZFS.World;
 using BZFlag.Networking.Messages.BZFS.Player;
 using BZFlag.Networking.Messages.BZFS.Control;
+using BZFlag.Networking.Messages.BZFS.Info;
 
 namespace BZFlag.Game.Host.Processors
 {
@@ -24,6 +25,7 @@ namespace BZFlag.Game.Host.Processors
 
             MessageDispatch.Add(new MsgWantWHash(), HandleWantWorldHash);
             MessageDispatch.Add(new MsgEnter(), HandleEnter);
+            MessageDispatch.Add(new MsgNegotiateFlags(), HandleNegotiateFlags);
         }
 
         public override void ProcessClientMessage(ServerPlayer player, NetworkMessage msg)
@@ -40,6 +42,7 @@ namespace BZFlag.Game.Host.Processors
             if (PromotePlayer != null)
                 PromotePlayer.Invoke(this, sp);
         }
+
         private void HandleEnter(ServerPlayer player, NetworkMessage msg)
         {
             MsgEnter enter = msg as MsgEnter;
@@ -71,6 +74,16 @@ namespace BZFlag.Game.Host.Processors
 
             hash.WorldHash = "NOPE!";
             player.SendMessage(hash);
+        }
+
+        private void HandleNegotiateFlags(ServerPlayer player, NetworkMessage msg)
+        {
+            MsgNegotiateFlags flags = msg as MsgNegotiateFlags;
+            if (flags == null)
+                return;
+
+            // just hang onto this data, we don't want to bother processing it until they have cleared the security jail
+            player.ClientFlagList = flags;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +7,7 @@ using System.Text;
 
 using BZFlag.Networking.Messages;
 using BZFlag.Networking.Common;
+using BZFlag.Networking.Messages.BZFS.Info;
 
 namespace BZFlag.Game.Host.Players
 {
@@ -18,6 +19,8 @@ namespace BZFlag.Game.Host.Players
         public string Callsign = string.Empty;
         public string Token = string.Empty;
         public string Motto = string.Empty;
+
+        public MsgNegotiateFlags ClientFlagList = null;
 
         public enum AuthStatuses
         {
