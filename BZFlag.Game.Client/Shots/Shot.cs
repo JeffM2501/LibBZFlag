@@ -3,6 +3,7 @@
 using BZFlag.Game.Players;
 using BZFlag.Data.Types;
 using BZFlag.Data.Teams;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Game.Shots
 {

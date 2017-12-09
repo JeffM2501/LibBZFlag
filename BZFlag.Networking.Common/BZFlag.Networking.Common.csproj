@@ -105,6 +105,10 @@
       <Project>{e20fc2b8-a7d1-4ad7-9b04-7f7d2e1c6056}</Project>
       <Name>BZFlag.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BZFlag.Math\BZFlag.Math.csproj">
+      <Project>{f295bd89-0662-49e1-acd9-860bb6cd1c29}</Project>
+      <Name>BZFlag.Math</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

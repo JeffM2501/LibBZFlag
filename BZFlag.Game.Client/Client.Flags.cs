@@ -9,6 +9,7 @@ using BZFlag.Networking.Messages.BZFS.Flags;
 using BZFlag.Networking.Messages;
 using BZFlag.Game.Players;
 using BZFlag.Game.Flags;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Game
 {

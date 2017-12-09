@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using BZFlag.Data.Types;
+using BZFlag.LinearMath;
 using BZFlag.Data.Flags;
 
 namespace BZFlag.Data.Utils

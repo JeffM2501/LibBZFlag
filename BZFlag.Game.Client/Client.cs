@@ -11,6 +11,7 @@ using BZFlag.Game.Shots;
 using BZFlag.Game.Players;
 using BZFlag.Data.Flags;
 using BZFlag.Networking.Messages.BZFS.Player;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Game
 {

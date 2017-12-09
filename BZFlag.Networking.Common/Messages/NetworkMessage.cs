@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using BZFlag.Data.Types;
+using BZFlag.LinearMath;
 using BZFlag.Data.Flags;
 using BZFlag.Data.Utils;
 
@@ -47,7 +48,7 @@ namespace BZFlag.Networking.Messages
 
         protected float ReadSmallAngle()
         {
-            return ((float)(ReadInt16() * Math.PI)) / Constants.SmallScale;
+            return ((float)(ReadInt16() * System.Math.PI)) / Constants.SmallScale;
         }
 
         protected float ReadSmallScale()

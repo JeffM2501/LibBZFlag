@@ -5,6 +5,8 @@ using System.Text;
 
 using BZFlag.Data.Types;
 
+using BZFlag.LinearMath;
+
 namespace BZFlag.Data.Players
 {
     public enum PlayerTypes

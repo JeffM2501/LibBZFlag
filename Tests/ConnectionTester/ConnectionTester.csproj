@@ -58,6 +58,10 @@
       <Project>{6a69803e-a03f-4351-a8b5-14de5dadcc41}</Project>
       <Name>BZFlag.Game.Server</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\BZFlag.Math\BZFlag.Math.csproj">
+      <Project>{f295bd89-0662-49e1-acd9-860bb6cd1c29}</Project>
+      <Name>BZFlag.Math</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\BZFlag.ServiceLink\BZFlag.ServiceLink.csproj">
       <Project>{310e93a9-1ec2-4909-b96b-c08f02b34f63}</Project>
       <Name>BZFlag.ServiceLink</Name>

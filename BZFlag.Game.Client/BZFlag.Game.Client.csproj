@@ -50,6 +50,7 @@
     <Compile Include="Client.WorldMap.cs" />
     <Compile Include="Flags\FlagInstance.cs" />
     <Compile Include="GameTime.cs" />
+    <Compile Include="Players\LocalPlayer.cs" />
     <Compile Include="Players\Player.cs" />
     <Compile Include="Players\PlayerManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -69,6 +70,10 @@
     <ProjectReference Include="..\BZFlag.Map\BZFlag.Map.csproj">
       <Project>{4c5393f4-0040-41c3-a7ef-a6692bda7e59}</Project>
       <Name>BZFlag.Map</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BZFlag.Math\BZFlag.Math.csproj">
+      <Project>{f295bd89-0662-49e1-acd9-860bb6cd1c29}</Project>
+      <Name>BZFlag.Math</Name>
     </ProjectReference>
     <ProjectReference Include="..\BZFlag.Networking.Common\BZFlag.Networking.Common.csproj">
       <Project>{8594acfd-a708-4076-8940-a4536f3eeda2}</Project>

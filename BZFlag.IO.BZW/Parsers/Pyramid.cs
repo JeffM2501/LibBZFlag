@@ -42,9 +42,9 @@ namespace BZFlag.IO.BZW.Parsers
             if ((p != null) && (p.Size[0] < 0 | p.Size[1] < 0 || p.Size[2] < 0) && !p.FlipZ)
             {
                 p.FlipZ = true;
-                p.Size[0] = (float)Math.Abs(p.Size[0]);
-                p.Size[1] = (float)Math.Abs(p.Size[1]);
-                p.Size[2] = (float)Math.Abs(p.Size[2]);
+                p.Size[0] = (float)System.Math.Abs(p.Size[0]);
+                p.Size[1] = (float)System.Math.Abs(p.Size[1]);
+                p.Size[2] = (float)System.Math.Abs(p.Size[2]);
             }
         }
 

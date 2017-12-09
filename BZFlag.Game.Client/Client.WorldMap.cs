@@ -14,6 +14,7 @@ using BZFlag.Game.Players;
 using BZFlag.Map.Elements.Shapes;
 using BZFlag.Map;
 using BZFlag.Data.BZDB;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Game
 {

@@ -6,6 +6,7 @@ using System.Text;
 using BZFlag.Data.Players;
 using BZFlag.Data.Types;
 using BZFlag.Data.Utils;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Networking.Messages.BZFS.Player
 {

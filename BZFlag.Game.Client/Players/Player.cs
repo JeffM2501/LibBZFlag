@@ -11,12 +11,15 @@ using BZFlag.Networking.Messages.BZFS.Player;
 using BZFlag.Game.Flags;
 using BZFlag.Game.Shots;
 using BZFlag.Map.Elements.Shapes;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Game.Players
 {
     public class Player : EventArgs
     {
         public int PlayerID = -1;
+
+        public virtual bool IsLocalPlayer { get { return false; } }
 
         public PlayerTypes PlayerType = PlayerTypes.Unknown;
 
@@ -96,7 +99,7 @@ namespace BZFlag.Game.Players
             return true;
         }
 
-        public void Update(double now, double delta)
+        public virtual void Update(double now, double delta)
         {
             double deltaFromUpdate = now - LastUpdate.TimeStamp;
 
@@ -121,6 +124,12 @@ namespace BZFlag.Game.Players
         {
             if (ShotList.ContainsKey(shot.BZFSShotID) && ShotList[shot.BZFSShotID] == shot)
                 ShotList.Remove(shot.BZFSShotID);
+        }
+
+        public virtual void Spawn(Vector3F position, float azimuth)
+        {
+            Position = position;
+            Azimuth = azimuth;
         }
     }
 }

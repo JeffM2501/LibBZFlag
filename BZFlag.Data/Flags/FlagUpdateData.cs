@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.LinearMath;
+
 namespace BZFlag.Data.Flags
 {
     public class FlagUpdateData

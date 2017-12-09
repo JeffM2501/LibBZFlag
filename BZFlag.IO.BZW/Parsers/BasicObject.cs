@@ -6,6 +6,7 @@ using System.Text;
 
 using BZFlag.Map.Elements;
 
+using BZFlag.LinearMath;
 using BZFlag.IO.BZW;
 
 namespace BZFlag.IO.BZW.Parsers

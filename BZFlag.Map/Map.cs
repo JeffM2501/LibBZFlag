@@ -4,12 +4,6 @@ using System.Collections.Generic;
 using BZFlag.Map.Elements;
 using BZFlag.Map.Elements.Shapes;
 
-using Jitter;
-using Jitter.Collision;
-using Jitter.Dynamics;
-using Jitter.Collision.Shapes;
-using Jitter.LinearMath;
-
 namespace BZFlag.Map
 {
     public class WorldMap
@@ -27,7 +21,6 @@ namespace BZFlag.Map
         public World WorldInfo = new World();
         public Options WorldOptions = new Options();
 
-        public JitterWorld PhysicsWorld = null;
 
         public void IntForLoad()
         {
@@ -50,24 +43,6 @@ namespace BZFlag.Map
 
                 if (tp.Name == string.Empty)
                     tp.Name = "teleporter_" + tp.Index.ToString();
-            }
-
-            PhysicsWorld = new JitterWorld(new CollisionSystemPersistentSAP());
-            PhysicsWorld.Gravity = new JVector(0,0,-9.81f);
-
-            foreach (BasicObject obj in Objects)
-            {
-                PositionableObject po = obj as PositionableObject;
-                if (po == null)
-                    continue;
-
-                RigidBody body = new RigidBody(new BoxShape(new JVector(po.Size.X + 2,po.Size.Y + 2,po.Size.Z)));
-                body.IsStatic = true;
-                body.Position = new JVector(po.Position.X, po.Position.Y, po.Position.Z + (po.Size.Z * 0.5f));
-                body.Orientation = JMatrix.CreateRotationZ(po.Rotation * ((float)Math.PI/180.0f));
-                body.Tag = po;
-
-                PhysicsWorld.AddBody(body);
             }
         }
 

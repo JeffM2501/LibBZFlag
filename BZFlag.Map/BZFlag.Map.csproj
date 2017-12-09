@@ -33,9 +33,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Jitter, Version=0.1.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Jitter.Redpoint.0.3.0\lib\net45\Jitter.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -74,6 +71,10 @@
     <ProjectReference Include="..\BZFlag.Data\BZFlag.Data.csproj">
       <Project>{e20fc2b8-a7d1-4ad7-9b04-7f7d2e1c6056}</Project>
       <Name>BZFlag.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BZFlag.Math\BZFlag.Math.csproj">
+      <Project>{f295bd89-0662-49e1-acd9-860bb6cd1c29}</Project>
+      <Name>BZFlag.Math</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

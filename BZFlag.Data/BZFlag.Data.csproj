@@ -52,12 +52,15 @@
     <Compile Include="Teams\TeamColors.cs" />
     <Compile Include="Types\Color4F.cs" />
     <Compile Include="Types\Constants.cs" />
-    <Compile Include="Types\Vector2F.cs" />
-    <Compile Include="Types\Vector3F.cs" />
-    <Compile Include="Types\Vector4f.cs" />
     <Compile Include="Utils\BufferUtils.cs" />
     <Compile Include="Utils\DynamicBufferReader.cs" />
     <Compile Include="Utils\DynamicOutputBuffer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BZFlag.Math\BZFlag.Math.csproj">
+      <Project>{f295bd89-0662-49e1-acd9-860bb6cd1c29}</Project>
+      <Name>BZFlag.Math</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

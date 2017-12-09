@@ -6,6 +6,7 @@ using System.Text;
 using BZFlag.Data.Types;
 using BZFlag.Data.Teams;
 using BZFlag.Data.Utils;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Networking.Messages.BZFS.Shots
 {

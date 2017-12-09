@@ -10,6 +10,7 @@ using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Data.Players;
 using BZFlag.Data.Flags;
 using BZFlag.Networking.Messages.BZFS.Control;
+using BZFlag.LinearMath;
 
 
 namespace BZFlag.Game.Players
@@ -36,7 +37,7 @@ namespace BZFlag.Game.Players
         public Player[] GetPlayerList() { return PlayerList.Values.ToArray(); }
 
         public int LocalPlayerID = -1;
-        public Player LocalPlayer = null;
+        public LocalPlayer Me = null;
 
         public GameTime Clock = new GameTime();
         public FlagTypeList FlagTypes = null;
@@ -124,7 +125,12 @@ namespace BZFlag.Game.Players
         {
             MsgAddPlayer ap = msg as MsgAddPlayer;
             if (!PlayerList.ContainsKey(ap.PlayerID))
-                PlayerList.Add(ap.PlayerID, new Player());
+            {
+                if (LocalPlayerID == ap.PlayerID)
+                    PlayerList.Add(ap.PlayerID, new LocalPlayer(null));
+                else
+                    PlayerList.Add(ap.PlayerID, new Player());
+            }
 
             Player player = PlayerList[ap.PlayerID];
             player.PlayerID = ap.PlayerID;
@@ -138,9 +144,9 @@ namespace BZFlag.Game.Players
             player.Losses = ap.Losses;
             player.TeamKills = ap.TeamKills;
 
-            if (LocalPlayerID == player.PlayerID) // hey it's us!
+            if (player.IsLocalPlayer) // hey it's us!
             {
-                LocalPlayer = player;
+                Me = player as LocalPlayer;
                 if (SelfAdded != null)
                     SelfAdded.Invoke(this, player);
             }
@@ -162,9 +168,9 @@ namespace BZFlag.Game.Players
             if (PlayerRemoved != null)
                 PlayerRemoved.Invoke(this, player);
 
-            if (LocalPlayer == player)   //oh shit it's us!
+            if (player.IsLocalPlayer)   //oh shit it's us!
             {
-                LocalPlayer = null;
+                Me = null;
                 if (SelfRemoved != null)
                     SelfRemoved.Invoke(this, player);
             }
@@ -226,8 +232,7 @@ namespace BZFlag.Game.Players
             player.PlayerSpawnTime = Clock.StepTime;
             player.SetTeleport(-1, null, null);
 
-            player.Position = alive.Position;
-            player.Azimuth = alive.Azimuth;
+            player.Spawn(alive.Position, alive.Azimuth);
 
             if (alive.PlayerID == LocalPlayerID)
                 SelfSpawned?.Invoke(this, player);

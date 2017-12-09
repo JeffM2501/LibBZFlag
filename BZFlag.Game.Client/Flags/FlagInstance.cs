@@ -6,6 +6,7 @@ using System.Text;
 using BZFlag.Data.Flags;
 using BZFlag.Data.Types;
 
+using BZFlag.LinearMath;
 using BZFlag.Game.Players;
 using BZFlag.Map;
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 
 using BZFlag.Data.Utils;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Networking.Messages.BZFS.Flags
 {
