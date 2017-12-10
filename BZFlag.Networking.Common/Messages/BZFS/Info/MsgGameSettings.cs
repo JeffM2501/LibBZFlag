@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,7 +31,24 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 
         public override byte[] Pack()
         {
-            throw new NotImplementedException();
+            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+
+            buffer.WriteFloat(WorldSize);
+            buffer.WriteUInt16((int)GameType);
+            buffer.WriteUInt16((int)GameOptions);
+            buffer.WriteUInt16(MaxPlayers);
+            buffer.WriteUInt16(MaxShots);
+            buffer.WriteUInt16(MaxFlags);
+
+            buffer.WriteFloat(LinearAcceleration);
+            buffer.WriteFloat(AngularAcceleration);
+
+            buffer.WriteUInt16((int)(ShakeTimeout / 0.1f));
+            buffer.WriteUInt16(ShakeWins);
+
+            buffer.WriteUInt32(UsedToBeSyncTime);
+
+            return buffer.GetMessageBuffer();
         }
 
         public override void Unpack(byte[] data)

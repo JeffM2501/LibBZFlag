@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,48 +12,24 @@ using BZFlag.Networking.Messages.BZFS.Control;
 using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Services;
 using BZFlag.Game.Security;
+using BZFlag.Game.Host.World;
 
 namespace BZFlag.Game.Host.Processors
 {
     public class StagingZone : PlayerProcessor
     {
-       
-
+        public GameWorld World = new GameWorld();
 
         public StagingZone(ServerConfig cfg) : base(cfg)
         {
             MessageProcessor = SecurityJailMessageFacotry.Factory;
 
             RegisterCommonHandlers();
-
-            MessageDispatch.Add(new MsgWantWHash(), HandleWantWorldHash);
-            MessageDispatch.Add(new MsgNegotiateFlags(), HandleNegotiateFlags);
         }
 
         protected override void PlayerAdded(ServerPlayer player)
         {
-            if (player.ClientFlagList != null)
-                HandleNegotiateFlags(player, player.ClientFlagList);
-        }
 
-        private void HandleWantWorldHash(ServerPlayer player, NetworkMessage msg)
-        {
-            MsgWantWHash hash = msg as MsgWantWHash;
-            if (hash == null)
-                return;
-
-            hash.WorldHash = "NOPE!";
-            player.SendMessage(hash);
-        }
-
-        private void HandleNegotiateFlags(ServerPlayer player, NetworkMessage msg)
-        {
-            MsgNegotiateFlags flags = msg as MsgNegotiateFlags;
-            if (flags == null)
-                return;
-
-            // just hang onto this data, we don't want to bother processing it until they have cleared the security jail
-            player.ClientFlagList = flags;
         }
     }
 }

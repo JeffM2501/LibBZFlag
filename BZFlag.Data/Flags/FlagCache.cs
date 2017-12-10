@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +8,13 @@ using BZFlag.Data.Teams;
 
 namespace BZFlag.Data.Flags
 {
-    public class FlagTypeList
+    public static class FlagTypeList
     {
-        private Dictionary<string, FlagType> FlagList = new Dictionary<string, FlagType>();
+        private static Dictionary<string, FlagType> FlagList = new Dictionary<string, FlagType>();
 
-        public FlagTypeList()
+        public static FlagType[] Flags {  get { return FlagList.Values.ToArray(); } }
+
+        static FlagTypeList()
         {
             Add(new FlagType("", "", FlagEndurances.FlagNormal, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, ""));
 
@@ -110,12 +112,12 @@ namespace BZFlag.Data.Flags
                             "Tank can't stop bouncing."));
         }
 
-        public void Add(FlagType f)
+        public static void Add(FlagType f)
         {
             FlagList.Add(f.FlagAbbv, f);
         }
 
-        public FlagType GetFromAbriv(string abriviation)
+        public static FlagType GetFromAbriv(string abriviation)
         {
             if (!FlagList.ContainsKey(abriviation))
                 return null;

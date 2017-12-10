@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +30,7 @@ namespace BZFlag.Game
 
             inst = new FlagInstance();
             inst.ID = data.FlagID;
-            inst.Flag = FlagTypes.GetFromAbriv(data.Abreviation);
+            inst.Flag = FlagTypeList.GetFromAbriv(data.Abreviation);
 
             WorldFlags.Add(inst);
             return inst;
@@ -40,7 +40,7 @@ namespace BZFlag.Game
         {
             FlagInstance inst = new FlagInstance();
             inst.ID = data.FlagID;
-            inst.Flag = FlagTypes.GetFromAbriv(data.Abreviation);
+            inst.Flag = FlagTypeList.GetFromAbriv(data.Abreviation);
 
             WorldFlags.Add(inst);
             return inst;

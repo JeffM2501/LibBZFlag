@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +27,11 @@ namespace BZFlag.Networking.Messages.BZFS.Info
         {
             foreach (var f in abreviations)
                 FlagAbrevs.Add(f);
+        }
+
+        public bool Contains(string abriv)
+        {
+            return FlagAbrevs.Contains(abriv);
         }
 
         public override byte[] Pack()

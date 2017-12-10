@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
@@ -14,12 +14,10 @@ namespace BZFlag.Game.Host
         // plugins
         public List<string> PlugIns = new List<string>();
 
-
         public string LogFile = string.Empty;
-        public int LogLevel = 1;
+        public int LogLevel = 4;
 
-        // external files
-        public string MapFile = string.Empty;
+        // external databases
         public string BanListFile = string.Empty;
 
 
@@ -34,7 +32,10 @@ namespace BZFlag.Game.Host
         public bool AllowAnonUsers = false;
 
         public List<string> SecurityGroups = new List<string>();
-        
+
+        // world data
+        public string MapFile = string.Empty;
+        public string MapURL = "https://www.hyperdrive.tech/blank.bzc";
 
 
         public static ServerConfig Read(string filepath)

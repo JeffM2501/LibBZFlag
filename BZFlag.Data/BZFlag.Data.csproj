@@ -53,6 +53,7 @@
     <Compile Include="Types\Color4F.cs" />
     <Compile Include="Types\Constants.cs" />
     <Compile Include="Utils\BufferUtils.cs" />
+    <Compile Include="Utils\Cryptography.cs" />
     <Compile Include="Utils\DynamicBufferReader.cs" />
     <Compile Include="Utils\DynamicOutputBuffer.cs" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-﻿using BZFlag.Data.Utils;
+using BZFlag.Data.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +22,11 @@ namespace BZFlag.Networking.Messages.BZFS.World
             DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
 
             if (NetworkMessage.IsOnServer)
+            {
+                buffer.WriteByte(IsRandomMap ? 116 : 0);
                 buffer.WriteNullTermString(WorldHash);
+            }
+                
 
             return buffer.GetMessageBuffer();
         }

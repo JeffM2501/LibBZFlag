@@ -1,4 +1,4 @@
-﻿using BZFlag.Game.Host.Players;
+using BZFlag.Game.Host.Players;
 using BZFlag.Networking.Messages;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace BZFlag.Game.Host
     public class ServerMessageDispatcher
     {
         public delegate void MessageHandler(ServerPlayer player, NetworkMessage msg);
-        protected static Dictionary<int, MessageHandler> Handlers = new Dictionary<int, MessageHandler>();
+        protected Dictionary<int, MessageHandler> Handlers = new Dictionary<int, MessageHandler>();
 
         public bool DispatchMessage(ServerPlayer player, NetworkMessage Message)
         {

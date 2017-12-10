@@ -1,4 +1,4 @@
-﻿using BZFlag.Networking;
+using BZFlag.Networking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +11,7 @@ using BZFlag.Game.Host.Players;
 using BZFlag.Data.Players;
 using BZFlag.Game.Host.API;
 using System.Reflection;
+using BZFlag.Game.Host.World;
 
 namespace BZFlag.Game.Host
 {
@@ -20,6 +21,7 @@ namespace BZFlag.Game.Host
         public UDPConnectionManager UDPConnections = new UDPConnectionManager();
 
         protected RestrictedAccessZone SecurityArea = null;
+
         //   protected PlayerProcessor AcceptedGamePlayers = new PlayerProcessor();
 
         internal BZFlag.Data.BZDB.Database BZDatabase = new BZFlag.Data.BZDB.Database();
@@ -30,6 +32,10 @@ namespace BZFlag.Game.Host
         protected int LastPlayerID = 0;
 
         public PublicServer PubServer = new PublicServer();
+
+        // World Contents
+        public FlagManager Flags = new FlagManager();
+        public GameWorld World = new GameWorld();
 
         public Server(ServerConfig cfg)
         {
@@ -46,6 +52,13 @@ namespace BZFlag.Game.Host
 
             SecurityArea = new RestrictedAccessZone(ConfigData);
             SecurityArea.PromotePlayer += SecurityArea_PromotePlayer;
+            SecurityArea.Flags = Flags;
+            SecurityArea.World = World;
+        }
+
+        private void StagingArea_PromotePlayer(object sender, ServerPlayer e)
+        {
+            throw new NotImplementedException();
         }
 
         private void SetupBZDB()
@@ -153,6 +166,8 @@ namespace BZFlag.Game.Host
 
             SecurityArea.Bans = TCPConnections.Bans;
 
+
+            SecurityArea.Setup();
             TCPConnections.StartUp();
 
 

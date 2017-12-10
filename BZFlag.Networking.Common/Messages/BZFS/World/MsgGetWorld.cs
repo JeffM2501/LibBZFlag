@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +27,9 @@ namespace BZFlag.Networking.Messages.BZFS.World
         {
             DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
             buffer.WriteUInt32(Offset);
+
+            if (Data.Length > 0)
+                buffer.WriteBytes(Data);
             return buffer.GetMessageBuffer();
         }
 

@@ -77,6 +77,10 @@
       <Project>{f295bd89-0662-49e1-acd9-860bb6cd1c29}</Project>
       <Name>BZFlag.Math</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Compression\Zlib\Zlib DLL.csproj">
+      <Project>{9816ba86-9250-4c00-a912-25f07f8677d1}</Project>
+      <Name>Zlib DLL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

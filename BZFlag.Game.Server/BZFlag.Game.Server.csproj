@@ -60,6 +60,7 @@
     <Compile Include="ServerMessageDispatcher.cs" />
     <Compile Include="TCPConnectionManager.cs" />
     <Compile Include="UDPConnectionManager.cs" />
+    <Compile Include="World\FlagManager.cs" />
     <Compile Include="World\GameWorld.cs" />
   </ItemGroup>
   <ItemGroup>

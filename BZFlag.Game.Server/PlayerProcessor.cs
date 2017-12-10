@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Text;
@@ -35,6 +35,11 @@ namespace BZFlag.Game.Host
             RemovePlayer(sp);
             if (PromotePlayer != null)
                 PromotePlayer.Invoke(this, sp);
+        }
+
+        public virtual void Setup()
+        {
+
         }
 
         public void Shutdown()
@@ -129,7 +134,7 @@ namespace BZFlag.Game.Host
 
         protected virtual void HandleUnknownMessage(ServerPlayer player, NetworkMessage msg)
         {
-            Logger.Log1("PlayerProcessor unhandled message " + msg.Code);
+            Logger.Log1(this.GetType().Name + " unhandled message " + msg.CodeAbreviation);
         }
 
         // common message handlers

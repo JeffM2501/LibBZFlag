@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,7 +40,6 @@ namespace BZFlag.Game.Players
         public LocalPlayer Me = null;
 
         public GameTime Clock = new GameTime();
-        public FlagTypeList FlagTypes = null;
 
         public Player GetPlayerByID(int id)
         {
@@ -249,7 +248,7 @@ namespace BZFlag.Game.Players
             args.Victim = GetPlayerByID(killed.VictimID);
             args.Killer = GetPlayerByID(killed.KillerID);
             args.Reason = killed.Reason;
-            args.KilledByFlag = FlagTypes.GetFromAbriv(killed.FlagAbreviation);
+            args.KilledByFlag = FlagTypeList.GetFromAbriv(killed.FlagAbreviation);
             if (killed.Reason == BlowedUpReasons.DeathTouch)
                 args.InstrumentID = killed.PhysicsDriverID;
             else

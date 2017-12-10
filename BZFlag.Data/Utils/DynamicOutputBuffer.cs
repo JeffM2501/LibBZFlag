@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -96,6 +96,11 @@ namespace BZFlag.Data.Utils
         {
             WriteUInt16(value, BytesUsed);
             BytesUsed += 2;
+        }
+
+        public void WriteUInt16(int value)
+        {
+            WriteUInt16((UInt16)value);
         }
 
         protected void WriteUInt16(UInt16 value, int offset)

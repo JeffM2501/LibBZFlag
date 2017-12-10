@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,12 +12,21 @@ using BZFlag.Networking.Messages.BZFS.Control;
 using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Services;
 using BZFlag.Game.Security;
+using BZFlag.Game.Host.World;
+using BZFlag.Data.Game;
+using System.Security.Cryptography;
 
 namespace BZFlag.Game.Host.Processors
 {
     public class RestrictedAccessZone : PlayerProcessor
     {
         public BanList Bans = new BanList();
+        public FlagManager Flags = new FlagManager();
+        public GameWorld World = new GameWorld();
+
+        protected MsgGameSettings SettingsCache = null;
+        protected MsgWantWHash HashCache = null;
+        protected MsgCacheURL URLCache = null;
 
         public RestrictedAccessZone(ServerConfig cfg) : base(cfg)
         {
@@ -28,11 +37,32 @@ namespace BZFlag.Game.Host.Processors
             MessageDispatch.Add(new MsgWantWHash(), HandleWantWorldHash);
             MessageDispatch.Add(new MsgEnter(), HandleEnter);
             MessageDispatch.Add(new MsgNegotiateFlags(), HandleNegotiateFlags);
+            MessageDispatch.Add(new MsgWantSettings(), HandleWantSettings);
+
+            MessageDispatch.Add(new MsgGetWorld(), HandleGetWorld);
         }
 
-        protected override void HandleUnknownMessage(ServerPlayer player, NetworkMessage msg)
+        public override void Setup()
         {
-            Logger.Log1("Restricted Access Zone unhandled message " + msg.Code);
+            SettingsCache = new MsgGameSettings();
+
+            byte[] worldBuffer = World.GetWorldData();
+            SettingsCache.WorldSize = worldBuffer.Length;
+            SettingsCache.GameType = GameTypes.OpenFFA;
+            SettingsCache.GameOptions = GameOptionFlags.NoStyle;
+            SettingsCache.MaxPlayers = 200;
+            SettingsCache.MaxShots = 1;
+            SettingsCache.MaxFlags = 50;
+            SettingsCache.LinearAcceleration = 0;
+            SettingsCache.AngularAcceleration = 0;
+
+            HashCache = new MsgWantWHash();
+            HashCache.IsRandomMap = true;
+            HashCache.WorldHash = BZFlag.Data.Utils.Cryptography.MD5Hash(worldBuffer);
+
+            URLCache = new MsgCacheURL();
+            URLCache.URL = Config.MapURL;
+
         }
 
         private void HandleEnter(ServerPlayer player, NetworkMessage msg)
@@ -123,18 +153,53 @@ namespace BZFlag.Game.Host.Processors
             if (hash == null)
                 return;
 
-            hash.WorldHash = "NOPE!";
-            player.SendMessage(hash);
+            if (URLCache != null && URLCache.URL != string.Empty)
+                player.SendMessage(URLCache);
+
+            player.SendMessage(HashCache);
         }
 
         private void HandleNegotiateFlags(ServerPlayer player, NetworkMessage msg)
         {
-            MsgNegotiateFlags flags = msg as MsgNegotiateFlags;
-            if (flags == null)
+            player.ClientFlagList = msg as MsgNegotiateFlags;
+            if (player.ClientFlagList == null)
                 return;
 
-            // just hang onto this data, we don't want to bother processing it until they have cleared the security jail
-            player.ClientFlagList = flags;
+            player.SendMessage(Flags.GetFlagNegotiation(player.ClientFlagList));
+        }
+
+        private void HandleWantSettings(ServerPlayer player, NetworkMessage msg)
+        {
+            MsgWantSettings ws = msg as MsgWantSettings;
+            if (ws == null)
+                return;
+
+            player.SendMessage(SettingsCache);
+        }
+   
+        private void HandleGetWorld(ServerPlayer player, NetworkMessage msg)
+        {
+            MsgGetWorld getW = msg as MsgGetWorld;
+            if (getW == null)
+                return;
+
+            Logger.Log4("Getting world chunk for " + player.PlayerID.ToString() + " at offset " + getW.Offset);
+
+            UInt32 len = (UInt32)World.GetWorldData().Length;
+            UInt32 start = getW.Offset;
+            if (start >= len)
+                start = len-1;
+
+            UInt32 end = start + 1024;
+            if (end > len)
+                end = len;
+
+            UInt32 realLen = end - start;
+            getW.Data = new byte[realLen];
+            getW.Offset = len-end;
+            Array.Copy(World.GetWorldData(), start, getW.Data, 0, getW.Data.Length);
+
+            player.SendMessage(getW);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using BZFlag.Map;
+using BZFlag.Map;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +13,7 @@ namespace BZFlag.Game.Host.World
         public WorldMap Map = new WorldMap();
 
         public string MapHash = string.Empty;
-        public byte[] WorldData = null;
+        protected byte[] WorldData = null;
 
         public void LoadBZWFile(string mapFile)
         {
@@ -23,7 +23,16 @@ namespace BZFlag.Game.Host.World
             BZFlag.IO.BZW.Reader.ReadMap(fs);
             fs.Close();
 
-
         }
+
+        public byte[] GetWorldData()
+        {
+            if (WorldData == null)
+                WorldData = new BZFlag.IO.BZW.Binary.WorldPacker(Map).Pack();
+
+            return WorldData;
+        }
+
+
     }
 }

@@ -1,4 +1,4 @@
-﻿using BZFlag.Map;
+using BZFlag.Map;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,8 @@ using System.IO.Compression;
 using BZFlag.Data.Utils;
 using BZFlag.Map.Elements;
 using BZFlag.Map.Elements.Shapes;
+
+using Ionic.Zlib;
 
 namespace BZFlag.IO.BZW.Binary
 {
@@ -24,6 +26,7 @@ namespace BZFlag.IO.BZW.Binary
 
         public byte[] Pack()
         {
+            
             WriteDynamicColors();
             WriteTextureMatricies();
             WriteMaterials();
@@ -45,7 +48,8 @@ namespace BZFlag.IO.BZW.Binary
             int uncompressedSize = BytesUsed;
 
             MemoryStream ms = new MemoryStream();
-            DeflateStream ws = new DeflateStream(ms, CompressionMode.Compress);
+            Ionic.Zlib.GZipStream ws = new Ionic.Zlib.GZipStream(ms,Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.Default, true);
+
             ws.Write(Buffer, 0, uncompressedSize);
             ws.Flush();
             ws.Close();
@@ -91,16 +95,16 @@ namespace BZFlag.IO.BZW.Binary
             WritePyramids(FindAllObjectsOfType<Pyramid>());
             WriteBases(FindAllObjectsOfType<Base>());
 
-            WriteInt32(0); // teleType,
-            WriteInt32(0); // meshType,
-            WriteInt32(0); // arcType,
-            WriteInt32(0); // coneType,
-            WriteInt32(0); // sphereType,
-            WriteInt32(0); // tetraType,
+            WriteUInt32(0); // teleType,
+            WriteUInt32(0); // meshType,
+            WriteUInt32(0); // arcType,
+            WriteUInt32(0); // coneType,
+            WriteUInt32(0); // sphereType,
+            WriteUInt32(0); // tetraType,
 
-            WriteInt32(0); // groups
+            WriteUInt32(0); // groups
 
-            WriteInt32(0); // group instances
+            WriteUInt32(0); // group instances
 
         }
 
@@ -195,7 +199,7 @@ namespace BZFlag.IO.BZW.Binary
         protected void WriteTransforms()
         {
             List<MeshTransform> items = FindAllObjectsOfType<MeshTransform>();
-            WriteInt32(items.Count);
+            WriteUInt32(items.Count);
 
             foreach (var xform in items)
                 WriteMeshTransform(xform);
@@ -204,7 +208,7 @@ namespace BZFlag.IO.BZW.Binary
         protected void WriteMeshTransform(MeshTransform t)
         {
             WriteULongPascalString(t.Name);
-            WriteInt32(t.Transforms.Count);
+            WriteUInt32(t.Transforms.Count);
 
             foreach (var data in t.Transforms)
             {
@@ -227,7 +231,7 @@ namespace BZFlag.IO.BZW.Binary
         protected void WritePhysicsDrivers()
         {
             List<Physics> items = FindAllObjectsOfType<Physics>();
-            WriteInt32(items.Count);
+            WriteUInt32(items.Count);
 
             foreach (var phy in items)
             {
@@ -245,7 +249,7 @@ namespace BZFlag.IO.BZW.Binary
         protected void WriteMaterials()
         {
             List<Material> items = FindAllObjectsOfType<Material>();
-            WriteInt32(items.Count);
+            WriteUInt32(items.Count);
 
             foreach (var mat in items)
             {
@@ -307,7 +311,7 @@ namespace BZFlag.IO.BZW.Binary
         protected void WriteTextureMatricies()
         {
             List<TextureMatrix> items = FindAllObjectsOfType<TextureMatrix>();
-            WriteInt32(items.Count);
+            WriteUInt32(items.Count);
 
             foreach (var tx in items)
             {
@@ -346,7 +350,7 @@ namespace BZFlag.IO.BZW.Binary
         {
             List<DynamicColor> colors = FindAllObjectsOfType<DynamicColor>();
 
-            WriteInt32(colors.Count);
+            WriteUInt32(colors.Count);
             foreach (DynamicColor color in colors)
             {
                 WriteULongPascalString(color.Name);

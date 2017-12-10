@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,7 +38,6 @@ namespace BZFlag.Game
         public BZFlag.Map.WorldMap Map = null;
         public ChatSystem Chat = new ChatSystem();
 
-        public FlagTypeList FlagTypes = new FlagTypeList();
         public PlayerManager PlayerList = new PlayerManager();
         public ShotManager ShotMan = null;
 
@@ -55,7 +54,6 @@ namespace BZFlag.Game
             TimeLeftInGame = -1;
 
             PlayerList.Clock = Clock;
-            PlayerList.FlagTypes = FlagTypes;
 
             ShotMan = new ShotManager(PlayerList, Map);
 
