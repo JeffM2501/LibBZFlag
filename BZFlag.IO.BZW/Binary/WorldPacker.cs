@@ -193,7 +193,7 @@ namespace BZFlag.IO.BZW.Binary
 
         protected void WriteWorldObject()
         {
-            WriteULongPascalString(MapData.WorldInfo.Name);
+            WriteULongPascalString(string.Empty);// MapData.WorldInfo.Name);
         }
 
         protected void WriteTransforms()

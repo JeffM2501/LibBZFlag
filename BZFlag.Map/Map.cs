@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using BZFlag.Map.Elements;
@@ -44,6 +44,40 @@ namespace BZFlag.Map
                 if (tp.Name == string.Empty)
                     tp.Name = "teleporter_" + tp.Index.ToString();
             }
+        }
+
+        public void Validate()
+        {
+            if (Objects.FindIndex((x) => x as WallObstacle != null) > 0)
+                return;
+
+            WallObstacle wall = new WallObstacle();
+            wall.Position = new LinearMath.Vector3F(WorldInfo.Size, 0, 0);
+            wall.Rotation = 0;
+            wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, 10);
+            wall.Ricochet = false;
+            Objects.Add(wall);
+
+            wall = new WallObstacle();
+            wall.Position = new LinearMath.Vector3F(-WorldInfo.Size, 0, 0);
+            wall.Rotation = 180;
+            wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, 10);
+            wall.Ricochet = false;
+            Objects.Add(wall);
+
+            wall = new WallObstacle();
+            wall.Position = new LinearMath.Vector3F(0, WorldInfo.Size, 0);
+            wall.Rotation = 90;
+            wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, 10);
+            wall.Ricochet = false;
+            Objects.Add(wall);
+
+            wall = new WallObstacle();
+            wall.Position = new LinearMath.Vector3F(0,-WorldInfo.Size, 0);
+            wall.Rotation = 270;
+            wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, 10);
+            wall.Ricochet = false;
+            Objects.Add(wall);
         }
 
         public void CacheRuntimeObjects()
