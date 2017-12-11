@@ -60,21 +60,21 @@ namespace BZFlag.Map
 
             wall = new WallObstacle();
             wall.Position = new LinearMath.Vector3F(-WorldInfo.Size, 0, 0);
-            wall.Rotation = 180;
+            wall.Rotation = LinearMath.TrigTools.ToRad(180);
             wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, 10);
             wall.Ricochet = false;
             Objects.Add(wall);
 
             wall = new WallObstacle();
             wall.Position = new LinearMath.Vector3F(0, WorldInfo.Size, 0);
-            wall.Rotation = 90;
+            wall.Rotation = LinearMath.TrigTools.ToRad(90);
             wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, 10);
             wall.Ricochet = false;
             Objects.Add(wall);
 
             wall = new WallObstacle();
             wall.Position = new LinearMath.Vector3F(0,-WorldInfo.Size, 0);
-            wall.Rotation = 270;
+            wall.Rotation = LinearMath.TrigTools.ToRad(270);
             wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, 10);
             wall.Ricochet = false;
             Objects.Add(wall);

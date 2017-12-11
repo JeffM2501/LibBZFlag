@@ -48,13 +48,18 @@ namespace BZFlag.IO.BZW.Binary
             int uncompressedSize = BytesUsed;
 
             MemoryStream ms = new MemoryStream();
-            Ionic.Zlib.GZipStream ws = new Ionic.Zlib.GZipStream(ms,Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.Default, true);
+            Ionic.Zlib.ZlibStream ws = new Ionic.Zlib.ZlibStream(ms,Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.Default, true);
 
             ws.Write(Buffer, 0, uncompressedSize);
             ws.Flush();
+
             ws.Close();
 
+            int len = (int)ms.Length;
+
             byte[] compressedData = ms.GetBuffer();
+           // ms.Length();
+            Array.Resize(ref compressedData, (int)ms.Length);
 
             DynamicOutputBuffer header = new DynamicOutputBuffer(false, 64);
             header.WriteUInt16(Constants.WorldCodeHeaderSize);

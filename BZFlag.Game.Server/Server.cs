@@ -50,6 +50,8 @@ namespace BZFlag.Game.Host
             SetupAPI();
             SetupPublicListing();
 
+            World.Map.Validate();
+
             SecurityArea = new RestrictedAccessZone(ConfigData);
             SecurityArea.PromotePlayer += SecurityArea_PromotePlayer;
             SecurityArea.Flags = Flags;
