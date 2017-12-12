@@ -42,13 +42,12 @@ namespace BZFlag.IO.BZW.Binary
             return CompressMap();
         }
 
-
         protected byte[] CompressMap()
         {
             int uncompressedSize = BytesUsed;
 
             MemoryStream ms = new MemoryStream();
-            Ionic.Zlib.ZlibStream ws = new Ionic.Zlib.ZlibStream(ms,Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.Default, true);
+            Ionic.Zlib.ZlibStream ws = new Ionic.Zlib.ZlibStream(ms,Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.BestCompression, true);
 
             ws.Write(Buffer, 0, uncompressedSize);
             ws.Flush();
@@ -68,8 +67,6 @@ namespace BZFlag.IO.BZW.Binary
 
             header.WriteUInt32(uncompressedSize);
             header.WriteUInt32(compressedData.Length);
-
-            header.WriteUInt16(0);
 
             header.WriteBytes(compressedData);
             header.WriteUInt16(Constants.WorldCodeEndSize);
