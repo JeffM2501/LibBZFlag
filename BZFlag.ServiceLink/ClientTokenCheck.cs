@@ -15,6 +15,7 @@ namespace BZFlag.Services
         public string LastError = string.Empty;
 
         public bool OK = false;
+        public bool NameRegistered = false;
         public string BZID = string.Empty;
 
         public List<string> Groups = new List<string>();
@@ -44,6 +45,8 @@ namespace BZFlag.Services
         {
             BZID = string.Empty;
             LastError = string.Empty;
+            OK = false;
+            NameRegistered = false;
 
             if (e.Error != null)
             {
@@ -70,6 +73,7 @@ namespace BZFlag.Services
                     {
                         LastError = string.Empty;
                         OK = true;
+                        NameRegistered = true;
 
                         string[] parts = cmdParts[1].Trim().Split(":".ToCharArray());
 
@@ -90,8 +94,14 @@ namespace BZFlag.Services
                     }
                     else if (command == "TOKBAD")
                     {
+                        NameRegistered = true;
                         LastError = "Bad Token";
                         OK = false;
+                    }
+                    else if (command == "UNK")
+                    {
+                        OK = false;
+                        NameRegistered = true;
                     }
                     else if (command == "BZID")
                     {

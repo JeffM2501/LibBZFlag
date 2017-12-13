@@ -20,12 +20,12 @@ namespace ServicesTest
             tok.RequestCompleted += RequestCompleted;
             tok.RequestErrored += RequestErrored;
 
-            string callsign = "CALLSIGN";
+            string callsign = "sadfsdfsdf";
             string password = "password";
             string globalIP = "IP";
 
-            Wait = true;
-            tok.GetToken(callsign, password);
+            Wait = false;
+        //    tok.GetToken(callsign, password);
 
             while (Wait)
             {
@@ -50,6 +50,8 @@ namespace ServicesTest
             groups.Add("DEVELOPERS");
             groups.Add("Planning.Developers");
             groups.Add("A.GROUP.THAT.NEVER.EXISTS");
+
+            tok.LastToken = string.Empty;
 
             chk.CheckToken(callsign, tok.LastToken, globalIP, groups);
 

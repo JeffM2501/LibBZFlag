@@ -48,34 +48,36 @@ namespace BZFlag.Map
 
         public void Validate()
         {
-            if (Objects.FindIndex((x) => x as WallObstacle != null) > 0)
+            if (Objects.FindIndex((x) => x as WallObstacle != null) > 0 || WorldInfo.NoWalls)
                 return;
 
+            float wallHeight = 6.5f; // TODO, get from BZDB
+
             WallObstacle wall = new WallObstacle();
-            wall.Position = new LinearMath.Vector3F(WorldInfo.Size, 0, 0);
-            wall.Rotation = 0;
-            wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, 10);
-            wall.Ricochet = false;
-            Objects.Add(wall);
-
-            wall = new WallObstacle();
-            wall.Position = new LinearMath.Vector3F(-WorldInfo.Size, 0, 0);
-            wall.Rotation = LinearMath.TrigTools.ToRad(180);
-            wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, 10);
-            wall.Ricochet = false;
-            Objects.Add(wall);
-
-            wall = new WallObstacle();
             wall.Position = new LinearMath.Vector3F(0, WorldInfo.Size, 0);
-            wall.Rotation = LinearMath.TrigTools.ToRad(90);
-            wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, 10);
+            wall.Rotation = LinearMath.TrigTools.ToRad(270);
+            wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, wallHeight);
             wall.Ricochet = false;
             Objects.Add(wall);
 
             wall = new WallObstacle();
-            wall.Position = new LinearMath.Vector3F(0,-WorldInfo.Size, 0);
-            wall.Rotation = LinearMath.TrigTools.ToRad(270);
-            wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, 10);
+            wall.Position = new LinearMath.Vector3F(WorldInfo.Size, 0, 0);
+            wall.Rotation = LinearMath.TrigTools.ToRad(180);
+            wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, wallHeight);
+            wall.Ricochet = false;
+            Objects.Add(wall);
+
+            wall = new WallObstacle();
+            wall.Position = new LinearMath.Vector3F(0,- WorldInfo.Size, 0);
+            wall.Rotation = LinearMath.TrigTools.ToRad(90);
+            wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, wallHeight);
+            wall.Ricochet = false;
+            Objects.Add(wall);
+
+            wall = new WallObstacle();
+            wall.Position = new LinearMath.Vector3F(-WorldInfo.Size, 0 , 0);
+            wall.Rotation = LinearMath.TrigTools.ToRad(0);
+            wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, wallHeight);
             wall.Ricochet = false;
             Objects.Add(wall);
         }

@@ -35,7 +35,7 @@ namespace BZFlag.IO.BZW.Binary
             WriteObstacles();
             WriteLinks();
 
-            WriteFloat(0); // water level
+            WriteFloat(-1); // water level
             WriteUInt32(0); // world weapons
             WriteUInt32(0); // zones
 

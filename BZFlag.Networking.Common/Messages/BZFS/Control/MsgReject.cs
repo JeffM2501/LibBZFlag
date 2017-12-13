@@ -1,4 +1,5 @@
-﻿using System;
+using BZFlag.Data.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -43,7 +44,12 @@ namespace BZFlag.Networking.Messages.BZFS.Control
 
         public override byte[] Pack()
         {
-            throw new NotImplementedException();
+            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+
+            buffer.WriteUInt16((UInt16)ReasonCode);
+            buffer.WriteNullTermString(ReasonMessage);
+
+            return buffer.GetMessageBuffer();
         }
 
         public override void Unpack(byte[] data)

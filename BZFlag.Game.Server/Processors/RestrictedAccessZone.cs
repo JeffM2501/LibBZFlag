@@ -67,13 +67,15 @@ namespace BZFlag.Game.Host.Processors
 
         private void HandleEnter(ServerPlayer player, NetworkMessage msg)
         {
+            Logger.Log4("Processing enter for " + player.PlayerID.ToString());
+
             MsgEnter enter = msg as MsgEnter;
             if (enter == null)
                 return;
 
             if (enter.Callsign == string.Empty || enter.Callsign.Length < 3)
             {
-                player.SendMessage(new MsgReject(MsgReject.RejectionCodes.RejectBadCallsign, "Invalid callsign"));
+                SendReject(player, MsgReject.RejectionCodes.RejectBadCallsign, "Invalid callsign");
                 return;
             }
 
@@ -81,16 +83,18 @@ namespace BZFlag.Game.Host.Processors
             player.Motto = enter.Motto;
             player.Token = enter.Token;
 
-            if (player.Token == string.Empty)
+            if (player.Token == string.Empty && !Config.ProtectRegisteredNames)
             {
                 player.AuthStatus = ServerPlayer.AuthStatuses.NoneProvided;
                 if (!Config.AllowAnonUsers)
-                    player.SendMessage(new MsgReject(MsgReject.RejectionCodes.RejectBadCallsign, "Registered Users Only"));
+                    SendReject(player, MsgReject.RejectionCodes.RejectBadCallsign, "Registered Users Only");
                 else
                     SendAccept(player);
             }
             else
             {
+                Logger.Log3("Starting token verification for " + player.PlayerID.ToString() + ":" + enter.Callsign);
+
                 player.AuthStatus = ServerPlayer.AuthStatuses.InProgress;
 
                 ClientTokenCheck checker = new ClientTokenCheck();
@@ -104,15 +108,19 @@ namespace BZFlag.Game.Host.Processors
 
         private void Checker_RequestErrored(object sender, EventArgs e)
         {
+            Logger.Log4("Token Checkup failed");
+
             ClientTokenCheck checker = sender as ClientTokenCheck;
             if (checker == null || checker.Tag as ServerPlayer == null)
                 return;
 
             ServerPlayer player = checker.Tag as ServerPlayer;
 
+            Logger.Log3("Token verification failed for " + player.PlayerID.ToString() + ":" + player.Callsign);
+
             player.AuthStatus = ServerPlayer.AuthStatuses.Failed;
             if (!Config.AllowAnonUsers)
-                player.SendMessage(new MsgReject(MsgReject.RejectionCodes.RejectBadCallsign, "Authentication Failed"));
+                SendReject(player, MsgReject.RejectionCodes.RejectBadCallsign, "Authentication Failed");
             else
                 SendAccept(player);
         }
@@ -125,20 +133,36 @@ namespace BZFlag.Game.Host.Processors
 
             ServerPlayer player = checker.Tag as ServerPlayer;
 
-            player.AuthStatus = ServerPlayer.AuthStatuses.Valid;
-            player.BZID = checker.BZID;
-            player.GroupMemberships = checker.Groups;
+            Logger.Log3("Token verification returned for " + player.PlayerID.ToString() + ":" + player.Callsign + (checker.OK ? " OK:" : " BAD:") + (checker.NameRegistered ? "REGISTERED" : "UNKNOWN"));
 
-            var ban = Bans.FindIDBan(checker.BZID);
+            if (checker.OK)
+            {
+                player.AuthStatus = ServerPlayer.AuthStatuses.Valid;
+                player.BZID = checker.BZID;
+                player.GroupMemberships = checker.Groups;
 
-            if (ban != null)
-                player.SendMessage(new MsgReject(MsgReject.RejectionCodes.RejectIDBanned, ban.Reason));
+                var ban = Bans.FindIDBan(checker.BZID);
+
+                if (ban != null)
+                    SendReject(player, MsgReject.RejectionCodes.RejectIDBanned, ban.Reason);
+                else
+                    SendAccept(player);
+            }
+            else if (checker.NameRegistered && Config.ProtectRegisteredNames)
+                SendReject(player, MsgReject.RejectionCodes.RejectBadCallsign, "Callsign is registered");
             else
-                SendAccept(player);
+            {
+                if (!Config.AllowAnonUsers)
+                    SendReject(player, MsgReject.RejectionCodes.RejectBadCallsign, "Callsign must be registered");
+                else
+                    SendAccept(player);
+            }
         }
 
         private void SendAccept(ServerPlayer player)
         {
+            Logger.Log1("Accept Player " + player.PlayerID + ":" + player.Callsign);
+
             MsgAccept accept = new MsgAccept();
             accept.PlayerID = player.PlayerID;
 
@@ -147,8 +171,16 @@ namespace BZFlag.Game.Host.Processors
             Promote(player);
         }
 
+        private void SendReject(ServerPlayer player, MsgReject.RejectionCodes code, string reason)
+        {
+            Logger.Log1("Reject Player " + player.PlayerID + " " + code.ToString() + " :" + reason);
+            player.SendMessage(new MsgReject(code, reason));
+        }
+
         private void HandleWantWorldHash(ServerPlayer player, NetworkMessage msg)
         {
+            Logger.Log4("Getting world hash for " + player.PlayerID.ToString());
+
             MsgWantWHash hash = msg as MsgWantWHash;
             if (hash == null)
                 return;
@@ -161,6 +193,8 @@ namespace BZFlag.Game.Host.Processors
 
         private void HandleNegotiateFlags(ServerPlayer player, NetworkMessage msg)
         {
+            Logger.Log4("Negotiating flags for " + player.PlayerID.ToString());
+
             player.ClientFlagList = msg as MsgNegotiateFlags;
             if (player.ClientFlagList == null)
                 return;
@@ -170,6 +204,8 @@ namespace BZFlag.Game.Host.Processors
 
         private void HandleWantSettings(ServerPlayer player, NetworkMessage msg)
         {
+            Logger.Log4("Getting settings for " + player.PlayerID.ToString());
+
             MsgWantSettings ws = msg as MsgWantSettings;
             if (ws == null)
                 return;

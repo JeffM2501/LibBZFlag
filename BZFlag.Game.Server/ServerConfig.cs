@@ -29,7 +29,8 @@ namespace BZFlag.Game.Host
         public string PublicTitle = string.Empty;
 
         // authentication data
-        public bool AllowAnonUsers = false;
+        public bool AllowAnonUsers = true;
+        public bool ProtectRegisteredNames = false;
 
         public List<string> SecurityGroups = new List<string>();
 

@@ -42,7 +42,9 @@ namespace BZFlag.Game.Host
             Networking.Messages.NetworkMessage.IsOnServer = true;
 
             Logger.SetLogFilePath(cfg.LogFile);
-            Logger.LogLevel = cfg.LogLevel = 4;
+            Logger.LogLevel = cfg.LogLevel;
+
+            Logger.Log0("Server startup");
 
             ConfigData = cfg;
 
@@ -65,11 +67,15 @@ namespace BZFlag.Game.Host
 
         private void SetupBZDB()
         {
+            Logger.Log2("Setup BZDB defaults");
+
             BZFlag.Game.Host.BZDB.Defaults.Setup(BZDatabase);
         }
 
         private void SetupAPI()
         {
+            Logger.Log2("Load API");
+
             API.Functions.ServerInstnace = this;
 
             PluginLoader.LoadFromAssembly(Assembly.GetExecutingAssembly());
@@ -92,6 +98,8 @@ namespace BZFlag.Game.Host
         {
             if (ConfigData.ListPublicly)
             {
+                Logger.Log1("Listing Publicly");
+
                 PubServer.Address = ConfigData.PublicHost;
                 PubServer.Description = ConfigData.PublicTitle;
                 PubServer.Name = ConfigData.PublicHost;
