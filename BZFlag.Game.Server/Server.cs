@@ -21,6 +21,7 @@ namespace BZFlag.Game.Host
         public UDPConnectionManager UDPConnections = new UDPConnectionManager();
 
         protected RestrictedAccessZone SecurityArea = null;
+        protected StagingZone StagingArea = null;
 
         //   protected PlayerProcessor AcceptedGamePlayers = new PlayerProcessor();
 
@@ -58,6 +59,9 @@ namespace BZFlag.Game.Host
             SecurityArea.PromotePlayer += SecurityArea_PromotePlayer;
             SecurityArea.Flags = Flags;
             SecurityArea.World = World;
+
+            StagingArea = new StagingZone(ConfigData);
+            StagingArea.PromotePlayer += this.StagingArea_PromotePlayer;
         }
 
         private void StagingArea_PromotePlayer(object sender, ServerPlayer e)
@@ -70,6 +74,8 @@ namespace BZFlag.Game.Host
             Logger.Log2("Setup BZDB defaults");
 
             BZFlag.Game.Host.BZDB.Defaults.Setup(BZDatabase);
+
+            BZDatabase.FinishLoading();
         }
 
         private void SetupAPI()
@@ -239,6 +245,7 @@ namespace BZFlag.Game.Host
         private void SecurityArea_PromotePlayer(object sender, ServerPlayer e)
         {
             // they passed muster
+            StagingArea.AddPendingConnection(e);
         }
     }
 }

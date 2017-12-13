@@ -13,12 +13,14 @@ using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Services;
 using BZFlag.Game.Security;
 using BZFlag.Game.Host.World;
+using BZFlag.Networking.Messages.BZFS.BZDB;
 
 namespace BZFlag.Game.Host.Processors
 {
     public class StagingZone : PlayerProcessor
     {
         public GameWorld World = new GameWorld();
+        public BZFlag.Data.BZDB.Database DB = null;
 
         public StagingZone(ServerConfig cfg) : base(cfg)
         {
@@ -27,9 +29,30 @@ namespace BZFlag.Game.Host.Processors
             RegisterCommonHandlers();
         }
 
-        protected override void PlayerAdded(ServerPlayer player)
+        protected override void UpdatePlayer(ServerPlayer player)
         {
+            PackInitalBZDB(player);
+            Promote(player);
+        }
 
+        protected void PackInitalBZDB(ServerPlayer player)
+        {
+            int size = 0;
+
+            Dictionary<string, string> currentList = new Dictionary<string, string>();
+            foreach (var item in DB.GetVars())
+            {
+                int thisSize = item.Key.Length + item.Value.Length + 2;
+                if ( thisSize + size >= 1018)
+                {
+                    player.SendMessage(new MsgSetVars(currentList));
+                    currentList.Clear();
+                }
+                currentList.Add(item.Key, item.Value);
+            }
+
+            if (currentList.Count > 0)
+                player.SendMessage(new MsgSetVars(currentList));
         }
     }
 }

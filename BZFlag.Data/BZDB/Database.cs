@@ -1,4 +1,4 @@
-﻿using BZFlag.Data.Types;
+using BZFlag.Data.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +40,8 @@ namespace BZFlag.Data.BZDB
         }
 
         protected Dictionary<string, DatabaseItem> RawBZDBVariables = new Dictionary<string, DatabaseItem>();
+
+        public DatabaseItem[] GetVars() { lock(RawBZDBVariables) return RawBZDBVariables.Values.ToArray(); }
 
 
         public class DatabaseChangedEventArgs : EventArgs

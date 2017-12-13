@@ -1,4 +1,5 @@
-﻿using System;
+using BZFlag.Data.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,9 +17,24 @@ namespace BZFlag.Networking.Messages.BZFS.BZDB
             Code = CodeFromChars("sv");
         }
 
+        public MsgSetVars(Dictionary<string, string> v)
+        {
+            Code = CodeFromChars("sv");
+            BZDBVariables = v;
+        }
+
         public override byte[] Pack()
         {
-            throw new NotImplementedException();
+            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+
+            buffer.WriteUInt16(BZDBVariables.Count);
+            foreach (var v in BZDBVariables)
+            {
+                buffer.WritePascalString(v.Key);
+                buffer.WritePascalString(v.Value);
+            }
+
+            return buffer.GetMessageBuffer();
         }
 
         public override void Unpack(byte[] data)

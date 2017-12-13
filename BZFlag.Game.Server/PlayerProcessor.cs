@@ -82,6 +82,11 @@ namespace BZFlag.Game.Host
                 Players.Remove(e as ServerPlayer);
         }
 
+        protected virtual void UpdatePlayer(ServerPlayer player)
+        {
+
+        }
+
         protected void ProcessPendingPlayers()
         {
             ServerPlayer[] locals = null;
@@ -109,6 +114,7 @@ namespace BZFlag.Game.Host
                         count++;
                     }
 
+                    UpdatePlayer(player);
                 }
                 Thread.Sleep(SleepTime);
                 lock (Players)
