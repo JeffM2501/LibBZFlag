@@ -18,7 +18,7 @@ namespace BZFlag.Game.Host.BZDB
 
         public static void Add(string key, string value, bool persist, StateDBPermission perms)
         {
-            StateDatabase.SetValue(key, value);
+            StateDatabase.InitValues(key, value);
         }
 
         public static void Setup(BZFlag.Data.BZDB.Database db)

@@ -42,13 +42,13 @@ namespace BZFlag.Game.Host.Processors
             Dictionary<string, string> currentList = new Dictionary<string, string>();
             foreach (var item in DB.GetVars())
             {
-                int thisSize = item.Key.Length + item.Value.Length + 2;
+                int thisSize = item.Key.Length + item.RawValue.Length + 2;
                 if ( thisSize + size >= 1018)
                 {
                     player.SendMessage(new MsgSetVars(currentList));
                     currentList.Clear();
                 }
-                currentList.Add(item.Key, item.Value);
+                currentList.Add(item.Key, item.RawValue);
             }
 
             if (currentList.Count > 0)
