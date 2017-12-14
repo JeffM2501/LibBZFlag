@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -16,6 +16,15 @@ namespace BZFlag.Game.Host
 
         public static int LogLevel = 1;
 
+        public class LogEventArgs : EventArgs
+        {
+            public int Level = 0;
+            public string Timestamp = string.Empty;
+            public string Text = string.Empty;
+        }
+
+        public static event EventHandler<LogEventArgs> LineLogged;
+
         public static void SetLogFilePath(string filePath)
         {
             if (filePath != string.Empty && File.Exists(filePath))
@@ -29,9 +38,16 @@ namespace BZFlag.Game.Host
             if (level > LogLevel)
                 return;
 
+            LogEventArgs args = new LogEventArgs();
+            args.Timestamp = DateTime.Now.ToShortDateString() + "-" + DateTime.Now.ToShortTimeString();
+            args.Text = data;
+            args.Level = level;
+
+            LineLogged?.Invoke(null, args);
+
             string line = "Level " + level.ToString() + " ";
             if (ShowDateTime)
-                line += DateTime.Now.ToShortDateString() + "-" + DateTime.Now.ToShortTimeString() + " ";
+                line += args.Timestamp  + " ";
             line += data;
 
             Console.WriteLine(line);

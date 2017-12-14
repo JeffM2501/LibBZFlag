@@ -17,7 +17,7 @@ using System.Security.Cryptography;
 
 namespace BZFlag.Game.Host.Processors
 {
-    public class GamePlayZone : PlayerProcessor
+    internal class GamePlayZone : PlayerProcessor
     {
         public Server.GameState State = null;
 

@@ -18,7 +18,7 @@ using System.Security.Cryptography;
 
 namespace BZFlag.Game.Host.Processors
 {
-    public class RestrictedAccessZone : PlayerProcessor
+    internal class RestrictedAccessZone : PlayerProcessor
     {
         public BanList Bans = new BanList();
         public FlagManager Flags = new FlagManager();
@@ -28,8 +28,11 @@ namespace BZFlag.Game.Host.Processors
         protected MsgWantWHash HashCache = null;
         protected MsgCacheURL URLCache = null;
 
+        public event EventHandler<ServerPlayer> PlayerRejected;
         public event EventHandler<ServerPlayer> PlayerBanned;
         public event EventHandler<ServerPlayer> PlayerAccepted;
+
+        public event EventHandler<Server.BooleanResultPlayerEventArgs> CheckPlayerAcceptance;
 
         public RestrictedAccessZone(ServerConfig cfg) : base(cfg)
         {
@@ -95,6 +98,15 @@ namespace BZFlag.Game.Host.Processors
             player.Motto = enter.Motto;
             player.Token = enter.Token;
 
+            Server.BooleanResultPlayerEventArgs args = new Server.BooleanResultPlayerEventArgs(player);
+            CheckPlayerAcceptance?.Invoke(this, args);
+
+            if (!args.Result)
+            {
+                SendReject(player, MsgReject.RejectionCodes.RejectUnknown, "API Reject");
+                return;
+            }
+
             if (player.Token == string.Empty && !Config.ProtectRegisteredNames)
             {
                 player.AuthStatus = ServerPlayer.AuthStatuses.NoneProvided;
@@ -156,7 +168,11 @@ namespace BZFlag.Game.Host.Processors
                 var ban = Bans.FindIDBan(checker.BZID);
 
                 if (ban != null)
+                {
+                    PlayerBanned?.Invoke(this, player);
                     SendReject(player, MsgReject.RejectionCodes.RejectIDBanned, ban.Reason);
+                }
+                   
                 else
                     SendAccept(player);
             }
@@ -185,8 +201,13 @@ namespace BZFlag.Game.Host.Processors
 
         private void SendReject(ServerPlayer player, MsgReject.RejectionCodes code, string reason)
         {
-            Logger.Log1("Reject Player " + player.PlayerID + " " + code.ToString() + " :" + reason);
+            player.Accepted = false;
+            player.RejectionReason = code.ToString() + " :" + reason;
+
+            Logger.Log1("Reject Player " + player.PlayerID + " " + player.RejectionReason);
             player.SendMessage(new MsgReject(code, reason));
+
+            PlayerRejected?.Invoke(this, player);
         }
 
         private void HandleWantWorldHash(ServerPlayer player, NetworkMessage msg)

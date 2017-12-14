@@ -18,7 +18,6 @@ namespace BZFlag.Game.Host
 
         protected MessageManager MessageProcessor = null;
 
-
         public int SleepTime = 100;
         public static int MaxMessagesPerClientCycle = 10;
 

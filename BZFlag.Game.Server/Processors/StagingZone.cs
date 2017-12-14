@@ -17,7 +17,7 @@ using BZFlag.Networking.Messages.BZFS.BZDB;
 
 namespace BZFlag.Game.Host.Processors
 {
-    public class StagingZone : PlayerProcessor
+    internal class StagingZone : PlayerProcessor
     {
         public GameWorld World = new GameWorld();
         public BZFlag.Data.BZDB.Database DB = null;

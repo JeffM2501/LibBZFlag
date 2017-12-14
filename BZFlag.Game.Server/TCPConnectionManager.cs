@@ -47,6 +47,21 @@ namespace BZFlag.Game.Host
 
         public event EventHandler<PendingClient> BZFSProtocolConnectionAccepted = null;
 
+        public class NetworkBanEventArgs : EventArgs
+        {
+            public PendingClient Client = null;
+            public BanList.BanRecord Ban = null;
+
+            public NetworkBanEventArgs (PendingClient c, BanList.BanRecord b)
+            {
+                Client = c;
+                Ban = b;
+            }
+        }
+
+        public event EventHandler<NetworkBanEventArgs> ConnectionIPBanned = null;
+        public event EventHandler<NetworkBanEventArgs> ConnectionHostBanned = null;
+
         protected Thread WorkerThread = null;
 
         protected Server Host = null;
@@ -87,6 +102,7 @@ namespace BZFlag.Game.Host
             var ban = Bans.FindIPBan(c.GetIPAsString());
             if (ban != null)
             {
+                ConnectionIPBanned?.Invoke(this, new NetworkBanEventArgs(c, ban));
                 c.ClientConnection.Close();
                 return;
             }
@@ -143,6 +159,7 @@ namespace BZFlag.Game.Host
                                 c.DNSPassed = true;
                             else
                             {
+                                ConnectionHostBanned?.Invoke(this, new NetworkBanEventArgs(c, ban));
                                 c.HostEntry = null;
                                 DisconnectPendingClient(c);
                             }

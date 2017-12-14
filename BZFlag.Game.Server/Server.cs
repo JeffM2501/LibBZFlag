@@ -20,10 +20,9 @@ namespace BZFlag.Game.Host
         public TCPConnectionManager TCPConnections = null;
         public UDPConnectionManager UDPConnections = new UDPConnectionManager();
 
-        protected RestrictedAccessZone SecurityArea = null;
-        protected StagingZone StagingArea = null;
-        protected GamePlayZone GameZone = null;
-
+        private RestrictedAccessZone SecurityArea = null;
+        private StagingZone StagingArea = null;
+        private GamePlayZone GameZone = null;
 
         public ServerConfig ConfigData = new ServerConfig();
 
@@ -34,6 +33,8 @@ namespace BZFlag.Game.Host
 
         public class GameState
         {
+            public bool IsPublic = false;
+
             public BZFlag.Data.BZDB.Database BZDatabase = new BZFlag.Data.BZDB.Database();
 
             public GameWorld World = new GameWorld();
@@ -64,6 +65,7 @@ namespace BZFlag.Game.Host
 
             SecurityArea = new RestrictedAccessZone(ConfigData);
             SecurityArea.PromotePlayer += SecurityArea_PromotePlayer;
+
             SecurityArea.Flags = State.Flags;
             SecurityArea.World = State.World;
 
@@ -71,6 +73,9 @@ namespace BZFlag.Game.Host
             StagingArea.PromotePlayer += this.StagingArea_PromotePlayer;
 
             GameZone = new GamePlayZone(ConfigData, State);
+
+
+            RegisterProcessorEvents();
         }
 
         protected virtual void BZFSProtocolConnectionAccepted(object sender, TCPConnectionManager.PendingClient e)
@@ -128,6 +133,8 @@ namespace BZFlag.Game.Host
                     Logger.Log1("Unable to load plug-in " + f + " :" + ex.ToString());
                 }
             }
+
+            APILoadComplete?.Invoke(this, EventArgs.Empty);
         }
 
         private void SetupWorld()
@@ -172,6 +179,8 @@ namespace BZFlag.Game.Host
 
         private void PubServer_RequestErrored(object sender, EventArgs e)
         {
+            State.IsPublic = false;
+
             Logger.Log1("Public List Failed: " + PubServer.LastError);
 
             PublicPostList?.Invoke(this, EventArgs.Empty);
@@ -179,6 +188,8 @@ namespace BZFlag.Game.Host
 
         private void PubServer_RequestCompleted(object sender, EventArgs e)
         {
+            State.IsPublic = true;
+
             Logger.Log3("Public List Update Complete");
 
             PublicPostList?.Invoke(this, EventArgs.Empty);
@@ -240,14 +251,11 @@ namespace BZFlag.Game.Host
 
             SecurityArea.Bans = TCPConnections.Bans;
 
-
             SecurityArea.Setup();
             TCPConnections.StartUp();
 
-
             UDPConnections = new UDPConnectionManager();
             UDPConnections.Listen(port);
-
 
             if (ConfigData.ListPublicly)
             {
