@@ -62,7 +62,16 @@ namespace BZFlag.Game.Host.Processors
 
             URLCache = new MsgCacheURL();
             URLCache.URL = Config.MapURL;
+        }
 
+        protected override void PlayerAdded(ServerPlayer player)
+        {
+            player.NeedStartupInfo = true;
+
+            // send them the player ID, so they can give us data
+            player.SendDirectMessage(true, new byte[] { (byte)player.PlayerID });
+
+            base.PlayerAdded(player);
         }
 
         private void HandleEnter(ServerPlayer player, NetworkMessage msg)

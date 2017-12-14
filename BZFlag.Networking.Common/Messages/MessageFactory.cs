@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -115,6 +115,44 @@ namespace BZFlag.Networking.Messages
 
             Factory.RegisterMessageType(new MsgUDPLinkRequest());
             Factory.RegisterMessageType(new MsgUDPLinkEstablished());
+        }
+    }
+
+    public static class GameServerMessageFacotry
+    {
+        public static MessageManager Factory = new MessageManager();
+
+        static GameServerMessageFacotry()
+        {
+            Factory.RegisterMessageType(new MsgExit());
+
+            Factory.RegisterMessageType(new MsgGameTime());
+            Factory.RegisterMessageType(new MsgLagPing());
+
+            Factory.RegisterMessageType(new MsgUDPLinkRequest());
+            Factory.RegisterMessageType(new MsgUDPLinkEstablished());
+
+            Factory.RegisterMessageType(new MsgMessage());
+
+            Factory.RegisterMessageType(new MsgQueryPlayers());
+
+            Factory.RegisterMessageType(new MsgAutoPilot());
+            Factory.RegisterMessageType(new MsgPlayerUpdateSmall());
+            Factory.RegisterMessageType(new MsgPlayerUpdate());
+            Factory.RegisterMessageType(new MsgAlive());
+            Factory.RegisterMessageType(new MsgKilled());
+            Factory.RegisterMessageType(new MsgTeleport());
+            Factory.RegisterMessageType(new MsgPause());
+
+            Factory.RegisterMessageType(new MsgScore());
+            Factory.RegisterMessageType(new MsgTimeUpdate());
+
+            Factory.RegisterMessageType(new MsgShotBegin());
+            Factory.RegisterMessageType(new MsgShotEnd());
+            Factory.RegisterMessageType(new MsgGMUpdate());
+
+            Factory.RegisterMessageType(new MsgFlagType());
+            Factory.RegisterMessageType(new MsgDropFlag());
         }
     }
 

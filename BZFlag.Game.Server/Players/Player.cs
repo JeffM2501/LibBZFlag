@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +22,8 @@ namespace BZFlag.Game.Host.Players
         public string Motto = string.Empty;
 
         public string BZID = string.Empty;
+
+        public bool NeedStartupInfo = true;
 
         public MsgNegotiateFlags ClientFlagList = null;
 

@@ -22,10 +22,8 @@ namespace BZFlag.Game.Host
 
         protected RestrictedAccessZone SecurityArea = null;
         protected StagingZone StagingArea = null;
+        protected GamePlayZone GameZone = null;
 
-        //   protected PlayerProcessor AcceptedGamePlayers = new PlayerProcessor();
-
-        internal BZFlag.Data.BZDB.Database BZDatabase = new BZFlag.Data.BZDB.Database();
 
         public ServerConfig ConfigData = new ServerConfig();
 
@@ -34,9 +32,19 @@ namespace BZFlag.Game.Host
 
         public PublicServer PubServer = new PublicServer();
 
+        public class GameState
+        {
+            public BZFlag.Data.BZDB.Database BZDatabase = new BZFlag.Data.BZDB.Database();
+
+            public GameWorld World = new GameWorld();
+            public FlagManager Flags = new FlagManager();
+
+            // public PlayerManager Players = new PlayerManager();
+            // public ShotManager Shots = new ShotManager();
+        }
+        public GameState State = new GameState();
         // World Contents
-        public FlagManager Flags = new FlagManager();
-        public GameWorld World = new GameWorld();
+
 
         public Server(ServerConfig cfg)
         {
@@ -53,29 +61,50 @@ namespace BZFlag.Game.Host
             SetupAPI();
             SetupPublicListing();
 
-            World.Map.Validate();
+            State.World.Map.Validate();
 
             SecurityArea = new RestrictedAccessZone(ConfigData);
             SecurityArea.PromotePlayer += SecurityArea_PromotePlayer;
-            SecurityArea.Flags = Flags;
-            SecurityArea.World = World;
+            SecurityArea.Flags = State.Flags;
+            SecurityArea.World = State.World;
 
             StagingArea = new StagingZone(ConfigData);
             StagingArea.PromotePlayer += this.StagingArea_PromotePlayer;
+
+            GameZone = new GamePlayZone(ConfigData, State);
+        }
+
+        protected virtual void BZFSProtocolConnectionAccepted(object sender, TCPConnectionManager.PendingClient e)
+        {
+            var player = AcceptTCPConnection(e);
+            if (player == null) // could not make a player for some reason
+            {
+                e.ClientConnection.Client.Disconnect(false);
+                return;
+            }
+
+            // send them into the restricted zone until they validate
+            SecurityArea.AddPendingConnection(player);
+        }
+
+        private void SecurityArea_PromotePlayer(object sender, ServerPlayer e)
+        {
+            // they passed muster
+            StagingArea.AddPendingConnection(e);
         }
 
         private void StagingArea_PromotePlayer(object sender, ServerPlayer e)
         {
-            throw new NotImplementedException();
+            GameZone.AddPendingConnection(e);
         }
 
         private void SetupBZDB()
         {
             Logger.Log2("Setup BZDB defaults");
 
-            BZFlag.Game.Host.BZDB.Defaults.Setup(BZDatabase);
+            BZFlag.Game.Host.BZDB.Defaults.Setup(State.BZDatabase);
 
-            BZDatabase.FinishLoading();
+           State.BZDatabase.FinishLoading();
         }
 
         private void SetupAPI()
@@ -223,29 +252,6 @@ namespace BZFlag.Game.Host
 
                 System.Threading.Thread.Sleep(100);
             }
-        }
-
-        protected virtual void BZFSProtocolConnectionAccepted(object sender, TCPConnectionManager.PendingClient e)
-        {
-            var player = AcceptTCPConnection(e);
-            if (player == null) // could not make a player for some reason
-            {
-                e.ClientConnection.Client.Disconnect(false);
-                return;
-            }
-
-            // send them the player ID, so they can give us data
-            player.SendDirectMessage(true, new byte[] { (byte)player.PlayerID });
-
-
-            // send them into the restricted zone until they validate
-            SecurityArea.AddPendingConnection(player);
-        }
-
-        private void SecurityArea_PromotePlayer(object sender, ServerPlayer e)
-        {
-            // they passed muster
-            StagingArea.AddPendingConnection(e);
         }
     }
 }

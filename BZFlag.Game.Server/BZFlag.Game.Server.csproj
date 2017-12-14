@@ -52,6 +52,7 @@
     <Compile Include="Logger.cs" />
     <Compile Include="PlayerProcessor.cs" />
     <Compile Include="Players\Player.cs" />
+    <Compile Include="Processors\GamePlayZone.cs" />
     <Compile Include="Processors\RestrictedAccessZone.cs" />
     <Compile Include="Processors\StagingZone.cs" />
     <Compile Include="Server.cs" />
