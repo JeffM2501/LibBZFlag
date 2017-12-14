@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Net;
 
 using BZFlag.Networking.Messages;
 using BZFlag.Networking.Common;
 using BZFlag.Networking.Messages.BZFS.Info;
-using System.Net;
+using BZFlag.Data.Teams;
 
 namespace BZFlag.Game.Host.Players
 {
@@ -23,6 +24,9 @@ namespace BZFlag.Game.Host.Players
         public string Callsign = string.Empty;
         public string Token = string.Empty;
         public string Motto = string.Empty;
+
+        public TeamColors DesiredTeam = TeamColors.AutomaticTeam;
+        public TeamColors ActualTeam = TeamColors.AutomaticTeam;
 
         public string BZID = string.Empty;
 

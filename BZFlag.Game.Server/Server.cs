@@ -1,17 +1,17 @@
-using BZFlag.Networking;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
-using System.Text;
+using System.Reflection;
 
 using BZFlag.Services;
 using BZFlag.Game.Host.Processors;
 using BZFlag.Game.Host.Players;
 using BZFlag.Data.Players;
 using BZFlag.Game.Host.API;
-using System.Reflection;
+
 using BZFlag.Game.Host.World;
+using BZFlag.Data.Teams;
 
 namespace BZFlag.Game.Host
 {
@@ -59,9 +59,10 @@ namespace BZFlag.Game.Host
             ConfigData = cfg;
 
             SetupAPI();
+            SetupConfig();
             SetupBZDB();
             SetupWorld();
-            SetupPublicListing();
+            UpdatePublicListServer();
 
             SecurityArea = new RestrictedAccessZone(ConfigData);
             SecurityArea.PromotePlayer += SecurityArea_PromotePlayer;
@@ -72,8 +73,8 @@ namespace BZFlag.Game.Host
             StagingArea = new StagingZone(ConfigData);
             StagingArea.PromotePlayer += this.StagingArea_PromotePlayer;
 
-            GameZone = new GamePlayZone(ConfigData, State);
-
+            GameZone = new GamePlayZone(this);
+            GameZone.UpdatePublicListServer += new EventHandler((s, e) => UpdatePublicListServer());
 
             RegisterProcessorEvents();
         }
@@ -135,15 +136,23 @@ namespace BZFlag.Game.Host
             }
 
             APILoadComplete?.Invoke(this, EventArgs.Empty);
+            ConfigLoaded?.Invoke(this, EventArgs.Empty);
+        }
+
+        // cache some items from the config.
+        private void SetupConfig()
+        {
+            if (ConfigData.GameData.GameType == Data.Game.GameTypes.ClassicCTF || ConfigData.GameData.GameType == Data.Game.GameTypes.TeamFFA)
+                ConfigData.GameData.IsTeamGame = true;
         }
 
         private void SetupWorld()
         {
             WorldPreload?.Invoke(this, EventArgs.Empty);
 
-            if (ConfigData.MapFile != string.Empty)
+            if (ConfigData.GameData.MapFile != string.Empty)
             {
-                System.IO.FileInfo map = new System.IO.FileInfo(ConfigData.MapFile);
+                System.IO.FileInfo map = new System.IO.FileInfo(ConfigData.GameData.MapFile);
                 System.IO.StreamReader sr = map.OpenText();
                 State.World.Map = BZFlag.IO.BZW.Reader.ReadMap(sr);
                 sr.Close();
@@ -157,11 +166,11 @@ namespace BZFlag.Game.Host
 
         }
 
-        private void SetupPublicListing()
+        private void UpdatePublicListServer()
         {
             if (ConfigData.ListPublicly)
             {
-                Logger.Log1("Listing Publicly");
+                Logger.Log1("Updating Public List Server");
 
                 PublicPreList?.Invoke(this, EventArgs.Empty);
 
@@ -171,10 +180,48 @@ namespace BZFlag.Game.Host
                 PubServer.Port = ConfigData.Port;
                 PubServer.Key = ConfigData.PublicListKey;
                 PubServer.AdvertGroups = string.Join(",", ConfigData.PublicAdvertizeGroups.ToArray());
+                PubServer.Info = GetGameInfo();
 
                 PubServer.RequestCompleted += PubServer_RequestCompleted;
                 PubServer.RequestErrored += PubServer_RequestErrored;
             }
+        }
+
+
+        public GameInfo GetGameInfo()
+        {
+            GameInfo info = new GameInfo();
+
+            info.GameOptions = (int)ConfigData.GameData.GameOptions;
+            info.GameType = (int)ConfigData.GameData.GameType;
+
+            info.MaxShots = ConfigData.GameData.MaxShots;
+            info.ShakeWins = ConfigData.GameData.ShakeWins;
+            info.ShakeTimeout = (int)ConfigData.GameData.ShakeTimeout;      // 1/10ths of second
+            info.MaxPlayerScore = 0;
+            info.MaxTeamScore = ConfigData.GameData.MaxShots;
+            info.MaxTime = 0;       // seconds
+            info.MaxPlayers = ConfigData.GameData.MaxPlayers;
+
+            info.RogueCount = GameZone.GetTeamPlayerCount(TeamColors.RogueTeam);
+            info.RogueMax = ConfigData.TeamData.GetTeamLimit(TeamColors.RogueTeam);
+
+            info.RedCount = GameZone.GetTeamPlayerCount(TeamColors.RedTeam);
+            info.RedMax = ConfigData.TeamData.GetTeamLimit(TeamColors.RedTeam);
+
+            info.GreenCount = GameZone.GetTeamPlayerCount(TeamColors.GreenTeam);
+            info.GreenMax = ConfigData.TeamData.GetTeamLimit(TeamColors.GreenTeam);
+
+            info.BlueCount = GameZone.GetTeamPlayerCount(TeamColors.BlueTeam);
+            info.BlueMax = ConfigData.TeamData.GetTeamLimit(TeamColors.BlueTeam);
+
+            info.PurpleCount = GameZone.GetTeamPlayerCount(TeamColors.PurpleTeam);
+            info.PurpleMax = ConfigData.TeamData.GetTeamLimit(TeamColors.PurpleTeam);
+
+            info.ObserverCount = GameZone.GetTeamPlayerCount(TeamColors.ObserverTeam);
+            info.ObserverMax = ConfigData.TeamData.GetTeamLimit(TeamColors.ObserverTeam); 
+
+            return info;
         }
 
         private void PubServer_RequestErrored(object sender, EventArgs e)

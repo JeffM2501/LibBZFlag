@@ -54,6 +54,11 @@ namespace BZFlag.Game.Host
 
         }
 
+        protected virtual void PlayerRemoved(ServerPlayer player)
+        {
+
+        }
+
         public void AddPendingConnection(ServerPlayer player)
         {
             lock (Players)
@@ -73,6 +78,7 @@ namespace BZFlag.Game.Host
         protected void RemovePlayer(ServerPlayer sp)
         {
             sp.Disconnected -= Player_Disconnected;
+            PlayerRemoved(sp);
         }
 
         private void Player_Disconnected(object sender, Networking.Common.Peer e)

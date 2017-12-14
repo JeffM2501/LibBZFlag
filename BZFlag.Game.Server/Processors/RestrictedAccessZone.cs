@@ -54,20 +54,20 @@ namespace BZFlag.Game.Host.Processors
 
             byte[] worldBuffer = World.GetWorldData();
             SettingsCache.WorldSize = worldBuffer.Length;
-            SettingsCache.GameType = GameTypes.OpenFFA;
-            SettingsCache.GameOptions = GameOptionFlags.NoStyle;
-            SettingsCache.MaxPlayers = 200;
-            SettingsCache.MaxShots = 1;
-            SettingsCache.MaxFlags = 50;
-            SettingsCache.LinearAcceleration = 0;
-            SettingsCache.AngularAcceleration = 0;
+            SettingsCache.GameType = Config.GameData.GameType;
+            SettingsCache.GameOptions = Config.GameData.GameOptions;
+            SettingsCache.MaxPlayers = Config.GameData.MaxPlayers;
+            SettingsCache.MaxShots = Config.GameData.MaxShots;
+            SettingsCache.MaxFlags = Config.GameData.MaxFlags;
+            SettingsCache.LinearAcceleration = Config.GameData.LinearAcceleration;
+            SettingsCache.AngularAcceleration = Config.GameData.AngularAcceleration;
 
             HashCache = new MsgWantWHash();
-            HashCache.IsRandomMap = true;
+            HashCache.IsRandomMap = World.IsRandom;
             HashCache.WorldHash = BZFlag.Data.Utils.Cryptography.MD5Hash(worldBuffer);
 
             URLCache = new MsgCacheURL();
-            URLCache.URL = Config.MapURL;
+            URLCache.URL = Config.GameData.MapURL;
         }
 
         protected override void PlayerAdded(ServerPlayer player)
@@ -94,6 +94,13 @@ namespace BZFlag.Game.Host.Processors
                 return;
             }
 
+            if (enter.PlayerType == Data.Players.PlayerTypes.ComputerPlayer)
+            {
+                SendReject(player, MsgReject.RejectionCodes.RejectBadType, "This server does not support client side robot players");
+                return;
+            }
+
+            player.DesiredTeam = enter.PlayerTeam;
             player.Callsign = enter.Callsign;
             player.Motto = enter.Motto;
             player.Token = enter.Token;
@@ -196,6 +203,7 @@ namespace BZFlag.Game.Host.Processors
 
             player.SendMessage(accept);
 
+            PlayerAccepted?.Invoke(this, player);
             Promote(player);
         }
 
@@ -208,6 +216,9 @@ namespace BZFlag.Game.Host.Processors
             player.SendMessage(new MsgReject(code, reason));
 
             PlayerRejected?.Invoke(this, player);
+
+            player.Disconnect();
+            RemovePlayer(player);
         }
 
         private void HandleWantWorldHash(ServerPlayer player, NetworkMessage msg)

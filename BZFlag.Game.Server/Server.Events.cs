@@ -33,6 +33,8 @@ namespace BZFlag.Game.Host
 
         public event EventHandler APILoadComplete;
 
+        public event EventHandler ConfigLoaded;
+
         public event EventHandler PublicPreList;
         public event EventHandler PublicPostList;
 
@@ -41,6 +43,10 @@ namespace BZFlag.Game.Host
         public event EventHandler<ServerPlayer> PlayerBanned;
         public event EventHandler<ServerPlayer> PlayerRejected;
         public event EventHandler<ServerPlayer> PlayerAccepted;
+
+        public event EventHandler<ServerPlayer> PlayerPreAdd;
+        public event EventHandler<ServerPlayer> PlayerPostAdd;
+        public event EventHandler<ServerPlayer> PlayerRemoved;
 
         public event EventHandler<BooleanResultPlayerEventArgs> CheckPlayerAcceptance;
 
@@ -56,6 +62,8 @@ namespace BZFlag.Game.Host
 
             TCPConnections.ConnectionHostBanned += TCPConnections_ConnectionHostBanned;
             TCPConnections.ConnectionIPBanned += TCPConnections_ConnectionIPBanned;
+
+            GameZone.PlayerRejected += SecurityArea_PlayerRejected; // can still be rejected by team
         }
 
         private void TCPConnections_ConnectionIPBanned(object sender, TCPConnectionManager.NetworkBanEventArgs e)
@@ -86,6 +94,21 @@ namespace BZFlag.Game.Host
         private void SecurityArea_CheckPlayerAcceptance(object sender, BooleanResultPlayerEventArgs e)
         {
             CheckPlayerAcceptance?.Invoke(this, e);
+        }
+
+        public void PreAddPlayer(ServerPlayer p)
+        {
+            PlayerPreAdd?.Invoke(this, p);
+        }
+
+        public void PostAddPlayer(ServerPlayer p)
+        {
+            PlayerPostAdd?.Invoke(this, p);
+        }
+
+        public void RemovedPlayer(ServerPlayer p)
+        {
+            PlayerRemoved?.Invoke(this, p);
         }
     }
 }
