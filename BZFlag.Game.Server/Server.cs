@@ -15,7 +15,7 @@ using BZFlag.Game.Host.World;
 
 namespace BZFlag.Game.Host
 {
-    public class Server
+    public partial class Server
     {
         public TCPConnectionManager TCPConnections = null;
         public UDPConnectionManager UDPConnections = new UDPConnectionManager();
@@ -57,11 +57,10 @@ namespace BZFlag.Game.Host
 
             ConfigData = cfg;
 
-            SetupBZDB();
             SetupAPI();
+            SetupBZDB();
+            SetupWorld();
             SetupPublicListing();
-
-            State.World.Map.Validate();
 
             SecurityArea = new RestrictedAccessZone(ConfigData);
             SecurityArea.PromotePlayer += SecurityArea_PromotePlayer;
@@ -104,7 +103,9 @@ namespace BZFlag.Game.Host
 
             BZFlag.Game.Host.BZDB.Defaults.Setup(State.BZDatabase);
 
-           State.BZDatabase.FinishLoading();
+            State.BZDatabase.FinishLoading();
+
+            BZDBDefaultsLoaded?.Invoke(this, EventArgs.Empty);
         }
 
         private void SetupAPI()
@@ -129,11 +130,33 @@ namespace BZFlag.Game.Host
             }
         }
 
+        private void SetupWorld()
+        {
+            WorldPreload?.Invoke(this, EventArgs.Empty);
+
+            if (ConfigData.MapFile != string.Empty)
+            {
+                System.IO.FileInfo map = new System.IO.FileInfo(ConfigData.MapFile);
+                System.IO.StreamReader sr = map.OpenText();
+                State.World.Map = BZFlag.IO.BZW.Reader.ReadMap(sr);
+                sr.Close();
+
+                if (State.World.Map == null)
+                    State.World.Map = new Map.WorldMap();
+            }
+
+            WorldPostload?.Invoke(this, EventArgs.Empty);
+            State.World.Map.Validate();
+
+        }
+
         private void SetupPublicListing()
         {
             if (ConfigData.ListPublicly)
             {
                 Logger.Log1("Listing Publicly");
+
+                PublicPreList?.Invoke(this, EventArgs.Empty);
 
                 PubServer.Address = ConfigData.PublicHost;
                 PubServer.Description = ConfigData.PublicTitle;
@@ -150,11 +173,15 @@ namespace BZFlag.Game.Host
         private void PubServer_RequestErrored(object sender, EventArgs e)
         {
             Logger.Log1("Public List Failed: " + PubServer.LastError);
+
+            PublicPostList?.Invoke(this, EventArgs.Empty);
         }
 
         private void PubServer_RequestCompleted(object sender, EventArgs e)
         {
             Logger.Log3("Public List Update Complete");
+
+            PublicPostList?.Invoke(this, EventArgs.Empty);
         }
 
         protected int FindPlayerID()
@@ -194,6 +221,8 @@ namespace BZFlag.Game.Host
 
             lock (ConnectedPlayers)
                 ConnectedPlayers.Add(p.PlayerID, p);
+
+            NewConnection?.Invoke(this, p);
 
             return p;
         }

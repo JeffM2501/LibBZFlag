@@ -28,6 +28,9 @@ namespace BZFlag.Game.Host.Processors
         protected MsgWantWHash HashCache = null;
         protected MsgCacheURL URLCache = null;
 
+        public event EventHandler<ServerPlayer> PlayerBanned;
+        public event EventHandler<ServerPlayer> PlayerAccepted;
+
         public RestrictedAccessZone(ServerConfig cfg) : base(cfg)
         {
             MessageProcessor = SecurityJailMessageFacotry.Factory;

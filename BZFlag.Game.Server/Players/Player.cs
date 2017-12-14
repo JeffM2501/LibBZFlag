@@ -17,6 +17,9 @@ namespace BZFlag.Game.Host.Players
         public int PlayerID = 0;
         public object Tag = 0;
 
+        public bool Accepted = false;
+        public string RejectionReason = string.Empty;
+
         public string Callsign = string.Empty;
         public string Token = string.Empty;
         public string Motto = string.Empty;

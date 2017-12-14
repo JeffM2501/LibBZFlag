@@ -10,7 +10,6 @@ namespace BZFlag.Game.Host
     {
         public int Port = 5154;
 
-
         // plugins
         public List<string> PlugIns = new List<string>();
 
@@ -36,7 +35,7 @@ namespace BZFlag.Game.Host
 
         // world data
         public string MapFile = string.Empty;
-        public string MapURL = "https://www.hyperdrive.tech/blank.bzc";
+        public string MapURL = string.Empty;
 
 
         public static ServerConfig Read(string filepath)
