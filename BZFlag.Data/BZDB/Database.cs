@@ -92,8 +92,12 @@ namespace BZFlag.Data.BZDB
                 DoubleValue = double.MinValue;
                 Computation = ComputationTypes.None;
 
-                if (double.TryParse(Value, out DoubleValue))
+                double v = double.MinValue;
+                if (double.TryParse(Value, out v))
+                {
+                    DoubleValue = v;
                     return;
+                }
 
                 if (Value.Contains("+"))
                     SetupAdd(db);
