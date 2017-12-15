@@ -1,13 +1,10 @@
-using BZFlag.Data.Types;
-using BZFlag.Game.Host;
-using BZFlag.LinearMath;
-using BZFlag.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading;
 
+using BZFlag.Game.Host;
+using BZFlag.Services;
 
 namespace ConnectionTester
 {
@@ -22,7 +19,31 @@ namespace ConnectionTester
 
         private static GameList Link = new GameList();
 
+        public static bool SaveConfig = false;
+
         static void Main(string[] args)
+        {
+            if (SaveConfig)
+                DoConfigSave();
+
+            Link.RequestCompleted += Link_RequestCompleted;
+            Link.RequestErrored += Link_RequestErrored;
+
+            if (testClient)
+            {
+                if (useSimple)
+                    SimpleLogger.Run(args);
+                else
+                    TestClients(GetPlayers(), "loclahost", 5154);
+            }
+            else
+            {
+                if (useSimple)
+                    SimpleHoster.Run(args);
+            }
+        }
+
+        static void DoConfigSave()
         {
             ServerConfig cfg = new ServerConfig();
 
@@ -46,24 +67,6 @@ namespace ConnectionTester
             cfg.TeamData.ForceAutomaticTeams = true;
 
             ServerConfig.WriteYAML(cfg, "config.yaml");
-            return;
-
-
-            Link.RequestCompleted += Link_RequestCompleted;
-            Link.RequestErrored += Link_RequestErrored;
-
-            if (testClient)
-            {
-                if (useSimple)
-                    SimpleLogger.Run(args);
-                else
-                    TestClients(GetPlayers(), "loclahost", 5154);
-            }
-            else
-            {
-                if (useSimple)
-                    SimpleHoster.Run(args);
-            }
         }
 
         static List<Tuple<string, string, string>>  GetPlayers()

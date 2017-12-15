@@ -1,8 +1,7 @@
-﻿using BZFlag.Networking;
+
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.IO;
+using System.Reflection;
 
 namespace BZFlag.Game.Host
 {
@@ -15,7 +14,14 @@ namespace BZFlag.Game.Host
             ServerConfig cfg = new ServerConfig();
             if (args.Length > 0)
             {
-                cfg = ServerConfig.ReadXML(args[0]);
+                string ext = Path.GetExtension(args[0]).ToUpper();
+                if (ext == ".XML")
+                    cfg = ServerConfig.ReadXML(args[0]);
+                else if (ext == ".JSON")
+                    cfg = ServerConfig.ReadJSON(args[0]);
+                else if (ext == ".YAML")
+                    cfg = ServerConfig.ReadYAML(args[0]);
+
                 Logger.Log1("Loading config from " + args[0]);
 
             }

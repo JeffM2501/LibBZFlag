@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-using System.Text;
+using System.Runtime.Serialization.Json;
 
 using BZFlag.Data.Game;
 using BZFlag.Data.Teams;
+
 
 namespace BZFlag.Game.Host
 {
@@ -127,6 +128,30 @@ namespace BZFlag.Game.Host
             }
         }
 
+
+
+        public static ServerConfig ReadYAML(string filepath)
+        {
+            FileInfo f = new FileInfo(filepath);
+            if (!f.Exists)
+                return new ServerConfig();
+
+            try
+            {
+                YamlDotNet.Serialization.Deserializer yaml = new YamlDotNet.Serialization.Deserializer();
+
+                var fs = f.OpenText();
+                ServerConfig cfg = yaml.Deserialize<ServerConfig>(fs);
+                fs.Close();
+
+                return cfg == null ? new ServerConfig() : cfg;
+            }
+            catch (Exception /*ex*/)
+            {
+                return new ServerConfig();
+            }
+        }
+
         public static bool WriteYAML(ServerConfig config, string filepath)
         {
             FileInfo f = new FileInfo(filepath);
@@ -139,6 +164,50 @@ namespace BZFlag.Game.Host
              
                 var fs = f.AppendText();
                 yaml.Serialize(fs, config, typeof(ServerConfig));
+                fs.Close();
+
+                return true;
+            }
+            catch (Exception /*ex*/)
+            {
+                return false;
+            }
+        }
+
+        public static ServerConfig ReadJSON(string filepath)
+        {
+            FileInfo f = new FileInfo(filepath);
+            if (!f.Exists)
+                return new ServerConfig();
+
+            try
+            {
+                DataContractJsonSerializer json = new DataContractJsonSerializer(typeof(ServerConfig));
+
+                var fs = f.OpenRead();
+                ServerConfig cfg = json.ReadObject(fs) as ServerConfig;
+                fs.Close();
+
+                return cfg == null ? new ServerConfig() : cfg;
+            }
+            catch (Exception /*ex*/)
+            {
+                return new ServerConfig();
+            }
+        }
+
+        public static bool WriteJSON(ServerConfig config, string filepath)
+        {
+            FileInfo f = new FileInfo(filepath);
+            if (f.Exists)
+                f.Delete();
+
+            try
+            {
+                DataContractJsonSerializer json = new DataContractJsonSerializer(typeof(ServerConfig));
+
+                var fs = f.OpenWrite();
+                json.WriteObject(fs, config);
                 fs.Close();
 
                 return true;
