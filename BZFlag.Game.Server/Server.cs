@@ -40,7 +40,7 @@ namespace BZFlag.Game.Host
             public GameWorld World = new GameWorld();
             public FlagManager Flags = new FlagManager();
 
-            // public PlayerManager Players = new PlayerManager();
+            public PlayerManager Players = new PlayerManager();
             // public ShotManager Shots = new ShotManager();
         }
         public GameState State = new GameState();
@@ -57,6 +57,8 @@ namespace BZFlag.Game.Host
             Logger.Log0("Server startup");
 
             ConfigData = cfg;
+
+            State.Players.ServerHost = this;
 
             SetupAPI();
             SetupConfig();
@@ -203,22 +205,22 @@ namespace BZFlag.Game.Host
             info.MaxTime = 0;       // seconds
             info.MaxPlayers = ConfigData.GameData.MaxPlayers;
 
-            info.RogueCount = GameZone.GetTeamPlayerCount(TeamColors.RogueTeam);
+            info.RogueCount = State.Players.GetTeamPlayerCount(TeamColors.RogueTeam);
             info.RogueMax = ConfigData.TeamData.GetTeamLimit(TeamColors.RogueTeam);
 
-            info.RedCount = GameZone.GetTeamPlayerCount(TeamColors.RedTeam);
+            info.RedCount = State.Players.GetTeamPlayerCount(TeamColors.RedTeam);
             info.RedMax = ConfigData.TeamData.GetTeamLimit(TeamColors.RedTeam);
 
-            info.GreenCount = GameZone.GetTeamPlayerCount(TeamColors.GreenTeam);
+            info.GreenCount = State.Players.GetTeamPlayerCount(TeamColors.GreenTeam);
             info.GreenMax = ConfigData.TeamData.GetTeamLimit(TeamColors.GreenTeam);
 
-            info.BlueCount = GameZone.GetTeamPlayerCount(TeamColors.BlueTeam);
+            info.BlueCount = State.Players.GetTeamPlayerCount(TeamColors.BlueTeam);
             info.BlueMax = ConfigData.TeamData.GetTeamLimit(TeamColors.BlueTeam);
 
-            info.PurpleCount = GameZone.GetTeamPlayerCount(TeamColors.PurpleTeam);
+            info.PurpleCount = State.Players.GetTeamPlayerCount(TeamColors.PurpleTeam);
             info.PurpleMax = ConfigData.TeamData.GetTeamLimit(TeamColors.PurpleTeam);
 
-            info.ObserverCount = GameZone.GetTeamPlayerCount(TeamColors.ObserverTeam);
+            info.ObserverCount = State.Players.GetTeamPlayerCount(TeamColors.ObserverTeam);
             info.ObserverMax = ConfigData.TeamData.GetTeamLimit(TeamColors.ObserverTeam); 
 
             return info;

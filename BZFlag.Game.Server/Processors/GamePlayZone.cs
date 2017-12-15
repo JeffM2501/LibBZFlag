@@ -6,6 +6,7 @@ using BZFlag.Networking.Messages;
 
 using BZFlag.Game.Host.Players;
 using BZFlag.Networking.Messages.BZFS;
+using BZFlag.Networking.Messages.BZFS.Player;
 using BZFlag.Data.Teams;
 using BZFlag.Networking.Messages.BZFS.Control;
 
@@ -14,8 +15,6 @@ namespace BZFlag.Game.Host.Processors
     internal class GamePlayZone : PlayerProcessor
     {
         public Server ServerHost = null;
-
-        public Dictionary<TeamColors, List<ServerPlayer>> Teams = new Dictionary<TeamColors, List<ServerPlayer>>();
 
         public event EventHandler UpdatePublicListServer = null;
         public event EventHandler<ServerPlayer> PlayerRejected;
@@ -41,11 +40,7 @@ namespace BZFlag.Game.Host.Processors
         {
             base.PlayerRemoved(player);
 
-            lock (Teams)
-            {
-                if (Teams.ContainsKey(player.ActualTeam))
-                    Teams[player.ActualTeam].Remove(player);
-            }
+            ServerHost.State.Players.RemovePlayer(player);
 
             // tell everyone they went away
 
@@ -65,29 +60,12 @@ namespace BZFlag.Game.Host.Processors
         {
             player.ActualTeam = ServerHost.GetPlayerTeam(player);
 
-            ServerHost.PreAddPlayer(player);
-
-            if (player.ActualTeam == TeamColors.NoTeam)
+            if (!ServerHost.State.Players.AddPlayer(player))
             {
                 SendReject(player, MsgReject.RejectionCodes.RejectTeamFull, "The team " + player.DesiredTeam.ToString() + " is full");
                 return;
             }
 
-            Logger.Log2("Player " + player.Callsign + " assigned to team " + player.ActualTeam.ToString());
-
-            lock(Teams)
-            {
-                if (!Teams.ContainsKey(player.ActualTeam))
-                    Teams.Add(player.ActualTeam, new List<ServerPlayer>());
-
-                Teams[player.ActualTeam].Add(player);
-            }
-       
-            // tell everyone they joined
-
-            player.NeedStartupInfo = false;
-
-            ServerHost.PostAddPlayer(player);
             UpdatePublicListServer?.Invoke(this, EventArgs.Empty);
         }
 
@@ -100,17 +78,6 @@ namespace BZFlag.Game.Host.Processors
         {
   
         }
-
-        public int GetTeamPlayerCount(TeamColors team)
-        {
-            lock (Teams)
-            {
-                if (Teams.ContainsKey(team))
-                    return Teams[team].Count;
-                return 0;
-            }
-        }
-
 
         private void SendReject(ServerPlayer player, MsgReject.RejectionCodes code, string reason)
         {

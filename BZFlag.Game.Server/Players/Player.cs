@@ -16,6 +16,8 @@ namespace BZFlag.Game.Host.Players
     public class ServerPlayer : Peer
     {
         public int PlayerID = 0;
+        public string BZID = string.Empty;
+
         public object Tag = 0;
 
         public bool Accepted = false;
@@ -28,7 +30,13 @@ namespace BZFlag.Game.Host.Players
         public TeamColors DesiredTeam = TeamColors.AutomaticTeam;
         public TeamColors ActualTeam = TeamColors.AutomaticTeam;
 
-        public string BZID = string.Empty;
+        public class ScoreInfo
+        {
+            public int Wins = 0;
+            public int Losses = 0;
+            public int TeamKills = 0;
+        }
+        public ScoreInfo Score = new ScoreInfo();
 
         public bool NeedStartupInfo = true;
 
