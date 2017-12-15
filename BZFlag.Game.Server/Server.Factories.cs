@@ -55,7 +55,25 @@ namespace BZFlag.Game.Host
 
             for(TeamColors t = TeamColors.RogueTeam; t < TeamColors.ObserverTeam; t++)
             {
-                int count = GameZone.GetTeamPlayerCount(t);
+                int count = State.Players.GetTeamPlayerCount(t);
+                if (count < size)
+                {
+                    size = count;
+                    team = t;
+                }
+            }
+
+            return team;
+        }
+
+        public TeamColors GetLargestTeam(bool includeRogue)
+        {
+            int size = int.MinValue;
+            TeamColors team = includeRogue ? TeamColors.RogueTeam : TeamColors.RedTeam;
+
+            for (TeamColors t = TeamColors.RogueTeam; t < TeamColors.ObserverTeam; t++)
+            {
+                int count = State.Players.GetTeamPlayerCount(t);
                 if (count > size)
                 {
                     size = count;
@@ -71,7 +89,7 @@ namespace BZFlag.Game.Host
             if (ConfigData.TeamData.ForceAutomaticTeams || !ValidPlayerTeam(player.DesiredTeam))
             {
                 TeamColors smallTeam = GetSmallestTeam(!ConfigData.GameData.IsTeamGame);
-                int count = GameZone.GetTeamPlayerCount(smallTeam);
+                int count = State.Players.GetTeamPlayerCount(smallTeam);
                 if (count >= ConfigData.TeamData.GetTeamLimit(smallTeam))
                     return TeamColors.NoTeam;
 

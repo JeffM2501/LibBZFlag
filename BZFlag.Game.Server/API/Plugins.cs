@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -11,7 +11,7 @@ namespace BZFlag.Game.Host.API
         string Name { get; }
         string Description { get; }
 
-        void Startup(ServerConfig config);
+        void Startup(Server serverInstance);
 
         void Shutdown();
     }
@@ -36,11 +36,11 @@ namespace BZFlag.Game.Host.API
             }
         }
 
-        public static void Startup(ServerConfig config)
+        public static void Startup(Server servInstance)
         {
             Logger.Log2("Plug-ins Startup");
             foreach (var p in Plugins)
-                p.Startup(config);
+                p.Startup(servInstance);
         }
 
         public static void Shutdown()

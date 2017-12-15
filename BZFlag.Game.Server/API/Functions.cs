@@ -7,6 +7,6 @@ namespace BZFlag.Game.Host.API
 {
     public static class Functions
     {
-        internal static Server ServerInstnace = null;
+        public static Server ServerInstnace = null;
     }
 }
