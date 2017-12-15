@@ -1,4 +1,5 @@
-﻿using BZFlag.Data.Types;
+using BZFlag.Data.Types;
+using BZFlag.Game.Host;
 using BZFlag.LinearMath;
 using BZFlag.Services;
 using System;
@@ -23,6 +24,31 @@ namespace ConnectionTester
 
         static void Main(string[] args)
         {
+            ServerConfig cfg = new ServerConfig();
+
+            var limits = new ServerConfig.TeamInfo.TeamLimits();
+            limits.Team = BZFlag.Data.Teams.TeamColors.RedTeam;
+            limits.Maxium = 100;
+            cfg.TeamData.Limits.Add(limits);
+
+            limits = new ServerConfig.TeamInfo.TeamLimits();
+            limits.Team = BZFlag.Data.Teams.TeamColors.BlueTeam;
+            limits.Maxium = 100;
+            cfg.TeamData.Limits.Add(limits);
+
+            cfg.GameData.GameType = BZFlag.Data.Game.GameTypes.OpenFFA;
+            cfg.LogFile = "./logs/";
+            cfg.BanListFile = "./bans/localbans.txt";
+            cfg.PlugIns.Add("sample.dll");
+            cfg.PlugIns.Add("random_map.dll");
+
+            cfg.ProtectRegisteredNames = true;
+            cfg.TeamData.ForceAutomaticTeams = true;
+
+            ServerConfig.WriteYAML(cfg, "config.yaml");
+            return;
+
+
             Link.RequestCompleted += Link_RequestCompleted;
             Link.RequestErrored += Link_RequestErrored;
 

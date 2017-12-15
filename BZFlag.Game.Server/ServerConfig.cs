@@ -14,63 +14,62 @@ namespace BZFlag.Game.Host
         public int Port = 5154;
 
         // plugins
-        public List<string> PlugIns = new List<string>();
+        public List<string> PlugIns { get; set; } = new List<string>();
 
-        public string LogFile = string.Empty;
-        public int LogLevel = 4;
+        public string LogFile { get; set; } = string.Empty;
+        public int LogLevel { get; set; } = 4;
 
         // external databases
-        public string BanListFile = string.Empty;
-
+        public string BanListFile { get; set; } = string.Empty;
 
         // public data
-        public bool ListPublicly = false;
-        public string PublicHost = string.Empty;
-        public string PublicListKey = string.Empty;
-        public List<string> PublicAdvertizeGroups = new List<string>();
-        public string PublicTitle = string.Empty;
+        public bool ListPublicly { get; set; } = false;
+        public string PublicHost { get; set; } = string.Empty;
+        public string PublicListKey { get; set; } = string.Empty;
+        public List<string> PublicAdvertizeGroups { get; set; } = new List<string>();
+        public string PublicTitle { get; set; } = string.Empty;
 
         // authentication data
-        public bool AllowAnonUsers = true;
-        public bool ProtectRegisteredNames = false;
+        public bool AllowAnonUsers { get; set; } = true;
+        public bool ProtectRegisteredNames { get; set; } = false;
 
-        public List<string> SecurityGroups = new List<string>();
+        public List<string> SecurityGroups { get; set; } = new List<string>();
 
         // gameplay data
         public class GameInfo
         {
             // world data
-            public string MapFile = string.Empty;
-            public string MapURL = string.Empty;
+            public string MapFile { get; set; } = string.Empty;
+            public string MapURL { get; set; } = string.Empty;
 
             // player data
 
-            public GameTypes GameType = GameTypes.Unknown;
-            public GameOptionFlags GameOptions = GameOptionFlags.NoStyle;
+            public GameTypes GameType { get; set; } = GameTypes.Unknown;
+            public GameOptionFlags GameOptions { get; set; } = GameOptionFlags.NoStyle;
 
             public bool IsTeamGame = false;
 
-            public int MaxPlayers = 200;
-            public int MaxShots = 1;
-            public int MaxFlags = -1;
-            public float LinearAcceleration = 0.1f;
-            public float AngularAcceleration = 0.1f;
+            public int MaxPlayers { get; set; } = 200;
+            public int MaxShots { get; set; } = 1;
+            public int MaxFlags { get; set; } = -1;
+            public float LinearAcceleration { get; set; } = 0.1f;
+            public float AngularAcceleration { get; set; } = 0.1f;
 
-            public int ShakeWins = 0;
-            public float ShakeTimeout = 0;
+            public int ShakeWins { get; set; } = 0;
+            public float ShakeTimeout { get; set; } = 0;
         }
 
-        public GameInfo GameData = new GameInfo();
+        public GameInfo GameData { get; set; } = new GameInfo();
 
         public class TeamInfo
         {
-            public bool ForceAutomaticTeams = false;
+            public bool ForceAutomaticTeams { get; set; } = false;
             public class TeamLimits
             {
-                public TeamColors Team = TeamColors.NoTeam;
-                public int Maxium = 100; 
+                public TeamColors Team { get; set; } = TeamColors.NoTeam;
+                public int Maxium { get; set; } = 100; 
             }
-            public List<TeamLimits> Limits = new List<TeamLimits>();
+            public List<TeamLimits> Limits { get; set; } = new List<TeamLimits>();
 
             public int GetTeamLimit(TeamColors team)
             {
@@ -83,10 +82,10 @@ namespace BZFlag.Game.Host
             }
         }
 
-        public TeamInfo TeamData = new TeamInfo();
+        public TeamInfo TeamData { get; set; } = new TeamInfo();
 
 
-        public static ServerConfig Read(string filepath)
+        public static ServerConfig ReadXML(string filepath)
         {
             FileInfo f = new FileInfo(filepath);
             if (!f.Exists)
@@ -107,7 +106,7 @@ namespace BZFlag.Game.Host
             }
         }
 
-        public static bool Write(ServerConfig config, string filepath)
+        public static bool WriteXML(ServerConfig config, string filepath)
         {
             FileInfo f = new FileInfo(filepath);
             if (f.Exists)
@@ -118,6 +117,28 @@ namespace BZFlag.Game.Host
                 XmlSerializer xml = new XmlSerializer(typeof(ServerConfig));
                 var fs = f.OpenWrite();
                 xml.Serialize(fs, config);
+                fs.Close();
+
+                return true;
+            }
+            catch (Exception /*ex*/)
+            {
+                return false;
+            }
+        }
+
+        public static bool WriteYAML(ServerConfig config, string filepath)
+        {
+            FileInfo f = new FileInfo(filepath);
+            if (f.Exists)
+                f.Delete();
+
+            try
+            {
+                YamlDotNet.Serialization.Serializer yaml = new YamlDotNet.Serialization.Serializer();
+             
+                var fs = f.AppendText();
+                yaml.Serialize(fs, config, typeof(ServerConfig));
                 fs.Close();
 
                 return true;
