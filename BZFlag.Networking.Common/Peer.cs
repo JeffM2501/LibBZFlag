@@ -28,6 +28,9 @@ namespace BZFlag.Networking.Common
         /// </summary>
         protected UdpClient UDP = null;
 
+        protected bool SendUDPInTCPThread = false;
+        public IPEndPoint UDPEndpoint = null;
+
         protected Thread TCPNetworkPollThread = null;
         protected Thread UDPNetworkPollThread = null;
 
@@ -155,6 +158,9 @@ namespace BZFlag.Networking.Common
             TCP = client;
             Connected = true;
             OutboundTCP.Start();
+
+            SendUDPInTCPThread = true;
+
             OutboundUDP.Start();
 
             if (InboundTCP == null)
@@ -169,8 +175,7 @@ namespace BZFlag.Networking.Common
             TCPNetworkPollThread.Start();
         }
 
-
-        IPEndPoint ServerUDPEndoint = null;
+        IPEndPoint RemoteUDPEndpoint = null;
 
         public void ConnectToUDP()
         {
@@ -180,7 +185,7 @@ namespace BZFlag.Networking.Common
             UDP = new UdpClient(HostName, HostPort);
 
 
-            ServerUDPEndoint = TCP.Client.RemoteEndPoint as IPEndPoint;
+            RemoteUDPEndpoint = TCP.Client.RemoteEndPoint as IPEndPoint;
 
             UDPNetworkPollThread = new Thread(new ThreadStart(PollUDP));
             UDPNetworkPollThread.Start();
@@ -305,14 +310,39 @@ namespace BZFlag.Networking.Common
             var stream = TCP.GetStream();
             while (true)
             {
-                byte[] outbound = OutboundTCP.Pop();
-                while (outbound != null)
+                if (stream.CanWrite && Connected)
                 {
-                    stream.Write(outbound, 0, outbound.Length);
-                    outbound = OutboundTCP.Pop();
-                }
-                stream.Flush();
+                    byte[] outbound = OutboundTCP.Pop();
+                    while (stream.CanWrite && outbound != null)
+                    {
+                        try
+                        {
+                            stream.Write(outbound, 0, outbound.Length);
+                            outbound = OutboundTCP.Pop();
+                        }
+                        catch (Exception)
+                        {
 
+                            outbound = null;
+                        }
+                        
+                    }
+                    stream.Flush();
+                }
+
+                if (SendUDPInTCPThread)
+                {
+                    int udpCount = 0;
+                    while (udpCount < 10)
+                    {
+                        byte[] outbound = OutboundUDP.Pop();
+                        if (outbound == null)
+                            break;
+
+                        UDPSendingsocket.SendTo(outbound, UDPEndpoint);
+                    }
+                }
+                
                 if (!Connected)
                 {
                     if (TCP.Available >= 9)
@@ -360,7 +390,7 @@ namespace BZFlag.Networking.Common
                 while (outbound != null)
                 {
 
-                    UDPSendingsocket.SendTo(outbound, ServerUDPEndoint);
+                    UDPSendingsocket.SendTo(outbound, RemoteUDPEndpoint);
                    // UDP.Send(outbound, outbound.Length);
                     outbound = OutboundUDP.Pop();
                 }

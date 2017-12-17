@@ -12,7 +12,7 @@ namespace BZFlag.Game.Host.World
     {
         public WorldMap Map = new WorldMap();
 
-        public bool IsRandom = false;
+        public bool IsRandom = true;
 
         public string MapHash = string.Empty;
         protected byte[] WorldData = null;

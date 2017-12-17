@@ -14,6 +14,8 @@ namespace BZFlag.Data.Flags
 
         public static FlagType[] Flags {  get { return FlagList.Values.ToArray(); } }
 
+        public static FlagType None { get { return FlagTypeList.Flags[0]; } }
+
         static FlagTypeList()
         {
             Add(new FlagType("", "", FlagEndurances.FlagNormal, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, ""));

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +6,7 @@ using System.Text;
 using BZFlag.Data.Types;
 using BZFlag.LinearMath;
 using BZFlag.Data.Flags;
+using BZFlag.Data.Utils;
 
 namespace BZFlag.Networking.Messages.BZFS.Flags
 {
@@ -20,7 +21,13 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
 
         public override byte[] Pack()
         {
-            throw new NotImplementedException();
+            DynamicOutputBuffer buffer = new DynamicOutputBuffer();
+
+            buffer.WriteUInt16(FlagUpdates.Count);
+            foreach (FlagUpdateData f in FlagUpdates)
+                buffer.WriteFlagUpdateData(f);
+
+            return buffer.GetMessageBuffer();
         }
 
         public override void Unpack(byte[] data)

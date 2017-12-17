@@ -58,10 +58,26 @@ namespace BZFlag.Game.Host.Players
 
         public TCPConnectionManager.PendingClient ConnectionData = null;
 
+        public enum UDPConenctionStatuses
+        {
+            Unknown,
+            RequestSent,
+            Connected,
+        }
+        public UDPConenctionStatuses UDPStatus = UDPConenctionStatuses.Unknown;
+
+        public bool SentSettings = false;
+
         public ServerPlayer(TCPConnectionManager.PendingClient pc)
         {
             ConnectionData = pc;
             Link(ConnectionData.ClientConnection);
+        }
+
+        public void ProcessUDPMessage(NetworkMessage msg)
+        {
+            msg.FromUDP = true;
+            InboundMessageProcessor.CompleteMessage(msg);
         }
     }
 }

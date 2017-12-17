@@ -48,7 +48,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="API\Functions.cs" />
+    <Compile Include="API\Common.cs" />
     <Compile Include="API\Plugins.cs" />
     <Compile Include="BanList.cs" />
     <Compile Include="BZDB\Defaults.cs" />

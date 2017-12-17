@@ -60,9 +60,6 @@ namespace BZFlag.Game.Host
             SecurityArea.PlayerBanned += this.SecurityArea_PlayerBanned;
             SecurityArea.PlayerRejected += SecurityArea_PlayerRejected;
 
-            TCPConnections.ConnectionHostBanned += TCPConnections_ConnectionHostBanned;
-            TCPConnections.ConnectionIPBanned += TCPConnections_ConnectionIPBanned;
-
             GameZone.PlayerRejected += SecurityArea_PlayerRejected; // can still be rejected by team
         }
 
@@ -108,6 +105,8 @@ namespace BZFlag.Game.Host
 
         public void RemovedPlayer(ServerPlayer p)
         {
+            UDPConnections.RemoveAcceptablePlayer(p.ConnectionData.GetIPAddress(),p);
+
             PlayerRemoved?.Invoke(this, p);
         }
     }

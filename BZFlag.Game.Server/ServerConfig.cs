@@ -52,7 +52,6 @@ namespace BZFlag.Game.Host
 
             public int MaxPlayers { get; set; } = 200;
             public int MaxShots { get; set; } = 1;
-            public int MaxFlags { get; set; } = -1;
             public float LinearAcceleration { get; set; } = 0.1f;
             public float AngularAcceleration { get; set; } = 0.1f;
 
@@ -85,6 +84,13 @@ namespace BZFlag.Game.Host
 
         public TeamInfo TeamData { get; set; } = new TeamInfo();
 
+        public class ExtraConfigInfo
+        {
+            public string Name = string.Empty;
+            public string Value = string.Empty;
+        }
+
+        public List<ExtraConfigInfo> CustomConfigItems = new List<ExtraConfigInfo>();
 
         public static ServerConfig ReadXML(string filepath)
         {

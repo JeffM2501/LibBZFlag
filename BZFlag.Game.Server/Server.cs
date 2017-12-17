@@ -12,13 +12,14 @@ using BZFlag.Game.Host.API;
 
 using BZFlag.Game.Host.World;
 using BZFlag.Data.Teams;
+using BZFlag.Networking.Messages;
 
 namespace BZFlag.Game.Host
 {
     public partial class Server
     {
         public TCPConnectionManager TCPConnections = null;
-        public UDPConnectionManager UDPConnections = new UDPConnectionManager();
+        public UDPConnectionManager UDPConnections = null;
 
         private RestrictedAccessZone SecurityArea = null;
         private StagingZone StagingArea = null;
@@ -46,7 +47,6 @@ namespace BZFlag.Game.Host
         public GameState State = new GameState();
         // World Contents
 
-
         public Server(ServerConfig cfg)
         {
             Networking.Messages.NetworkMessage.IsOnServer = true;
@@ -59,6 +59,9 @@ namespace BZFlag.Game.Host
             ConfigData = cfg;
 
             State.Players.ServerHost = this;
+            State.Flags.ServerHost = this;
+
+            SetTeamSelector(null);
 
             SetupAPI();
             SetupConfig();
@@ -73,6 +76,7 @@ namespace BZFlag.Game.Host
             SecurityArea.World = State.World;
 
             StagingArea = new StagingZone(ConfigData);
+            StagingArea.DB = State.BZDatabase;
             StagingArea.PromotePlayer += this.StagingArea_PromotePlayer;
 
             GameZone = new GamePlayZone(this);
@@ -89,6 +93,8 @@ namespace BZFlag.Game.Host
                 e.ClientConnection.Client.Disconnect(false);
                 return;
             }
+
+            UDPConnections.AddAcceptalbePlayer(e.GetIPAddress(), player);
 
             // send them into the restricted zone until they validate
             SecurityArea.AddPendingConnection(player);
@@ -120,7 +126,7 @@ namespace BZFlag.Game.Host
         {
             Logger.Log2("Load API");
 
-            API.Functions.ServerInstnace = this;
+            API.Common.ServerInstnace = this;
 
             PluginLoader.LoadFromAssembly(Assembly.GetExecutingAssembly());
             foreach (var f in ConfigData.PlugIns)
@@ -296,14 +302,18 @@ namespace BZFlag.Game.Host
             Logger.Log1("Listening on port " + port.ToString());
 
             TCPConnections = new TCPConnectionManager(port, this);
+
             TCPConnections.BZFSProtocolConnectionAccepted += BZFSProtocolConnectionAccepted;
+            TCPConnections.ConnectionHostBanned += TCPConnections_ConnectionHostBanned;
+            TCPConnections.ConnectionIPBanned += TCPConnections_ConnectionIPBanned;
+
+            UDPConnections = new UDPConnectionManager(UDPServerMessageFactory.Factory);
 
             SecurityArea.Bans = TCPConnections.Bans;
 
             SecurityArea.Setup();
             TCPConnections.StartUp();
 
-            UDPConnections = new UDPConnectionManager();
             UDPConnections.Listen(port);
 
             if (ConfigData.ListPublicly)

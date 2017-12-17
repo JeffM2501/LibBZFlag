@@ -9,6 +9,8 @@ using BZFlag.Game.Host.Players;
 using BZFlag.Networking.Messages;
 using BZFlag.Networking.Messages.BZFS.Player;
 using BZFlag.Networking.Messages.BZFS.Info;
+using BZFlag.Networking.Messages.BZFS;
+using BZFlag.Data.Players;
 
 namespace BZFlag.Game.Host
 {
@@ -96,8 +98,6 @@ namespace BZFlag.Game.Host
 
             // tell everyone they joined
 
-            player.NeedStartupInfo = false;
-
             MsgAddPlayer add = new MsgAddPlayer();
 
             add.PlayerID = player.PlayerID;
@@ -131,8 +131,29 @@ namespace BZFlag.Game.Host
             }
             player.SendMessage(tUpd);
 
-
             ServerHost.PostAddPlayer(player);
+
+            if (player.ActualTeam == TeamColors.ObserverTeam)
+            {
+                MsgMessage observerMsg = new MsgMessage();
+                observerMsg.From = PlayerConstants.ServerPlayerID;
+                observerMsg.To = player.PlayerID;
+                observerMsg.MessageType = MsgMessage.MessageTypes.ChatMessage;
+                observerMsg.MessageText = "You are in observer mode.";
+                player.SendMessage(observerMsg);
+            }
+
+            // send info bits
+            MsgPlayerInfo info = new MsgPlayerInfo();
+
+            MsgPlayerInfo.PlayerInfoData d = new MsgPlayerInfo.PlayerInfoData();
+            d.PlayerID = player.PlayerID;
+            if (player.BZID != string.Empty)
+                d.Attributes = PlayerAttributes.IsVerified;
+
+            info.PlayerUpdates.Add(d);
+
+            SendToAll(info, false);
 
             return true;
         }
@@ -175,7 +196,6 @@ namespace BZFlag.Game.Host
                 if (Teams[player.ActualTeam].Members.Count == 0)
                     TeamEmpty?.Invoke(this, Teams[player.ActualTeam]);
             }
-
         }
 
         public int GetTeamPlayerCount(TeamColors team)
@@ -187,6 +207,58 @@ namespace BZFlag.Game.Host
                 return 0;
             }
         }
+
+        public bool ValidPlayerTeam(TeamColors color)
+        {
+            switch (color)
+            {
+                case TeamColors.RedTeam:
+                case TeamColors.BlueTeam:
+                case TeamColors.GreenTeam:
+                case TeamColors.PurpleTeam:
+                case TeamColors.RogueTeam:
+                case TeamColors.ObserverTeam:
+                    return ServerHost.ConfigData.TeamData.GetTeamLimit(color) != 0;
+            }
+            return false;
+        }
+
+        public TeamColors GetSmallestTeam(bool includeRogue)
+        {
+            int size = int.MaxValue;
+            TeamColors team = includeRogue ? TeamColors.RogueTeam : TeamColors.RedTeam;
+
+            for (TeamColors t = TeamColors.RogueTeam; t < TeamColors.ObserverTeam; t++)
+            {
+                int count = GetTeamPlayerCount(t);
+                if (count < size)
+                {
+                    size = count;
+                    team = t;
+                }
+            }
+
+            return team;
+        }
+
+        public TeamColors GetLargestTeam(bool includeRogue)
+        {
+            int size = int.MinValue;
+            TeamColors team = includeRogue ? TeamColors.RogueTeam : TeamColors.RedTeam;
+
+            for (TeamColors t = TeamColors.RogueTeam; t < TeamColors.ObserverTeam; t++)
+            {
+                int count = GetTeamPlayerCount(t);
+                if (count > size)
+                {
+                    size = count;
+                    team = t;
+                }
+            }
+
+            return team;
+        }
+
 
         protected virtual void SendToAll(NetworkMessage message, bool useUDP)
         {

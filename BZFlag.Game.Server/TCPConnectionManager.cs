@@ -41,6 +41,14 @@ namespace BZFlag.Game.Host
 
                 return ((IPEndPoint)ClientConnection.Client.RemoteEndPoint).Address.ToString();
             }
+
+            public IPAddress GetIPAddress()
+            {
+                if (ClientConnection == null)
+                    return IPAddress.None;
+
+                return ((IPEndPoint)ClientConnection.Client.RemoteEndPoint).Address;
+            }
         }
 
         protected List<PendingClient> PendingClients = new List<PendingClient>();

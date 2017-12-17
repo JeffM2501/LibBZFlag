@@ -8,6 +8,7 @@ using BZFlag.Networking;
 
 using BZFlag.Game.Host.Players;
 using BZFlag.Networking.Messages.BZFS.Player;
+using BZFlag.Networking.Messages.BZFS.UDP;
 
 namespace BZFlag.Game.Host
 {
@@ -119,6 +120,18 @@ namespace BZFlag.Game.Host
                         count++;
                     }
 
+                    count = 0;
+                    while (count < MaxMessagesPerClientCycle)
+                    {
+                        var msg = player.InboundMessageProcessor.Pop();
+                        if (msg == null)
+                            break;
+
+                        ProcessClientMessage(player, msg);
+
+                        count++;
+                    }
+
                     UpdatePlayer(player);
                 }
                 Thread.Sleep(SleepTime);
@@ -135,6 +148,9 @@ namespace BZFlag.Game.Host
         protected void RegisterCommonHandlers()
         {
             MessageDispatch.Add(new MsgExit(), HandleExit);
+
+            MessageDispatch.Add(new MsgUDPLinkRequest(), HandleUDPLinkRequest);
+            MessageDispatch.Add(new MsgUDPLinkEstablished(), HandleUDPLinkEstablished);
         }
 
         public virtual void ProcessClientMessage(ServerPlayer player, NetworkMessage msg)
@@ -158,6 +174,37 @@ namespace BZFlag.Game.Host
 
             RemovePlayer(player);
             player.Disconnect();
+        }
+
+        protected void HandleUDPLinkRequest(ServerPlayer player, NetworkMessage msg)
+        {
+            MsgUDPLinkRequest udp = msg as MsgUDPLinkRequest;
+            if (udp == null || player.UDPStatus != ServerPlayer.UDPConenctionStatuses.Unknown)
+                return;
+
+            Logger.Log3("Player:" + player.PlayerID.ToString() + " Sent UDP Link Request ");
+
+            player.SendMessage(true,new MsgUDPLinkEstablished());
+
+            MsgUDPLinkRequest outBound = new MsgUDPLinkRequest();
+            outBound.PlayerID = player.PlayerID;
+
+            player.UDPStatus = ServerPlayer.UDPConenctionStatuses.RequestSent;
+            player.SendMessage(false, outBound);
+        }
+
+        protected void HandleUDPLinkEstablished(ServerPlayer player, NetworkMessage msg)
+        {
+            MsgUDPLinkEstablished udp = msg as MsgUDPLinkEstablished;
+            if (udp == null)
+                return;
+
+            if (udp.FromUDP)
+                Logger.Log3("Player:" + player.PlayerID.ToString() + " Sent UDP Link Established from UDP ");
+            else
+                Logger.Log3("Player:" + player.PlayerID.ToString() + " Sent UDP Link Established from TCP ");
+
+            player.UDPStatus = ServerPlayer.UDPConenctionStatuses.Connected;
         }
     }
 }

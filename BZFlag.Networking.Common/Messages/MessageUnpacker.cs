@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Text;
@@ -33,7 +33,6 @@ namespace BZFlag.Networking.Messages
             }
             return msg;
         }
-
 
         protected InboundMessageBuffer.CompletedMessage GetNextInbound()
         {

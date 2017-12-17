@@ -58,7 +58,7 @@ namespace BZFlag.Game.Host.Processors
             SettingsCache.GameOptions = Config.GameData.GameOptions;
             SettingsCache.MaxPlayers = Config.GameData.MaxPlayers;
             SettingsCache.MaxShots = Config.GameData.MaxShots;
-            SettingsCache.MaxFlags = Config.GameData.MaxFlags;
+            SettingsCache.MaxFlags = API.Common.MaxFlags;
             SettingsCache.LinearAcceleration = Config.GameData.LinearAcceleration;
             SettingsCache.AngularAcceleration = Config.GameData.AngularAcceleration;
 
@@ -251,9 +251,10 @@ namespace BZFlag.Game.Host.Processors
             Logger.Log4("Getting settings for " + player.PlayerID.ToString());
 
             MsgWantSettings ws = msg as MsgWantSettings;
-            if (ws == null)
+            if (ws == null )
                 return;
 
+            player.SentSettings = true;
             player.SendMessage(SettingsCache);
         }
    

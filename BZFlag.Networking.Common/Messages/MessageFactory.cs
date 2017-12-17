@@ -156,6 +156,27 @@ namespace BZFlag.Networking.Messages
         }
     }
 
+    public static class UDPServerMessageFactory
+    {
+        public static MessageManager Factory = new MessageManager();
+
+        static UDPServerMessageFactory()
+        {
+            Factory.RegisterMessageType(new MsgUDPLinkRequest());
+            Factory.RegisterMessageType(new MsgUDPLinkEstablished());
+
+            Factory.RegisterMessageType(new MsgPlayerUpdateSmall());
+            Factory.RegisterMessageType(new MsgPlayerUpdate());
+    
+            Factory.RegisterMessageType(new MsgScore());
+            Factory.RegisterMessageType(new MsgTimeUpdate());
+
+            Factory.RegisterMessageType(new MsgShotBegin());
+            Factory.RegisterMessageType(new MsgShotEnd());
+            Factory.RegisterMessageType(new MsgGMUpdate());
+        }
+    }
+
     public class MessageManager
     {
         private Dictionary<int, Type> MessageTypes = new Dictionary<int, Type>();

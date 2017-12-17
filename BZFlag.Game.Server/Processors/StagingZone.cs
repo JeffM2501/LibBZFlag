@@ -31,7 +31,6 @@ namespace BZFlag.Game.Host.Processors
 
         protected override void UpdatePlayer(ServerPlayer player)
         {
-            player.NeedStartupInfo = true;
             PackInitalBZDB(player);
             Promote(player);
         }

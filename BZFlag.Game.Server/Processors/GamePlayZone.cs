@@ -26,9 +26,22 @@ namespace BZFlag.Game.Host.Processors
 
             ServerHost.State.BZDatabase.ValueChanged += this.BZDatabase_ValueChanged;
 
+            ServerHost.State.Flags.FlagAdded += Flags_FlagAdded;
+            ServerHost.State.Flags.FlagRemoved += Flags_FlagRemoved;
+
             RegisterCommonHandlers();
 
             MessageDispatch.Add(new MsgMessage(), HandleChatMessage);
+        }
+
+        private void Flags_FlagRemoved(object sender, World.FlagManager.FlagInstance e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Flags_FlagAdded(object sender, World.FlagManager.FlagInstance e)
+        {
+            throw new NotImplementedException();
         }
 
         protected override void PlayerAdded(ServerPlayer player)
@@ -65,6 +78,10 @@ namespace BZFlag.Game.Host.Processors
                 SendReject(player, MsgReject.RejectionCodes.RejectTeamFull, "The team " + player.DesiredTeam.ToString() + " is full");
                 return;
             }
+
+            ServerHost.State.Flags.SendInitialFlagUpdate(player);
+
+            player.NeedStartupInfo = false;
 
             UpdatePublicListServer?.Invoke(this, EventArgs.Empty);
         }

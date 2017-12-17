@@ -33,62 +33,11 @@ namespace BZFlag.Game.Host
             return TeamSelector(player);
         }
 
-        protected bool ValidPlayerTeam(TeamColors color)
-        {
-            switch(color)
-            {
-                case TeamColors.RedTeam:
-                case TeamColors.BlueTeam:
-                case TeamColors.GreenTeam:
-                case TeamColors.PurpleTeam:
-                case TeamColors.RogueTeam:
-                case TeamColors.ObserverTeam:
-                    return true;
-            }
-            return false;
-        }
-
-        public TeamColors GetSmallestTeam(bool includeRogue)
-        {
-            int size = int.MaxValue;
-            TeamColors team = includeRogue ? TeamColors.RogueTeam : TeamColors.RedTeam;
-
-            for(TeamColors t = TeamColors.RogueTeam; t < TeamColors.ObserverTeam; t++)
-            {
-                int count = State.Players.GetTeamPlayerCount(t);
-                if (count < size)
-                {
-                    size = count;
-                    team = t;
-                }
-            }
-
-            return team;
-        }
-
-        public TeamColors GetLargestTeam(bool includeRogue)
-        {
-            int size = int.MinValue;
-            TeamColors team = includeRogue ? TeamColors.RogueTeam : TeamColors.RedTeam;
-
-            for (TeamColors t = TeamColors.RogueTeam; t < TeamColors.ObserverTeam; t++)
-            {
-                int count = State.Players.GetTeamPlayerCount(t);
-                if (count > size)
-                {
-                    size = count;
-                    team = t;
-                }
-            }
-
-            return team;
-        }
-
         public TeamColors DefaultSelectTeam(ServerPlayer player)
         {
-            if (ConfigData.TeamData.ForceAutomaticTeams || !ValidPlayerTeam(player.DesiredTeam))
+            if (ConfigData.TeamData.ForceAutomaticTeams || !State.Players.ValidPlayerTeam(player.DesiredTeam))
             {
-                TeamColors smallTeam = GetSmallestTeam(!ConfigData.GameData.IsTeamGame);
+                TeamColors smallTeam = State.Players.GetSmallestTeam(!ConfigData.GameData.IsTeamGame);
                 int count = State.Players.GetTeamPlayerCount(smallTeam);
                 if (count >= ConfigData.TeamData.GetTeamLimit(smallTeam))
                     return TeamColors.NoTeam;
