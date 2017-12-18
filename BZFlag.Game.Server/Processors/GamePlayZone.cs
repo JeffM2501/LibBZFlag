@@ -34,6 +34,11 @@ namespace BZFlag.Game.Host.Processors
             MessageDispatch.Add(new MsgMessage(), HandleChatMessage);
         }
 
+        protected override void HandleUnknownMessage(ServerPlayer player, NetworkMessage msg)
+        {
+            base.HandleUnknownMessage(player, msg);
+        }
+
         private void Flags_FlagRemoved(object sender, World.FlagManager.FlagInstance e)
         {
             throw new NotImplementedException();

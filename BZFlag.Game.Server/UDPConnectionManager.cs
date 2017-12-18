@@ -80,7 +80,9 @@ namespace BZFlag.Game.Host
 
         protected void Receive()
         {
-            while (true)
+            bool done = false;
+
+            while (!done)
             {
                 byte[] data = null;
                 IPEndPoint source = new IPEndPoint(IPAddress.Any, 5154);
@@ -97,7 +99,6 @@ namespace BZFlag.Game.Host
                 ProcessUDPPackets(source, data);
             }
             UDPListenThred = null;
-
         }
 
         public void Shutdown()

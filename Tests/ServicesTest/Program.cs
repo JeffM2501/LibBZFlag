@@ -25,7 +25,7 @@ namespace ServicesTest
             string globalIP = "IP";
 
             Wait = false;
-        //    tok.GetToken(callsign, password);
+            tok.GetToken(callsign, password);
 
             while (Wait)
             {
