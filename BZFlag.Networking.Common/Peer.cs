@@ -314,7 +314,7 @@ namespace BZFlag.Networking.Common
             var stream = TCP.GetStream();
             while (true)
             {
-                if (stream.CanWrite && Connected)
+                if (stream.CanWrite)
                 {
                     byte[] outbound = OutboundTCP.Pop();
                     while (stream.CanWrite && outbound != null)

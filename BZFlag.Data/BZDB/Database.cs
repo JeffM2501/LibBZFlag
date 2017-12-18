@@ -355,12 +355,14 @@ namespace BZFlag.Data.BZDB
             if (!RawBZDBVariables.ContainsKey(key))
                 AddItem(key, value);
 
-            RawBZDBVariables[key].Value = value;
+            var item = RawBZDBVariables[key];
 
-            RawBZDBVariables[key].SetupValue(this);
-            RawBZDBVariables[key].ResolveValue();
+            item.RawValue = value;
 
-            RawBZDBVariables[key].CallChanged();
+            item.SetupValue(this);
+            item.ResolveValue();
+
+            item.CallChanged();
             return true;
         }
 

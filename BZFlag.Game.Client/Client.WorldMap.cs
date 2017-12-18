@@ -22,6 +22,8 @@ namespace BZFlag.Game
     {
         private WorldUnpacker Unpacker = null;
 
+        private MsgGameSettings GameSettings = new MsgGameSettings();
+
         private string WorldURL = string.Empty;
 
         public class WorldDownloadProgressEventArgs : EventArgs

@@ -14,6 +14,8 @@ namespace BZFlag.Data.Flags
 
         public static FlagType[] Flags {  get { return FlagList.Values.ToArray(); } }
 
+        public static string[] Names { get { return FlagList.Keys.ToArray(); } }
+
         public static FlagType None { get { return FlagTypeList.Flags[0]; } }
 
         static FlagTypeList()

@@ -34,7 +34,7 @@ namespace ConnectionTester
                 if (useSimple)
                     SimpleLogger.Run(args);
                 else
-                    TestClients(GetPlayers(), "loclahost", 5154);
+                    TestClients(GetPlayers(), "localhost", 5154);
             }
             else
             {
@@ -103,14 +103,20 @@ namespace ConnectionTester
         {
             List<ClientTester> clients = new List<ClientTester>();
 
-            GetList("A_REGULAR_HUMAN_PLAYER", string.Empty);
-            var server = Link.FindServerWithMostPlayers();
+           
+            GameList.ListServerData server = new GameList.ListServerData();
 
             if (host != string.Empty)
             {
                 server.Host = host;
                 server.Port = port;
             }
+            else
+            {
+                GetList("A_REGULAR_HUMAN_PLAYER", string.Empty);
+                server = Link.FindServerWithMostPlayers();
+            }
+                
 
             for (int i =0; i < players.Count; i++)
             {
