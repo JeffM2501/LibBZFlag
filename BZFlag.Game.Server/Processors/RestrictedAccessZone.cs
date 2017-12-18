@@ -251,7 +251,7 @@ namespace BZFlag.Game.Host.Processors
             Logger.Log4("Getting settings for " + player.PlayerID.ToString());
 
             MsgWantSettings ws = msg as MsgWantSettings;
-            if (ws == null )
+            if (ws == null || player.SentSettings)
                 return;
 
             player.SentSettings = true;

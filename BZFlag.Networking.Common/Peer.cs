@@ -23,6 +23,10 @@ namespace BZFlag.Networking.Common
 
         protected TcpClient TCP = null;
 
+        public delegate void WriteUDPFunction(byte[] buffer, IPEndPoint address);
+
+        public WriteUDPFunction WriteUDP = null;
+
         /// <summary>
         /// Only used by client connections, server connections have to share a single UDP with all users and do prefi
         /// </summary>
@@ -339,7 +343,10 @@ namespace BZFlag.Networking.Common
                         if (outbound == null)
                             break;
 
-                        UDPSendingsocket.SendTo(outbound, UDPEndpoint);
+                        if (WriteUDP != null)
+                            WriteUDP(outbound, UDPEndpoint);
+                        else
+                            UDPSendingsocket.SendTo(outbound, UDPEndpoint);
                     }
                 }
                 

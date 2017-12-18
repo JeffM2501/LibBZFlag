@@ -16,7 +16,6 @@ namespace BZFlag.Game.Host
 {
     public class UDPConnectionManager
     {
-
         protected Dictionary<IPAddress, List<ServerPlayer>> AcceptableClients = new Dictionary<IPAddress, List<ServerPlayer>>();
         public bool AllowAll = false;
 
@@ -28,7 +27,8 @@ namespace BZFlag.Game.Host
 
         public event EventHandler<OutOfBandUDPEventArgs> OutOfBandUDPMessage = null;
 
-        protected UdpClient UDPHost = null;
+        protected UdpClient UDPSocket = null;
+        protected int UDPInPort = 5154;
 
         protected InboundMessageBuffer MsgBuffer = new InboundMessageBuffer(true);  // if we ever have to buffer across packets, then this is one per endpoint
 
@@ -65,51 +65,41 @@ namespace BZFlag.Game.Host
 
         public void Listen(int port)
         {
-            UDPHost = new UdpClient(port);
+            UDPInPort = port;
+            UDPSocket = new UdpClient(UDPInPort);
 
-            StartUDPListen();
+            UDPSocket.BeginReceive(Receive, UDPSocket);
         }
 
-        protected Thread UDPListenThred = null;
-
-        protected void StartUDPListen()
+        protected void Receive(IAsyncResult result)
         {
-            UDPListenThred = new Thread(new ThreadStart(Receive));
-            UDPListenThred.Start();
-        }
-
-        protected void Receive()
-        {
+            UdpClient socket = result.AsyncState as UdpClient;
             bool done = false;
 
-            while (!done)
-            {
-                byte[] data = null;
-                IPEndPoint source = new IPEndPoint(IPAddress.Any, 5154);
-                try
-                {
+            IPEndPoint source = new IPEndPoint(0, 0);
+            // get the actual message and fill out the source:
+            byte[] data = socket.EndReceive(result, ref source);
 
-                    data = UDPHost.Receive(ref source);
-                }
-                catch (System.Exception /*ex*/)
-                {
-
-                }
-
+            if (data != null || data.Length > 0)
                 ProcessUDPPackets(source, data);
-            }
-            UDPListenThred = null;
+
+            UDPSocket.BeginReceive(Receive, UDPSocket);
         }
 
         public void Shutdown()
         {
-            if (UDPListenThred != null)
-                UDPListenThred.Abort();
-
-            UDPListenThred = null;
-
-            if (UDPHost != null)
-                UDPHost.Close();
+            try
+            {
+                if (UDPSocket != null)
+                {
+                    UDPSocket.Close();
+                    UDPSocket.Dispose();
+                }
+            }
+            catch (Exception)
+            {
+            }
+            UDPSocket = null;
         }
 
         protected void ProcessUDPPackets(IPEndPoint ep, byte[] data)
@@ -145,6 +135,12 @@ namespace BZFlag.Game.Host
               
             }
             return null;
+        }
+
+        public void WriteUDP(byte[] buffer, IPEndPoint address)
+        {
+            if (UDPSocket != null)
+                UDPSocket.Send(buffer, buffer.Length, address);
         }
 
         private void MsgBuffer_CompleteMessageRecived(object sender, EventArgs e)

@@ -95,6 +95,7 @@ namespace BZFlag.Game.Host
             }
 
             UDPConnections.AddAcceptalbePlayer(e.GetIPAddress(), player);
+            player.WriteUDP = UDPConnections.WriteUDP;
 
             // send them into the restricted zone until they validate
             SecurityArea.AddPendingConnection(player);
