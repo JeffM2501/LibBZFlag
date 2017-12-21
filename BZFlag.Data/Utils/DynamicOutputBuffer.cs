@@ -294,6 +294,21 @@ namespace BZFlag.Data.Utils
             WriteFloat(value.A);
         }
 
+
+        public void WriteSmallVector3F(Vector3F value)
+        {
+            WriteSmallDist(value.X);
+            WriteSmallDist(value.Y);
+            WriteSmallDist(value.Z);
+        }
+
+        public void WriteSmallVelVector3F(Vector3F value)
+        {
+            WriteSmallVel(value.X);
+            WriteSmallVel(value.Y);
+            WriteSmallVel(value.Z);
+        }
+
         public void WriteDouble(double value)
         {
             CheckBuffer(8);
@@ -368,7 +383,7 @@ namespace BZFlag.Data.Utils
             Encoding.UTF8.GetBytes(value, 0, actualSize, Buffer, BytesUsed);
             BytesUsed += actualSize;
         }
-
+    
         public void WriteNullTermString(string value)
         {
             CheckBuffer(value.Length + 1);
@@ -390,6 +405,16 @@ namespace BZFlag.Data.Utils
             WriteFloat(flag.FlightTime);
             WriteFloat(flag.FlightEnd);
             WriteFloat(flag.InitalVelocity);
+        }
+
+        public void WriteSmallDist(float val)
+        {
+            WriteInt16((Int16)((val * Constants.SmallScale) / Constants.SmallMaxDist));
+        }
+
+        public void WriteSmallAngle(float val)
+        {
+            WriteInt16((Int16)((val * Constants.SmallScale) / System.Math.PI));
         }
 
         public void WriteSmallScale(float val)

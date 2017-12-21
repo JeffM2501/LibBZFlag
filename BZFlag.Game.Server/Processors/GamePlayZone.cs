@@ -22,7 +22,7 @@ namespace BZFlag.Game.Host.Processors
         public GamePlayZone(Server server) : base(server.ConfigData)
         {
             ServerHost = server;
-            MessageProcessor = SecurityJailMessageFacotry.Factory;
+            MessageProcessor = GameServerMessageFacotry.Factory;
 
             ServerHost.State.BZDatabase.ValueChanged += this.BZDatabase_ValueChanged;
 
@@ -32,10 +32,18 @@ namespace BZFlag.Game.Host.Processors
             RegisterCommonHandlers();
 
             MessageDispatch.Add(new MsgMessage(), HandleChatMessage);
+            MessageDispatch.Add(new MsgAlive(), HandleAlive);
+            MessageDispatch.Add(new MsgPlayerUpdateSmall(), HandlePlayerUpdate);
+            MessageDispatch.Add(new MsgPlayerUpdate(), HandlePlayerUpdate);
         }
 
         protected override void HandleUnknownMessage(ServerPlayer player, NetworkMessage msg)
         {
+            byte[] b = BitConverter.GetBytes((UInt16)msg.Code);
+            Array.Reverse(b);
+            string code = Encoding.ASCII.GetString(b);
+
+            Logger.Log2("Unknown message in gameplay handler, " + code);
             base.HandleUnknownMessage(player, msg);
         }
 
@@ -84,7 +92,7 @@ namespace BZFlag.Game.Host.Processors
                 return;
             }
 
-        //    ServerHost.State.Flags.SendInitialFlagUpdate(player);
+            ServerHost.State.Flags.SendInitialFlagUpdate(player);
 
             player.NeedStartupInfo = false;
 
@@ -94,6 +102,16 @@ namespace BZFlag.Game.Host.Processors
         private void HandleChatMessage(ServerPlayer player, NetworkMessage msg)
         {
        
+        }
+
+        private void HandleAlive(ServerPlayer player, NetworkMessage msg)
+        {
+            ServerHost.State.Players.StartSpawn(player, msg as MsgAlive);
+        }
+
+        private void HandlePlayerUpdate(ServerPlayer player, NetworkMessage msg)
+        {
+            ServerHost.State.Players.PlayerUpdate(player, msg as MsgPlayerUpdateBase);
         }
 
         private void BZDatabase_ValueChanged(object sender, Data.BZDB.Database.DatabaseItem e)

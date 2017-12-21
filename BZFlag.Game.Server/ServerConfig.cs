@@ -52,8 +52,8 @@ namespace BZFlag.Game.Host
 
             public int MaxPlayers { get; set; } = 200;
             public int MaxShots { get; set; } = 1;
-            public float LinearAcceleration { get; set; } = 0.1f;
-            public float AngularAcceleration { get; set; } = 0.1f;
+            public float LinearAcceleration { get; set; } = 100f;
+            public float AngularAcceleration { get; set; } = 100f;
 
             public int ShakeWins { get; set; } = 0;
             public float ShakeTimeout { get; set; } = 0;

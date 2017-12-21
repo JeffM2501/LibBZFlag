@@ -141,7 +141,18 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 
         public override byte[] Pack()
         {
-            throw new NotImplementedException();
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
+
+            PackHeader(buffer);
+
+            buffer.WriteSmallVector3F(Position);
+            buffer.WriteSmallVelVector3F(Velocity);
+
+            buffer.WriteSmallAngle(Azimuth);
+            buffer.WriteSmallAngVel(AngularVelocity);
+
+            PackFooter(buffer);
+            return buffer.GetMessageBuffer();
         }
 
         public override void Unpack(byte[] data)

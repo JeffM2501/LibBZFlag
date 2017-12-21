@@ -11,6 +11,7 @@ using BZFlag.Networking.Messages.BZFS.Player;
 using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Networking.Messages.BZFS;
 using BZFlag.Data.Players;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Game.Host
 {
@@ -67,12 +68,33 @@ namespace BZFlag.Game.Host
         public event EventHandler<TeamInfo> TeamInited = null;
         public event EventHandler<TeamInfo> TeamEmpty = null;
 
+        public class PlayerInfo
+        {
+            public class MotionInfo
+            {
+                public double TimeStamp = 0;
+                public Vector3F Position = Vector3F.Zero;
+                public Vector3F Velocity = Vector3F.Zero;
+                public float Azimuth = 0;
+                public float AngularVelocity = 0;
+            }
+
+            public MotionInfo CurrentState = new MotionInfo();
+            public MotionInfo LastSentUpdate = new MotionInfo();
+            public MotionInfo LastSpawnState = new MotionInfo();
+
+            public bool Alive = false;
+
+        }
+
         public virtual bool AddPlayer(ServerPlayer player)
         {
             ServerHost.PreAddPlayer(player);
 
             if (player.ActualTeam == TeamColors.NoTeam)
                 return false;
+
+            player.Info = new PlayerInfo();
 
             lock (Players)
                 Players.Add(player);
@@ -158,6 +180,25 @@ namespace BZFlag.Game.Host
             return true;
         }
 
+        public void StartSpawn(ServerPlayer player, MsgAlive spawnRequest)
+        {
+            MsgAlive spawnPostion = new MsgAlive();
+            spawnPostion.IsSpawn = false;
+
+            // TODO, run a thread task to find a spawn.
+
+            if (ServerHost.State.World.GetSpawn(ref player.Info.LastSpawnState.Position, ref player.Info.LastSpawnState.Azimuth))
+            {
+                player.Info.Alive = true;
+
+                spawnPostion.PlayerID = player.PlayerID;
+                spawnPostion.Position = player.Info.LastSpawnState.Position;
+                spawnPostion.Azimuth = player.Info.LastSpawnState.Azimuth;
+
+                SendToAll(spawnPostion, false);
+            }
+        }
+
         protected void SendTeamUpdate(TeamInfo team)
         {
             if (team == null)
@@ -174,6 +215,12 @@ namespace BZFlag.Game.Host
             tUpd.TeamUpdates.Add(u);
 
             SendToAll(tUpd, false);
+        }
+
+        public void PlayerUpdate(ServerPlayer player, MsgPlayerUpdateBase updMessage)
+        {
+            if (updMessage != null)
+                SendToAll(updMessage, updMessage.FromUDP);
         }
 
         private void Team_PlayerRemoved(object sender, TeamInfo e)

@@ -42,6 +42,8 @@ namespace BZFlag.Game.Host.Players
 
         public MsgNegotiateFlags ClientFlagList = null;
 
+        public PlayerManager.PlayerInfo Info = null; 
+
         public enum AuthStatuses
         {
             Unknown,

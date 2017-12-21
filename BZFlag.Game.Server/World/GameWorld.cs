@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 
 using BZFlag.IO.BZW;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Game.Host.World
 {
@@ -16,6 +17,8 @@ namespace BZFlag.Game.Host.World
 
         public string MapHash = string.Empty;
         protected byte[] WorldData = null;
+
+        protected Random RNG = new Random();
 
         public void LoadBZWFile(string mapFile)
         {
@@ -35,6 +38,16 @@ namespace BZFlag.Game.Host.World
             return WorldData;
         }
 
+        protected float GetRandomPostion(float size)
+        {
+            return (float)(RNG.NextDouble() * (size * 2)) - size;
+        }
 
+        public bool GetSpawn(ref Vector3F position, ref float rotation)
+        {
+            position = new Vector3F(GetRandomPostion(Map.WorldInfo.Size * 0.6f), GetRandomPostion(Map.WorldInfo.Size * 0.6f), 0);
+            rotation = (float)(RNG.NextDouble() * Math.PI * 2);
+            return true;
+        }
     }
 }
