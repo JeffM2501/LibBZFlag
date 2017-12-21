@@ -136,10 +136,13 @@ namespace BZFlag.Game.Host.World
 
             MsgFlagUpdate msg = new MsgFlagUpdate();
 
+            bool sentOne = false;
+
             foreach (FlagInstance flag in GetActiveFlags())
             {
                 if (msg.FlagUpdates.Count == maxFlagsPerUpdate)
                 {
+                    sentOne = true;
                     player.SendMessage(msg);
                     msg = new MsgFlagUpdate();
                 }
@@ -147,7 +150,7 @@ namespace BZFlag.Game.Host.World
                 msg.FlagUpdates.Add(flag.LastUpdate);
             }
 
-            if (msg.FlagUpdates.Count > 0)
+            if (!sentOne || msg.FlagUpdates.Count > 0)
                 player.SendMessage(msg);
         }
     }

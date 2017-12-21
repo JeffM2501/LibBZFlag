@@ -39,19 +39,24 @@ namespace BZFlag.Game.Host.Processors
         {
             int size = 0;
 
+            bool sentOne = false;
+
             Dictionary<string, string> currentList = new Dictionary<string, string>();
             foreach (var item in DB.GetVars())
             {
                 int thisSize = item.Key.Length + item.RawValue.Length + 2;
-                if ( thisSize + size >= 1018)
+                if ( thisSize + size >= 512)
                 {
+                    sentOne = true;
                     player.SendMessage(new MsgSetVars(currentList));
                     currentList.Clear();
+                    size = 0;
                 }
                 currentList.Add(item.Key, item.RawValue);
+                size += thisSize;
             }
 
-            if (currentList.Count > 0)
+            if (!sentOne || currentList.Count > 0)
                 player.SendMessage(new MsgSetVars(currentList));
         }
     }

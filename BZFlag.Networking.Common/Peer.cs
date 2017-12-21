@@ -179,6 +179,11 @@ namespace BZFlag.Networking.Common
             TCPNetworkPollThread.Start();
         }
 
+        public string GetTCPRemoteAddresString()
+        {
+            return TCP != null ? TCP.Client.RemoteEndPoint.ToString() : string.Empty;
+        }
+
         IPEndPoint RemoteUDPEndpoint = null;
 
         public void ConnectToUDP()
@@ -231,7 +236,6 @@ namespace BZFlag.Networking.Common
             OutboundUDP.Clear();
 
             Active = false;
-
         }
 
         public void SendMessage(NetworkMessage msg)
@@ -247,12 +251,31 @@ namespace BZFlag.Networking.Common
                 OutboundUDP.Push(msg);
         }
 
+        /// <summary>
+        /// sends a message RIGHT NOW
+        /// </summary>
+        /// <param name="viaTCP"></param>
+        /// <param name="msg"></param>
         public void SendDirectMessage(bool viaTCP, byte[] msg)
         {
             if (viaTCP)
-                OutboundTCP.PushDirectMessage(msg);
+            {
+                var st = TCP.GetStream();
+                if (st != null && st.CanWrite)
+                {
+                    st.Write(msg, 0, msg.Length);
+                    st.Flush();
+                }
+                else
+                    OutboundTCP.PushDirectMessage(msg);
+            }
             else
-                OutboundUDP.PushDirectMessage(msg);
+            {
+                if (WriteUDP != null)
+                    WriteUDP(msg, UDPEndpoint);
+                else
+                    UDPSendingsocket.SendTo(msg, UDPEndpoint);
+            }
         }
 
         public event EventHandler TCPConnected = null;
@@ -278,6 +301,7 @@ namespace BZFlag.Networking.Common
                         break;
 
                     case NetworkPushMessages.TCPHostDisconnect:
+                        Active = false;
                         if (TCPHostDisconnect != null)
                             TCPHostDisconnect.Invoke(this, EventArgs.Empty);
                         break;
@@ -309,12 +333,12 @@ namespace BZFlag.Networking.Common
         protected bool Connected = false;
         private string HostProtoVersion = string.Empty;
 
-        protected virtual void PollTCP()
+        public void FlushTCP()
         {
             var stream = TCP.GetStream();
-            while (true)
+            if (stream.CanWrite)
             {
-                if (stream.CanWrite)
+                lock (OutboundTCP)
                 {
                     byte[] outbound = OutboundTCP.Pop();
                     while (stream.CanWrite && outbound != null)
@@ -322,7 +346,41 @@ namespace BZFlag.Networking.Common
                         try
                         {
                             stream.Write(outbound, 0, outbound.Length);
-                            outbound = OutboundTCP.Pop();
+                            stream.Flush();
+                        }
+                        catch (Exception)
+                        {
+                            outbound = null;
+                        }
+                        outbound = OutboundTCP.Pop();
+                    }
+                }
+            }
+        }
+
+        protected virtual void PollTCP()
+        {
+            var stream = TCP.GetStream();
+            while (true)
+            {
+              
+                if (stream.CanWrite)
+                {
+                    byte[] outbound = null;
+
+                    lock(OutboundTCP)
+                        outbound = OutboundTCP.Pop();
+
+                    while (stream.CanWrite && outbound != null)
+                    {
+                        try
+                        {
+                            if (outbound.Length < 4)
+                                stream.Write(outbound, 0, outbound.Length);
+                            else
+                                stream.Write(outbound, 0, outbound.Length);
+                            lock (OutboundTCP)
+                                outbound = OutboundTCP.Pop();
                         }
                         catch (Exception)
                         {
@@ -381,6 +439,19 @@ namespace BZFlag.Networking.Common
                     InboundTCP.AddData(data);
                     if (RaiseDataMessages)
                         PushNetworkNotificatioin(NetworkPushMessages.HostHasData);
+                }
+                else if (Connected)
+                {
+                    if (!TCP.Connected)
+                    {
+                        Connected = false;
+                        PushNetworkNotificatioin(NetworkPushMessages.TCPHostDisconnect);
+                        {
+                            Disconnect();
+                            Active = false;
+                            return;
+                        }
+                    }
                 }
                 Thread.Sleep(10);
             }

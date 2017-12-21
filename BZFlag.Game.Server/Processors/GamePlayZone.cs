@@ -84,7 +84,7 @@ namespace BZFlag.Game.Host.Processors
                 return;
             }
 
-            ServerHost.State.Flags.SendInitialFlagUpdate(player);
+        //    ServerHost.State.Flags.SendInitialFlagUpdate(player);
 
             player.NeedStartupInfo = false;
 

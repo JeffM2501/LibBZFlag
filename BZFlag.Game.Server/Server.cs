@@ -28,7 +28,7 @@ namespace BZFlag.Game.Host
         public ServerConfig ConfigData = new ServerConfig();
 
         protected Dictionary<int, ServerPlayer> ConnectedPlayers = new Dictionary<int, ServerPlayer>();
-        protected int LastPlayerID = 0;
+        protected int LastPlayerID = -1;
 
         public PublicServer PubServer = new PublicServer();
 
@@ -99,6 +99,8 @@ namespace BZFlag.Game.Host
 
             // send them into the restricted zone until they validate
             SecurityArea.AddPendingConnection(player);
+
+            Logger.Log1("PlayerID "  + player.PlayerID.ToString() + " accepted from " + player.GetTCPRemoteAddresString());
         }
 
         private void SecurityArea_PromotePlayer(object sender, ServerPlayer e)
@@ -275,7 +277,7 @@ namespace BZFlag.Game.Host
             }
 
             // we are full up
-            LastPlayerID = 0;
+            LastPlayerID = -1;
             return -1;
         }
 
@@ -283,6 +285,9 @@ namespace BZFlag.Game.Host
         {
             ServerPlayer p = NewPlayerRecord(client);
 
+            Logger.Log3("Socket " + p.GetTCPRemoteAddresString() + " Connected ");
+
+            p.Disconnected += P_Disconnected;
             foreach (var m in UDPServerMessageFactory.Factory.GetMessageTypes())
                 p.OutboundUDP.AddAcceptableMessageType(m);
 
@@ -296,6 +301,11 @@ namespace BZFlag.Game.Host
             NewConnection?.Invoke(this, p);
 
             return p;
+        }
+
+        private void P_Disconnected(object sender, Networking.Common.Peer e)
+        {
+            Logger.Log3("Socket " + e.GetTCPRemoteAddresString() + " disconnected ");
         }
 
         protected virtual ServerPlayer NewPlayerRecord(TCPConnectionManager.PendingClient client) { return new ServerPlayer(client); }
@@ -347,6 +357,8 @@ namespace BZFlag.Game.Host
                     {
                         lock (ConnectedPlayers)
                             ConnectedPlayers.Remove(p.PlayerID);
+
+                        Logger.Log1("PlayerID " + p.PlayerID.ToString() + " removed");
                     }
                 }
 

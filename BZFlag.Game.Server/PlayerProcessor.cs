@@ -32,6 +32,8 @@ namespace BZFlag.Game.Host
         public event EventHandler<ServerPlayer> PromotePlayer = null;
         protected void Promote(ServerPlayer sp)
         {
+            sp.FlushTCP();
+
             RemovePlayer(sp);
             if (PromotePlayer != null)
                 PromotePlayer.Invoke(this, sp);
@@ -78,6 +80,8 @@ namespace BZFlag.Game.Host
 
         protected void RemovePlayer(ServerPlayer sp)
         {
+            lock (Players)
+                Players.Remove(sp);
             sp.Disconnected -= Player_Disconnected;
             PlayerRemoved(sp);
         }
@@ -104,6 +108,8 @@ namespace BZFlag.Game.Host
             {
                 foreach (ServerPlayer player in locals)
                 {
+                    bool keep = true;
+
                     int count = 0;
                     while (count < MaxMessagesPerClientCycle)
                     {
@@ -117,8 +123,17 @@ namespace BZFlag.Game.Host
 
                         ProcessClientMessage(player, msg);
 
+                        lock (Players)
+                            keep = Players.Contains(player);
+
+                        if (!keep)
+                            break;
+
                         count++;
                     }
+
+                    if (!keep)
+                        break;
 
                     count = 0;
                     while (count < MaxMessagesPerClientCycle)
@@ -129,8 +144,17 @@ namespace BZFlag.Game.Host
 
                         ProcessClientMessage(player, msg);
 
+                        lock (Players)
+                            keep = Players.Contains(player);
+
+                        if (!keep)
+                            break;
+
                         count++;
                     }
+
+                    if (!keep)
+                        break;
 
                     UpdatePlayer(player);
                 }

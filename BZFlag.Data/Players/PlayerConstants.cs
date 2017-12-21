@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,8 +19,8 @@ namespace BZFlag.Data.Players
         public static readonly int RabbitTeamID = 245;
         public static readonly int HunterTeamID = 244;
 
-        public static readonly int MaxUseablePlayerID = 243;
-        public static readonly int MinimumPlayerID = 1;
+        public static readonly int MaxUseablePlayerID = 200;
+        public static readonly int MinimumPlayerID = 0;
 
         public static bool PlayerIDIsUseable(int id)
         {
