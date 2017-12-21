@@ -27,7 +27,7 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 
         public override byte[] Pack()
         {
-            DynamicOutputBuffer buffer = new DynamicOutputBuffer();
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
 
             buffer.WriteByte(TeamUpdates.Count);
             foreach (TeamUpdate upd in TeamUpdates)

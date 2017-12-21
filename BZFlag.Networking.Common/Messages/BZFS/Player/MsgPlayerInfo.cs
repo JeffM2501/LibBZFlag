@@ -26,7 +26,7 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 
         public override byte[] Pack()
         {
-            DynamicOutputBuffer buffer = new DynamicOutputBuffer();
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
 
             buffer.WriteByte(PlayerUpdates.Count);
             foreach (var p in PlayerUpdates)

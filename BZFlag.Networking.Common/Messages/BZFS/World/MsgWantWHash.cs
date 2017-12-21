@@ -19,7 +19,7 @@ namespace BZFlag.Networking.Messages.BZFS.World
 
         public override byte[] Pack()
         {
-            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
 
             if (NetworkMessage.IsOnServer)
                 buffer.WriteNullTermString((IsRandomMap ? "t" : string.Empty) + WorldHash);

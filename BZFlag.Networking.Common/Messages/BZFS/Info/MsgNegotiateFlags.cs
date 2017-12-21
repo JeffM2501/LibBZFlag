@@ -36,7 +36,7 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 
         public override byte[] Pack()
         {
-            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
             foreach (var f in FlagAbrevs)
                 buffer.WriteFixedSizeString(f, 2);
 

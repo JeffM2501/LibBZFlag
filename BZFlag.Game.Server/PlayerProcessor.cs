@@ -186,11 +186,8 @@ namespace BZFlag.Game.Host
 
             player.SendMessage(true,new MsgUDPLinkEstablished());
 
-            MsgUDPLinkRequest outBound = new MsgUDPLinkRequest();
-            outBound.PlayerID = player.PlayerID;
-
             player.UDPStatus = ServerPlayer.UDPConenctionStatuses.RequestSent;
-            player.SendMessage(false, outBound);
+            player.SendMessage(false, udp);
         }
 
         protected void HandleUDPLinkEstablished(ServerPlayer player, NetworkMessage msg)

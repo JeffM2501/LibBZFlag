@@ -1,4 +1,4 @@
-﻿using BZFlag.Data.Flags;
+using BZFlag.Data.Flags;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +22,7 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
 
         public override byte[] Pack()
         {
-            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
 
             buffer.WriteByte(PlayerID);
             buffer.WriteFlagUpdateData(FlagData);

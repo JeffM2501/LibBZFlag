@@ -44,7 +44,7 @@ namespace BZFlag.Networking.Messages.BZFS.Control
 
         public override byte[] Pack()
         {
-            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
 
             buffer.WriteUInt16((UInt16)ReasonCode);
             buffer.WriteNullTermString(ReasonMessage);

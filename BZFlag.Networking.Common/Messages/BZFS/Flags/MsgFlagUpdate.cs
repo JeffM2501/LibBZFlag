@@ -21,7 +21,7 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
 
         public override byte[] Pack()
         {
-            DynamicOutputBuffer buffer = new DynamicOutputBuffer();
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
 
             buffer.WriteUInt16(FlagUpdates.Count);
             foreach (FlagUpdateData f in FlagUpdates)

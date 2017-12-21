@@ -23,7 +23,7 @@ namespace BZFlag.Networking.Messages.BZFS.UDP
 
         public override byte[] Pack()
         {
-            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
             if (!IsOnServer)
                 buffer.WriteByte((byte)PlayerID);
             return buffer.GetMessageBuffer();

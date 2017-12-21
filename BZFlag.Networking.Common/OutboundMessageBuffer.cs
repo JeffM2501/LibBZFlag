@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Text;
@@ -14,6 +14,14 @@ namespace BZFlag.Networking
         private List<NetworkMessage> UnprocessedOutbound = new List<NetworkMessage>();
 
         private Thread Worker = null;
+
+        private List<Type> AcceptableMessageTypes = new List<Type>();
+
+        public void AddAcceptableMessageType(Type t)
+        {
+            lock (AcceptableMessageTypes)
+                AcceptableMessageTypes.Add(t);
+        }
 
         public void Start()
         {
@@ -38,15 +46,29 @@ namespace BZFlag.Networking
                 NetworkMessage msg = GetNextUnprocessedMessage();
                 while (msg != null)
                 {
-                    byte[] buffer = msg.Pack();
-                    if (buffer != null)
-                        PushDirectMessage(buffer);
+                    bool process = true;
 
+                    lock (AcceptableMessageTypes)
+                    { 
+                        if (AcceptableMessageTypes.Count > 0)
+                            process = AcceptableMessageTypes.Contains(msg.GetType());
+                    }
+
+                    if (process)
+                    {
+                        byte[] buffer = msg.Pack();
+                        if (buffer != null)
+                            PushDirectMessage(buffer);
+                    }
+                    else
+                    {
+                        // WTF?
+                    }
+                  
                     msg = GetNextUnprocessedMessage();
 
                 }
                 Thread.Sleep(10);
-
             }
         }
 

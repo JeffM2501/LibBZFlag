@@ -11,20 +11,75 @@ namespace BZFlag.Data.Utils
 {
     public class DynamicOutputBuffer
     {
+        public static DynamicOutputBuffer Get( int code )
+        {
+            lock(BufferCache)
+            {
+                foreach(var db in BufferCache)
+                {
+                    if (!db.Used())
+                    {
+                        db.Reset(code);
+                        return db;
+                    }
+                }
+
+                DynamicOutputBuffer b = new DynamicOutputBuffer(code);
+                b.Reset(code);
+                BufferCache.Add(b);
+                return b;
+            }
+        }
+
+        public static DynamicOutputBuffer GetTempBuffer( int size)
+        {
+            return new DynamicOutputBuffer(false, size);
+        }
+
+        private static List<DynamicOutputBuffer> BufferCache = new List<DynamicOutputBuffer>();
+
         protected UInt16 Code = 0;
 
-        private static byte[] GlobalBuffer = new byte[2048];
+        private byte[] GlobalBuffer = new byte[2048];
         protected int BytesUsed = 0;
 
         protected byte[] Buffer = null;
 
-        public DynamicOutputBuffer()
+
+        protected bool InUse = false;
+        public object Locker = new object();
+
+        public bool Used ()
+        {
+            lock (Locker)
+                return InUse;
+        }
+
+        protected void SetUnused()
+        {
+            lock (Locker)
+                InUse = false;
+        }
+
+        protected void Reset(int code)
+        {
+            lock (Locker)
+                InUse = true;
+
+            BytesUsed = 4;
+            Buffer = GlobalBuffer;
+            Code = (UInt16)code;
+            WriteUInt16(0, 0);
+            WriteUInt16(Code, 2);
+        }
+
+        protected DynamicOutputBuffer()
         {
             BytesUsed = 4;
             Buffer = GlobalBuffer;
         }
 
-        public DynamicOutputBuffer(int code)
+        protected DynamicOutputBuffer(int code)
         {
             BytesUsed = 4;
             Buffer = GlobalBuffer;
@@ -33,15 +88,15 @@ namespace BZFlag.Data.Utils
             WriteUInt16(Code, 2);
         }
 
-        public DynamicOutputBuffer(bool useGlobal, int size)
-        {
-            BytesUsed = 0;
-
-            if (useGlobal)
-                Buffer = GlobalBuffer;
-            else
-                Buffer = new byte[size];
-        }
+         protected DynamicOutputBuffer(bool useGlobal, int size)
+         {
+             BytesUsed = 0;
+ 
+             if (useGlobal)
+                 Buffer = GlobalBuffer;
+             else
+                 Buffer = new byte[size];
+         }
 
 
         public void SetCode(int code)
@@ -55,6 +110,8 @@ namespace BZFlag.Data.Utils
             WriteUInt16((UInt16)(BytesUsed - 4), 0);
             byte[] outbuffer = new byte[BytesUsed];
             Array.Copy(Buffer, outbuffer, BytesUsed);
+
+            SetUnused();
             return outbuffer;
         }
 
@@ -62,6 +119,8 @@ namespace BZFlag.Data.Utils
         {
             byte[] outbuffer = new byte[BytesUsed];
             Array.Copy(Buffer, outbuffer, BytesUsed);
+
+            SetUnused();
             return outbuffer;
         }
 

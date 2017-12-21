@@ -18,7 +18,7 @@ namespace BZFlag.Networking.Messages.BZFS.Info
 
         public override byte[] Pack()
         {
-            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
 
             buffer.WriteNullTermString(URL);
 

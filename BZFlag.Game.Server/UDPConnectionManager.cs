@@ -140,7 +140,10 @@ namespace BZFlag.Game.Host
         public void WriteUDP(byte[] buffer, IPEndPoint address)
         {
             if (UDPSocket != null)
-                UDPSocket.Send(buffer, buffer.Length, address);
+            {
+            //    UDPSocket.Connect(address);
+              int sent = UDPSocket.Send(buffer, buffer.Length, address);
+            }
         }
 
         private void MsgBuffer_CompleteMessageRecived(object sender, EventArgs e)

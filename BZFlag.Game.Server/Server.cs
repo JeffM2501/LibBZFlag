@@ -282,6 +282,10 @@ namespace BZFlag.Game.Host
         protected virtual ServerPlayer AcceptTCPConnection(TCPConnectionManager.PendingClient client)
         {
             ServerPlayer p = NewPlayerRecord(client);
+
+            foreach (var m in UDPServerMessageFactory.Factory.GetMessageTypes())
+                p.OutboundUDP.AddAcceptableMessageType(m);
+
             p.PlayerID = FindPlayerID();
             if (p.PlayerID < 0)
                 return null;

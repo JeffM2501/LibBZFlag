@@ -193,6 +193,12 @@ namespace BZFlag.Networking.Messages
             }
         }
 
+        public Type[] GetMessageTypes()
+        {
+            lock (MessageTypes)
+                return MessageTypes.Values.ToArray();
+        }
+
         public void RegisterMessageType(NetworkMessage m)
         {
             RegisterMessageType(m.Code, m.GetType());
