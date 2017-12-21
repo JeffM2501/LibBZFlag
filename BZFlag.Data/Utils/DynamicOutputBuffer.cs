@@ -286,6 +286,7 @@ namespace BZFlag.Data.Utils
             WriteFloat(value.Y);
             WriteFloat(value.Z);
         }
+
         public void WriteColor4F(Color4F value)
         {
             WriteFloat(value.R);
@@ -293,7 +294,6 @@ namespace BZFlag.Data.Utils
             WriteFloat(value.B);
             WriteFloat(value.A);
         }
-
 
         public void WriteSmallVector3F(Vector3F value)
         {
