@@ -11,6 +11,8 @@ using BZFlag.Networking;
 using BZFlag.Game.Host.Players;
 using BZFlag.Networking.Messages.BZFS.UDP;
 using System.Text;
+using BZFlag.Data.Utils;
+using static BZFlag.Networking.InboundMessageBuffer;
 
 namespace BZFlag.Game.Host
 {
@@ -30,13 +32,11 @@ namespace BZFlag.Game.Host
         protected UdpClient UDPSocket = null;
         protected int UDPInPort = 5154;
 
-        protected InboundMessageBuffer MsgBuffer = new InboundMessageBuffer(true);  // if we ever have to buffer across packets, then this is one per endpoint
 
         protected MessageManager AcceptableMessages = null;
 
         public UDPConnectionManager(MessageManager unpacker)
         {
-            MsgBuffer.CompleteMessageRecived += MsgBuffer_CompleteMessageRecived;
             AcceptableMessages = unpacker;
         }
 
@@ -68,28 +68,33 @@ namespace BZFlag.Game.Host
             UDPInPort = port;
             UDPSocket = new UdpClient(UDPInPort);
 
-            UDPSocket.BeginReceive(Receive, UDPSocket);
+            UDPReceiveThread = new Thread(new ThreadStart(Receive));
+            UDPReceiveThread.Start();
         }
 
-        protected void Receive(IAsyncResult result)
+        private Thread UDPReceiveThread = null;
+
+        protected void Receive()
         {
-            UdpClient socket = result.AsyncState as UdpClient;
-            bool done = false;
+            while(true)
+            {
+                IPEndPoint source = null;
 
-            IPEndPoint source = new IPEndPoint(0, 0);
-            // get the actual message and fill out the source:
-            byte[] data = socket.EndReceive(result, ref source);
+                byte[] data = UDPSocket.Receive(ref source);
 
-            if (data != null || data.Length > 0)
-                ProcessUDPPackets(source, data);
-
-            UDPSocket.BeginReceive(Receive, UDPSocket);
+                if (data != null && data.Length > 0 && source != null)
+                    ProcessUDPPackets(source, data);
+            }
         }
 
         public void Shutdown()
         {
             try
             {
+                if (UDPReceiveThread != null)
+                    UDPReceiveThread.Abort();
+                UDPReceiveThread = null;
+
                 if (UDPSocket != null)
                 {
                     UDPSocket.Close();
@@ -104,8 +109,30 @@ namespace BZFlag.Game.Host
 
         protected void ProcessUDPPackets(IPEndPoint ep, byte[] data)
         {
+
+            if (data.Length < 4)
+                return;
+
+            int len = BufferUtils.ReadUInt16(data, 0);
+            int code = BufferUtils.ReadUInt16(data, 2);
+
+            CompletedMessage msg = new CompletedMessage();
+            msg.ID = code;
+            msg.Size = len;
+
+            if (data.Length < len + 4)
+                return;
+
+            msg.Tag = ep;
+            msg.Data = new byte[len];
+            Array.Copy(data, 4, msg.Data, 0, len);
+
+            string msgCode = Encoding.ASCII.GetString(data, 2, 2);
+        
             if (AcceptableClients.ContainsKey(ep.Address))
-                MsgBuffer.AddData(data, ep);
+            {
+                CompleteMessageRecived(msg);
+            }
             else if (AllowAll && OutOfBandUDPMessage != null)
             {
                 OutOfBandUDPEventArgs args = new OutOfBandUDPEventArgs();
@@ -130,7 +157,7 @@ namespace BZFlag.Game.Host
                         return p;
                     }
                 }
-                else if (p.UDPEndpoint == ep)
+                else if (p.UDPEndpoint.Port == ep.Port)
                     return p;
               
             }
@@ -146,11 +173,9 @@ namespace BZFlag.Game.Host
             }
         }
 
-        private void MsgBuffer_CompleteMessageRecived(object sender, EventArgs e)
+        private void CompleteMessageRecived(CompletedMessage msg)
         {
-            InboundMessageBuffer.CompletedMessage msg = MsgBuffer.GetMessage();
-
-            while (msg != null || msg.Tag as IPEndPoint == null)
+           // while (msg != null || msg.Tag as IPEndPoint == null)
             {
                 msg.UDP = true;
 

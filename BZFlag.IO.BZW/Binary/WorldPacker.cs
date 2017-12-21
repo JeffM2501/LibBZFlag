@@ -14,7 +14,7 @@ using Ionic.Zlib;
 
 namespace BZFlag.IO.BZW.Binary
 {
-    public class WorldPacker : DynamicOutputBuffer
+    public class WorldPacker
     {
         WorldMap MapData = null;
 
@@ -37,21 +37,21 @@ namespace BZFlag.IO.BZW.Binary
             WriteObstacles();
             WriteLinks();
 
-            WriteFloat(-1); // water level
-            WriteUInt32(0); // world weapons
-            WriteUInt32(0); // zones
+            DynaBuffer.WriteFloat(-1); // water level
+            DynaBuffer.WriteUInt32(0); // world weapons
+            DynaBuffer.WriteUInt32(0); // zones
 
             return CompressMap();
         }
 
         protected byte[] CompressMap()
         {
-            int uncompressedSize = BytesUsed;
+            int uncompressedSize = DynaBuffer.GetBytesUsed();
 
             MemoryStream ms = new MemoryStream();
             Ionic.Zlib.ZlibStream ws = new Ionic.Zlib.ZlibStream(ms,Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.BestCompression, true);
 
-            ws.Write(Buffer, 0, uncompressedSize);
+            ws.Write(DynaBuffer.GetRawBuffer(), 0, uncompressedSize);
             ws.Flush();
 
             ws.Close();
@@ -377,7 +377,7 @@ namespace BZFlag.IO.BZW.Binary
                     }
 
 
-                    WriteUInt32(chan.ClampUps.Count);
+                    DynaBuffer.WriteUInt32(chan.ClampUps.Count);
                     foreach (var p in chan.ClampUps)
                     {
                         DynaBuffer.WriteFloat(p.Period);
@@ -385,7 +385,7 @@ namespace BZFlag.IO.BZW.Binary
                         DynaBuffer.WriteFloat(p.Width);
                     }
 
-                    WriteUInt32(chan.ClampDowns.Count);
+                    DynaBuffer.WriteUInt32(chan.ClampDowns.Count);
                     foreach (var p in chan.ClampDowns)
                     {
                         DynaBuffer.WriteFloat(p.Period);
@@ -393,7 +393,7 @@ namespace BZFlag.IO.BZW.Binary
                         DynaBuffer.WriteFloat(p.Width);
                     }
 
-                    WriteUInt32(chan.Sequence.Values.Count);
+                    DynaBuffer.WriteUInt32(chan.Sequence.Values.Count);
                     if (chan.Sequence.Values.Count > 0)
                     {
                         DynaBuffer.WriteFloat(chan.Sequence.Period);

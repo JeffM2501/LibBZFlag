@@ -49,6 +49,17 @@ namespace BZFlag.Data.Utils
         protected bool InUse = false;
         public object Locker = new object();
 
+
+        public int GetBytesUsed()
+        {
+            return BytesUsed;
+        }
+
+        public byte[] GetRawBuffer()
+        {
+            return Buffer;
+        }
+
         public bool Used ()
         {
             lock (Locker)
