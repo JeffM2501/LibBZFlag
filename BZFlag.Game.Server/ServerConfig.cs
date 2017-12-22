@@ -92,6 +92,15 @@ namespace BZFlag.Game.Host
 
         public List<ExtraConfigInfo> CustomConfigItems = new List<ExtraConfigInfo>();
 
+        public string GetCustomConfigData(string name)
+        {
+            ExtraConfigInfo info = null;
+            lock (CustomConfigItems)
+                info = CustomConfigItems.Find((x) => x.Name == name);
+
+            return info?.Value;
+        }
+
         public static ServerConfig ReadXML(string filepath)
         {
             FileInfo f = new FileInfo(filepath);

@@ -20,17 +20,26 @@ namespace BZFlag.Game.Host.API
     {
         private static string PluginTypeName = typeof(PlugIn).Name;
 
-        private static List<PlugIn> Plugins = new List<PlugIn>();
-
-        public static void LoadFromAssembly(Assembly ass)
+        private class PluginInfo
         {
+            public PlugIn Module = null;
+            public bool Loaded = false;
+            public bool IsPlugin = false;
+        }
 
+        private static List<PluginInfo> Plugins = new List<PluginInfo>();
+
+        public static void LoadFromAssembly(Assembly ass, bool isPlugin)
+        {
             foreach (var t in ass.GetTypes())
             {
                 var i = t.GetInterface(PluginTypeName);
                 if (i != null)
                 {
-                    Plugins.Add(Activator.CreateInstance(t) as PlugIn);
+                    PluginInfo info = new PluginInfo();
+                    info.IsPlugin = isPlugin;
+                    info.Module = Activator.CreateInstance(t) as PlugIn;
+                    Plugins.Add(info);
                     Logger.Log3("Loaded plug-in " + t.Name + " from " + Path.GetFileName(ass.Location));
                 }
             }
@@ -40,14 +49,27 @@ namespace BZFlag.Game.Host.API
         {
             Logger.Log2("Plug-ins Startup");
             foreach (var p in Plugins)
-                p.Startup(servInstance);
+            {
+                if (!p.Loaded)
+                {
+                    p.Module.Startup(servInstance);
+                    p.Loaded = true;
+                }
+            }
+               
         }
 
         public static void Shutdown()
         {
             Logger.Log2("Plug-ins Shutdown");
             foreach (var p in Plugins)
-                p.Shutdown();
+            {
+                if (p.Loaded)
+                {
+                    p.Module.Shutdown();
+                    p.Loaded = false;
+                }
+            }
         }
     }
 }

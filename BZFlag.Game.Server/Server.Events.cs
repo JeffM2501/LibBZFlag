@@ -32,6 +32,7 @@ namespace BZFlag.Game.Host
         public event EventHandler WorldPostload;
 
         public event EventHandler APILoadComplete;
+        public event EventHandler ModuleLoadComplete;
 
         public event EventHandler ConfigLoaded;
 

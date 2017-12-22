@@ -13,6 +13,7 @@ using BZFlag.Game.Host.API;
 using BZFlag.Game.Host.World;
 using BZFlag.Data.Teams;
 using BZFlag.Networking.Messages;
+using System.IO;
 
 namespace BZFlag.Game.Host
 {
@@ -133,20 +134,45 @@ namespace BZFlag.Game.Host
 
             API.Common.ServerInstnace = this;
 
-            PluginLoader.LoadFromAssembly(Assembly.GetExecutingAssembly());
+            PluginLoader.LoadFromAssembly(Assembly.GetExecutingAssembly(), false);
+
+            DirectoryInfo modulesDir = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Modules"));
+            if (modulesDir.Exists)
+            {
+                foreach (var module in modulesDir.GetFiles("*.dll"))
+                {
+                    try
+                    {
+                        var a = Assembly.LoadFile(module.FullName);
+                        if (a != null)
+                            PluginLoader.LoadFromAssembly(a, false);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Logger.Log1("Unable to load module " + module.Name + " :" + ex.ToString());
+                    }
+                }
+
+                // load the build in modules first
+                PluginLoader.Startup(this);
+                ModuleLoadComplete?.Invoke(this,EventArgs.Empty);
+            }
+
             foreach (var f in ConfigData.PlugIns)
             {
                 try
                 {
                     var a = Assembly.LoadFile(f);
                     if (a != null)
-                        PluginLoader.LoadFromAssembly(a);
+                        PluginLoader.LoadFromAssembly(a, true);
                 }
                 catch (System.Exception ex)
                 {
                     Logger.Log1("Unable to load plug-in " + f + " :" + ex.ToString());
                 }
             }
+
+            PluginLoader.Startup(this);
 
             APILoadComplete?.Invoke(this, EventArgs.Empty);
             ConfigLoaded?.Invoke(this, EventArgs.Empty);
