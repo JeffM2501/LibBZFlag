@@ -42,6 +42,7 @@ namespace BZFlag.Game.Host
             public FlagManager Flags = new FlagManager();
 
             public PlayerManager Players = new PlayerManager();
+            public ChatManager Chat = new ChatManager();
             // public ShotManager Shots = new ShotManager();
         }
         public GameState State = new GameState();
@@ -60,6 +61,7 @@ namespace BZFlag.Game.Host
 
             State.Players.ServerHost = this;
             State.Flags.ServerHost = this;
+            State.Chat.ServerHost = this;
 
             SetTeamSelector(null);
 

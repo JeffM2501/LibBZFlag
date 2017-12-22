@@ -30,6 +30,8 @@ namespace BZFlag.Game.Host.Players
         public TeamColors DesiredTeam = TeamColors.AutomaticTeam;
         public TeamColors ActualTeam = TeamColors.AutomaticTeam;
 
+        public event EventHandler<Peer> Exited = null;
+
         public class ScoreInfo
         {
             public int Wins = 0;
@@ -74,6 +76,11 @@ namespace BZFlag.Game.Host.Players
         {
             ConnectionData = pc;
             Link(ConnectionData.ClientConnection);
+        }
+
+        public void SetExit()
+        {
+            Exited?.Invoke(this, this);
         }
 
         public void ProcessUDPMessage(NetworkMessage msg)

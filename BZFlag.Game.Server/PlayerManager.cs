@@ -61,6 +61,15 @@ namespace BZFlag.Game.Host
                 }
                 PlayerAdded?.Invoke(this, this);
             }
+
+            public void SentTo(NetworkMessage message, bool useUDP)
+            {
+                lock(Members)
+                {
+                    foreach (var member in Members)
+                        member.SendMessage(!useUDP, message);
+                }
+            }
         }
 
         public Dictionary<TeamColors, TeamInfo> Teams = new Dictionary<TeamColors, TeamInfo>();
@@ -89,6 +98,9 @@ namespace BZFlag.Game.Host
 
         public virtual bool AddPlayer(ServerPlayer player)
         {
+            player.Exited += Player_Exited;
+            player.Disconnected += Player_Exited;
+
             ServerHost.PreAddPlayer(player);
 
             if (player.ActualTeam == TeamColors.NoTeam)
@@ -179,6 +191,24 @@ namespace BZFlag.Game.Host
 
             return true;
         }
+
+        private void Player_Exited(object sender, Networking.Common.Peer e)
+        {
+            ServerPlayer sp = e as ServerPlayer;
+            if (sp == null || !Players.Contains(sp))
+                return;
+
+            lock (Players)
+                Players.Remove(sp);
+
+            MsgRemovePlayer exit = new MsgRemovePlayer();
+            exit.PlayerID = sp.PlayerID;
+            SendToAll(exit,false);
+
+            if (Teams.ContainsKey(sp.ActualTeam))
+                Teams[sp.ActualTeam].Remove(sp);
+        }
+
 
         public void StartSpawn(ServerPlayer player, MsgAlive spawnRequest)
         {
@@ -306,8 +336,13 @@ namespace BZFlag.Game.Host
             return team;
         }
 
+        public virtual ServerPlayer GetPlayerByID(int playerID)
+        {
+            lock (Players)
+                return Players.Find((x) => x.PlayerID == playerID);
+        }
 
-        protected virtual void SendToAll(NetworkMessage message, bool useUDP)
+        public virtual void SendToAll(NetworkMessage message, bool useUDP)
         {
             ServerPlayer[] locals = null;
 
@@ -316,6 +351,21 @@ namespace BZFlag.Game.Host
 
             foreach (ServerPlayer player in locals)
                 player.SendMessage(!useUDP, message);
+        }
+
+        public virtual void SendToTeam(NetworkMessage message, TeamColors team, bool useUDP)
+        {
+            if (Teams.ContainsKey(team))
+                Teams[team].SentTo(message, useUDP);
+        }
+
+        public virtual void SendToPlayerID(NetworkMessage message, bool useUDP, int playerID)
+        {
+            ServerPlayer player = GetPlayerByID(playerID);
+            if (player == null)
+                return;
+
+            player.SendMessage(!useUDP, message);
         }
     }
 }

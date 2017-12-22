@@ -101,7 +101,7 @@ namespace BZFlag.Game.Host.Processors
 
         private void HandleChatMessage(ServerPlayer player, NetworkMessage msg)
         {
-       
+            ServerHost.State.Chat.HandleChatMessage(player, msg as MsgMessage);
         }
 
         private void HandleAlive(ServerPlayer player, NetworkMessage msg)

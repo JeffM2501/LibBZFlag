@@ -83,6 +83,10 @@ namespace BZFlag.Game.Host
             lock (Players)
                 Players.Remove(sp);
             sp.Disconnected -= Player_Disconnected;
+
+            sp.SetExit();
+
+            sp.FlushTCP();
             PlayerRemoved(sp);
         }
 

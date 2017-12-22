@@ -53,6 +53,7 @@
     <Compile Include="BanList.cs" />
     <Compile Include="BZDB\Defaults.cs" />
     <Compile Include="BZFS.cs" />
+    <Compile Include="ChatManager.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="PlayerManager.cs" />
     <Compile Include="PlayerProcessor.cs" />
