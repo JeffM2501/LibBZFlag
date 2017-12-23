@@ -102,8 +102,6 @@ namespace BZFlag.Game.Host
 
         public ChatManager()
         {
-            DefaultFilter = DefaultChatFilter;
-
             GroupInfo adminGroup = new GroupInfo();
             adminGroup.Name = "Admin";
             adminGroup.BroadcastID = PlayerConstants.AdminGroup;
@@ -259,12 +257,6 @@ namespace BZFlag.Game.Host
 
             lock (PendingInboundChats)
                 FilterWorker = null;
-        }
-
-
-        protected bool DefaultChatFilter(ChatMessageEventArgs message)
-        {
-            return false;
         }
 
         public void DispatchChatMessage(ChatMessageEventArgs messaage)

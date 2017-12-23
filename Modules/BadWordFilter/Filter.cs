@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using BZFlag.Game.Host;
 using BZFlag.Game.Host.API;
 using static BZFlag.Game.Host.ChatManager;
@@ -15,8 +13,11 @@ namespace BadWordFilter
 
         public string Description => "Default bad word filter";
 
-        public void Shutdown()
+        protected List<string> BadWords = new List<string>();
+
+        public void Shutdown(Server serverInstance)
         {
+            serverInstance.State.Chat.DefaultFilter = null;
         }
 
         public void Startup(Server serverInstance)
@@ -30,12 +31,25 @@ namespace BadWordFilter
             if (path == null || path == string.Empty)
                 return;
 
+            if (File.Exists(path))
+                BadWords.AddRange(File.ReadLines(path));
         }
 
         protected virtual bool FilterChat(ChatMessageEventArgs message)
         {
+            string upperMSG = message.MessageText.ToUpperInvariant();
+            foreach(string word in BadWords)
+            {
+                if (upperMSG.Contains(word.ToUpperInvariant()))
+                {
+                    // TODO, handle case incentive replenishment
+                    word.Replace(word, string.Empty);
 
-            return false;
+                    message.Filtered = true;
+                }
+            }
+
+            return message.Filtered;
         }
     }
 }

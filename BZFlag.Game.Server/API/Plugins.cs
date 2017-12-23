@@ -13,7 +13,7 @@ namespace BZFlag.Game.Host.API
 
         void Startup(Server serverInstance);
 
-        void Shutdown();
+        void Shutdown(Server serverInstance);
     }
 
     internal static class PluginLoader
@@ -59,14 +59,14 @@ namespace BZFlag.Game.Host.API
                
         }
 
-        public static void Shutdown()
+        public static void Shutdown(ServerHost servInstance)
         {
             Logger.Log2("Plug-ins Shutdown");
             foreach (var p in Plugins)
             {
                 if (p.Loaded)
                 {
-                    p.Module.Shutdown();
+                    p.Module.Shutdown(servInstance);
                     p.Loaded = false;
                 }
             }
