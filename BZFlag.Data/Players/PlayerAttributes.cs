@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +19,16 @@ namespace BZFlag.Data.Players
     public enum ShotTypes
     {
         NormalShot = 0,
-        SpecialShot = 1,
+        SuperShot = 1,
+        GuidedShot = 2,
+        Laser = 3,
+        Shockwave = 4,
+        PhantomShot = 5,
+        ThiefShot = 6,
+        RicochetShot = 7,
+        InvisibleShot = 8,
+        GenocideShot = 9,
+        SpecialShot = 10,    // used for things that behave like normal shots but have different effects outside of the shot (reload, on kill, etc..)
         Unknown = Byte.MaxValue,
     };
 

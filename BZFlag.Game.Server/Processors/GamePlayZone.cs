@@ -9,6 +9,7 @@ using BZFlag.Networking.Messages.BZFS;
 using BZFlag.Networking.Messages.BZFS.Player;
 using BZFlag.Data.Teams;
 using BZFlag.Networking.Messages.BZFS.Control;
+using BZFlag.Networking.Messages.BZFS.Shots;
 
 namespace BZFlag.Game.Host.Processors
 {
@@ -35,6 +36,10 @@ namespace BZFlag.Game.Host.Processors
             MessageDispatch.Add(new MsgAlive(), HandleAlive);
             MessageDispatch.Add(new MsgPlayerUpdateSmall(), HandlePlayerUpdate);
             MessageDispatch.Add(new MsgPlayerUpdate(), HandlePlayerUpdate);
+
+            MessageDispatch.Add(new MsgShotBegin(), HandleShotBegin);
+            MessageDispatch.Add(new MsgShotEnd(), HandleShotEnd);
+            MessageDispatch.Add(new MsgKilled(), HandleKilled);
         }
 
         protected override void HandleUnknownMessage(ServerPlayer player, NetworkMessage msg)
@@ -97,6 +102,21 @@ namespace BZFlag.Game.Host.Processors
             player.NeedStartupInfo = false;
 
             UpdatePublicListServer?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void HandleShotBegin(ServerPlayer player, NetworkMessage msg)
+        {
+            ServerHost.State.Shots.HandleShotBegin(player, msg as MsgShotBegin);
+        }
+
+        private void HandleShotEnd(ServerPlayer player, NetworkMessage msg)
+        {
+            ServerHost.State.Shots.HandleShotEnd(player, msg as MsgShotEnd);
+        }
+
+        private void HandleKilled(ServerPlayer player, NetworkMessage msg)
+        {
+
         }
 
         private void HandleChatMessage(ServerPlayer player, NetworkMessage msg)

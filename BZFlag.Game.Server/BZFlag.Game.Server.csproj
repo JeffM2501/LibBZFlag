@@ -67,6 +67,7 @@
     <Compile Include="Server.Factories.cs" />
     <Compile Include="ServerConfig.cs" />
     <Compile Include="ServerMessageDispatcher.cs" />
+    <Compile Include="ShotManager.cs" />
     <Compile Include="TCPConnectionManager.cs" />
     <Compile Include="UDPConnectionManager.cs" />
     <Compile Include="World\FlagManager.cs" />

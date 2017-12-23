@@ -40,15 +40,15 @@ namespace BZFlag.Data.Flags
                             "Shoots more often.  Shells go faster but not as far."));
             Add(new FlagType("Machine Gun", "MG", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "Very fast reload and very short range."));
-            Add(new FlagType("Guided Missile", "GM", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam,
+            Add(new FlagType("Guided Missile", "GM", FlagEndurances.FlagUnstable, ShotTypes.GuidedShot, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."));
-            Add(new FlagType("Laser", "L", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam,
+            Add(new FlagType("Laser", "L", FlagEndurances.FlagUnstable, ShotTypes.Laser, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "Shoots a laser.  Infinite speed and range but long reload time."));
-            Add(new FlagType("Ricochet", "R", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam,
+            Add(new FlagType("Ricochet", "R", FlagEndurances.FlagUnstable, ShotTypes.RicochetShot, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "Shots bounce off walls.  Don't shoot yourself!"));
-            Add(new FlagType("Super Bullet", "SB", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam,
+            Add(new FlagType("Super Bullet", "SB", FlagEndurances.FlagUnstable, ShotTypes.SuperShot, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "Shoots through buildings.  Can kill Phantom Zone."));
-            Add(new FlagType("Invisible Bullet", "IB", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
+            Add(new FlagType("Invisible Bullet", "IB", FlagEndurances.FlagUnstable, ShotTypes.InvisibleShot, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "Your shots don't appear on other radars.  Can still see them out window."));
             Add(new FlagType("Stealth", "ST", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"));
@@ -60,11 +60,11 @@ namespace BZFlag.Data.Flags
                             "Getting hit only drops flag.  Flag flies an extra-long time."));
             Add(new FlagType("Steamroller", "SR", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "Destroys tanks you touch but you have to get really close."));
-            Add(new FlagType("Shock Wave", "SW", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam,
+            Add(new FlagType("Shock Wave", "SW", FlagEndurances.FlagUnstable, ShotTypes.Shockwave, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."));
-            Add(new FlagType("Phantom Zone", "PZ", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam,
+            Add(new FlagType("Phantom Zone", "PZ", FlagEndurances.FlagUnstable, ShotTypes.PhantomShot, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank shoots Zoned bullets and can't be shot (except by superbullet, shock wave, and other Zoned tanks)."));
-            Add(new FlagType("Genocide", "G", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
+            Add(new FlagType("Genocide", "G", FlagEndurances.FlagUnstable, ShotTypes.GenocideShot, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "Killing one tank kills that tank's whole team."));
             Add(new FlagType("Jumping", "JP", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "Tank can jump.  Use Tab key.  Can't steer in the air."));
@@ -78,7 +78,7 @@ namespace BZFlag.Data.Flags
                             "In opponent's hud, you appear as a teammate."));
             Add(new FlagType("Seer", "SE", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "See stealthed, cloaked and masquerading tanks as normal."));
-            Add(new FlagType("Thief", "TH", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam,
+            Add(new FlagType("Thief", "TH", FlagEndurances.FlagUnstable, ShotTypes.ThiefShot, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "Steal flags.  Small and fast but can't kill."));
             Add(new FlagType("Burrow", "BU", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!"));
