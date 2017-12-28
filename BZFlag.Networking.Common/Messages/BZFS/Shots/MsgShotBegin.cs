@@ -34,11 +34,14 @@ namespace BZFlag.Networking.Messages.BZFS.Shots
         public override byte[] Pack()
         {
             DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
+
             buffer.WriteFloat(TimeSent);
             buffer.WriteByte(PlayerID);
             buffer.WriteInt16(ShotID);
+
             buffer.WriteVector3F(Position);
             buffer.WriteVector3F(Velocity);
+
             buffer.WriteFloat(DeltaTime);
 
             buffer.WriteInt16((UInt16)Team);
