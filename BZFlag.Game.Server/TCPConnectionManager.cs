@@ -88,7 +88,6 @@ namespace BZFlag.Game.Host
             {
                 ListenerV6 = null;
             }
-            
         }
 
         public void StartUp()
