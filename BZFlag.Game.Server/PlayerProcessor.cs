@@ -238,5 +238,16 @@ namespace BZFlag.Game.Host
 
             player.UDPStatus = ServerPlayer.UDPConenctionStatuses.Connected;
         }
+
+        public virtual void SendToAll(NetworkMessage message, bool useUDP)
+        {
+            ServerPlayer[] locals = null;
+
+            lock (Players)
+                locals = Players.ToArray();
+
+            foreach (ServerPlayer player in locals)
+                player.SendMessage(!useUDP, message);
+        }
     }
 }
