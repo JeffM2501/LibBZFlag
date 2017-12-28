@@ -30,7 +30,6 @@ namespace BZFlag.Game.Host
         protected UdpClient UDPSocketV6 = null;
         protected int UDPInPort = 5154;
 
-
         protected MessageManager AcceptableMessages = null;
 
         public UDPConnectionManager(MessageManager unpacker)
@@ -138,7 +137,9 @@ namespace BZFlag.Game.Host
             catch (Exception)
             {
             }
+
             UDPSocketV4 = null;
+            UDPSocketV6 = null;
         }
 
         protected void ProcessUDPPackets(IPEndPoint ep, byte[] data)
@@ -163,9 +164,7 @@ namespace BZFlag.Game.Host
             string msgCode = Encoding.ASCII.GetString(data, 2, 2);
         
             if (AcceptableClients.ContainsKey(ep.Address))
-            {
                 CompleteMessageRecived(msg);
-            }
             else if (AllowAll && OutOfBandUDPMessage != null)
             {
                 OutOfBandUDPEventArgs args = new OutOfBandUDPEventArgs();
@@ -207,29 +206,26 @@ namespace BZFlag.Game.Host
 
         private void CompleteMessageRecived(InboundMessageBuffer.CompletedMessage msg)
         {
-           // while (msg != null || msg.Tag as IPEndPoint == null)
+           msg.UDP = true;
+
+            IPEndPoint clientAddress = msg.Tag as IPEndPoint;
+
+            NetworkMessage unpacked = null;
+
+            if (AcceptableMessages != null)
+                unpacked = AcceptableMessages.Unpack(msg.ID, msg.Data, true);
+
+            if (unpacked == null)
             {
-                msg.UDP = true;
-
-                IPEndPoint clientAddress = msg.Tag as IPEndPoint;
-
-                NetworkMessage unpacked = null;
-
-                if(AcceptableMessages != null)
-                    unpacked = AcceptableMessages.Unpack(msg.ID, msg.Data, true);
-
-                if (unpacked == null)
-                {
-                    Logger.Log3("Unknown UDP Packet " + Encoding.ASCII.GetString(msg.Data));
-                    return;
-                }
-
-                ServerPlayer player = GetPlayerForAddress(unpacked as MsgUDPLinkRequest, clientAddress);
-                if (player != null)
-                    player.ProcessUDPMessage(unpacked);
-                else
-                    Logger.Log3("Unknown UDP Player Msg" + unpacked.CodeAbreviation);
+                Logger.Log3("Unknown UDP Packet " + Encoding.ASCII.GetString(msg.Data));
+                return;
             }
+
+            ServerPlayer player = GetPlayerForAddress(unpacked as MsgUDPLinkRequest, clientAddress);
+            if (player != null)
+                player.ProcessUDPMessage(unpacked);
+            else
+                Logger.Log3("Unknown UDP Player Msg" + unpacked.CodeAbreviation);
         }
     }
 }
