@@ -12,7 +12,8 @@ namespace BZFlag.Game.Host
     public class TCPConnectionManager
     {
         public int Port = 5154;
-        public TcpListener Listener = null;
+        public TcpListener ListenerV4 = null;
+        public TcpListener ListenerV6 = null;
 
         public BanList Bans = new BanList();
 
@@ -78,14 +79,17 @@ namespace BZFlag.Game.Host
         {
             Host = server;
             Port = port;
-            Listener = new TcpListener(IPAddress.Any, port);
+            ListenerV4 = new TcpListener(IPAddress.Any, port);
+            ListenerV6 = new TcpListener(IPAddress.IPv6Any, port);
         }
 
         public void StartUp()
         {
-            Listener.Start();
+            ListenerV4.Start();
+            ListenerV4.BeginAcceptTcpClient(TCPClientAcceptedV4, null);
 
-            Listener.BeginAcceptTcpClient(TCPClientAccepted, null);
+            ListenerV6.Start();
+            ListenerV6.BeginAcceptTcpClient(TCPClientAcceptedV6, null);
         }
 
         public void Shutdown()
@@ -94,18 +98,39 @@ namespace BZFlag.Game.Host
                 WorkerThread.Abort();
 
             WorkerThread = null;
+
+            ListenerV4.Stop();
+            ListenerV6.Stop();
         }
 
-        protected void TCPClientAccepted(IAsyncResult ar)
+        protected void TCPClientAcceptedV4(IAsyncResult ar)
         {
-
             PendingClient c = new PendingClient();
-            c.ClientConnection = Listener.EndAcceptTcpClient(ar);
+            c.ClientConnection = ListenerV4.EndAcceptTcpClient(ar);
             c.NetStream = c.ClientConnection.GetStream();
 
+            Logger.Log2("IPV4 Connection accepted from " + c.ClientConnection.Client.RemoteEndPoint.ToString());
+            AcceptClient(c);
+
+            ListenerV4.BeginAcceptTcpClient(TCPClientAcceptedV4, null);
+        }
+
+        protected void TCPClientAcceptedV6(IAsyncResult ar)
+        {
+            PendingClient c = new PendingClient();
+            c.ClientConnection = ListenerV6.EndAcceptTcpClient(ar);
+            c.NetStream = c.ClientConnection.GetStream();
+
+            Logger.Log2("IPV6 Connection accepted from " + c.ClientConnection.Client.RemoteEndPoint.ToString());
+            AcceptClient(c);
+
+            ListenerV6.BeginAcceptTcpClient(TCPClientAcceptedV4, null);
+        }
+
+        protected void AcceptClient(PendingClient c)
+        {
             Logger.Log2("TCP Connection accepted from " + c.ClientConnection.Client.RemoteEndPoint.ToString());
 
-            Listener.BeginAcceptTcpClient(TCPClientAccepted, null);
 
             var ban = Bans.FindIPBan(c.GetIPAsString());
             if (ban != null)
