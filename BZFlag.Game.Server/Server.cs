@@ -35,6 +35,8 @@ namespace BZFlag.Game.Host
 
         public PublicServer PubServer = new PublicServer();
 
+        public static event EventHandler MasterThreadTick;
+
         public class GameState
         {
             public bool IsPublic = false;
@@ -395,6 +397,7 @@ namespace BZFlag.Game.Host
                         Logger.Log1("PlayerID " + p.PlayerID.ToString() + " removed");
                     }
                 }
+                MasterThreadTick?.Invoke(this, EventArgs.Empty);
                 System.Threading.Thread.Sleep(10);
             }
         }
