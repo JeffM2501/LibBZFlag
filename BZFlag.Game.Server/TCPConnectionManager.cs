@@ -80,7 +80,15 @@ namespace BZFlag.Game.Host
             Host = server;
             Port = port;
             ListenerV4 = new TcpListener(IPAddress.Any, port);
-            ListenerV6 = new TcpListener(IPAddress.IPv6Any, port);
+            try
+            {
+                ListenerV6 = new TcpListener(IPAddress.IPv6Any, port);
+            }
+            catch (Exception)
+            {
+                ListenerV6 = null;
+            }
+            
         }
 
         public void StartUp()
@@ -88,8 +96,16 @@ namespace BZFlag.Game.Host
             ListenerV4.Start();
             ListenerV4.BeginAcceptTcpClient(TCPClientAcceptedV4, null);
 
-            ListenerV6.Start();
-            ListenerV6.BeginAcceptTcpClient(TCPClientAcceptedV6, null);
+            try
+            {
+                ListenerV6.Start();
+                ListenerV6.BeginAcceptTcpClient(TCPClientAcceptedV6, null);
+            }
+            catch (Exception)
+            {
+                ListenerV6 = null;
+            }
+            
         }
 
         public void Shutdown()
@@ -100,7 +116,8 @@ namespace BZFlag.Game.Host
             WorkerThread = null;
 
             ListenerV4.Stop();
-            ListenerV6.Stop();
+            if (ListenerV6 != null)
+                ListenerV6.Stop();
         }
 
         protected void TCPClientAcceptedV4(IAsyncResult ar)
@@ -117,6 +134,9 @@ namespace BZFlag.Game.Host
 
         protected void TCPClientAcceptedV6(IAsyncResult ar)
         {
+            if (ListenerV6 == null)
+                return;
+
             PendingClient c = new PendingClient();
             c.ClientConnection = ListenerV6.EndAcceptTcpClient(ar);
             c.NetStream = c.ClientConnection.GetStream();
@@ -130,8 +150,7 @@ namespace BZFlag.Game.Host
         protected void AcceptClient(PendingClient c)
         {
             Logger.Log2("TCP Connection accepted from " + c.ClientConnection.Client.RemoteEndPoint.ToString());
-
-
+            
             var ban = Bans.FindIPBan(c.GetIPAsString());
             if (ban != null)
             {
