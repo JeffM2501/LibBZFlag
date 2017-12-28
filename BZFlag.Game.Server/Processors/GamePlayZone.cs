@@ -10,6 +10,7 @@ using BZFlag.Networking.Messages.BZFS.Player;
 using BZFlag.Data.Teams;
 using BZFlag.Networking.Messages.BZFS.Control;
 using BZFlag.Networking.Messages.BZFS.Shots;
+using System.Diagnostics;
 
 namespace BZFlag.Game.Host.Processors
 {
@@ -77,6 +78,14 @@ namespace BZFlag.Game.Host.Processors
 
             ServerHost.RemovedPlayer(player);
             UpdatePublicListServer?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected override void Update()
+        {
+            ServerHost.State.GameTime.Update();
+            ServerHost.State.Flags.Update(ServerHost.State.GameTime);
+            ServerHost.State.Shots.Update(ServerHost.State.GameTime);
+            ServerHost.State.Players.Update(ServerHost.State.GameTime);
         }
 
         protected override void UpdatePlayer(ServerPlayer player)

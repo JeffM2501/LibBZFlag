@@ -153,5 +153,10 @@ namespace BZFlag.Game.Host.World
             if (!sentOne || msg.FlagUpdates.Count > 0)
                 player.SendMessage(msg);
         }
+
+        public void Update(Data.Time.Clock gameTime)
+        {
+
+        }
     }
 }

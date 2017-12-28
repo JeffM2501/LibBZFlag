@@ -59,7 +59,7 @@ namespace BZFlag.Game.Host.API
                
         }
 
-        public static void Shutdown(ServerHost servInstance)
+        public static void Shutdown(Server servInstance)
         {
             Logger.Log2("Plug-ins Shutdown");
             foreach (var p in Plugins)

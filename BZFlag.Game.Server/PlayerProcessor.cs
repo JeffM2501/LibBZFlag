@@ -101,6 +101,11 @@ namespace BZFlag.Game.Host
 
         }
 
+        protected virtual void Update()
+        {
+
+        }
+
         protected void ProcessPendingPlayers()
         {
             ServerPlayer[] locals = null;
@@ -110,6 +115,8 @@ namespace BZFlag.Game.Host
 
             while (locals.Length > 0)
             {
+                Update();
+
                 foreach (ServerPlayer player in locals)
                 {
                     bool keep = true;

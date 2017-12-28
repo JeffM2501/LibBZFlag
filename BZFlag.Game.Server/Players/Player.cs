@@ -1,15 +1,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
-using System.Net;
 
 using BZFlag.Networking.Messages;
 using BZFlag.Networking.Common;
 using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Data.Teams;
+using BZFlag.Game.Host.World;
 
 namespace BZFlag.Game.Host.Players
 {
@@ -31,6 +29,8 @@ namespace BZFlag.Game.Host.Players
         public TeamColors ActualTeam = TeamColors.AutomaticTeam;
 
         public event EventHandler<Peer> Exited = null;
+
+        public FlagManager.FlagInstance CariedFlag = null;
 
         public class ScoreInfo
         {

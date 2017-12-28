@@ -10,6 +10,8 @@ using BZFlag.Game.Host.Players;
 using BZFlag.Data.Players;
 using BZFlag.Game.Host.API;
 
+using BZFlag.Data.BZDB;
+using BZFlag.Data.Time;
 using BZFlag.Game.Host.World;
 using BZFlag.Data.Teams;
 using BZFlag.Networking.Messages;
@@ -37,7 +39,9 @@ namespace BZFlag.Game.Host
         {
             public bool IsPublic = false;
 
-            public BZFlag.Data.BZDB.Database BZDatabase = new BZFlag.Data.BZDB.Database();
+            public Clock GameTime = new Clock();
+
+            public Database BZDatabase = new Database();
 
             public GameWorld World = new GameWorld();
             public FlagManager Flags = new FlagManager();
@@ -52,7 +56,7 @@ namespace BZFlag.Game.Host
 
         public Server(ServerConfig cfg)
         {
-            Networking.Messages.NetworkMessage.IsOnServer = true;
+            NetworkMessage.IsOnServer = true;
 
             Logger.SetLogFilePath(cfg.LogFile);
             Logger.LogLevel = cfg.LogLevel;
@@ -391,9 +395,7 @@ namespace BZFlag.Game.Host
                         Logger.Log1("PlayerID " + p.PlayerID.ToString() + " removed");
                     }
                 }
-
-
-                System.Threading.Thread.Sleep(100);
+                System.Threading.Thread.Sleep(10);
             }
         }
     }

@@ -52,6 +52,7 @@
     <Compile Include="Players\PlayerConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Teams\TeamColors.cs" />
+    <Compile Include="Time\Clock.cs" />
     <Compile Include="Types\Color4F.cs" />
     <Compile Include="Types\Constants.cs" />
     <Compile Include="Utils\BufferUtils.cs" />

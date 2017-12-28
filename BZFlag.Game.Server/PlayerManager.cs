@@ -12,6 +12,7 @@ using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Networking.Messages.BZFS;
 using BZFlag.Data.Players;
 using BZFlag.LinearMath;
+using BZFlag.Data.Time;
 
 namespace BZFlag.Game.Host
 {
@@ -96,6 +97,10 @@ namespace BZFlag.Game.Host
 
         }
 
+        public void Update(Clock gameTime)
+        {
+        }
+
         public virtual bool AddPlayer(ServerPlayer player)
         {
             player.Exited += Player_Exited;
@@ -130,21 +135,23 @@ namespace BZFlag.Game.Host
                     TeamInited?.Invoke(this, Teams[player.ActualTeam]);
             }
 
+            // tell them about everone except them
+            ServerPlayer[] locals = null;
+
+            lock (Players)
+                locals = Players.ToArray();
+
+            foreach (ServerPlayer peer in locals)
+            {
+                if (peer == player)
+                    continue;
+
+                player.SendMessage(false, BuildPlayerAdd(peer));
+            }
+               
             // tell everyone they joined
 
-            MsgAddPlayer add = new MsgAddPlayer();
-
-            add.PlayerID = player.PlayerID;
-            add.Callsign = player.Callsign;
-            add.Team = player.ActualTeam;
-            add.Motto = player.Motto;
-            add.PlayerType = 0;
-            add.Wins = player.Score.Wins;
-            add.Losses = player.Score.Losses;
-            add.TeamKills = player.Score.TeamKills;
-
-            SendToAll(add, false);
-
+            SendToAll(BuildPlayerAdd(player), false);
 
             TeamInfo[] teams = null;
             lock (Teams)
@@ -190,6 +197,22 @@ namespace BZFlag.Game.Host
             SendToAll(info, false);
 
             return true;
+        }
+
+        private MsgAddPlayer BuildPlayerAdd(ServerPlayer player)
+        {
+            MsgAddPlayer add = new MsgAddPlayer();
+
+            add.PlayerID = player.PlayerID;
+            add.Callsign = player.Callsign;
+            add.Team = player.ActualTeam;
+            add.Motto = player.Motto;
+            add.PlayerType = 0;
+            add.Wins = player.Score.Wins;
+            add.Losses = player.Score.Losses;
+            add.TeamKills = player.Score.TeamKills;
+
+            return add;
         }
 
         private void Player_Exited(object sender, Networking.Common.Peer e)
