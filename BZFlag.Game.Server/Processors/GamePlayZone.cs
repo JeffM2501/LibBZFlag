@@ -125,7 +125,8 @@ namespace BZFlag.Game.Host.Processors
 
         private void HandleKilled(ServerPlayer player, NetworkMessage msg)
         {
-
+            // TODO, tell shots and players that someone died
+            SendToAll(msg, msg.FromUDP);
         }
 
         private void HandleChatMessage(ServerPlayer player, NetworkMessage msg)
