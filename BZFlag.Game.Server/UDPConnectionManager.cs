@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Text;
 
-using BZFlag.Networking.Messages;
 using BZFlag.Networking;
-
-
+using BZFlag.Networking.Messages;
 using BZFlag.Game.Host.Players;
 using BZFlag.Networking.Messages.BZFS.UDP;
-using System.Text;
 using BZFlag.Data.Utils;
-using static BZFlag.Networking.InboundMessageBuffer;
 
 namespace BZFlag.Game.Host
 {
@@ -83,8 +80,6 @@ namespace BZFlag.Game.Host
                 UDPSocketV6 = null;
                 UDPReceiveThreadV6 = null;
             }
-
-         
         }
 
         private Thread UDPReceiveThreadV4 = null;
@@ -148,14 +143,13 @@ namespace BZFlag.Game.Host
 
         protected void ProcessUDPPackets(IPEndPoint ep, byte[] data)
         {
-
             if (data.Length < 4)
                 return;
 
             int len = BufferUtils.ReadUInt16(data, 0);
             int code = BufferUtils.ReadUInt16(data, 2);
 
-            CompletedMessage msg = new CompletedMessage();
+            InboundMessageBuffer.CompletedMessage msg = new InboundMessageBuffer.CompletedMessage();
             msg.ID = code;
             msg.Size = len;
 
@@ -211,7 +205,7 @@ namespace BZFlag.Game.Host
                 UDPSocketV6.Send(buffer, buffer.Length, address);
         }
 
-        private void CompleteMessageRecived(CompletedMessage msg)
+        private void CompleteMessageRecived(InboundMessageBuffer.CompletedMessage msg)
         {
            // while (msg != null || msg.Tag as IPEndPoint == null)
             {
