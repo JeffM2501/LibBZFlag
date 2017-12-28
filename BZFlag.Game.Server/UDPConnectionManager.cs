@@ -29,7 +29,8 @@ namespace BZFlag.Game.Host
 
         public event EventHandler<OutOfBandUDPEventArgs> OutOfBandUDPMessage = null;
 
-        protected UdpClient UDPSocket = null;
+        protected UdpClient UDPSocketV4 = null;
+        protected UdpClient UDPSocketV6 = null;
         protected int UDPInPort = 5154;
 
 
@@ -66,21 +67,49 @@ namespace BZFlag.Game.Host
         public void Listen(int port)
         {
             UDPInPort = port;
-            UDPSocket = new UdpClient(UDPInPort);
+            UDPSocketV4 = new UdpClient(UDPInPort,AddressFamily.InterNetwork);
+            UDPReceiveThreadV4 = new Thread(new ThreadStart(ReceiveV4));
+            UDPReceiveThreadV4.Start();
 
-            UDPReceiveThread = new Thread(new ThreadStart(Receive));
-            UDPReceiveThread.Start();
+            try
+            {
+                UDPSocketV6 = new UdpClient(UDPInPort, AddressFamily.InterNetworkV6);
+                UDPReceiveThreadV6 = new Thread(new ThreadStart(ReceiveV6));
+                UDPReceiveThreadV6.Start();
+            }
+            catch (Exception)
+            {
+
+                UDPSocketV6 = null;
+                UDPReceiveThreadV6 = null;
+            }
+
+         
         }
 
-        private Thread UDPReceiveThread = null;
+        private Thread UDPReceiveThreadV4 = null;
+        private Thread UDPReceiveThreadV6 = null;
 
-        protected void Receive()
+        protected void ReceiveV4()
         {
             while(true)
             {
                 IPEndPoint source = null;
 
-                byte[] data = UDPSocket.Receive(ref source);
+                byte[] data = UDPSocketV4.Receive(ref source);
+
+                if (data != null && data.Length > 0 && source != null)
+                    ProcessUDPPackets(source, data);
+            }
+        }
+
+        protected void ReceiveV6()
+        {
+            while (true)
+            {
+                IPEndPoint source = null;
+
+                byte[] data = UDPSocketV6.Receive(ref source);
 
                 if (data != null && data.Length > 0 && source != null)
                     ProcessUDPPackets(source, data);
@@ -91,20 +120,30 @@ namespace BZFlag.Game.Host
         {
             try
             {
-                if (UDPReceiveThread != null)
-                    UDPReceiveThread.Abort();
-                UDPReceiveThread = null;
+                if (UDPReceiveThreadV4 != null)
+                    UDPReceiveThreadV4.Abort();
+                UDPReceiveThreadV4 = null;
 
-                if (UDPSocket != null)
+                if (UDPReceiveThreadV6 != null)
+                    UDPReceiveThreadV6.Abort();
+                UDPReceiveThreadV6 = null;
+
+                if (UDPSocketV4 != null)
                 {
-                    UDPSocket.Close();
-                    UDPSocket.Dispose();
+                    UDPSocketV4.Close();
+                    UDPSocketV4.Dispose();
+                }
+
+                if (UDPSocketV6 != null)
+                {
+                    UDPSocketV6.Close();
+                    UDPSocketV6.Dispose();
                 }
             }
             catch (Exception)
             {
             }
-            UDPSocket = null;
+            UDPSocketV4 = null;
         }
 
         protected void ProcessUDPPackets(IPEndPoint ep, byte[] data)
@@ -166,11 +205,10 @@ namespace BZFlag.Game.Host
 
         public void WriteUDP(byte[] buffer, IPEndPoint address)
         {
-            if (UDPSocket != null)
-            {
-            //    UDPSocket.Connect(address);
-              int sent = UDPSocket.Send(buffer, buffer.Length, address);
-            }
+            if (UDPSocketV4 != null && address.AddressFamily == AddressFamily.InterNetwork)
+                UDPSocketV4.Send(buffer, buffer.Length, address);
+            else if (UDPSocketV6 != null && address.AddressFamily == AddressFamily.InterNetworkV6)
+                UDPSocketV6.Send(buffer, buffer.Length, address);
         }
 
         private void CompleteMessageRecived(CompletedMessage msg)
