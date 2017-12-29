@@ -5,7 +5,6 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using BZFlag.Networking;
-using BZFlag.Game.Security;
 
 namespace BZFlag.Game.Host
 {
@@ -15,7 +14,11 @@ namespace BZFlag.Game.Host
         public TcpListener ListenerV4 = null;
         public TcpListener ListenerV6 = null;
 
-        public BanList Bans = new BanList();
+
+        public delegate bool BanCallback(PendingClient player, ref string reason);
+
+        public BanCallback CheckIPBan;
+        public BanCallback CheckHostBan;
 
         public class PendingClient : EventArgs
         {
@@ -56,21 +59,6 @@ namespace BZFlag.Game.Host
 
         public event EventHandler<PendingClient> BZFSProtocolConnectionAccepted = null;
 
-        public class NetworkBanEventArgs : EventArgs
-        {
-            public PendingClient Client = null;
-            public BanList.BanRecord Ban = null;
-
-            public NetworkBanEventArgs (PendingClient c, BanList.BanRecord b)
-            {
-                Client = c;
-                Ban = b;
-            }
-        }
-
-        public event EventHandler<NetworkBanEventArgs> ConnectionIPBanned = null;
-        public event EventHandler<NetworkBanEventArgs> ConnectionHostBanned = null;
-
         protected Thread WorkerThread = null;
 
         protected Server Host = null;
@@ -104,7 +92,6 @@ namespace BZFlag.Game.Host
             {
                 ListenerV6 = null;
             }
-            
         }
 
         public void Shutdown()
@@ -149,11 +136,14 @@ namespace BZFlag.Game.Host
         protected void AcceptClient(PendingClient c)
         {
             Logger.Log2("TCP Connection accepted from " + c.ClientConnection.Client.RemoteEndPoint.ToString());
-            
-            var ban = Bans.FindIPBan(c.GetIPAsString());
-            if (ban != null)
+
+            bool ban = false;
+            string reason = string.Empty;
+            if (CheckIPBan != null)
+                ban = CheckIPBan(c, ref reason);
+
+            if (ban)
             {
-                ConnectionIPBanned?.Invoke(this, new NetworkBanEventArgs(c, ban));
                 c.ClientConnection.Close();
                 return;
             }
@@ -203,14 +193,18 @@ namespace BZFlag.Game.Host
                     {
                         if (c.HostEntry != null)
                         {
-                            Logger.Log3("Ban-List Lookup started for " + c.HostEntry.HostName);
+                            Logger.Log3("Ban check started for " + c.HostEntry.HostName);
                             // lookup the host in the ban list
-                            var ban = Bans.FindHostBan(c.HostEntry.HostName);
-                            if (ban == null)
+
+                            bool ban = false;
+                            string reason = string.Empty;
+                            if (CheckHostBan != null)
+                                ban = CheckHostBan(c, ref reason);
+
+                            if (ban )
                                 c.DNSPassed = true;
                             else
                             {
-                                ConnectionHostBanned?.Invoke(this, new NetworkBanEventArgs(c, ban));
                                 c.HostEntry = null;
                                 DisconnectPendingClient(c);
                             }

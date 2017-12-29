@@ -355,12 +355,7 @@ namespace BZFlag.Game.Host
             TCPConnections = new TCPConnectionManager(port, this);
 
             TCPConnections.BZFSProtocolConnectionAccepted += BZFSProtocolConnectionAccepted;
-            TCPConnections.ConnectionHostBanned += TCPConnections_ConnectionHostBanned;
-            TCPConnections.ConnectionIPBanned += TCPConnections_ConnectionIPBanned;
-
             UDPConnections = new UDPConnectionManager(UDPServerMessageFactory.Factory);
-
-            SecurityArea.Bans = TCPConnections.Bans;
 
             SecurityArea.Setup();
             TCPConnections.StartUp();

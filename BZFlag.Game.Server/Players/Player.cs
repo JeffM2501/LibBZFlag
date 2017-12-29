@@ -16,8 +16,6 @@ namespace BZFlag.Game.Host.Players
         public int PlayerID = 0;
         public string BZID = string.Empty;
 
-        public object Tag = 0;
-
         public bool Accepted = false;
         public string RejectionReason = string.Empty;
 
@@ -57,6 +55,8 @@ namespace BZFlag.Game.Host.Players
 
         public AuthStatuses AuthStatus = AuthStatuses.Unknown;
         public List<string> GroupMemberships = new List<string>();
+
+        public Dictionary<string, object> Tags = new Dictionary<string, object>();
 
         protected NetworkStream NetStream = null;
 

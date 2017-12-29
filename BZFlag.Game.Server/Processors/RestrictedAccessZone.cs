@@ -11,7 +11,6 @@ using BZFlag.Networking.Messages.BZFS.Player;
 using BZFlag.Networking.Messages.BZFS.Control;
 using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Services;
-using BZFlag.Game.Security;
 using BZFlag.Game.Host.World;
 using BZFlag.Data.Game;
 using System.Security.Cryptography;
@@ -20,13 +19,16 @@ namespace BZFlag.Game.Host.Processors
 {
     internal class RestrictedAccessZone : PlayerProcessor
     {
-        public BanList Bans = new BanList();
         public FlagManager Flags = new FlagManager();
         public GameWorld World = new GameWorld();
 
         protected MsgGameSettings SettingsCache = null;
         protected MsgWantWHash HashCache = null;
         protected MsgCacheURL URLCache = null;
+
+        public delegate bool IDBanCallback(ServerPlayer player, ref string reason);
+
+        public IDBanCallback CheckIDBan = null;
 
         public event EventHandler<ServerPlayer> PlayerRejected;
         public event EventHandler<ServerPlayer> PlayerBanned;
@@ -172,12 +174,17 @@ namespace BZFlag.Game.Host.Processors
                 player.BZID = checker.BZID;
                 player.GroupMemberships = checker.Groups;
 
-                var ban = Bans.FindIDBan(checker.BZID);
 
-                if (ban != null)
+                bool ban = false;
+                string reason = string.Empty;
+
+                if (CheckIDBan != null)
+                    ban = CheckIDBan(player, ref reason);
+
+                if (ban)
                 {
                     PlayerBanned?.Invoke(this, player);
-                    SendReject(player, MsgReject.RejectionCodes.RejectIDBanned, ban.Reason);
+                    SendReject(player, MsgReject.RejectionCodes.RejectIDBanned, reason);
                 }
                    
                 else

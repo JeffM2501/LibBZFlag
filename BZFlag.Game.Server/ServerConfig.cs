@@ -21,7 +21,16 @@ namespace BZFlag.Game.Host
         public int LogLevel { get; set; } = 4;
 
         // external databases
-        public string BanListFile { get; set; } = string.Empty;
+        public class SecurityInfo
+        {
+            public string BanDBBackend { get; set; } = "SQLITE";
+            public string BanDBFile { get; set; } = string.Empty;
+            public bool BansReadOnly { get; set; } = true;
+
+            public int IPV4SubnetBanRange { get; set; } = 1;
+            public int IPV6SubnetBanRange { get; set; } = 3;
+        }
+        public SecurityInfo Security { get; set; } = new SecurityInfo();
 
         // public data
         public bool ListPublicly { get; set; } = false;

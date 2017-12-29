@@ -11,7 +11,6 @@ using BZFlag.Networking.Messages.BZFS.Player;
 using BZFlag.Networking.Messages.BZFS.Control;
 using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Services;
-using BZFlag.Game.Security;
 using BZFlag.Game.Host.World;
 using BZFlag.Networking.Messages.BZFS.BZDB;
 

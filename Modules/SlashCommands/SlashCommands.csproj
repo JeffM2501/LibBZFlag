@@ -59,4 +59,9 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if not exist $(SolutionDir)_test mkdir $(SolutionDir)_test
+if not exist $(SolutionDir)_test\Modules mkdir $(SolutionDir)_test\Modules
+copy $(TargetPath) $(SolutionDir)_test\Modules</PostBuildEvent>
+  </PropertyGroup>
 </Project>

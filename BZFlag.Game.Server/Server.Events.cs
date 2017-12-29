@@ -41,7 +41,8 @@ namespace BZFlag.Game.Host
 
         public event EventHandler<ServerPlayer> NewConnection;
 
-        public event EventHandler<ServerPlayer> PlayerBanned;
+        public event EventHandler<TCPConnectionManager.PendingClient> PlayerAddressBanned;
+        public event EventHandler<ServerPlayer> PlayerIDBanned;
         public event EventHandler<ServerPlayer> PlayerRejected;
         public event EventHandler<ServerPlayer> PlayerAccepted;
 
@@ -51,32 +52,69 @@ namespace BZFlag.Game.Host
 
         public event EventHandler<BooleanResultPlayerEventArgs> CheckPlayerAcceptance;
 
-        public event EventHandler<TCPConnectionManager.NetworkBanEventArgs> ConnectionBanned;
-
 
         private void RegisterProcessorEvents()
         {
-            SecurityArea.CheckPlayerAcceptance += this.SecurityArea_CheckPlayerAcceptance;
+           
             SecurityArea.PlayerAccepted += this.SecurityArea_PlayerAccepted;
             SecurityArea.PlayerBanned += this.SecurityArea_PlayerBanned;
             SecurityArea.PlayerRejected += SecurityArea_PlayerRejected;
 
             GameZone.PlayerRejected += SecurityArea_PlayerRejected; // can still be rejected by team
+
+            TCPConnections.CheckIPBan = CheckTCPIPBan;
+            TCPConnections.CheckHostBan = CheckTCPHostBan;
+            SecurityArea.CheckIDBan = CheckBZIDBan;
+            SecurityArea.CheckPlayerAcceptance += this.SecurityArea_CheckPlayerAcceptance;
         }
 
-        private void TCPConnections_ConnectionIPBanned(object sender, TCPConnectionManager.NetworkBanEventArgs e)
+        // ban hooks
+        public delegate bool AddressBanCallback(string addres, bool IsIP, ref string reason);
+        public delegate bool PlayerBanCallback(ServerPlayer player, ref string reason);
+
+        public AddressBanCallback IsAddressBanned = null;
+        public PlayerBanCallback IsPlayerBanned = null;
+
+        private bool CheckBZIDBan(ServerPlayer player, ref string reason)
         {
-            ConnectionBanned?.Invoke(this, e);
+            if (IsPlayerBanned == null)
+                return false;
+
+            return IsPlayerBanned(player, ref reason);
         }
 
-        private void TCPConnections_ConnectionHostBanned(object sender, TCPConnectionManager.NetworkBanEventArgs e)
+        private bool CheckTCPHostBan(TCPConnectionManager.PendingClient player, ref string reason)
         {
-            ConnectionBanned?.Invoke(this, e);
+            if (IsAddressBanned == null)
+                return false;
+
+            bool banned = IsAddressBanned(player.HostEntry.HostName, false, ref reason);
+            if (banned)
+                PlayerAddressBanned?.Invoke(this, player);
+
+            return banned;
+        }
+
+        private bool CheckTCPIPBan(TCPConnectionManager.PendingClient player, ref string reason)
+        {
+            if (IsAddressBanned == null)
+                return false;
+
+            bool banned = IsAddressBanned(player.GetIPAsString(), false, ref reason);
+            if (banned)
+                PlayerAddressBanned?.Invoke(this, player);
+
+            return banned;
+        }
+
+        private void SecurityArea_CheckPlayerAcceptance(object sender, BooleanResultPlayerEventArgs e)
+        {
+            CheckPlayerAcceptance?.Invoke(this, e);
         }
 
         private void SecurityArea_PlayerBanned(object sender, ServerPlayer e)
         {
-            PlayerBanned?.Invoke(this, e);
+            PlayerIDBanned?.Invoke(this, e);
         }
 
         private void SecurityArea_PlayerAccepted(object sender, ServerPlayer e)
@@ -87,11 +125,6 @@ namespace BZFlag.Game.Host
         private void SecurityArea_PlayerRejected(object sender, ServerPlayer e)
         {
             PlayerRejected?.Invoke(this, e);
-        }
-
-        private void SecurityArea_CheckPlayerAcceptance(object sender, BooleanResultPlayerEventArgs e)
-        {
-            CheckPlayerAcceptance?.Invoke(this, e);
         }
 
         public void PreAddPlayer(ServerPlayer p)

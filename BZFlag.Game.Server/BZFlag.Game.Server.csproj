@@ -50,7 +50,6 @@
   <ItemGroup>
     <Compile Include="API\Common.cs" />
     <Compile Include="API\Plugins.cs" />
-    <Compile Include="BanList.cs" />
     <Compile Include="BZDB\Defaults.cs" />
     <Compile Include="BZFS.cs" />
     <Compile Include="ChatManager.cs" />
