@@ -28,6 +28,8 @@ namespace BZFS.SlashCommands
 
         protected Thread Worker = null;
 
+        protected Server Instance = null;
+
         public void Shutdown(Server serverInstance)
         {
             lock (PendingCommands)
@@ -42,7 +44,11 @@ namespace BZFS.SlashCommands
 
         public void Startup(Server serverInstance)
         {
-            serverInstance.State.Chat.AcceptTextCommand = TextCommandCallback;
+            Instance = serverInstance;
+
+            Instance.State.Chat.AcceptTextCommand = TextCommandCallback;
+
+            RegisterStandardCommands();
         }
 
         private bool TextCommandCallback(ServerPlayer player, MsgMessage message)
@@ -104,6 +110,18 @@ namespace BZFS.SlashCommands
 
             lock (PendingCommands)
                 Worker = null;
+        }
+
+
+        void RegisterStandardCommands()
+        {
+            Commands.RegisterHandler("DATE", DateTimeCommand);
+            Commands.RegisterHandler("TIME", DateTimeCommand);
+        }
+
+        protected void DateTimeCommand(string command, string arguments, ServerPlayer caller)
+        {
+            Instance.State.Chat.SendChatToUser(null, caller, DateTime.Now.ToString(), false);
         }
     }
 }
