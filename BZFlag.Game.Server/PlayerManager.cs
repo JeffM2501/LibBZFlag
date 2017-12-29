@@ -128,7 +128,6 @@ namespace BZFlag.Game.Host
                     team.PlayerRemoved += Team_PlayerRemoved;
                     Teams.Add(player.ActualTeam, team);
                 }
-                    
 
                 Teams[player.ActualTeam].Add(player);
                 if (Teams[player.ActualTeam].Members.Count == 1)

@@ -27,6 +27,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{03D5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadWordFilter", "Modules\BadWordFilter\BadWordFilter.csproj", "{BE5B4DD6-A9A1-42AC-B09C-CB11CFE1D2FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlashCommands", "Modules\SlashCommands\SlashCommands.csproj", "{F9CE7698-94C4-4994-B40F-35C260CA91B6}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Compression\Zlib.Shared\Zlib.Shared.projitems*{9816ba86-9250-4c00-a912-25f07f8677d1}*SharedItemsImports = 4
@@ -73,6 +75,10 @@ Global
 		{BE5B4DD6-A9A1-42AC-B09C-CB11CFE1D2FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE5B4DD6-A9A1-42AC-B09C-CB11CFE1D2FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE5B4DD6-A9A1-42AC-B09C-CB11CFE1D2FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9CE7698-94C4-4994-B40F-35C260CA91B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9CE7698-94C4-4994-B40F-35C260CA91B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9CE7698-94C4-4994-B40F-35C260CA91B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9CE7698-94C4-4994-B40F-35C260CA91B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +87,7 @@ Global
 		{C6B960DA-45D1-4D38-8697-05C0BA439503} = {540B6F9C-9BA8-4B82-9011-FD10ACB76C3E}
 		{9816BA86-9250-4C00-A912-25F07F8677D1} = {540B6F9C-9BA8-4B82-9011-FD10ACB76C3E}
 		{BE5B4DD6-A9A1-42AC-B09C-CB11CFE1D2FA} = {03D52218-A7AC-4B0E-ACC0-8BEF4EEB1545}
+		{F9CE7698-94C4-4994-B40F-35C260CA91B6} = {03D52218-A7AC-4B0E-ACC0-8BEF4EEB1545}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E030BA98-F96B-4F52-AAF6-D48B6CE52364}
