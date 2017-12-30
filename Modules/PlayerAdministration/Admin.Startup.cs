@@ -23,6 +23,9 @@ namespace BZFS.PlayerAdministration
         private Server Instance = null;
         Thread ExpireCheck = null;
 
+        private Server.AddressBanCallback OrigonalAddressBan = null;
+        private Server.PlayerBanCallback OrigonaPlayerBan = null;
+
         public void Shutdown(Server serverInstance)
         {
             if (ExpireCheck != null)
@@ -42,6 +45,10 @@ namespace BZFS.PlayerAdministration
             Instance.APILoadComplete += ServerInstance_APILoadComplete;
 
             Instance.CheckPlayerAcceptance += ServerInstance_CheckPlayerAcceptance;
+
+            OrigonalAddressBan = Instance.IsAddressBanned;
+            OrigonaPlayerBan = Instance.IsPlayerBanned;
+
             Instance.IsAddressBanned = ServerInstance_CheckAddressBan;
             Instance.IsPlayerBanned = ServerInstance_CheckIDBan;
 
@@ -68,14 +75,26 @@ namespace BZFS.PlayerAdministration
         {
             var results = BanDatabase.CheckIDBan(player.BZID);
             reason = results.Reason;
-            return results.Active;
+
+            if (results.Active)
+                return true;
+
+            if (OrigonaPlayerBan != null)
+                return OrigonaPlayerBan(player, ref reason);
+            return false;
         }
 
         private bool ServerInstance_CheckAddressBan(string addres, bool IsIP, ref string reason)
         {
             var results = IsIP ? BanDatabase.CheckAddressBan(addres) : BanDatabase.CheckHostBan(addres);
             reason = results.Reason;
-            return results.Active;
+
+            if (results.Active)
+                return true;
+
+            if (OrigonalAddressBan != null)
+                return OrigonalAddressBan(addres, IsIP, ref reason);
+            return false;
         }
 
         private void ServerInstance_CheckPlayerAcceptance(object sender, Server.BooleanResultPlayerEventArgs e)
