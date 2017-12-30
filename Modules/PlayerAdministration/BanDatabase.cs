@@ -25,7 +25,7 @@ namespace BZFS.PlayerAdministration
             if (Backend != null)
                 return;
 
-            API.RegisterDBBackend("SQLITE", new Databases.SQLiteBanDB());
+            API.RegisterDBBackend("YAML", new Databases.YAMLFlatFileDB());
             string backend = info.BanDBBackend.ToUpperInvariant();
 
             lock (API.Backends)

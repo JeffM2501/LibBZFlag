@@ -136,24 +136,31 @@ namespace BZFlag.Game.Host
             BZDBDefaultsLoaded?.Invoke(this, EventArgs.Empty);
         }
 
+        List<Assembly> ModuleAssemblies = new List<Assembly>();
+
         private void SetupAPI()
         {
             Logger.Log2("Load API");
 
             API.Common.ServerInstnace = this;
 
+            AppDomain.CurrentDomain.AssemblyResolve += ModuleAssemblyResolver;
+
             PluginLoader.LoadFromAssembly(Assembly.GetExecutingAssembly(), false);
 
-            DirectoryInfo modulesDir = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Modules"));
-            if (modulesDir.Exists)
+            DirectoryInfo ModulesDir = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Modules"));
+            if (ModulesDir.Exists)
             {
-                foreach (var module in modulesDir.GetFiles("*.dll"))
+                foreach (var module in ModulesDir.GetFiles("*.dll"))
                 {
                     try
                     {
                         var a = Assembly.LoadFile(module.FullName);
                         if (a != null)
+                        {
+                            ModuleAssemblies.Add(a);
                             PluginLoader.LoadFromAssembly(a, false);
+                        }
                     }
                     catch (System.Exception ex)
                     {
@@ -170,20 +177,28 @@ namespace BZFlag.Game.Host
             {
                 try
                 {
+                    DirectoryInfo PluginDir = new DirectoryInfo(Path.GetDirectoryName(f));
                     var a = Assembly.LoadFile(f);
                     if (a != null)
+                    {
+                        ModuleAssemblies.Add(a);
                         PluginLoader.LoadFromAssembly(a, true);
+                    }
                 }
                 catch (System.Exception ex)
                 {
                     Logger.Log1("Unable to load plug-in " + f + " :" + ex.ToString());
                 }
             }
-
             PluginLoader.Startup(this);
 
             APILoadComplete?.Invoke(this, EventArgs.Empty);
             ConfigLoaded?.Invoke(this, EventArgs.Empty);
+        }
+
+        private Assembly ModuleAssemblyResolver(object sender, ResolveEventArgs args)
+        {
+            return ModuleAssemblies.Find((x) => x.FullName == args.Name);
         }
 
         // cache some items from the config.
@@ -356,6 +371,9 @@ namespace BZFlag.Game.Host
 
             TCPConnections.BZFSProtocolConnectionAccepted += BZFSProtocolConnectionAccepted;
             UDPConnections = new UDPConnectionManager(UDPServerMessageFactory.Factory);
+
+            TCPConnections.CheckIPBan = CheckTCPIPBan;
+            TCPConnections.CheckHostBan = CheckTCPHostBan;
 
             SecurityArea.Setup();
             TCPConnections.StartUp();

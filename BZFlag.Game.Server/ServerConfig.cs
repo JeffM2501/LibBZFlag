@@ -23,7 +23,7 @@ namespace BZFlag.Game.Host
         // external databases
         public class SecurityInfo
         {
-            public string BanDBBackend { get; set; } = "SQLITE";
+            public string BanDBBackend { get; set; } = "YAML";
             public string BanDBFile { get; set; } = string.Empty;
             public bool BansReadOnly { get; set; } = true;
 

@@ -55,15 +55,12 @@ namespace BZFlag.Game.Host
 
         private void RegisterProcessorEvents()
         {
-           
             SecurityArea.PlayerAccepted += this.SecurityArea_PlayerAccepted;
             SecurityArea.PlayerBanned += this.SecurityArea_PlayerBanned;
             SecurityArea.PlayerRejected += SecurityArea_PlayerRejected;
 
             GameZone.PlayerRejected += SecurityArea_PlayerRejected; // can still be rejected by team
 
-            TCPConnections.CheckIPBan = CheckTCPIPBan;
-            TCPConnections.CheckHostBan = CheckTCPHostBan;
             SecurityArea.CheckIDBan = CheckBZIDBan;
             SecurityArea.CheckPlayerAcceptance += this.SecurityArea_CheckPlayerAcceptance;
         }
