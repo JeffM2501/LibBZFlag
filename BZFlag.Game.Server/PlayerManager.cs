@@ -140,14 +140,17 @@ namespace BZFlag.Game.Host
             lock (Players)
                 locals = Players.ToArray();
 
+            MsgPlayerInfo info = new MsgPlayerInfo();
             foreach (ServerPlayer peer in locals)
             {
                 if (peer == player)
                     continue;
 
                 player.SendMessage(false, BuildPlayerAdd(peer));
+                info.PlayerUpdates.Add(GetPlayerInfo(peer));
             }
-               
+            player.SendMessage(false, info);
+
             // tell everyone they joined
 
             SendToAll(BuildPlayerAdd(player), false);
@@ -183,19 +186,27 @@ namespace BZFlag.Game.Host
                 player.SendMessage(observerMsg);
             }
 
-            // send info bits
-            MsgPlayerInfo info = new MsgPlayerInfo();
+            // send info bits to everyone
+            info = new MsgPlayerInfo();
 
+            info.PlayerUpdates.Add(GetPlayerInfo(player));
+
+            SendToAll(info, false);
+
+            return true;
+        }
+
+        private MsgPlayerInfo.PlayerInfoData GetPlayerInfo(ServerPlayer player)
+        {
             MsgPlayerInfo.PlayerInfoData d = new MsgPlayerInfo.PlayerInfoData();
             d.PlayerID = player.PlayerID;
             if (player.BZID != string.Empty)
                 d.Attributes = PlayerAttributes.IsVerified;
 
-            info.PlayerUpdates.Add(d);
+            if (player.ShowAdminMark)
+                d.Attributes |= PlayerAttributes.IsAdmin;
 
-            SendToAll(info, false);
-
-            return true;
+            return d;
         }
 
         private MsgAddPlayer BuildPlayerAdd(ServerPlayer player)
@@ -362,6 +373,14 @@ namespace BZFlag.Game.Host
         {
             lock (Players)
                 return Players.Find((x) => x.PlayerID == playerID);
+        }
+
+        public virtual ServerPlayer GetPlayerByCallsign(string callsign)
+        {
+            string c = callsign.ToUpperInvariant();
+
+            lock (Players)
+                return Players.Find((x) => x.Callsign.ToUpperInvariant() == c);
         }
 
         public virtual void SendToAll(NetworkMessage message, bool useUDP)

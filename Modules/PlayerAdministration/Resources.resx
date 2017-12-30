@@ -117,6 +117,42 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ArgumentNoUserMessage" xml:space="preserve">
+    <value>Unable to locate player: </value>
+  </data>
+  <data name="BanCompleteMessage" xml:space="preserve">
+    <value>Banning player: </value>
+  </data>
+  <data name="BanDefaultReason" xml:space="preserve">
+    <value>Banned</value>
+  </data>
+  <data name="BanImmunityMessage" xml:space="preserve">
+    <value>Ban immunity in place for player: </value>
+  </data>
+  <data name="BanMalformedMessage" xml:space="preserve">
+    <value>Uknown ban arguments useage, /ban PLAYER BanType[WEAK/STRONG] Durration[#D#M/FULL] REASON</value>
+  </data>
+  <data name="BanNonAuthMessage" xml:space="preserve">
+    <value>You do not have the required permissions to use the Kick command</value>
+  </data>
+  <data name="BanSelfMessage" xml:space="preserve">
+    <value>You can not ban yourself, that would be stupid</value>
+  </data>
+  <data name="KickCompleteMessage" xml:space="preserve">
+    <value>Kicking player:</value>
+  </data>
+  <data name="KickImmunityMessage" xml:space="preserve">
+    <value>Kick immunity in place for player: </value>
+  </data>
+  <data name="KickNonAuthMessage" xml:space="preserve">
+    <value>You do not have the required permissions to use the Kick command</value>
+  </data>
+  <data name="KickSelfMessage" xml:space="preserve">
+    <value>You can not kick yourself, that would be silly</value>
+  </data>
+  <data name="KickTargetMessagePrefix" xml:space="preserve">
+    <value>You are being kicked for: </value>
+  </data>
   <data name="SQLiteCreateString" xml:space="preserve">
     <value>CREATE TABLE bans (
     ID         INTEGER  PRIMARY KEY AUTOINCREMENT,

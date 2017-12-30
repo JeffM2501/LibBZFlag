@@ -29,6 +29,29 @@ namespace BZFlag.Game.Host
 
             public int IPV4SubnetBanRange { get; set; } = 1;
             public int IPV6SubnetBanRange { get; set; } = 3;
+
+            public class GroupPermissions
+            {
+                public string Group { get; set; } = string.Empty;
+                public List<string> Permisions { get; set; } = new List<string>();
+            }
+
+            public List<GroupPermissions> Groups { get; set; } = new List<GroupPermissions>();
+
+            public string[] GetGroupPerms(string group)
+            {
+                GroupPermissions perms = null;
+
+                lock (Groups)
+                {
+                    perms = Groups.Find((x) => x.Group == group.ToUpperInvariant());
+
+                    if (perms == null)
+                        return new string[0];
+
+                    return perms.Permisions.ToArray();
+                }
+            }
         }
         public SecurityInfo Security { get; set; } = new SecurityInfo();
 

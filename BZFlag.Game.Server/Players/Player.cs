@@ -23,6 +23,8 @@ namespace BZFlag.Game.Host.Players
         public string Token = string.Empty;
         public string Motto = string.Empty;
 
+        public bool ShowAdminMark = false;
+
         public TeamColors DesiredTeam = TeamColors.AutomaticTeam;
         public TeamColors ActualTeam = TeamColors.AutomaticTeam;
 
@@ -56,6 +58,14 @@ namespace BZFlag.Game.Host.Players
         public AuthStatuses AuthStatus = AuthStatuses.Unknown;
         public List<string> GroupMemberships = new List<string>();
 
+        public class AllowableActions
+        {
+            public bool AllowChat = true;
+            public bool AllowCommands = true;
+            public bool AllowPlay= true;
+        }
+        public AllowableActions Allowances = new AllowableActions();
+
         public Dictionary<string, object> Tags = new Dictionary<string, object>();
 
         protected NetworkStream NetStream = null;
@@ -76,6 +86,28 @@ namespace BZFlag.Game.Host.Players
         {
             ConnectionData = pc;
             Link(ConnectionData.ClientConnection);
+        }
+
+        public void SetTag(string name, object value, bool force)
+        {
+            lock (Tags)
+            {
+                if (!Tags.ContainsKey(name))
+                    Tags.Add(name, value);
+                else if (force)
+                    Tags[name] = value;
+            }
+        }
+
+        public T GetTag<T>(string name) where T : class
+        {
+            lock(Tags)
+            {
+                if (Tags.ContainsKey(name))
+                    return Tags[name] as T;
+
+                return null;
+            }
         }
 
         public void SetExit()

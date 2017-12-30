@@ -58,6 +58,9 @@ namespace BZFS.SlashCommands
 
             if (message.MessageText[0] == '/')
             {
+                if (!player.Allowances.AllowCommands)
+                    return false;
+
                 PendingCommand cmd = new PendingCommand();
                 cmd.Text = message.MessageText;
                 cmd.Player = player;

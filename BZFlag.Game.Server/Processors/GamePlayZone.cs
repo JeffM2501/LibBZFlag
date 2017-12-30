@@ -136,6 +136,9 @@ namespace BZFlag.Game.Host.Processors
 
         private void HandleAlive(ServerPlayer player, NetworkMessage msg)
         {
+            if (!player.Allowances.AllowPlay)
+                return;
+
             ServerHost.State.Players.StartSpawn(player, msg as MsgAlive);
         }
 

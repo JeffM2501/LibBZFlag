@@ -61,6 +61,114 @@ namespace BZFS.PlayerAdministration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to locate player: .
+        /// </summary>
+        internal static string ArgumentNoUserMessage {
+            get {
+                return ResourceManager.GetString("ArgumentNoUserMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Banning player: .
+        /// </summary>
+        internal static string BanCompleteMessage {
+            get {
+                return ResourceManager.GetString("BanCompleteMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Banned.
+        /// </summary>
+        internal static string BanDefaultReason {
+            get {
+                return ResourceManager.GetString("BanDefaultReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ban immunity in place for player: .
+        /// </summary>
+        internal static string BanImmunityMessage {
+            get {
+                return ResourceManager.GetString("BanImmunityMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uknown ban arguments useage, /ban PLAYER BanType[WEAK/STRONG] Durration[#D#M/FULL] REASON.
+        /// </summary>
+        internal static string BanMalformedMessage {
+            get {
+                return ResourceManager.GetString("BanMalformedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You do not have the required permissions to use the Kick command.
+        /// </summary>
+        internal static string BanNonAuthMessage {
+            get {
+                return ResourceManager.GetString("BanNonAuthMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can not ban yourself, that would be stupid.
+        /// </summary>
+        internal static string BanSelfMessage {
+            get {
+                return ResourceManager.GetString("BanSelfMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kicking player:.
+        /// </summary>
+        internal static string KickCompleteMessage {
+            get {
+                return ResourceManager.GetString("KickCompleteMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kick immunity in place for player: .
+        /// </summary>
+        internal static string KickImmunityMessage {
+            get {
+                return ResourceManager.GetString("KickImmunityMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You do not have the required permissions to use the Kick command.
+        /// </summary>
+        internal static string KickNonAuthMessage {
+            get {
+                return ResourceManager.GetString("KickNonAuthMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can not kick yourself, that would be silly.
+        /// </summary>
+        internal static string KickSelfMessage {
+            get {
+                return ResourceManager.GetString("KickSelfMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are being kicked for: .
+        /// </summary>
+        internal static string KickTargetMessagePrefix {
+            get {
+                return ResourceManager.GetString("KickTargetMessagePrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CREATE TABLE bans (
         ///    ID         INTEGER  PRIMARY KEY AUTOINCREMENT,
         ///    BanID      STRING,

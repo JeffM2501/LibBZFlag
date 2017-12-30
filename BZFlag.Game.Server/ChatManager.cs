@@ -99,16 +99,16 @@ namespace BZFlag.Game.Host
         }
 
         protected List<GroupInfo> CustomGroups = new List<GroupInfo>();
+        public GroupInfo AdminGroup = null;
 
         public ChatManager()
         {
-            GroupInfo adminGroup = new GroupInfo();
-            adminGroup.Name = "Admin";
-            adminGroup.BroadcastID = PlayerConstants.AdminGroup;
+            AdminGroup = new GroupInfo();
+            AdminGroup.Name = "Admin";
+            AdminGroup.BroadcastID = PlayerConstants.AdminGroup;
 
-            AddGroup(adminGroup);
+            AddGroup(AdminGroup);
         }
-
 
         public void Shutdown()
         {
@@ -142,7 +142,7 @@ namespace BZFlag.Game.Host
 
         public void HandleChatMessage(ServerPlayer sender, MsgMessage message)
         {
-            if (message == null || (AcceptTextCommand != null && AcceptTextCommand(sender, message)))
+            if (message == null || (AcceptTextCommand != null && AcceptTextCommand(sender, message)) || !sender.Allowances.AllowChat)
                 return;
 
             ChatMessageEventArgs inChat = new ChatMessageEventArgs();

@@ -8,14 +8,17 @@ using BZFlag.Game.Host;
 using BZFlag.Game.Host.API;
 using BZFlag.Game.Host.Players;
 
+using BZFS.SlashCommands;
+
 namespace BZFS.PlayerAdministration
 {
-    public class Startup : PlugIn
+    public partial class Admin : PlugIn
     {
         public string Name => "PlayerAdmin";
 
         public string Description => "Handles player administration functions";
 
+        private PermissionProcessor Permissions = new PermissionProcessor();
 
         private Server Instance = null;
         Thread ExpireCheck = null;
@@ -25,11 +28,16 @@ namespace BZFS.PlayerAdministration
             if (ExpireCheck != null)
                 ExpireCheck.Abort();
             ExpireCheck = null;
+
+            Permissions.Shutdown();
         }
 
         void PlugIn.Startup(Server serverInstance)
         {
             Instance = serverInstance;
+
+            Permissions.Init(Instance, Instance.ConfigData.Security);
+            BanDatabase.Init(Instance.ConfigData.Security);
 
             Instance.APILoadComplete += ServerInstance_APILoadComplete;
 
@@ -39,6 +47,9 @@ namespace BZFS.PlayerAdministration
 
             ExpireCheck = new Thread(new ThreadStart(CheckExpired));
             ExpireCheck.Start();
+
+            Commands.RegisterHandler("KICK", Kick);
+            Commands.RegisterHandler("BAN", Ban);
         }
 
         private void CheckExpired()

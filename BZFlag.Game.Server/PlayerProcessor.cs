@@ -17,6 +17,8 @@ namespace BZFlag.Game.Host
         protected Thread WorkerThread = null;
         private List<ServerPlayer> Players = new List<ServerPlayer>();
 
+        private List<ServerPlayer> NewPlayers = new List<ServerPlayer>();
+
         protected MessageManager MessageProcessor = null;
 
         public int SleepTime = 100;
@@ -64,12 +66,10 @@ namespace BZFlag.Game.Host
 
         public void AddPendingConnection(ServerPlayer player)
         {
-            lock (Players)
-                Players.Add(player);
+            lock (NewPlayers)
+                NewPlayers.Add(player);
 
             player.Disconnected += Player_Disconnected;
-
-            PlayerAdded(player);
 
             if (WorkerThread == null)
             {
@@ -106,17 +106,51 @@ namespace BZFlag.Game.Host
 
         }
 
+        private ServerPlayer PopNewPlayer()
+        {
+            lock(NewPlayers)
+            {
+                if (NewPlayers.Count == 0)
+                    return null;
+
+                ServerPlayer player = NewPlayers[0];
+                NewPlayers.RemoveAt(0);
+                return player;
+            }
+        }
+
         protected void ProcessPendingPlayers()
         {
-            ServerPlayer[] locals = null;
-
-            lock (Players)
-                locals = Players.ToArray();
-
-            while (locals.Length > 0)
+            bool done = false;
+            while (!done)
             {
                 Update();
 
+                ServerPlayer newPlayer = PopNewPlayer();
+                while (newPlayer != null)
+                {
+                    lock (Players)
+                        Players.Add(newPlayer);
+
+                    PlayerAdded(newPlayer);
+                    newPlayer = PopNewPlayer();
+                }
+
+                ServerPlayer[] locals = null;
+
+                lock (Players)
+                {
+                    lock(NewPlayers)
+                    {
+                        if (Players.Count == 0 || NewPlayers.Count == 0)
+                        {
+                            done = true;
+                            break;
+                        }
+                    }
+
+                    locals = Players.ToArray();
+                }
                 foreach (ServerPlayer player in locals)
                 {
                     bool keep = true;
@@ -170,8 +204,6 @@ namespace BZFlag.Game.Host
                     UpdatePlayer(player);
                 }
                 Thread.Sleep(SleepTime);
-                lock (Players)
-                    locals = Players.ToArray();
             }
 
             WorkerThread = null;
