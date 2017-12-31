@@ -134,7 +134,9 @@ namespace BZFlag.Game.Host
                     TeamInited?.Invoke(this, Teams[player.ActualTeam]);
             }
 
-            // tell them about everone except them
+            ServerHost.State.Flags.SendInitialFlagUpdate(player);
+
+            // tell them about everyone except them
             ServerPlayer[] locals = null;
 
             lock (Players)
@@ -146,14 +148,10 @@ namespace BZFlag.Game.Host
                 if (peer == player)
                     continue;
 
-                player.SendMessage(false, BuildPlayerAdd(peer));
+                player.SendMessage(true, BuildPlayerAdd(peer));
                 info.PlayerUpdates.Add(GetPlayerInfo(peer));
             }
-            player.SendMessage(false, info);
-
-            // tell everyone they joined
-
-            SendToAll(BuildPlayerAdd(player), false);
+            player.SendMessage(true, info);
 
             TeamInfo[] teams = null;
             lock (Teams)
@@ -174,24 +172,18 @@ namespace BZFlag.Game.Host
             }
             player.SendMessage(tUpd);
 
-            ServerHost.PostAddPlayer(player);
-
-            if (player.ActualTeam == TeamColors.ObserverTeam)
-            {
-                MsgMessage observerMsg = new MsgMessage();
-                observerMsg.From = PlayerConstants.ServerPlayerID;
-                observerMsg.To = player.PlayerID;
-                observerMsg.MessageType = MsgMessage.MessageTypes.ChatMessage;
-                observerMsg.MessageText = "You are in observer mode.";
-                player.SendMessage(observerMsg);
-            }
+            // tell everyone they joined
+            SendToAll(BuildPlayerAdd(player), false);
 
             // send info bits to everyone
             info = new MsgPlayerInfo();
-
             info.PlayerUpdates.Add(GetPlayerInfo(player));
-
             SendToAll(info, false);
+
+            ServerHost.PostAddPlayer(player);
+
+            if (player.ActualTeam == TeamColors.ObserverTeam)
+                ServerHost.State.Chat.SendChatToUser(null, player, Resources.ObserverModeNotificatioMessage, false);
 
             return true;
         }

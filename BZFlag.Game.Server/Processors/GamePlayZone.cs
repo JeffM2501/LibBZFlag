@@ -105,9 +105,6 @@ namespace BZFlag.Game.Host.Processors
                 SendReject(player, MsgReject.RejectionCodes.RejectTeamFull, "The team " + player.DesiredTeam.ToString() + " is full");
                 return;
             }
-
-            ServerHost.State.Flags.SendInitialFlagUpdate(player);
-
             player.NeedStartupInfo = false;
 
             UpdatePublicListServer?.Invoke(this, EventArgs.Empty);
