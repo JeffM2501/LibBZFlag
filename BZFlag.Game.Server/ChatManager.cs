@@ -140,9 +140,28 @@ namespace BZFlag.Game.Host
                 return CustomGroups.ToArray();
         }
 
+        protected bool IsMeCommand(MsgMessage message)
+        {
+            return message.MessageText.Length > 5 && message.MessageText.Substring(0,4).ToUpperInvariant() == "/ME ";
+        }
+
         public void HandleChatMessage(ServerPlayer sender, MsgMessage message)
         {
-            if (message == null || (AcceptTextCommand != null && AcceptTextCommand(sender, message)) || !sender.Allowances.AllowChat)
+            // check all the ways we can ingore this
+            if (message == null)
+                return;
+
+            bool isAction = IsMeCommand(message);
+
+            if (!isAction)
+            {
+                if (AcceptTextCommand != null && AcceptTextCommand(sender, message))
+                    return;
+            }
+            else if (message.MessageText.Length < 5)
+                return;
+
+            if (!sender.Allowances.AllowChat)
                 return;
 
             ChatMessageEventArgs inChat = new ChatMessageEventArgs();
@@ -151,8 +170,11 @@ namespace BZFlag.Game.Host
             inChat.Allow = true;
             inChat.Filtered = false;
             inChat.From = sender;
-            inChat.MessageText = message.MessageText;
-            inChat.Action = message.MessageType == MsgMessage.MessageTypes.ActionMessage;
+            inChat.Action = isAction;
+            if (isAction)
+                inChat.MessageText = message.MessageText.Substring(3);
+            else
+                inChat.MessageText = message.MessageText;
 
             if (message.To <= PlayerConstants.MaxUseablePlayerID)
             {
