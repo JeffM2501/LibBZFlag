@@ -88,12 +88,21 @@ namespace BZFlag.Game.Host
         {
             while(true)
             {
-                IPEndPoint source = null;
+                try
+                {
+                    if (UDPSocketV4.Available > 0)
+                    {
+                        IPEndPoint source = null;
 
-                byte[] data = UDPSocketV4.Receive(ref source);
+                        byte[] data = UDPSocketV4.Receive(ref source);
 
-                if (data != null && data.Length > 0 && source != null)
-                    ProcessUDPPackets(source, data);
+                        if (data != null && data.Length > 0 && source != null)
+                            ProcessUDPPackets(source, data);
+                    }
+                }
+                catch (Exception)
+                {
+                }
             }
         }
 
@@ -101,12 +110,23 @@ namespace BZFlag.Game.Host
         {
             while (true)
             {
-                IPEndPoint source = null;
+                
+                try
+                {
+                    if (UDPSocketV4.Available > 0)
+                    {
+                        IPEndPoint source = null;
 
-                byte[] data = UDPSocketV6.Receive(ref source);
+                        byte[] data = UDPSocketV6.Receive(ref source);
 
-                if (data != null && data.Length > 0 && source != null)
-                    ProcessUDPPackets(source, data);
+                        if (data != null && data.Length > 0 && source != null)
+                            ProcessUDPPackets(source, data);
+                    }
+                }
+                catch (Exception)
+                {
+                }
+              
             }
         }
 
