@@ -62,8 +62,12 @@ namespace BZFlag.Game.Host
         public void HandleShotBegin(ServerPlayer sender, MsgShotBegin shotMessage)
         {
             ShotInfo shot = new ShotInfo();
+
             shot.GlobalID = NewShotID();
+            shot.Owner = sender;
             shot.PlayerShotID = shotMessage.ShotID;
+            shot.Allow = true;
+
             if (sender.CariedFlag == null)
             {
                 shot.ShotType = GetDefaultShotType(sender);
@@ -82,7 +86,6 @@ namespace BZFlag.Game.Host
             shot.Lifetime = shotMessage.Lifetime;
 
             ShotPreFire?.Invoke(this, shot);
-
 
             if (shot.Allow)
                 FireShot(shot);
@@ -110,7 +113,8 @@ namespace BZFlag.Game.Host
             shotMessage.Position = shot.InitalPostion;
             shotMessage.Velocity = shot.InitalVector;
             shotMessage.Lifetime = (float)shot.Lifetime;
-            shotMessage.Flag = shot.SourceFlag?.FlagAbbv;
+            if (shot.SourceFlag != null)
+                shotMessage.Flag =  shot.SourceFlag.FlagAbbv;
 
             lock (Shots)
                 Shots.Add(shot);
