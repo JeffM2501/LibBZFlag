@@ -201,6 +201,8 @@ namespace BZFlag.Game.Host
         {
             lock (PendingInboundChats)
                 PendingInboundChats.Add(message);
+
+            CheckFilterThread();
         }
 
         protected List<ChatMessageEventArgs> PendingInboundChats = new List<ChatMessageEventArgs>();
@@ -230,7 +232,6 @@ namespace BZFlag.Game.Host
                 {
                     FilterWorker = new Thread(new ThreadStart(FilterChat));
                     FilterWorker.Start();
-
                 }
             }
         }
@@ -250,9 +251,9 @@ namespace BZFlag.Game.Host
                         message.Filtered = DefaultFilter(message);
 
                     MessageFilter?.Invoke(this, message);
-                }
 
-                DispatchChatMessage(message);
+                    DispatchChatMessage(message);
+                }
             }
 
             lock (PendingInboundChats)
@@ -325,9 +326,6 @@ namespace BZFlag.Game.Host
 
             args.Action = action;
             args.ChatType = from == null ? ChatMessageEventArgs.ChatMessageTypes.ServerAnnouncemnt : ChatMessageEventArgs.ChatMessageTypes.PublicMessage;
-
-            if (args.To == null)
-                return;
 
             MsgMessage msg = new MsgMessage();
             msg.MessageText = chat;

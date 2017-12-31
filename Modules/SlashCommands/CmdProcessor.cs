@@ -54,31 +54,31 @@ namespace BZFS.SlashCommands
         private bool TextCommandCallback(ServerPlayer player, MsgMessage message)
         {
             if (player == null || message.MessageText == string.Empty || message.To != BZFlag.Data.Players.PlayerConstants.AllPlayersID || message.MessageType == MsgMessage.MessageTypes.ActionMessage)
-                return true;
+                return false;
 
             if (message.MessageText[0] == '/')
             {
-                if (!player.Allowances.AllowCommands)
-                    return false;
-
-                PendingCommand cmd = new PendingCommand();
-                cmd.Text = message.MessageText;
-                cmd.Player = player;
-                lock (PendingCommands)
+                if (player.Allowances.AllowCommands)
                 {
-                    PendingCommands.Add(cmd);
-
-                    if (Worker == null)
+                    PendingCommand cmd = new PendingCommand();
+                    cmd.Text = message.MessageText;
+                    cmd.Player = player;
+                    lock (PendingCommands)
                     {
-                        Worker = new Thread(new ThreadStart(ProcessCommands));
-                        Worker.Start();
+                        PendingCommands.Add(cmd);
+
+                        if (Worker == null)
+                        {
+                            Worker = new Thread(new ThreadStart(ProcessCommands));
+                            Worker.Start();
+                        }
                     }
                 }
 
-                return false;
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         protected PendingCommand PopCommand()
