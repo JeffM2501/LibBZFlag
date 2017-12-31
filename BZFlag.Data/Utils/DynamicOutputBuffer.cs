@@ -323,23 +323,16 @@ namespace BZFlag.Data.Utils
 
         public void WriteFixedSizeString(string value, int size)
         {
-            CheckBuffer(size);
-
             int i = value.Length;
             if (i > size)
                 i = size;
 
-            Encoding.UTF8.GetBytes(value, 0, i, Buffer, BytesUsed);
+            byte[] textBuffer = new byte[size];
+            for (int a = 0; a < size; a++)
+                textBuffer[a] = byte.MinValue;
 
-            if (i < size)
-            {
-                while (i < size)
-                {
-                    Buffer[BytesUsed + i] = 0;
-                    i++;
-                }
-            }
-            BytesUsed += size;
+            Encoding.UTF8.GetBytes(value, 0, i, textBuffer, 0);
+            WriteBytes(textBuffer);
         }
 
         public void WritePascalString(string value)
