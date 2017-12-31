@@ -142,7 +142,7 @@ namespace BZFlag.Game.Host
                 {
                     lock(NewPlayers)
                     {
-                        if (Players.Count == 0 || NewPlayers.Count == 0)
+                        if (Players.Count == 0 && NewPlayers.Count == 0)
                         {
                             done = true;
                             break;

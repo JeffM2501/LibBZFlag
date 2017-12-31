@@ -201,7 +201,7 @@ namespace BZFlag.Game.Host
                             if (CheckHostBan != null)
                                 ban = CheckHostBan(c, ref reason);
 
-                            if (ban )
+                            if (!ban)
                                 c.DNSPassed = true;
                             else
                             {
