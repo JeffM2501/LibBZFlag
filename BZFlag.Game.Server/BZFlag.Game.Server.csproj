@@ -50,11 +50,10 @@
   <ItemGroup>
     <Compile Include="API\Common.cs" />
     <Compile Include="API\Plugins.cs" />
-    <Compile Include="BZDB\Defaults.cs" />
     <Compile Include="BZFS.cs" />
-    <Compile Include="ChatManager.cs" />
+    <Compile Include="Players\ChatManager.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="PlayerManager.cs" />
+    <Compile Include="Players\PlayerManager.cs" />
     <Compile Include="PlayerProcessor.cs" />
     <Compile Include="Players\Player.cs" />
     <Compile Include="Processors\GamePlayZone.cs" />
@@ -71,7 +70,7 @@
     <Compile Include="Server.Factories.cs" />
     <Compile Include="ServerConfig.cs" />
     <Compile Include="ServerMessageDispatcher.cs" />
-    <Compile Include="ShotManager.cs" />
+    <Compile Include="Players\ShotManager.cs" />
     <Compile Include="TCPConnectionManager.cs" />
     <Compile Include="UDPConnectionManager.cs" />
     <Compile Include="World\FlagManager.cs" />

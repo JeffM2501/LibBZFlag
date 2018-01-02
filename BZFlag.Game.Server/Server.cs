@@ -125,11 +125,15 @@ namespace BZFlag.Game.Host
             GameZone.AddPendingConnection(e);
         }
 
+        public delegate void BZDBCallback(Server host, Database db);
+
+        public BZDBCallback GetBZDBDefaults = null;
+
         private void SetupBZDB()
         {
             Logger.Log2("Setup BZDB defaults");
 
-            BZFlag.Game.Host.BZDB.Defaults.Setup(State.BZDatabase);
+            GetBZDBDefaults?.Invoke(this, State.BZDatabase);
 
             State.BZDatabase.FinishLoading();
 

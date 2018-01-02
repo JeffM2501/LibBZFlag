@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using BZFlag.Game.Host;
 using BZFlag.Game.Host.API;
-using static BZFlag.Game.Host.ChatManager;
+using static BZFlag.Game.Host.Players.ChatManager;
 
 namespace BadWordFilter
 {

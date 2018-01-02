@@ -1,3 +1,4 @@
+using BZFlag.Data.BZDB;
 using BZFlag.Data.Players;
 using BZFlag.Game.Host;
 using BZFlag.Game.Host.API;
@@ -24,6 +25,10 @@ namespace BZFS.StandardRuleset
         {
             serverInstance.State.Players.ComputeScores = DoPlayerScore;
             serverInstance.State.Flags.OnPlayerHitWhileHoldingFlag = OnPlayerHitWhileHoldingFlag;
+
+            serverInstance.GetBZDBDefaults = LoadBZDBDefaults;
         }
+
+       
     }
 }

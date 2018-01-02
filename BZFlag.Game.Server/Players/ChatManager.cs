@@ -12,7 +12,7 @@ using BZFlag.Networking.Messages;
 using BZFlag.Networking.Messages.BZFS;
 
 
-namespace BZFlag.Game.Host
+namespace BZFlag.Game.Host.Players
 {
     public class ChatManager
     {

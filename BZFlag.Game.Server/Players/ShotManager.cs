@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 using BZFlag.LinearMath;
 using BZFlag.Data.Players;
 using BZFlag.Data.Teams;
-using BZFlag.Game.Host.Players;
 using BZFlag.Networking.Messages.BZFS.Shots;
 using BZFlag.Data.Flags;
 using BZFlag.Data.Time;
 
-namespace BZFlag.Game.Host
+namespace BZFlag.Game.Host.Players
 {
     public class ShotManager
     {
