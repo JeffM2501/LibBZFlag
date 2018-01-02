@@ -22,6 +22,8 @@ namespace BZFlag.Data.Flags
         public static FlagType GuidedMissile { get; private set; } = null;
         public static FlagType Thief { get; private set; } = null;
 
+        public static FlagType Genocide { get; private set; } = null;
+
 
         static FlagTypeList()
         {
@@ -75,8 +77,12 @@ namespace BZFlag.Data.Flags
                             "Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."));
             Add(new FlagType("Phantom Zone", "PZ", FlagEndurances.FlagUnstable, ShotTypes.PhantomShot, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank shoots Zoned bullets and can't be shot (except by superbullet, shock wave, and other Zoned tanks)."));
-            Add(new FlagType("Genocide", "G", FlagEndurances.FlagUnstable, ShotTypes.GenocideShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Killing one tank kills that tank's whole team."));
+
+
+            Genocide = new FlagType("Genocide", "G", FlagEndurances.FlagUnstable, ShotTypes.GenocideShot, FlagQualities.FlagGood, TeamColors.NoTeam,
+                            "Killing one tank kills that tank's whole team.");
+            Add(Genocide);
+
             Add(new FlagType("Jumping", "JP", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
                             "Tank can jump.  Use Tab key.  Can't steer in the air."));
             Add(new FlagType("Identify", "ID", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
