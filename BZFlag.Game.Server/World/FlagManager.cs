@@ -13,7 +13,7 @@ using BZFlag.Networking.Messages.BZFS.Flags;
 
 namespace BZFlag.Game.Host.World
 {
-    public class FlagManager
+    public partial class FlagManager
     {
         public Server ServerHost = null;
 

@@ -13,6 +13,8 @@ using BZFlag.Networking.Messages.BZFS;
 using BZFlag.Data.Players;
 using BZFlag.LinearMath;
 using BZFlag.Data.Time;
+using BZFlag.Data.Flags;
+using BZFlag.Game.Host.World;
 
 namespace BZFlag.Game.Host
 {
@@ -45,7 +47,7 @@ namespace BZFlag.Game.Host
             {
                 lock(Members)
                     Members.Remove(player);
-
+                player.Info.Team = null;
                 PlayerRemoved?.Invoke(this, this);
             }
 
@@ -60,6 +62,7 @@ namespace BZFlag.Game.Host
                     }
                     Members.Add(player);
                 }
+                player.Info.Team = this;
                 PlayerAdded?.Invoke(this, this);
             }
 
@@ -80,6 +83,8 @@ namespace BZFlag.Game.Host
 
         public class PlayerInfo
         {
+            public TeamInfo Team = null;
+
             public class MotionInfo
             {
                 public double TimeStamp = 0;
@@ -96,7 +101,62 @@ namespace BZFlag.Game.Host
             public bool Alive = false;
 
             public int ShotImmunities = 0;
+
+            public FlagManager.FlagInstance CariedFlag = null;
+
+            public class ScoreInfo 
+            {
+                public int Wins = 0;
+                public int Losses = 0;
+                public int TeamKills = 0;
+
+                public void ApplyScore(ScoreInfo delta)
+                {
+                    Wins += delta.Wins;
+                    Losses += delta.Losses;
+                    TeamKills += delta.TeamKills;
+                }
+
+                public MsgScore GetMessage(int playerID)
+                {
+                    MsgScore msg = new MsgScore();
+
+                    msg.PlayerID = playerID;
+                    msg.Wins = Wins;
+                    msg.Losses = Losses;
+                    msg.TeamKills = TeamKills;
+
+                    return msg;
+                }
+
+                public bool Empty
+                {
+                    get
+                    {
+                        return Wins == 0 && Losses == 0 && TeamKills == 0;
+                    }
+                }
+            }
+            public ScoreInfo Score = new ScoreInfo();
         }
+
+        public delegate bool ScoreUpdateCallback(ServerPlayer victim, ref PlayerInfo.ScoreInfo victimScoreDelta, ServerPlayer killer, ref PlayerInfo.ScoreInfo killerScoreDelta, BlowedUpReasons eventReason);
+        public ScoreUpdateCallback ComputeScores = null;
+
+        public event EventHandler<ServerPlayer> ScoreUpdated = null;
+
+        public event EventHandler<ServerPlayer> PlayerSpawned = null;
+
+        public class KilledEventArgs : EventArgs
+        {
+            public ServerPlayer Victim = null;
+            public ServerPlayer Killer = null;
+
+            public MsgKilled KillInfo = null;
+
+            public ShotManager.ShotInfo Shot = null;
+        }
+        public event EventHandler<KilledEventArgs> PlayerKilled = null;
 
         public void Update(Clock gameTime)
         {
@@ -189,6 +249,93 @@ namespace BZFlag.Game.Host
             return true;
         }
 
+        internal void HandleKilled(ServerPlayer player, MsgKilled msgKilled)
+        {
+            if (msgKilled == null || player == null)
+                return;
+
+            if (!player.Info.Alive)
+                Logger.Log0("Player " + player.Callsign + " killed while dead");
+
+            player.Info.Alive = false;
+
+            KilledEventArgs args = new KilledEventArgs();
+            args.Victim = player;
+            args.Killer = GetPlayerByID(msgKilled.KillerID);
+            args.Shot = ServerHost.State.Shots.FindKillableShot(msgKilled.KillerID, msgKilled.ShotID);
+            args.KillInfo = msgKilled;
+
+            PlayerKilled?.Invoke(this, args);
+
+            bool wasFromAFlag = false;
+            switch (msgKilled.Reason)
+            {
+                case BlowedUpReasons.GotKilledMsg:
+                    break;
+
+                case BlowedUpReasons.GotShot:
+                    wasFromAFlag = true;
+                    ServerHost.State.Shots.RemoveShotForDeath(player, msgKilled.KillerID, msgKilled.ShotID);
+
+                    if (args.Shot != null)// tell the flag it took a hit
+                        ServerHost.State.Flags.HandlePlayerTakeHit(player, args.Killer, args.Shot);
+                    break;
+
+                case BlowedUpReasons.GotRunOver:
+                    wasFromAFlag = true;
+                    break;
+
+                case BlowedUpReasons.GotCaptured:
+                    break;
+
+                case BlowedUpReasons.GenocideEffect:
+                    break;
+
+                case BlowedUpReasons.SelfDestruct:
+                    break;
+
+                case BlowedUpReasons.WaterDeath:
+                    break;
+
+                case BlowedUpReasons.LastReason:
+                    break;
+
+                case BlowedUpReasons.DeathTouch:
+                    break;
+
+                case BlowedUpReasons.Unknown:
+                    break;
+            }
+
+            if (wasFromAFlag)   // tell the flag it killed
+                ServerHost.State.Flags.HandlePlayerDoDamage(player, args.Killer, FlagTypeList.GetFromAbriv(msgKilled.FlagAbreviation));
+
+            // process any scores
+            PlayerInfo.ScoreInfo vicScores = new PlayerInfo.ScoreInfo();
+            PlayerInfo.ScoreInfo killerScores = new PlayerInfo.ScoreInfo();
+            if (ComputeScores(args.Victim, ref vicScores, args.Killer, ref killerScores, msgKilled.Reason))
+            {
+                args.Victim.Info.Score.ApplyScore(vicScores);
+                if (args.Killer != null)
+                    args.Killer.Info.Score.ApplyScore(killerScores);
+
+                if (!vicScores.Empty)
+                {
+                    ScoreUpdated?.Invoke(this, args.Victim);
+                    SendToAll(args.Victim.Info.Score.GetMessage(args.Victim.PlayerID), false);
+                }
+
+
+                if (args.Killer != null && !killerScores.Empty)
+                {
+                    ScoreUpdated?.Invoke(this, args.Killer);
+                    SendToAll(args.Killer.Info.Score.GetMessage(args.Killer.PlayerID), false);
+                }
+            }
+
+            SendToAll(msgKilled, false);
+        }
+
         private MsgPlayerInfo.PlayerInfoData GetPlayerInfo(ServerPlayer player)
         {
             MsgPlayerInfo.PlayerInfoData d = new MsgPlayerInfo.PlayerInfoData();
@@ -211,9 +358,9 @@ namespace BZFlag.Game.Host
             add.Team = player.ActualTeam;
             add.Motto = player.Motto;
             add.PlayerType = 0;
-            add.Wins = player.Score.Wins;
-            add.Losses = player.Score.Losses;
-            add.TeamKills = player.Score.TeamKills;
+            add.Wins = player.Info.Score.Wins;
+            add.Losses = player.Info.Score.Losses;
+            add.TeamKills = player.Info.Score.TeamKills;
 
             return add;
         }
@@ -235,7 +382,6 @@ namespace BZFlag.Game.Host
                 Teams[sp.ActualTeam].Remove(sp);
         }
 
-
         public void StartSpawn(ServerPlayer player, MsgAlive spawnRequest)
         {
             MsgAlive spawnPostion = new MsgAlive();
@@ -246,6 +392,8 @@ namespace BZFlag.Game.Host
             if (ServerHost.State.World.GetSpawn(ref player.Info.LastSpawnState.Position, ref player.Info.LastSpawnState.Azimuth))
             {
                 player.Info.Alive = true;
+
+                PlayerSpawned?.Invoke(this, player);
 
                 spawnPostion.PlayerID = player.PlayerID;
                 spawnPostion.Position = player.Info.LastSpawnState.Position;

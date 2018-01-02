@@ -43,11 +43,25 @@ namespace BZFlag.Game.Host
 
         protected List<ShotInfo> Shots = new List<ShotInfo>();
         protected List<ShotInfo> RecentlyDeadShots = new List<ShotInfo>();
-        protected int LastShotID = -1;
 
+        protected int LastShotID = -1;
+        protected double ShotPergetoryTime = -3;
 
         public event EventHandler<ShotInfo> ShotPreFire;
         public event EventHandler<ShotInfo> ShotFired;
+        public event EventHandler<ShotInfo> ShotExpired;
+        public event EventHandler<ShotInfo> ShotDied;
+        public event EventHandler<ShotInfo> ShotHit;
+
+        public class ShotHitArgs : EventArgs
+        {
+            public ShotInfo Shot = null;
+            public ServerPlayer Target = null;
+
+            public ShotHitArgs(ShotInfo s, ServerPlayer p) { Shot = s; Target = p; }
+        }
+
+        public event EventHandler<ShotHitArgs> ShotKilled;
 
         protected int NewShotID()
         {
@@ -68,15 +82,15 @@ namespace BZFlag.Game.Host
             shot.PlayerShotID = shotMessage.ShotID;
             shot.Allow = true;
 
-            if (sender.CariedFlag == null)
+            if (sender.Info.CariedFlag == null)
             {
                 shot.ShotType = GetDefaultShotType(sender);
                 shot.SourceFlag = null;
             }
             else
             {
-                shot.ShotType = sender.CariedFlag.Flag.FlagShot;
-                shot.SourceFlag = sender.CariedFlag.Flag;
+                shot.ShotType = sender.Info.CariedFlag.Flag.FlagShot;
+                shot.SourceFlag = sender.Info.CariedFlag.Flag;
             }
 
             shot.InitalPostion = shotMessage.Position;
@@ -95,6 +109,9 @@ namespace BZFlag.Game.Host
         {
             ShotInfo shot = FindShot(shotMessage.PlayerID, shotMessage.ShotID);
 
+            if (shot == null)
+                return;
+
             bool valid = false;
             if (sender.Info.ShotImmunities > 0)
             {
@@ -105,10 +122,13 @@ namespace BZFlag.Game.Host
             if (shot.ShotType == ShotTypes.ThiefShot || shot.ShotType == ShotTypes.GuidedShot)
                 valid = true;
 
-            if (!valid)     // don't peanalize them for sending this, they just always send it
+            if (!valid)     // don't penalize them for sending this, they just always send it
                 return;     // we know that all other cases must be followed by a death to be valid, so just remove the shot then.
-                            
-            ServerHost.State.Players.SendToAll(shotMessage, shotMessage.FromUDP);
+
+            ServerHost.State.Flags.HandlePlayerTakeHit(sender, shot.Owner, shot);
+
+            ShotHit?.Invoke(this, shot);
+            EndShot(shot, shotMessage.Exploded);
         }
 
         public void FireShot(ShotInfo shot)
@@ -142,14 +162,37 @@ namespace BZFlag.Game.Host
 
         public void EndShot(ShotInfo shot, bool exploded)
         {
+            lock (Shots)
+                Shots.Remove(shot);
+
+            ShotDied?.Invoke(this, shot);
+
             MsgShotEnd endShot = new MsgShotEnd();
-      //      endShot.
+            endShot.Exploded = exploded;
+            endShot.PlayerID = shot.Owner.PlayerID;
+            endShot.ShotID = shot.PlayerShotID;
+
+            ServerHost.State.Players.SendToAll(endShot, false);
         }
 
         public ShotInfo FindShot(int playerID, int shotID)
         {
             lock (Shots)
                 return Shots.Find((x) => x.PlayerShotID == shotID && x.Owner.PlayerID == playerID);
+        }
+
+        public ShotInfo FindUndeadShot(int playerID, int shotID)
+        {
+            lock (RecentlyDeadShots)
+                return RecentlyDeadShots.Find((x) => x.PlayerShotID == shotID && x.Owner.PlayerID == playerID);
+        }
+
+        public ShotInfo FindKillableShot(int playerID, int shotID)
+        {
+            ShotInfo i = FindShot(playerID, shotID);
+            if (i == null)
+                i = FindUndeadShot(playerID, shotID);
+            return i;
         }
 
         public void Update(Clock gameTime)
@@ -164,7 +207,10 @@ namespace BZFlag.Game.Host
             foreach (var shot in toProcess)
             {
                 if (now - shot.CreateTimeStamp > shot.Lifetime)
+                {
+                    ShotExpired?.Invoke(this, shot);
                     expired.Add(shot);
+                }
                 else
                 {
                     // update the position?
@@ -179,7 +225,8 @@ namespace BZFlag.Game.Host
                 if (shot.Owner == null)
                 {
                     shot.Allow = false;
-                    EndShot(shot);
+                    shot.Lifetime = -1;
+                    EndShot(shot, true);
                 }
             }
 
@@ -187,7 +234,32 @@ namespace BZFlag.Game.Host
 
             // do something with the expired shots, we expect them to be removed shortly
             lock (RecentlyDeadShots)
-                RecentlyDeadShots.AddRange(expired.ToArray());
+                toProcess = RecentlyDeadShots.ToArray();
+
+            foreach (var shot in toProcess)
+                shot.Lifetime -= gameTime.Delta;
+
+            RecentlyDeadShots.RemoveAll((x)=>x.Lifetime < ShotPergetoryTime);
+        }
+
+        public void RemoveShotForDeath(ServerPlayer player, int killerID, int shotID)
+        {
+            ShotInfo shot = FindShot(killerID, shotID);
+
+            if (shot == null)
+            {
+                shot = FindUndeadShot(killerID, shotID);
+                if (shot == null)
+                {
+                    Logger.Log1("Player " + player.Callsign + " killed by unknown shot");
+                    return;
+                }
+            }
+            else
+                EndShot(shot, false);
+
+            ShotHit?.Invoke(this, shot);
+            ShotKilled?.Invoke(this, new ShotHitArgs(shot, player));
         }
     }
 }

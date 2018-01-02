@@ -30,16 +30,6 @@ namespace BZFlag.Game.Host.Players
 
         public event EventHandler<Peer> Exited = null;
 
-        public FlagManager.FlagInstance CariedFlag = null;
-
-        public class ScoreInfo
-        {
-            public int Wins = 0;
-            public int Losses = 0;
-            public int TeamKills = 0;
-        }
-        public ScoreInfo Score = new ScoreInfo();
-
         public bool NeedStartupInfo = true;
 
         public MsgNegotiateFlags ClientFlagList = null;
