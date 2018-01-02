@@ -95,6 +95,7 @@ namespace BZFlag.Game.Host
 
             public bool Alive = false;
 
+            public int ShotImmunities = 0;
         }
 
         public void Update(Clock gameTime)

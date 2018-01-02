@@ -93,6 +93,21 @@ namespace BZFlag.Game.Host
 
         public void HandleShotEnd(ServerPlayer sender, MsgShotEnd shotMessage)
         {
+            ShotInfo shot = FindShot(shotMessage.PlayerID, shotMessage.ShotID);
+
+            bool valid = false;
+            if (sender.Info.ShotImmunities > 0)
+            {
+                sender.Info.ShotImmunities--;
+                valid = true;
+            }
+
+            if (shot.ShotType == ShotTypes.ThiefShot || shot.ShotType == ShotTypes.GuidedShot)
+                valid = true;
+
+            if (!valid)     // don't peanalize them for sending this, they just always send it
+                return;     // we know that all other cases must be followed by a death to be valid, so just remove the shot then.
+                            
             ServerHost.State.Players.SendToAll(shotMessage, shotMessage.FromUDP);
         }
 
@@ -125,10 +140,17 @@ namespace BZFlag.Game.Host
             shot.Allow = true;
         }
 
-        public void EndShot(ShotInfo shot)
+        public void EndShot(ShotInfo shot, bool exploded)
         {
+            MsgShotEnd endShot = new MsgShotEnd();
+      //      endShot.
         }
 
+        public ShotInfo FindShot(int playerID, int shotID)
+        {
+            lock (Shots)
+                return Shots.Find((x) => x.PlayerShotID == shotID && x.Owner.PlayerID == playerID);
+        }
 
         public void Update(Clock gameTime)
         {
