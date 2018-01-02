@@ -1,10 +1,8 @@
-
 using System;
 using System.Collections.Generic;
 
 using BZFlag.Data.Flags;
 using BZFlag.Data.Players;
-using BZFlag.Game.Host;
 using BZFlag.Game.Host.Players;
 
 using static BZFlag.Game.Host.Players.PlayerManager.PlayerInfo;

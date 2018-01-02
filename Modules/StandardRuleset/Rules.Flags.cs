@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 
 using BZFlag.Data.Flags;
-using BZFlag.Game.Host;
 using BZFlag.Game.Host.Players;
 
 namespace BZFS.StandardRuleset

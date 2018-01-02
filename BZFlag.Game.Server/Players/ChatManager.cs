@@ -18,8 +18,6 @@ namespace BZFlag.Game.Host.Players
     {
         public Server ServerHost = null;
 
-        // use ServerHost.State.Players for player list
-
         public class ChatMessageEventArgs : EventArgs
         {
             public enum ChatMessageTypes
@@ -293,7 +291,6 @@ namespace BZFlag.Game.Host.Players
             {
                 case ChatMessageEventArgs.ChatMessageTypes.PrivateMessage:
                 case ChatMessageEventArgs.ChatMessageTypes.ServerPrivateMessage:
-
                     SendChatToUser(messaage.From, messaage.To, messaage.MessageText, messaage.Action);
                     return;
 

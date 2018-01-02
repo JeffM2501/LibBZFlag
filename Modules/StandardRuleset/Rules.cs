@@ -1,13 +1,8 @@
-using BZFlag.Data.BZDB;
-using BZFlag.Data.Players;
-using BZFlag.Game.Host;
-using BZFlag.Game.Host.API;
-using BZFlag.Game.Host.Players;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using BZFlag.Game.Host;
+using BZFlag.Game.Host.API;
 
 namespace BZFS.StandardRuleset
 {
@@ -28,7 +23,5 @@ namespace BZFS.StandardRuleset
 
             serverInstance.GetBZDBDefaults = LoadBZDBDefaults;
         }
-
-       
     }
 }

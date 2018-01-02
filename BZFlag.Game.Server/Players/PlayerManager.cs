@@ -341,7 +341,6 @@ namespace BZFlag.Game.Host.Players
                     SendToAll(args.Victim.Info.Score.GetMessage(args.Victim.PlayerID), false);
                 }
 
-
                 if (args.Killer != null && !killerScores.Empty)
                 {
                     Logger.Log3("Player " + player.Callsign + " score updated by " + killerScores.ToString());
