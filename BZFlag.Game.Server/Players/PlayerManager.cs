@@ -117,16 +117,16 @@ namespace BZFlag.Game.Host.Players
                     TeamKills += delta.TeamKills;
                 }
 
-                public MsgScore GetMessage(int playerID)
+                public void Pack(int playerID, MsgScore msg)
                 {
-                    MsgScore msg = new MsgScore();
+                    MsgScore.ScoreData data = new MsgScore.ScoreData();
 
-                    msg.PlayerID = playerID;
-                    msg.Wins = Wins;
-                    msg.Losses = Losses;
-                    msg.TeamKills = TeamKills;
+                    data.PlayerID = playerID;
+                    data.Wins = Wins;
+                    data.Losses = Losses;
+                    data.TeamKills = TeamKills;
 
-                    return msg;
+                    msg.Scores.Add(data);
                 }
 
                 public bool Empty
@@ -333,12 +333,13 @@ namespace BZFlag.Game.Host.Players
                 if (args.Killer != null)
                     args.Killer.Info.Score.ApplyScore(killerScores);
 
+                MsgScore scoreMessage = new MsgScore();
                 if (!vicScores.Empty)
                 {
                     Logger.Log3("Player " + player.Callsign + " score updated by " + vicScores.ToString());
 
                     ScoreUpdated?.Invoke(this, args.Victim);
-                    SendToAll(args.Victim.Info.Score.GetMessage(args.Victim.PlayerID), false);
+                    args.Victim.Info.Score.Pack(args.Victim.PlayerID, scoreMessage);
                 }
 
                 if (args.Killer != null && !killerScores.Empty)
@@ -346,8 +347,11 @@ namespace BZFlag.Game.Host.Players
                     Logger.Log3("Player " + player.Callsign + " score updated by " + killerScores.ToString());
 
                     ScoreUpdated?.Invoke(this, args.Killer);
-                    SendToAll(args.Killer.Info.Score.GetMessage(args.Killer.PlayerID), false);
+                    args.Killer.Info.Score.Pack(args.Killer.PlayerID, scoreMessage);
                 }
+
+                if (scoreMessage.Scores.Count > 0)
+                    SendToAll(scoreMessage, false);
             }
 
             SendToAll(args.KillInfo, false);
