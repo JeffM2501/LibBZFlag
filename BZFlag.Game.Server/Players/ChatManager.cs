@@ -313,6 +313,9 @@ namespace BZFlag.Game.Host.Players
 
         public void SendChatToUser(ServerPlayer from, ServerPlayer to, string chat, bool action)
         {
+            if (chat == string.Empty)
+                return;
+
             ChatMessageEventArgs args = new ChatMessageEventArgs();
             args.From = from;
             args.To = to;
@@ -331,13 +334,16 @@ namespace BZFlag.Game.Host.Players
             msg.To = to.PlayerID;
             msg.MessageType = action ? MsgMessage.MessageTypes.ActionMessage : MsgMessage.MessageTypes.ChatMessage;
 
-            to.SendMessage(false,msg);
+            to.SendMessage(true,msg);
 
             MessageSent?.Invoke(this,args);
         }
 
         public void SendChatToAll (ServerPlayer from, string chat, bool action)
         {
+            if (chat == string.Empty)
+                return;
+
             ChatMessageEventArgs args = new ChatMessageEventArgs();
             args.From = from;
             args.To = null;
@@ -360,6 +366,9 @@ namespace BZFlag.Game.Host.Players
 
         public void SendChatToTeam(ServerPlayer from, TeamColors to, string chat, bool action)
         {
+            if (chat == string.Empty)
+                return;
+
             ChatMessageEventArgs args = new ChatMessageEventArgs();
             args.From = from;
             args.To = null;
@@ -386,6 +395,9 @@ namespace BZFlag.Game.Host.Players
 
         public void SendChatToGroup(ServerPlayer from, GroupInfo to, string chat, bool action)
         {
+            if (chat == string.Empty)
+                return;
+
             ChatMessageEventArgs args = new ChatMessageEventArgs();
             args.From = from;
             args.To = null;

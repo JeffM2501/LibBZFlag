@@ -260,6 +260,7 @@ namespace BZFlag.Game.Host.Players
                 return;
 
             KilledEventArgs args = new KilledEventArgs();
+            msgKilled.VictimID = player.PlayerID;
             args.Victim = player;
             args.Killer = GetPlayerByID(msgKilled.KillerID);
             args.Shot = ServerHost.State.Shots.FindKillableShot(msgKilled.KillerID, msgKilled.ShotID);
@@ -354,7 +355,15 @@ namespace BZFlag.Game.Host.Players
                     SendToAll(scoreMessage, false);
             }
 
-            SendToAll(args.KillInfo, false);
+            MsgKilled killedMessage = new MsgKilled();
+            killedMessage.VictimID = args.Victim.PlayerID;
+            killedMessage.KillerID = args.Killer != null ? args.Killer.PlayerID : PlayerConstants.ServerPlayerID;
+            killedMessage.ShotID = args.Shot != null ? args.Shot.PlayerShotID : -1;
+            killedMessage.Reason = args.KillInfo.Reason;
+            killedMessage.FlagAbreviation = (args.Shot != null && args.Shot.SourceFlag != null) ? args.Shot.SourceFlag.FlagAbbv : string.Empty;
+            killedMessage.PhysicsDriverID = args.KillInfo.PhysicsDriverID;
+
+            SendToAll(killedMessage, false);
         }
 
         private MsgPlayerInfo.PlayerInfoData GetPlayerInfo(ServerPlayer player)

@@ -49,7 +49,6 @@ namespace BZFlag.Networking.Messages.BZFS.Player
         {
             Reset(data);
 
-            VictimID = ReadByte();
             KillerID = ReadByte();
 
             int r = ReadInt16();

@@ -16,12 +16,26 @@ namespace BZFS.StandardRuleset
         {
         }
 
+        protected Server Instance = null;
+
         public void Startup(Server serverInstance)
         {
+            Instance = serverInstance;
+
             serverInstance.State.Players.ComputeScores = DoPlayerScore;
             serverInstance.State.Flags.OnPlayerHitWhileHoldingFlag = OnPlayerHitWhileHoldingFlag;
 
             serverInstance.GetBZDBDefaults = LoadBZDBDefaults;
+
+            serverInstance.PlayerPostAdd += ServerInstance_PlayerPostAdd;
+        }
+
+        private void ServerInstance_PlayerPostAdd(object sender, BZFlag.Game.Host.Players.ServerPlayer e)
+        {
+            foreach (string line in Resources.PreReleaseWarning.Split("\r\n".ToCharArray()))
+                Instance.State.Chat.SendChatToUser(null, e, line, false);
+
+            e.FlushTCP();
         }
     }
 }

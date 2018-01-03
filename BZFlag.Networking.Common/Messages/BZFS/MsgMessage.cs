@@ -31,11 +31,8 @@ namespace BZFlag.Networking.Messages.BZFS
 
             if (!IsServer())
             {
-                
                 buffer.WriteByte((byte)To);
                 buffer.WriteFixedSizeString(MessageText, BZFlag.Data.Types.Constants.ChatMessageLenght);
-
-                
             }
             else
             {

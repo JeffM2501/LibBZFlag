@@ -61,7 +61,6 @@ namespace BZFlag.Game.Host
             lock (PendingLogUpdates)
                 PendingLogUpdates.Add(text);
 
-
             if (LogWriter == null)
             {
                 LogWriter = new Thread(new ThreadStart(WriteLog));

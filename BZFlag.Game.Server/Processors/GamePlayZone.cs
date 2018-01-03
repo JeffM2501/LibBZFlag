@@ -96,6 +96,11 @@ namespace BZFlag.Game.Host.Processors
                 DoPlayerAdd(player);
         }
 
+        public override void ProcessClientMessage(ServerPlayer player, NetworkMessage msg)
+        {
+            base.ProcessClientMessage(player, msg);
+        }
+
         protected void DoPlayerAdd(ServerPlayer player)
         {
             player.ActualTeam = ServerHost.GetPlayerTeam(player);
