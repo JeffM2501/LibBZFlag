@@ -60,6 +60,9 @@ namespace BZFlag.Game.Host
         {
             NetworkMessage.IsOnServer = true;
 
+            if (cfg.LogFile == string.Empty)
+                cfg.LogFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "default_log.txt");
+
             Logger.SetLogFilePath(cfg.LogFile);
             Logger.LogLevel = cfg.LogLevel;
 

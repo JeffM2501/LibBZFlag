@@ -27,7 +27,7 @@ namespace BZFlag.Game.Host
 
         public static void SetLogFilePath(string filePath)
         {
-            if (filePath != string.Empty && File.Exists(filePath))
+            if (filePath != string.Empty && Directory.Exists(Path.GetDirectoryName(filePath)))
                 LogFile = new FileInfo(filePath);
             else
                 LogFile = null;
