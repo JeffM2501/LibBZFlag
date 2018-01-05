@@ -210,4 +210,109 @@
   <data name="TinyName" xml:space="preserve">
     <value>Tiny</value>
   </data>
+  <data name="AgilityDescription" xml:space="preserve">
+    <value>Tank is quick and nimble making it easier to dodge.</value>
+  </data>
+  <data name="AgilityName" xml:space="preserve">
+    <value>Agility</value>
+  </data>
+  <data name="BurrowDescription" xml:space="preserve">
+    <value>Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!</value>
+  </data>
+  <data name="BurrowName" xml:space="preserve">
+    <value>Burrow</value>
+  </data>
+  <data name="CloakingDescription" xml:space="preserve">
+    <value>Makes your tank invisible out-the-window.  Still visible on radar.</value>
+  </data>
+  <data name="CloakingName" xml:space="preserve">
+    <value>Cloaking</value>
+  </data>
+  <data name="GenoDescription" xml:space="preserve">
+    <value>Killing one tank kills that tank's whole team.</value>
+  </data>
+  <data name="GMDescription" xml:space="preserve">
+    <value>Shots track a target.  Lock on with right button.  Can lock on or retarget after firing.</value>
+  </data>
+  <data name="IBDescription" xml:space="preserve">
+    <value>Your shots don't appear on other radars.  Can still see them out window.</value>
+  </data>
+  <data name="IdentifyDescription" xml:space="preserve">
+    <value>Identifies type of nearest flag.</value>
+  </data>
+  <data name="IdentifyName" xml:space="preserve">
+    <value>Identify</value>
+  </data>
+  <data name="JumpingDescription" xml:space="preserve">
+    <value>Tank can jump.  Use Tab key.  Can't steer in the air.</value>
+  </data>
+  <data name="JumpingName" xml:space="preserve">
+    <value>Jumping</value>
+  </data>
+  <data name="LaserDescription" xml:space="preserve">
+    <value>Shoots a laser.  Infinite speed and range but long reload time.</value>
+  </data>
+  <data name="MachineGunDescription" xml:space="preserve">
+    <value>Very fast reload but very short range.</value>
+  </data>
+  <data name="MasqueradeDescription" xml:space="preserve">
+    <value>In opponent's hud, you appear as a teammate.</value>
+  </data>
+  <data name="MasqueradeName" xml:space="preserve">
+    <value>Masquerade</value>
+  </data>
+  <data name="NarrowDescription" xml:space="preserve">
+    <value>Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings.</value>
+  </data>
+  <data name="PZDescription" xml:space="preserve">
+    <value>Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank shoots Zoned bullets and can't be shot (except by superbullet, shock wave, and other Zoned tanks).</value>
+  </data>
+  <data name="RapidFireDescription" xml:space="preserve">
+    <value>Shoots more often.  Shells go faster but not as far.</value>
+  </data>
+  <data name="RiccoDescription" xml:space="preserve">
+    <value>Shots bounce off walls.  Don't shoot yourself!</value>
+  </data>
+  <data name="SBDescription" xml:space="preserve">
+    <value>Shoots through buildings.  Can kill Phantom Zone.</value>
+  </data>
+  <data name="SeerDescription" xml:space="preserve">
+    <value>See stealthed, cloaked and masquerading tanks as normal.</value>
+  </data>
+  <data name="SeerName" xml:space="preserve">
+    <value>Seer</value>
+  </data>
+  <data name="ShieldDescription" xml:space="preserve">
+    <value>Getting hit only drops flag.  Flag flies an extra-long time.</value>
+  </data>
+  <data name="ShockwaveDescription" xml:space="preserve">
+    <value>Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings.</value>
+  </data>
+  <data name="StealthDescription" xml:space="preserve">
+    <value>Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!</value>
+  </data>
+  <data name="SteamrollerDescription" xml:space="preserve">
+    <value>Destroys tanks you touch but you have to get really close.</value>
+  </data>
+  <data name="ThiefDescription" xml:space="preserve">
+    <value>Steal flags.  Small and fast but can't kill.</value>
+  </data>
+  <data name="ThiefName" xml:space="preserve">
+    <value>Thief</value>
+  </data>
+  <data name="TinyDescription" xml:space="preserve">
+    <value>Tank is small and can get through small openings.  Very hard to hit.</value>
+  </data>
+  <data name="UselessDescription" xml:space="preserve">
+    <value>You have found the useless flag. Use it wisely.</value>
+  </data>
+  <data name="UselessName" xml:space="preserve">
+    <value>Useless</value>
+  </data>
+  <data name="WingsDescription" xml:space="preserve">
+    <value>Tank can drive in air.</value>
+  </data>
+  <data name="WingsName" xml:space="preserve">
+    <value>Wings</value>
+  </data>
 </root>

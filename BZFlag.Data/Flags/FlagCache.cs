@@ -11,6 +11,8 @@ namespace BZFlag.Data.Flags
     public static class FlagTypeList
     {
         private static Dictionary<string, FlagType> FlagList = new Dictionary<string, FlagType>();
+        private static List<FlagType> GoodFlagList = new List<FlagType>();
+        private static List<FlagType> BadFlagList = new List<FlagType>();
 
         public static FlagType[] Flags {  get { return FlagList.Values.ToArray(); } }
 
@@ -23,6 +25,9 @@ namespace BZFlag.Data.Flags
         public static FlagType Thief { get; private set; } = null;
 
         public static FlagType Genocide { get; private set; } = null;
+
+        public static FlagType[] GoodFlags { get { return GoodFlagList.ToArray(); } }
+        public static FlagType[] BadFlags { get { return BadFlagList.ToArray(); } }
 
 
         static FlagTypeList()
@@ -40,72 +45,42 @@ namespace BZFlag.Data.Flags
             Add(new FlagType(FlagStrings.QuickTurnName, "QT", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.QuickTurnDescription));
             Add(new FlagType(FlagStrings.OOName, "OO", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,FlagStrings.OODescription));
 
-            Add(new FlagType(FlagStrings.RapidFireName, "F", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Shoots more often.  Shells go faster but not as far."));
-            Add(new FlagType(FlagStrings.MachineGunName, "MG", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Very fast reload and very short range."));
+            Add(new FlagType(FlagStrings.RapidFireName, "F", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.RapidFireDescription));
+            Add(new FlagType(FlagStrings.MachineGunName, "MG", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.MachineGunDescription));
 
-            GuidedMissile = new FlagType(FlagStrings.GMName, "GM", FlagEndurances.FlagUnstable, ShotTypes.GuidedShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Shots track a target.  Lock on with right button.  Can lock on or retarget after firing.");
-            Add(GuidedMissile);
+            GuidedMissile =  Add(new FlagType(FlagStrings.GMName, "GM", FlagEndurances.FlagUnstable, ShotTypes.GuidedShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.GMDescription));
 
-            Add(new FlagType(FlagStrings.LaserName, "L", FlagEndurances.FlagUnstable, ShotTypes.Laser, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Shoots a laser.  Infinite speed and range but long reload time."));
-            Add(new FlagType(FlagStrings.RiccoName, "R", FlagEndurances.FlagUnstable, ShotTypes.RicochetShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Shots bounce off walls.  Don't shoot yourself!"));
-            Add(new FlagType(FlagStrings.SBName, "SB", FlagEndurances.FlagUnstable, ShotTypes.SuperShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Shoots through buildings.  Can kill Phantom Zone."));
-            Add(new FlagType(FlagStrings.IBName, "IB", FlagEndurances.FlagUnstable, ShotTypes.InvisibleShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Your shots don't appear on other radars.  Can still see them out window."));
-            Add(new FlagType(FlagStrings.StealthName, "ST", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"));
-            Add(new FlagType(FlagStrings.TinyName, "T", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Tank is small and can get through small openings.  Very hard to hit."));
-            Add(new FlagType(FlagStrings.NarrowName, "N", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."));
+            Add(new FlagType(FlagStrings.LaserName, "L", FlagEndurances.FlagUnstable, ShotTypes.Laser, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.LaserDescription));
+            Add(new FlagType(FlagStrings.RiccoName, "R", FlagEndurances.FlagUnstable, ShotTypes.RicochetShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.RiccoDescription));
+            Add(new FlagType(FlagStrings.SBName, "SB", FlagEndurances.FlagUnstable, ShotTypes.SuperShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.SBDescription));
+            Add(new FlagType(FlagStrings.IBName, "IB", FlagEndurances.FlagUnstable, ShotTypes.InvisibleShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.IBDescription));
+            Add(new FlagType(FlagStrings.StealthName, "ST", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.StealthDescription));
+            Add(new FlagType(FlagStrings.TinyName, "T", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.TinyDescription));
+            Add(new FlagType(FlagStrings.NarrowName, "N", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.NarrowDescription));
 
-            Shield = new FlagType(FlagStrings.ShieldName, "SH", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Getting hit only drops flag.  Flag flies an extra-long time.");
-            Add(Shield);
+            Shield = Add(new FlagType(FlagStrings.ShieldName, "SH", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.ShieldDescription));
 
-            Add(new FlagType(FlagStrings.SteamrollerName, "SR", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Destroys tanks you touch but you have to get really close."));
-            Add(new FlagType(FlagStrings.ShockWaveName, "SW", FlagEndurances.FlagUnstable, ShotTypes.Shockwave, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."));
-            Add(new FlagType(FlagStrings.PZName, "PZ", FlagEndurances.FlagUnstable, ShotTypes.PhantomShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank shoots Zoned bullets and can't be shot (except by superbullet, shock wave, and other Zoned tanks)."));
+            Add(new FlagType(FlagStrings.SteamrollerName, "SR", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.SteamrollerDescription));
+            Add(new FlagType(FlagStrings.ShockWaveName, "SW", FlagEndurances.FlagUnstable, ShotTypes.Shockwave, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.ShieldDescription));
+            Add(new FlagType(FlagStrings.PZName, "PZ", FlagEndurances.FlagUnstable, ShotTypes.PhantomShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.PZDescription));
 
+            Add(new FlagType(FlagStrings.JumpingName, "JP", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.JumpingDescription));
+            Add(new FlagType(FlagStrings.IdentifyName, "ID", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.IdentifyDescription));
+            Add(new FlagType(FlagStrings.CloakingName, "CL", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.CloakingDescription));
+            Add(new FlagType(FlagStrings.UselessName, "US", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.UselessDescription));
+            Add(new FlagType(FlagStrings.MasqueradeName, "MQ", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.MasqueradeDescription));
+            Add(new FlagType(FlagStrings.SeerName, "SE", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.SeerDescription));
 
-            Genocide = new FlagType(FlagStrings.GenoName, "G", FlagEndurances.FlagUnstable, ShotTypes.GenocideShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Killing one tank kills that tank's whole team.");
-            Add(Genocide);
+            Thief = Add(new FlagType(FlagStrings.ThiefName, "TH", FlagEndurances.FlagUnstable, ShotTypes.ThiefShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.ThiefDescription));
 
-            Add(new FlagType("Jumping", "JP", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Tank can jump.  Use Tab key.  Can't steer in the air."));
-            Add(new FlagType("Identify", "ID", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Identifies type of nearest flag."));
-            Add(new FlagType("Cloaking", "CL", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Makes your tank invisible out-the-window.  Still visible on radar."));
-            Add(new FlagType("Useless", "US", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "You have found the useless flag. Use it wisely."));
-            Add(new FlagType("Masquerade", "MQ", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "In opponent's hud, you appear as a teammate."));
-            Add(new FlagType("Seer", "SE", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "See stealthed, cloaked and masquerading tanks as normal."));
+            Add(new FlagType(FlagStrings.BurrowName, "BU", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.BurrowDescription));
+            Add(new FlagType(FlagStrings.WingsName, "WG", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.WingsDescription));
+            Add(new FlagType(FlagStrings.AgilityName, "A", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.AgilityDescription));
 
-            Thief = new FlagType("Thief", "TH", FlagEndurances.FlagUnstable, ShotTypes.ThiefShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Steal flags.  Small and fast but can't kill.");
-            Add(Thief);
+            // stupid flags
+            Genocide = Add(new FlagType(FlagStrings.GenoName, "G", FlagEndurances.FlagUnstable, ShotTypes.GenocideShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.GenoDescription));
 
-            Add(new FlagType("Burrow", "BU", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!"));
-            Add(new FlagType("Wings", "WG", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Tank can drive in air."));
-            Add(new FlagType("Agility", "A", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,
-                            "Tank is quick and nimble making it easier to dodge."));
-
-
-
+            // bad flags
             Add(new FlagType("ReverseControls", "RC", FlagEndurances.FlagSticky, ShotTypes.NormalShot, FlagQualities.FlagBad, TeamColors.NoTeam,
                             "Tank driving controls are reversed."));
             Add(new FlagType("Colorblindness", "CB", FlagEndurances.FlagSticky, ShotTypes.NormalShot, FlagQualities.FlagBad, TeamColors.NoTeam,
@@ -136,9 +111,16 @@ namespace BZFlag.Data.Flags
                             "Tank can't stop bouncing."));
         }
 
-        public static void Add(FlagType f)
+        public static FlagType Add(FlagType f)
         {
+            if (f.FlagQuality == FlagQualities.FlagGood && f.FlagTeam == TeamColors.NoTeam && f.FlagShot != ShotTypes.GenocideShot)
+                GoodFlagList.Add(f);
+            else if (f.FlagQuality == FlagQualities.FlagBad)
+                BadFlagList.Add(f);
+
             FlagList.Add(f.FlagAbbv, f);
+
+            return f;
         }
 
         public static FlagType GetFromAbriv(string abriviation)

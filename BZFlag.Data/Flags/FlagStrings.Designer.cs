@@ -61,6 +61,24 @@ namespace BZFlag.Data.Flags {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tank is quick and nimble making it easier to dodge..
+        /// </summary>
+        internal static string AgilityDescription {
+            get {
+                return ResourceManager.GetString("AgilityDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Agility.
+        /// </summary>
+        internal static string AgilityName {
+            get {
+                return ResourceManager.GetString("AgilityName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to If it&apos;s yours, prevent other teams from taking it.  If it&apos;s not take it to your base to capture it!.
         /// </summary>
         internal static string BlueTeamDescription {
@@ -79,11 +97,65 @@ namespace BZFlag.Data.Flags {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!.
+        /// </summary>
+        internal static string BurrowDescription {
+            get {
+                return ResourceManager.GetString("BurrowDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Burrow.
+        /// </summary>
+        internal static string BurrowName {
+            get {
+                return ResourceManager.GetString("BurrowName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Makes your tank invisible out-the-window.  Still visible on radar..
+        /// </summary>
+        internal static string CloakingDescription {
+            get {
+                return ResourceManager.GetString("CloakingDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cloaking.
+        /// </summary>
+        internal static string CloakingName {
+            get {
+                return ResourceManager.GetString("CloakingName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Killing one tank kills that tank&apos;s whole team..
+        /// </summary>
+        internal static string GenoDescription {
+            get {
+                return ResourceManager.GetString("GenoDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Genocide.
         /// </summary>
         internal static string GenoName {
             get {
                 return ResourceManager.GetString("GenoName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shots track a target.  Lock on with right button.  Can lock on or retarget after firing..
+        /// </summary>
+        internal static string GMDescription {
+            get {
+                return ResourceManager.GetString("GMDescription", resourceCulture);
             }
         }
         
@@ -133,11 +205,65 @@ namespace BZFlag.Data.Flags {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your shots don&apos;t appear on other radars.  Can still see them out window..
+        /// </summary>
+        internal static string IBDescription {
+            get {
+                return ResourceManager.GetString("IBDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invisible Bullet.
         /// </summary>
         internal static string IBName {
             get {
                 return ResourceManager.GetString("IBName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Identifies type of nearest flag..
+        /// </summary>
+        internal static string IdentifyDescription {
+            get {
+                return ResourceManager.GetString("IdentifyDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Identify.
+        /// </summary>
+        internal static string IdentifyName {
+            get {
+                return ResourceManager.GetString("IdentifyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tank can jump.  Use Tab key.  Can&apos;t steer in the air..
+        /// </summary>
+        internal static string JumpingDescription {
+            get {
+                return ResourceManager.GetString("JumpingDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jumping.
+        /// </summary>
+        internal static string JumpingName {
+            get {
+                return ResourceManager.GetString("JumpingName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shoots a laser.  Infinite speed and range but long reload time..
+        /// </summary>
+        internal static string LaserDescription {
+            get {
+                return ResourceManager.GetString("LaserDescription", resourceCulture);
             }
         }
         
@@ -151,11 +277,47 @@ namespace BZFlag.Data.Flags {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Very fast reload but very short range..
+        /// </summary>
+        internal static string MachineGunDescription {
+            get {
+                return ResourceManager.GetString("MachineGunDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Machine Gun.
         /// </summary>
         internal static string MachineGunName {
             get {
                 return ResourceManager.GetString("MachineGunName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In opponent&apos;s hud, you appear as a teammate..
+        /// </summary>
+        internal static string MasqueradeDescription {
+            get {
+                return ResourceManager.GetString("MasqueradeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Masquerade.
+        /// </summary>
+        internal static string MasqueradeName {
+            get {
+                return ResourceManager.GetString("MasqueradeName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings..
+        /// </summary>
+        internal static string NarrowDescription {
+            get {
+                return ResourceManager.GetString("NarrowDescription", resourceCulture);
             }
         }
         
@@ -223,6 +385,15 @@ namespace BZFlag.Data.Flags {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank shoots Zoned bullets and can&apos;t be shot (except by superbullet, shock wave, and other Zoned tanks)..
+        /// </summary>
+        internal static string PZDescription {
+            get {
+                return ResourceManager.GetString("PZDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Phantom Zone.
         /// </summary>
         internal static string PZName {
@@ -246,6 +417,15 @@ namespace BZFlag.Data.Flags {
         internal static string QuickTurnName {
             get {
                 return ResourceManager.GetString("QuickTurnName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shoots more often.  Shells go faster but not as far..
+        /// </summary>
+        internal static string RapidFireDescription {
+            get {
+                return ResourceManager.GetString("RapidFireDescription", resourceCulture);
             }
         }
         
@@ -277,11 +457,29 @@ namespace BZFlag.Data.Flags {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Shots bounce off walls.  Don&apos;t shoot yourself!.
+        /// </summary>
+        internal static string RiccoDescription {
+            get {
+                return ResourceManager.GetString("RiccoDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Riccochet.
         /// </summary>
         internal static string RiccoName {
             get {
                 return ResourceManager.GetString("RiccoName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shoots through buildings.  Can kill Phantom Zone..
+        /// </summary>
+        internal static string SBDescription {
+            get {
+                return ResourceManager.GetString("SBDescription", resourceCulture);
             }
         }
         
@@ -295,11 +493,47 @@ namespace BZFlag.Data.Flags {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to See stealthed, cloaked and masquerading tanks as normal..
+        /// </summary>
+        internal static string SeerDescription {
+            get {
+                return ResourceManager.GetString("SeerDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Seer.
+        /// </summary>
+        internal static string SeerName {
+            get {
+                return ResourceManager.GetString("SeerName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Getting hit only drops flag.  Flag flies an extra-long time..
+        /// </summary>
+        internal static string ShieldDescription {
+            get {
+                return ResourceManager.GetString("ShieldDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shield.
         /// </summary>
         internal static string ShieldName {
             get {
                 return ResourceManager.GetString("ShieldName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Firing destroys all tanks nearby.  Don&apos;t kill teammates!  Can kill tanks on/in buildings..
+        /// </summary>
+        internal static string ShockwaveDescription {
+            get {
+                return ResourceManager.GetString("ShockwaveDescription", resourceCulture);
             }
         }
         
@@ -313,11 +547,29 @@ namespace BZFlag.Data.Flags {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!.
+        /// </summary>
+        internal static string StealthDescription {
+            get {
+                return ResourceManager.GetString("StealthDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stealth.
         /// </summary>
         internal static string StealthName {
             get {
                 return ResourceManager.GetString("StealthName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Destroys tanks you touch but you have to get really close..
+        /// </summary>
+        internal static string SteamrollerDescription {
+            get {
+                return ResourceManager.GetString("SteamrollerDescription", resourceCulture);
             }
         }
         
@@ -331,11 +583,74 @@ namespace BZFlag.Data.Flags {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Steal flags.  Small and fast but can&apos;t kill..
+        /// </summary>
+        internal static string ThiefDescription {
+            get {
+                return ResourceManager.GetString("ThiefDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thief.
+        /// </summary>
+        internal static string ThiefName {
+            get {
+                return ResourceManager.GetString("ThiefName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tank is small and can get through small openings.  Very hard to hit..
+        /// </summary>
+        internal static string TinyDescription {
+            get {
+                return ResourceManager.GetString("TinyDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tiny.
         /// </summary>
         internal static string TinyName {
             get {
                 return ResourceManager.GetString("TinyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have found the useless flag. Use it wisely..
+        /// </summary>
+        internal static string UselessDescription {
+            get {
+                return ResourceManager.GetString("UselessDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Useless.
+        /// </summary>
+        internal static string UselessName {
+            get {
+                return ResourceManager.GetString("UselessName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tank can drive in air..
+        /// </summary>
+        internal static string WingsDescription {
+            get {
+                return ResourceManager.GetString("WingsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wings.
+        /// </summary>
+        internal static string WingsName {
+            get {
+                return ResourceManager.GetString("WingsName", resourceCulture);
             }
         }
     }
