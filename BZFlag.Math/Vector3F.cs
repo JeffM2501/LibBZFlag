@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -107,6 +107,11 @@ namespace BZFlag.LinearMath
         public static float Distance(Vector3F v1, Vector3F v2)
         {
             return (float)System.Math.Sqrt((v2.X - v1.X) * (v2.X - v1.X) + (v2.Y - v1.Y) * (v2.Y - v1.Y) + (v2.Z - v1.Z) * (v2.Z - v1.Z));
+        }
+
+        public static float DistanceSquared(Vector3F v1, Vector3F v2)
+        {
+            return (v2.X - v1.X) * (v2.X - v1.X) + (v2.Y - v1.Y) * (v2.Y - v1.Y) + (v2.Z - v1.Z) * (v2.Z - v1.Z);
         }
 
         public static Vector3F Min(Vector3F v1, Vector3F v2)
