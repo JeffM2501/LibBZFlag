@@ -116,6 +116,32 @@ namespace BZFlag.Game.Host
 
         public TeamInfo TeamData { get; set; } = new TeamInfo();
 
+        public class FlagInfo
+        {
+            public bool AllowGeno { get; set; } = false;
+
+            public bool SpawnRandomFlags { get; set; } = false;
+
+            public class RandomFlagSpawnInfo
+            {
+                public bool OverrideMapFlags { get; set; } = false;
+
+                public int MinFlagCount { get; set; } = 10;
+                public int MaxFlagCount { get; set; } = 10;
+
+                public bool UseGoodFlags { get; set; } = true;
+                public bool UseBadFlags { get; set; } = false;
+
+                public List<string> IgnoreFlags { get; set; } = new List<string>();
+                public List<string> UseFlags { get; set; } = new List<string>();
+
+            }
+            public RandomFlagSpawnInfo RandomFlags { get; set; } = new RandomFlagSpawnInfo();
+        }
+        public FlagInfo Flgs { get; set; } = new FlagInfo();
+
+
+
         public class ExtraConfigInfo
         {
             public string Name = string.Empty;
