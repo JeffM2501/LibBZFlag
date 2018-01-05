@@ -9,9 +9,69 @@ using BZFlag.LinearMath;
 
 namespace BZFlag.Data.BZDB
 {
-    public static class BZDBVarNames
+    public class BZDBCacheFloat
     {
-        public static readonly string Gravity = "_gravity";
+        private Database DB = null;
+
+        public string VarName { get; protected set; }  = string.Empty;
+
+        private float _Value = float.MinValue;
+
+        public BZDBCacheFloat(Database db, string name)
+        {
+            DB = db;
+            VarName = name;
+
+            db.ValueChanged += Db_ValueChanged;
+        }
+
+        private void Db_ValueChanged(object sender, Database.DatabaseItem e)
+        {
+            if (e.Key == VarName)
+                Update();
+        }
+
+        public float Value
+        {
+            get
+            {
+                if (_Value == double.MinValue)
+                    Update();
+                return _Value;
+            }
+        }
+
+        protected void Update()
+        {
+            if (DB == null)
+                return;
+
+            _Value = (float)DB.GetValueD(VarName);
+        }
+    }
+
+    public class BZDBCache
+    {
+        public static class VarNames
+        {
+            public static readonly string Gravity = "_gravity";
+            public static readonly string FlagRadius = "_flagRadius";
+            public static readonly string TankRadius = "_tankRadius";
+            public static readonly string TankSpeed = "_tankSpeed";
+        }
+
+        public BZDBCacheFloat Gravity = null;
+        public BZDBCacheFloat FlagRadius = null;
+        public BZDBCacheFloat TankRadius = null;
+        public BZDBCacheFloat TankSpeed = null;
+
+        public BZDBCache(Database db)
+        {
+            Gravity = new BZDBCacheFloat(db, VarNames.Gravity);
+            FlagRadius = new BZDBCacheFloat(db, VarNames.FlagRadius);
+            TankRadius = new BZDBCacheFloat(db, VarNames.TankRadius);
+            TankSpeed = new BZDBCacheFloat(db, VarNames.TankSpeed);
+        }
     }
 
     public class Database
@@ -50,6 +110,8 @@ namespace BZFlag.Data.BZDB
             public event EventHandler<DatabaseItem> Changed = null;
 
             public bool Trasmit = true;
+
+            public bool Locked = false;
 
             public DatabaseItem() { Key = string.Empty; Value = string.Empty; }
             public DatabaseItem(string k, string v) { Key = k; Value = v; }
@@ -300,6 +362,13 @@ namespace BZFlag.Data.BZDB
 
         public Dictionary<string, EventHandler<DatabaseItem>> NotificationEvents = new Dictionary<string, EventHandler<DatabaseItem>>();
 
+        public BZDBCache Cache = null;
+
+        public Database()
+        {
+            Cache = new BZDBCache(this);
+        }
+
         public void RegisterVariableChangeNotifiacation(string name, EventHandler<DatabaseItem> handler)
         {
             if (NotificationEvents.ContainsKey(name))
@@ -357,6 +426,9 @@ namespace BZFlag.Data.BZDB
 
             var item = RawBZDBVariables[key];
 
+            if (item.Locked)
+                return false;
+
             item.RawValue = value;
 
             item.SetupValue(this);
@@ -371,12 +443,13 @@ namespace BZFlag.Data.BZDB
             ChangeValue(key, value);
         }
 
-        public void InitValues(string key, string value)
+        public void InitValues(string key, string value, bool locked)
         {
             if (!RawBZDBVariables.ContainsKey(key))
                 AddItem(key, value);
 
             RawBZDBVariables[key].InitValue(value);
+            RawBZDBVariables[key].Locked = locked;
         }
 
         public void SetValues(Dictionary<string, string> values, bool callEvents)

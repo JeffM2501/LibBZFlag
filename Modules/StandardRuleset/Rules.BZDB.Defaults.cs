@@ -19,9 +19,9 @@ namespace BZFS.StandardRuleset
 
         private static BZFlag.Data.BZDB.Database StateDatabase = null;
 
-        public static void SetInitalBZDB(string key, string value, bool persist, StateDBPermission perms)
+        public static void SetInitalBZDB(string key, string value, bool persist, StateDBPermission perms, bool isStatic = false)
         {
-            StateDatabase.InitValues(key, value);
+            StateDatabase.InitValues(key, value, isStatic);
         }
 
         protected virtual void LoadBZDBDefaults(Server host, BZFlag.Data.BZDB.Database db)
@@ -62,10 +62,10 @@ namespace BZFS.StandardRuleset
             SetInitalBZDB("_explodeTime", "5.0", false, StateDBPermission.Locked);
             SetInitalBZDB("_flagAltitude", "11.0", false, StateDBPermission.Locked);
             SetInitalBZDB("_flagEffectTime", "0.64", false, StateDBPermission.Locked);
-            SetInitalBZDB("_flagHeight", "10.0", false, StateDBPermission.Locked);
-            SetInitalBZDB("_flagPoleWidth", "0.025", false, StateDBPermission.Locked);
-            SetInitalBZDB("_flagPoleSize", "0.8", false, StateDBPermission.Locked);
-            SetInitalBZDB("_flagRadius", "2.5", false, StateDBPermission.Locked);
+            SetInitalBZDB("_flagHeight", "10.0", false, StateDBPermission.Locked, true);
+            SetInitalBZDB("_flagPoleWidth", "0.025", false, StateDBPermission.Locked, true);
+            SetInitalBZDB("_flagPoleSize", "0.8", false, StateDBPermission.Locked, true);
+            SetInitalBZDB("_flagRadius", "2.5", false, StateDBPermission.Locked,true);
             SetInitalBZDB("_friction", "0", false, StateDBPermission.Locked);
             SetInitalBZDB("_forbidMarkers", "0", false, StateDBPermission.Locked);
             SetInitalBZDB("_fogMode", "none", false, StateDBPermission.Locked);
@@ -165,7 +165,7 @@ namespace BZFS.StandardRuleset
             SetInitalBZDB("_tankAngVel", "0.785398", false, StateDBPermission.Locked);
             SetInitalBZDB("_tankHeight", "2.05", false, StateDBPermission.Locked);
             SetInitalBZDB("_tankLength", "6.0", false, StateDBPermission.Locked);
-            SetInitalBZDB("_tankRadius", "0.72 * _tankLength", false, StateDBPermission.Locked);
+            SetInitalBZDB("_tankRadius", "0.72 * _tankLength", false, StateDBPermission.Locked, true);
             SetInitalBZDB("_tankSpeed", "25.0", false, StateDBPermission.Locked);
             SetInitalBZDB("_tankWidth", "2.8", false, StateDBPermission.Locked);
             SetInitalBZDB("_targetingAngle", "0.3", false, StateDBPermission.Locked);
