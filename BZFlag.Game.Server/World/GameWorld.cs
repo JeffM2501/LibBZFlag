@@ -18,7 +18,7 @@ namespace BZFlag.Game.Host.World
         public string MapHash = string.Empty;
         protected byte[] WorldData = null;
 
-        protected Random RNG = new Random();
+        public Random RNG { get; protected set; } = new Random();
 
         public void LoadBZWFile(string mapFile)
         {
@@ -27,7 +27,6 @@ namespace BZFlag.Game.Host.World
 
             BZFlag.IO.BZW.Reader.ReadMap(fs);
             fs.Close();
-
         }
 
         public byte[] GetWorldData()
