@@ -24,6 +24,7 @@ namespace BZFS.StandardRuleset
 
             serverInstance.State.Players.ComputeScores = DoPlayerScore;
             serverInstance.State.Flags.OnPlayerHitWhileHoldingFlag = OnPlayerHitWhileHoldingFlag;
+            serverInstance.State.Flags.BuildRandomFlags = BuildRandomFlags;
 
             serverInstance.GetBZDBDefaults = LoadBZDBDefaults;
 

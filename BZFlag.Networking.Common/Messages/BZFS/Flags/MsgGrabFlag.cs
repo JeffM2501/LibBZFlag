@@ -24,8 +24,15 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
         {
             DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
 
-            buffer.WriteByte(PlayerID);
-            buffer.WriteFlagUpdateData(FlagData);
+            if (IsServer())
+            {
+                buffer.WriteUInt16(FlagData.FlagID);
+            }
+            else
+            {
+                buffer.WriteByte(PlayerID);
+                buffer.WriteFlagUpdateData(FlagData, false);
+            }
 
             return buffer.GetMessageBuffer();
         }
@@ -34,8 +41,15 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
         {
             Reset(data);
 
-            PlayerID = ReadByte();
-            FlagData = ReadFlagUpdateData();
+            if (IsServer())
+            {
+                FlagData.FlagID = ReadUInt16();
+            }
+            else
+            {
+                PlayerID = ReadByte();
+                FlagData = ReadFlagUpdateData();
+            }
         }
     }
 }

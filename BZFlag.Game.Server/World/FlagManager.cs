@@ -17,19 +17,26 @@ namespace BZFlag.Game.Host.World
     {
         public Server ServerHost = null;
 
-        public class FlagInstance : EventArgs
+        public class FlagInstance : FlagUpdateData
         {
-            public bool Active = false;
-
             public FlagType Flag = FlagTypeList.None;
-            public FlagUpdateData LastUpdate = new FlagUpdateData();
-
             public ServerPlayer Owner = null;
+
+            public bool Grabable()
+            {
+                lock (this)
+                    return Owner == null && (Status == FlagStatuses.FlagInAir || Status == FlagStatuses.FlagOnGround);
+            }
         }
 
-        protected Dictionary<int,FlagInstance> ActiveFlags = new Dictionary<int, FlagInstance>();
+        protected Dictionary<int, FlagInstance> ActiveFlags = new Dictionary<int, FlagInstance>();
+
+        protected Dictionary<int, FlagInstance> CarriedFlags = new Dictionary<int, FlagInstance>();
+        protected Dictionary<int, FlagInstance> WorldFlags = new Dictionary<int, FlagInstance>();
 
         protected List<int> EmptyFlagIDs = new List<int>();
+
+        public static readonly int MaxFlagID = 256;
 
         public FlagInstance[] GetActiveFlags()
         {
@@ -40,11 +47,23 @@ namespace BZFlag.Game.Host.World
         public event EventHandler<FlagInstance> FlagAdded = null;
         public event EventHandler<FlagInstance> FlagRemoved = null;
 
+        public event EventHandler<FlagInstance> FlagGrabbed = null;
+        public event EventHandler<FlagInstance> FlagDropped = null;
+
+        public delegate void BuildRandomFlagsCallback(FlagManager manager, ServerConfig.FlagInfo flagInfo);
+        public BuildRandomFlagsCallback BuildRandomFlags = null;
+
+        public delegate void BuildMapFlagsCallback(FlagManager manager, GameWorld map);
+        public BuildMapFlagsCallback BuildMapFlags = null;
+
+        public delegate void SpawnFlagCallback(FlagManager manager, GameWorld map, FlagType flag,  ref Vector3F postion);
+        public SpawnFlagCallback ComputeFlagSpawnPoint = SimpleSpawn;
+
         protected int GetNewFlagID()
         {
             lock (ActiveFlags)
             {
-                if (ActiveFlags.Count >= API.Common.MaxFlags)
+                if (ActiveFlags.Count > MaxFlagID)
                     return -1;
             }
 
@@ -62,33 +81,56 @@ namespace BZFlag.Game.Host.World
                 return ActiveFlags.Count;
         }
 
+        public FlagInstance FindFlagByID(int id)
+        {
+            lock(ActiveFlags)
+            {
+                if (ActiveFlags.ContainsKey(id))
+                    return ActiveFlags[id];
+            }
+            return null;
+        }
+
+        public void ClearAllFlags()
+        {
+            lock (ActiveFlags)
+            {
+                EmptyFlagIDs.Clear();
+                ActiveFlags.Clear();
+            }
+        }
+
         protected FlagInstance SetupNewFlag(FlagType flag, Vector3F location, bool spawnInAir)
         {
             FlagInstance inst = new FlagInstance();
             inst.Flag = flag;
-            inst.LastUpdate.Postion = location;
+            inst.Postion = location;
             inst.Owner = null;
-            inst.Active = true;
-            inst.LastUpdate.Owner = -1;
+            inst.OwnerID = -1;
 
             if (spawnInAir)
             {
-                inst.LastUpdate.Status = FlagStatuses.FlagComing;
-                inst.LastUpdate.LaunchPosition = location;
-                inst.LastUpdate.LandingPostion = new Vector3F(location.X, location.Y, 0); // TODO, project ray into octree
-                inst.LastUpdate.FlightEnd = 1;
+                inst.Status = FlagStatuses.FlagComing;
+                inst.LaunchPosition = location;
+                inst.LandingPostion = new Vector3F(location.X, location.Y, 0); // TODO, project ray into octree
+                inst.FlightEnd = 1;
             }
             else
             {
-                inst.LastUpdate.Status = FlagStatuses.FlagOnGround;
+                inst.Status = FlagStatuses.FlagOnGround;
             }
 
-            inst.LastUpdate.FlagID = GetNewFlagID();
-            if (inst.LastUpdate.FlagID < 0)
+            inst.FlagID = GetNewFlagID();
+            if (inst.FlagID < 0)
                 return null;
 
             lock (ActiveFlags)
-                ActiveFlags.Add(inst.LastUpdate.FlagID, inst);
+            {
+                ActiveFlags.Add(inst.FlagID, inst);
+                WorldFlags.Add(inst.FlagID, inst);
+            }
+
+            Logger.Log3("Setup new flag " + inst.FlagID.ToString() + " of type " + flag.FlagAbbv);
 
             return inst;
         }
@@ -99,7 +141,18 @@ namespace BZFlag.Game.Host.World
             if (inst != null)
                 FlagAdded?.Invoke(this, inst);
 
+            MsgFlagUpdate upd = new MsgFlagUpdate();
+            upd.FlagUpdates.Add(inst);
+            ServerHost.State.Players.SendToAll(upd, false);
+
+            Logger.Log2("Added new flag " + inst.FlagID.ToString() + " of type " + flag.FlagAbbv);
+
             return inst != null;
+        }
+
+        public bool AddFlag(FlagType flag)
+        {
+            return AddFlag(flag, GetFlagSpawn(flag), true);
         }
 
         public bool InitFlag(FlagType flag, Vector3F location)
@@ -107,15 +160,42 @@ namespace BZFlag.Game.Host.World
             return SetupNewFlag(flag, location, false) != null;
         }
 
-        public void RemoveFlag(FlagInstance instnace)
+        public bool InitFlag(FlagType flag)
         {
-            lock (EmptyFlagIDs)
-                EmptyFlagIDs.Add(instnace.LastUpdate.FlagID);
+            return InitFlag(flag, GetFlagSpawn(flag));
+        }
 
-            FlagRemoved?.Invoke(this, instnace);
+        public void RemoveFlag(FlagInstance flag)
+        {
+            DropFlag(flag);
 
+            flag.Status = FlagStatuses.FlagNoExist;
             lock (ActiveFlags)
-                ActiveFlags.Remove(instnace.LastUpdate.FlagID);
+            {
+                ActiveFlags.Remove(flag.FlagID);
+                lock (WorldFlags)
+                {
+                    if (WorldFlags.ContainsKey(flag.FlagID))
+                        WorldFlags.Remove(flag.FlagID);
+                }
+
+                lock (CarriedFlags)
+                {
+                    if (WorldFlags.ContainsKey(flag.FlagID))
+                        WorldFlags.Remove(flag.FlagID);
+                }
+            }
+
+            MsgFlagUpdate upd = new MsgFlagUpdate();
+            upd.FlagUpdates.Add(flag);
+            ServerHost.State.Players.SendToAll(upd, false);
+
+            lock (EmptyFlagIDs)
+                EmptyFlagIDs.Add(flag.FlagID);
+
+            FlagRemoved?.Invoke(this, flag);
+
+            Logger.Log2("Removed flag " + flag.FlagID.ToString() + " of type " + flag.Flag.FlagAbbv);
         }
 
         public MsgNegotiateFlags GetFlagNegotiation(MsgNegotiateFlags inFlags)
@@ -147,7 +227,7 @@ namespace BZFlag.Game.Host.World
                     msg = new MsgFlagUpdate();
                 }
 
-                msg.FlagUpdates.Add(flag.LastUpdate);
+                msg.FlagUpdates.Add(flag);
             }
 
             if (!sentOne || msg.FlagUpdates.Count > 0)
@@ -157,6 +237,29 @@ namespace BZFlag.Game.Host.World
         public void Update(Data.Time.Clock gameTime)
         {
 
+        }
+
+        public void SetupIniitalFlags()
+        {
+            if (ServerHost.ConfigData.Flags.SpawnRandomFlags)
+                BuildRandomFlags?.Invoke(this, ServerHost.ConfigData.Flags);
+
+            if (ServerHost.ConfigData.Flags.SpawnRandomFlags && !ServerHost.ConfigData.Flags.RandomFlags.OverrideMapFlags && false) // repolace with check for map flags object
+                BuildMapFlags?.Invoke(this, ServerHost.State.World);
+        }
+
+        public Vector3F GetFlagSpawn(FlagType flag)
+        {
+            Vector3F pos = new Vector3F(0, 0, 0);
+
+            ComputeFlagSpawnPoint?.Invoke(this, ServerHost.State.World, flag, ref pos);
+            return pos;
+        }
+
+        protected static void SimpleSpawn(FlagManager manager, GameWorld map, FlagType flag, ref Vector3F postion)
+        {
+            float dummy = 0;
+            map.GetSpawn(ref postion, ref dummy);
         }
     }
 }

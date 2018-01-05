@@ -32,7 +32,7 @@ namespace BZFlag.Data.Flags
 
         static FlagTypeList()
         {
-            Add(new FlagType(FlagStrings.NullFlagName,string.Empty, FlagEndurances.FlagNormal, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.NullFlagDescription));
+            Add(new FlagType(FlagStrings.NullFlagName,string.Empty, FlagEndurances.FlagNormal, ShotTypes.NormalShot, FlagQualities.FlagUnknown, TeamColors.NoTeam, FlagStrings.NullFlagDescription));
 
             // teams
             Add(new FlagType(FlagStrings.RedTeamName, "R*", FlagEndurances.FlagNormal, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.RedTeam, FlagStrings.RedTeamDescription));

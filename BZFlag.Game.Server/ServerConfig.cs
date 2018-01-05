@@ -120,7 +120,7 @@ namespace BZFlag.Game.Host
         {
             public bool AllowGeno { get; set; } = false;
 
-            public bool SpawnRandomFlags { get; set; } = false;
+            public bool SpawnRandomFlags { get; set; } = true;
 
             public class RandomFlagSpawnInfo
             {
@@ -138,9 +138,8 @@ namespace BZFlag.Game.Host
             }
             public RandomFlagSpawnInfo RandomFlags { get; set; } = new RandomFlagSpawnInfo();
         }
-        public FlagInfo Flgs { get; set; } = new FlagInfo();
 
-
+        public FlagInfo Flags { get; set; } = new FlagInfo();
 
         public class ExtraConfigInfo
         {
@@ -200,8 +199,6 @@ namespace BZFlag.Game.Host
                 return false;
             }
         }
-
-
 
         public static ServerConfig ReadYAML(string filepath)
         {

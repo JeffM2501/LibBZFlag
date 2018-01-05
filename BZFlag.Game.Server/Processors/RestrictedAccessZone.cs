@@ -60,7 +60,7 @@ namespace BZFlag.Game.Host.Processors
             SettingsCache.GameOptions = Config.GameData.GameOptions;
             SettingsCache.MaxPlayers = Config.GameData.MaxPlayers;
             SettingsCache.MaxShots = Config.GameData.MaxShots;
-            SettingsCache.MaxFlags = API.Common.MaxFlags;
+            SettingsCache.MaxFlags = FlagManager.MaxFlagID;
             SettingsCache.LinearAcceleration = Config.GameData.LinearAcceleration;
             SettingsCache.AngularAcceleration = Config.GameData.AngularAcceleration;
 

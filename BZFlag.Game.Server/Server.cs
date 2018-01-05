@@ -233,6 +233,7 @@ namespace BZFlag.Game.Host
             WorldPostload?.Invoke(this, EventArgs.Empty);
             State.World.Map.Validate();
 
+            State.Flags.SetupIniitalFlags();
         }
 
         private void UpdatePublicListServer()

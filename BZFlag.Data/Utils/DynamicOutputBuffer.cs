@@ -385,13 +385,17 @@ namespace BZFlag.Data.Utils
             WriteByte(byte.MinValue);
         }
 
-        public void WriteFlagUpdateData(FlagUpdateData flag)
+        public void WriteFlagUpdateData(FlagUpdateData flag, bool useFakeFlag)
         {
             WriteInt16(flag.FlagID);
-            WriteFixedSizeString(flag.Abreviation, 2);
+            if (useFakeFlag)
+                WriteFixedSizeString("PZ", 2);
+            else
+                WriteFixedSizeString(flag.Abreviation, 2);
+
             WriteUInt16((UInt16)flag.Status);
             WriteUInt16((UInt16)flag.Endurance);
-            WriteByte(flag.Owner);
+            WriteByte(flag.OwnerID);
             WriteVector3F(flag.Postion);
             WriteVector3F(flag.LaunchPosition);
             WriteVector3F(flag.LandingPostion);

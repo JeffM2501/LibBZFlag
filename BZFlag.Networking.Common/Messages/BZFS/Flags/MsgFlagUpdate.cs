@@ -14,6 +14,8 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
     {
         public List<FlagUpdateData> FlagUpdates = new List<FlagUpdateData>();
 
+        public bool HideType = true;
+
         public MsgFlagUpdate()
         {
             Code = CodeFromChars("fu");
@@ -25,7 +27,7 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
 
             buffer.WriteUInt16(FlagUpdates.Count);
             foreach (FlagUpdateData f in FlagUpdates)
-                buffer.WriteFlagUpdateData(f);
+                buffer.WriteFlagUpdateData(f, HideType);
 
             return buffer.GetMessageBuffer();
         }

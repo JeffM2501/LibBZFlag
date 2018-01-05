@@ -150,6 +150,10 @@ namespace BZFlag.Game.Host.Players
 
         public event EventHandler<ServerPlayer> ScoreUpdated = null;
 
+
+        public delegate bool PlayerSpawnCallback(ServerPlayer player, GameWorld map, ref Vector3F position, ref float rotation);
+        public PlayerSpawnCallback ComputeSpawn = SimpleSpawn;
+
         public event EventHandler<ServerPlayer> PlayerSpawned = null;
 
         public class KilledEventArgs : EventArgs
@@ -412,14 +416,22 @@ namespace BZFlag.Game.Host.Players
                 Teams[sp.ActualTeam].Remove(sp);
         }
 
+        protected static bool SimpleSpawn(ServerPlayer player, GameWorld map, ref Vector3F position, ref float rotation)
+        {
+            return map.GetSpawn(ref player.Info.LastSpawnState.Position, ref player.Info.LastSpawnState.Azimuth);
+        }
+
         public void StartSpawn(ServerPlayer player, MsgAlive spawnRequest)
         {
             MsgAlive spawnPostion = new MsgAlive();
             spawnPostion.IsSpawn = false;
 
             // TODO, run a thread task to find a spawn.
+            bool ret = false;
+            if (ComputeSpawn != null)
+                ret = ComputeSpawn(player, ServerHost.State.World, ref player.Info.LastSpawnState.Position, ref player.Info.LastSpawnState.Azimuth);
 
-            if (ServerHost.State.World.GetSpawn(ref player.Info.LastSpawnState.Position, ref player.Info.LastSpawnState.Azimuth))
+            if (ret)
             {
                 player.Info.Alive = true;
 

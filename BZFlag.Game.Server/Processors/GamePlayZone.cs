@@ -11,6 +11,7 @@ using BZFlag.Data.Teams;
 using BZFlag.Networking.Messages.BZFS.Control;
 using BZFlag.Networking.Messages.BZFS.Shots;
 using System.Diagnostics;
+using BZFlag.Networking.Messages.BZFS.Flags;
 
 namespace BZFlag.Game.Host.Processors
 {
@@ -28,19 +29,20 @@ namespace BZFlag.Game.Host.Processors
 
             ServerHost.State.BZDatabase.ValueChanged += this.BZDatabase_ValueChanged;
 
-            ServerHost.State.Flags.FlagAdded += Flags_FlagAdded;
-            ServerHost.State.Flags.FlagRemoved += Flags_FlagRemoved;
-
             RegisterCommonHandlers();
 
-            MessageDispatch.Add(new MsgMessage(), HandleChatMessage);
             MessageDispatch.Add(new MsgAlive(), HandleAlive);
             MessageDispatch.Add(new MsgPlayerUpdateSmall(), HandlePlayerUpdate);
             MessageDispatch.Add(new MsgPlayerUpdate(), HandlePlayerUpdate);
 
-            MessageDispatch.Add(new MsgShotBegin(), HandleShotBegin);
-            MessageDispatch.Add(new MsgShotEnd(), HandleShotEnd);
-            MessageDispatch.Add(new MsgKilled(), HandleKilled);
+            MessageDispatch.Add(new MsgMessage(), new ServerMessageDispatcher.MessageHandler((x, y) => ServerHost.State.Chat.HandleChatMessage(x, y as MsgMessage)));
+
+            MessageDispatch.Add(new MsgShotBegin(), new ServerMessageDispatcher.MessageHandler((x, y) => ServerHost.State.Shots.HandleShotBegin(x, y as MsgShotBegin)));
+            MessageDispatch.Add(new MsgShotEnd(), new ServerMessageDispatcher.MessageHandler((x, y) => ServerHost.State.Shots.HandleShotEnd(x, y as MsgShotEnd)));
+            MessageDispatch.Add(new MsgKilled(), new ServerMessageDispatcher.MessageHandler((x, y) => ServerHost.State.Players.HandleKilled(x, y as MsgKilled)));
+
+            MessageDispatch.Add(new MsgGrabFlag(), new ServerMessageDispatcher.MessageHandler((x, y) => ServerHost.State.Flags.HandleFlagGrab(x, y as MsgGrabFlag)));
+            MessageDispatch.Add(new MsgDropFlag(), new ServerMessageDispatcher.MessageHandler((x, y) => ServerHost.State.Flags.HandleDropFlag(x, y as MsgDropFlag)));
         }
 
         protected override void HandleUnknownMessage(ServerPlayer player, NetworkMessage msg)
@@ -51,16 +53,6 @@ namespace BZFlag.Game.Host.Processors
 
             Logger.Log2("Unknown message in gameplay handler, " + code);
             base.HandleUnknownMessage(player, msg);
-        }
-
-        private void Flags_FlagRemoved(object sender, World.FlagManager.FlagInstance e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void Flags_FlagAdded(object sender, World.FlagManager.FlagInstance e)
-        {
-            throw new NotImplementedException();
         }
 
         protected override void PlayerAdded(ServerPlayer player)
@@ -113,26 +105,6 @@ namespace BZFlag.Game.Host.Processors
             player.NeedStartupInfo = false;
 
             UpdatePublicListServer?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void HandleShotBegin(ServerPlayer player, NetworkMessage msg)
-        {
-            ServerHost.State.Shots.HandleShotBegin(player, msg as MsgShotBegin);
-        }
-
-        private void HandleShotEnd(ServerPlayer player, NetworkMessage msg)
-        {
-            ServerHost.State.Shots.HandleShotEnd(player, msg as MsgShotEnd);
-        }
-
-        private void HandleKilled(ServerPlayer player, NetworkMessage msg)
-        {
-            ServerHost.State.Players.HandleKilled(player, msg as MsgKilled);
-        }
-
-        private void HandleChatMessage(ServerPlayer player, NetworkMessage msg)
-        {
-            ServerHost.State.Chat.HandleChatMessage(player, msg as MsgMessage);
         }
 
         private void HandleAlive(ServerPlayer player, NetworkMessage msg)
