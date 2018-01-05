@@ -79,6 +79,24 @@ namespace BZFlag.Data.Flags {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t see out window.  Radar still works..
+        /// </summary>
+        internal static string BlindnessDescription {
+            get {
+                return ResourceManager.GetString("BlindnessDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Blindness.
+        /// </summary>
+        internal static string BlindnessName {
+            get {
+                return ResourceManager.GetString("BlindnessName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to If it&apos;s yours, prevent other teams from taking it.  If it&apos;s not take it to your base to capture it!.
         /// </summary>
         internal static string BlueTeamDescription {
@@ -93,6 +111,24 @@ namespace BZFlag.Data.Flags {
         internal static string BlueTeamName {
             get {
                 return ResourceManager.GetString("BlueTeamName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tank can&apos;t stop bouncing..
+        /// </summary>
+        internal static string BouncyDescription {
+            get {
+                return ResourceManager.GetString("BouncyDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bouncy.
+        /// </summary>
+        internal static string BouncyName {
+            get {
+                return ResourceManager.GetString("BouncyName", resourceCulture);
             }
         }
         
@@ -115,6 +151,24 @@ namespace BZFlag.Data.Flags {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t tell team colors.  Don&apos;t shoot teammates!.
+        /// </summary>
+        internal static string CBDescription {
+            get {
+                return ResourceManager.GetString("CBDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Colorblindness.
+        /// </summary>
+        internal static string CBName {
+            get {
+                return ResourceManager.GetString("CBName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Makes your tank invisible out-the-window.  Still visible on radar..
         /// </summary>
         internal static string CloakingDescription {
@@ -129,6 +183,24 @@ namespace BZFlag.Data.Flags {
         internal static string CloakingName {
             get {
                 return ResourceManager.GetString("CloakingName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t drive in reverse..
+        /// </summary>
+        internal static string FODescription {
+            get {
+                return ResourceManager.GetString("FODescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forward Only.
+        /// </summary>
+        internal static string FOName {
+            get {
+                return ResourceManager.GetString("FOName", resourceCulture);
             }
         }
         
@@ -241,6 +313,24 @@ namespace BZFlag.Data.Flags {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Radar doesn&apos;t work.  Can still see..
+        /// </summary>
+        internal static string JammingDescription {
+            get {
+                return ResourceManager.GetString("JammingDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jamming.
+        /// </summary>
+        internal static string JammingName {
+            get {
+                return ResourceManager.GetString("JammingName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tank can jump.  Use Tab key.  Can&apos;t steer in the air..
         /// </summary>
         internal static string JumpingDescription {
@@ -273,6 +363,24 @@ namespace BZFlag.Data.Flags {
         internal static string LaserName {
             get {
                 return ResourceManager.GetString("LaserName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t turn right..
+        /// </summary>
+        internal static string LTDescription {
+            get {
+                return ResourceManager.GetString("LTDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Turn Only.
+        /// </summary>
+        internal static string LTName {
+            get {
+                return ResourceManager.GetString("LTName", resourceCulture);
             }
         }
         
@@ -313,6 +421,24 @@ namespace BZFlag.Data.Flags {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tank has inertia.  Acceleration is limited..
+        /// </summary>
+        internal static string MomentumDescription {
+            get {
+                return ResourceManager.GetString("MomentumDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Momentum.
+        /// </summary>
+        internal static string MomentumName {
+            get {
+                return ResourceManager.GetString("MomentumName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings..
         /// </summary>
         internal static string NarrowDescription {
@@ -331,6 +457,24 @@ namespace BZFlag.Data.Flags {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tank can&apos;t jump..
+        /// </summary>
+        internal static string NoJumpDescription {
+            get {
+                return ResourceManager.GetString("NoJumpDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Jumping.
+        /// </summary>
+        internal static string NoJumpName {
+            get {
+                return ResourceManager.GetString("NoJumpName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
         internal static string NullFlagDescription {
@@ -345,6 +489,24 @@ namespace BZFlag.Data.Flags {
         internal static string NullFlagName {
             get {
                 return ResourceManager.GetString("NullFlagName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tank becomes very large.  Can&apos;t fit through teleporters..
+        /// </summary>
+        internal static string ObesityDescription {
+            get {
+                return ResourceManager.GetString("ObesityDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Obesity.
+        /// </summary>
+        internal static string ObesityName {
+            get {
+                return ResourceManager.GetString("ObesityName", resourceCulture);
             }
         }
         
@@ -439,6 +601,24 @@ namespace BZFlag.Data.Flags {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tank driving controls are reversed..
+        /// </summary>
+        internal static string RCDescription {
+            get {
+                return ResourceManager.GetString("RCDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reverse Controls.
+        /// </summary>
+        internal static string RCName {
+            get {
+                return ResourceManager.GetString("RCName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to If it&apos;s yours, prevent other teams from taking it.  If it&apos;s not take it to your base to capture it!.
         /// </summary>
         internal static string RedTeamDescription {
@@ -471,6 +651,42 @@ namespace BZFlag.Data.Flags {
         internal static string RiccoName {
             get {
                 return ResourceManager.GetString("RiccoName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t drive forward..
+        /// </summary>
+        internal static string RODescription {
+            get {
+                return ResourceManager.GetString("RODescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ReverseOnly.
+        /// </summary>
+        internal static string ROName {
+            get {
+                return ResourceManager.GetString("ROName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t turn left..
+        /// </summary>
+        internal static string RTDescription {
+            get {
+                return ResourceManager.GetString("RTDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right Turn Only.
+        /// </summary>
+        internal static string RTName {
+            get {
+                return ResourceManager.GetString("RTName", resourceCulture);
             }
         }
         
@@ -619,6 +835,24 @@ namespace BZFlag.Data.Flags {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tank can&apos;t stop firing..
+        /// </summary>
+        internal static string TRDescription {
+            get {
+                return ResourceManager.GetString("TRDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trigger Happy.
+        /// </summary>
+        internal static string TRName {
+            get {
+                return ResourceManager.GetString("TRName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You have found the useless flag. Use it wisely..
         /// </summary>
         internal static string UselessDescription {
@@ -633,6 +867,24 @@ namespace BZFlag.Data.Flags {
         internal static string UselessName {
             get {
                 return ResourceManager.GetString("UselessName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fish-eye lens distorts view..
+        /// </summary>
+        internal static string WADescription {
+            get {
+                return ResourceManager.GetString("WADescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wide Angle.
+        /// </summary>
+        internal static string WAName {
+            get {
+                return ResourceManager.GetString("WAName", resourceCulture);
             }
         }
         

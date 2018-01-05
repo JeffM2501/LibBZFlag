@@ -315,4 +315,88 @@
   <data name="WingsName" xml:space="preserve">
     <value>Wings</value>
   </data>
+  <data name="BlindnessDescription" xml:space="preserve">
+    <value>Can't see out window.  Radar still works.</value>
+  </data>
+  <data name="BlindnessName" xml:space="preserve">
+    <value>Blindness</value>
+  </data>
+  <data name="BouncyDescription" xml:space="preserve">
+    <value>Tank can't stop bouncing.</value>
+  </data>
+  <data name="BouncyName" xml:space="preserve">
+    <value>Bouncy</value>
+  </data>
+  <data name="CBDescription" xml:space="preserve">
+    <value>Can't tell team colors.  Don't shoot teammates!</value>
+  </data>
+  <data name="CBName" xml:space="preserve">
+    <value>Colorblindness</value>
+  </data>
+  <data name="FODescription" xml:space="preserve">
+    <value>Can't drive in reverse.</value>
+  </data>
+  <data name="FOName" xml:space="preserve">
+    <value>Forward Only</value>
+  </data>
+  <data name="JammingDescription" xml:space="preserve">
+    <value>Radar doesn't work.  Can still see.</value>
+  </data>
+  <data name="JammingName" xml:space="preserve">
+    <value>Jamming</value>
+  </data>
+  <data name="LTDescription" xml:space="preserve">
+    <value>Can't turn right.</value>
+  </data>
+  <data name="LTName" xml:space="preserve">
+    <value>Left Turn Only</value>
+  </data>
+  <data name="MomentumDescription" xml:space="preserve">
+    <value>Tank has inertia.  Acceleration is limited.</value>
+  </data>
+  <data name="MomentumName" xml:space="preserve">
+    <value>Momentum</value>
+  </data>
+  <data name="NoJumpDescription" xml:space="preserve">
+    <value>Tank can't jump.</value>
+  </data>
+  <data name="NoJumpName" xml:space="preserve">
+    <value>No Jumping</value>
+  </data>
+  <data name="ObesityDescription" xml:space="preserve">
+    <value>Tank becomes very large.  Can't fit through teleporters.</value>
+  </data>
+  <data name="ObesityName" xml:space="preserve">
+    <value>Obesity</value>
+  </data>
+  <data name="RCDescription" xml:space="preserve">
+    <value>Tank driving controls are reversed.</value>
+  </data>
+  <data name="RCName" xml:space="preserve">
+    <value>Reverse Controls</value>
+  </data>
+  <data name="RODescription" xml:space="preserve">
+    <value>Can't drive forward.</value>
+  </data>
+  <data name="ROName" xml:space="preserve">
+    <value>ReverseOnly</value>
+  </data>
+  <data name="RTDescription" xml:space="preserve">
+    <value>Can't turn left.</value>
+  </data>
+  <data name="RTName" xml:space="preserve">
+    <value>Right Turn Only</value>
+  </data>
+  <data name="TRDescription" xml:space="preserve">
+    <value>Tank can't stop firing.</value>
+  </data>
+  <data name="TRName" xml:space="preserve">
+    <value>Trigger Happy</value>
+  </data>
+  <data name="WADescription" xml:space="preserve">
+    <value>Fish-eye lens distorts view.</value>
+  </data>
+  <data name="WAName" xml:space="preserve">
+    <value>Wide Angle</value>
+  </data>
 </root>
