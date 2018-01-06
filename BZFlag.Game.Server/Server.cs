@@ -101,6 +101,7 @@ namespace BZFlag.Game.Host
                 Flags.Set(this);
                 Shots.Set(this);
                 Chat.Set(this);
+                Players.Set(this);
             }
         }
         public GameState State = new GameState();
@@ -224,6 +225,7 @@ namespace BZFlag.Game.Host
                 }
 
                 // load the build in modules first
+                Logger.Log2("Modules Startup");
                 PluginLoader.Startup(this);
                 ModuleLoadComplete?.Invoke(this,EventArgs.Empty);
             }
@@ -245,6 +247,7 @@ namespace BZFlag.Game.Host
                     Logger.Log1("Unable to load plug-in " + f + " :" + ex.ToString());
                 }
             }
+            Logger.Log2("Plug-ins Startup");
             PluginLoader.Startup(this);
 
             APILoadComplete?.Invoke(this, EventArgs.Empty);

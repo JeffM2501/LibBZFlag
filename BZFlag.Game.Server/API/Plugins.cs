@@ -40,14 +40,13 @@ namespace BZFlag.Game.Host.API
                     info.IsPlugin = isPlugin;
                     info.Module = Activator.CreateInstance(t) as PlugIn;
                     Plugins.Add(info);
-                    Logger.Log3("Loaded plug-in " + t.Name + " from " + Path.GetFileName(ass.Location));
+                    Logger.Log3("Loaded Class " + t.Name + " from " + Path.GetFileName(ass.Location));
                 }
             }
         }
 
         public static void Startup(Server servInstance)
         {
-            Logger.Log2("Plug-ins Startup");
             foreach (var p in Plugins)
             {
                 if (!p.Loaded)
@@ -61,7 +60,7 @@ namespace BZFlag.Game.Host.API
 
         public static void Shutdown(Server servInstance)
         {
-            Logger.Log2("Plug-ins Shutdown");
+            Logger.Log2("API Shutdown");
             foreach (var p in Plugins)
             {
                 if (p.Loaded)
