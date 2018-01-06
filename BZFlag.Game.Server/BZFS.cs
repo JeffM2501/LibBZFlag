@@ -28,12 +28,6 @@ namespace BZFlag.Game.Host
             else
             {
                 Logger.Log0("No config, using default");
-                if (true)
-                {
-                    string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "config.xml");
-                    ServerConfig.WriteXML(cfg, path);
-                    Logger.Log2("Writing config to " + path);
-                }
             }
 
             new Server(cfg).Run();
