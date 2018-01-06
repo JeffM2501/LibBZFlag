@@ -131,5 +131,21 @@ namespace BZFlag.Game.Host {
                 return ResourceManager.GetString("TeamFullMessage", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to usage: BZFSPro.exe [options] config_file
+        ///  options:
+        ///    -save_config, saves a config template to the
+        ///		  specificed config file location
+        ///
+        ///  config files:
+        ///    config files can be YAML, XML, or JSON
+        ///    format is specified by extension.
+        /// </summary>
+        internal static string UseageText {
+            get {
+                return ResourceManager.GetString("UseageText", resourceCulture);
+            }
+        }
     }
 }

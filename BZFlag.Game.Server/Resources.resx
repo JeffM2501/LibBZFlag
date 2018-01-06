@@ -141,4 +141,14 @@
   <data name="TeamFullMessage" xml:space="preserve">
     <value>The team %T is full</value>
   </data>
+  <data name="UseageText" xml:space="preserve">
+    <value>usage: BZFSPro.exe [options] config_file
+  options:
+    -save_config, saves a config template to the
+		  specificed config file location
+
+  config files:
+    config files can be YAML, XML, or JSON
+    format is specified by extension</value>
+  </data>
 </root>
