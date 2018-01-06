@@ -33,7 +33,7 @@ namespace BZFlag.Game.Host
             public class GroupPermissions
             {
                 public string Group { get; set; } = string.Empty;
-                public List<string> Permisions { get; set; } = new List<string>();
+                public List<string> Permissions { get; set; } = new List<string>();
             }
 
             public List<GroupPermissions> Groups { get; set; } = new List<GroupPermissions>();
@@ -49,7 +49,7 @@ namespace BZFlag.Game.Host
                     if (perms == null)
                         return new string[0];
 
-                    return perms.Permisions.ToArray();
+                    return perms.Permissions.ToArray();
                 }
             }
 
@@ -113,7 +113,7 @@ namespace BZFlag.Game.Host
             public class TeamLimits
             {
                 public TeamColors Team { get; set; } = TeamColors.NoTeam;
-                public int Maxium { get; set; } = 100; 
+                public int Maximum { get; set; } = 100; 
             }
             public List<TeamLimits> Limits { get; set; } = new List<TeamLimits>();
 
@@ -122,7 +122,7 @@ namespace BZFlag.Game.Host
                 foreach (var t in Limits)
                 {
                     if (t.Team == team)
-                        return t.Maxium;
+                        return t.Maximum;
                 }
                 return 200;
             }

@@ -80,14 +80,14 @@ namespace BZFlag.Game.Host
 
             ServerConfig.SecurityInfo.GroupPermissions group = new ServerConfig.SecurityInfo.GroupPermissions();
             group.Group = "SECURITY_GROUP_A";
-            group.Permisions.Add("PERMISSION_A");
-            group.Permisions.Add("PERMISSION_B");
+            group.Permissions.Add("PERMISSION_A");
+            group.Permissions.Add("PERMISSION_B");
             config.Security.Groups.Add(group);
 
             group = new ServerConfig.SecurityInfo.GroupPermissions();
             group.Group = "SECURITY_GROUP_B";
-            group.Permisions.Add("PERMISSION_A");
-            group.Permisions.Add("PERMISSION_C");
+            group.Permissions.Add("PERMISSION_A");
+            group.Permissions.Add("PERMISSION_C");
             config.Security.Groups.Add(group);
 
             config.ListPublicly = true;
@@ -116,27 +116,27 @@ namespace BZFlag.Game.Host
             config.TeamData.ForceAutomaticTeams = false;
 
             ServerConfig.TeamInfo.TeamLimits limits = new ServerConfig.TeamInfo.TeamLimits();
-            limits.Maxium = 60;
+            limits.Maximum = 60;
             limits.Team = TeamColors.ObserverTeam;
             config.TeamData.Limits.Add(limits);
 
             limits = new ServerConfig.TeamInfo.TeamLimits();
-            limits.Maxium = 10;
+            limits.Maximum = 10;
             limits.Team = TeamColors.RedTeam;
             config.TeamData.Limits.Add(limits);
 
             limits = new ServerConfig.TeamInfo.TeamLimits();
-            limits.Maxium = 10;
+            limits.Maximum = 10;
             limits.Team = TeamColors.BlueTeam;
             config.TeamData.Limits.Add(limits);
 
             limits = new ServerConfig.TeamInfo.TeamLimits();
-            limits.Maxium = 10;
+            limits.Maximum = 10;
             limits.Team = TeamColors.GreenTeam;
             config.TeamData.Limits.Add(limits);
 
             limits = new ServerConfig.TeamInfo.TeamLimits();
-            limits.Maxium = 10;
+            limits.Maximum = 10;
             limits.Team = TeamColors.PurpleTeam;
             config.TeamData.Limits.Add(limits);
 
