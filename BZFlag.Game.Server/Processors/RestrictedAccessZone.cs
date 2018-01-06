@@ -139,7 +139,7 @@ namespace BZFlag.Game.Host.Processors
                 checker.RequestCompleted += this.Checker_RequestCompleted;
                 checker.RequestErrored += this.Checker_RequestErrored;
 
-                checker.CheckToken(player.Callsign, player.Token, player.ConnectionData.GetIPAsString(), Config.SecurityGroups);
+                checker.CheckToken(player.Callsign, player.Token, player.ConnectionData.GetIPAsString(), Config.Security.GetGroupNames());
             }
         }
 

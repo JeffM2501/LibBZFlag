@@ -52,6 +52,22 @@ namespace BZFlag.Game.Host
                     return perms.Permisions.ToArray();
                 }
             }
+
+            protected List<string> SecurityGroupNames = new List<string>();
+
+            public string [] GetGroupNames()
+            {
+                if (SecurityGroupNames.Count == 0 )
+                {
+                    if (Groups.Count == 0)
+                        return new string[0];
+
+                    foreach (var group in Groups)
+                        SecurityGroupNames.Add(group.Group);
+                }
+
+                return SecurityGroupNames.ToArray();
+            }
         }
         public SecurityInfo Security { get; set; } = new SecurityInfo();
 
@@ -65,8 +81,6 @@ namespace BZFlag.Game.Host
         // authentication data
         public bool AllowAnonUsers { get; set; } = true;
         public bool ProtectRegisteredNames { get; set; } = false;
-
-        public List<string> SecurityGroups { get; set; } = new List<string>();
 
         // gameplay data
         public class GameInfo
@@ -120,7 +134,7 @@ namespace BZFlag.Game.Host
         {
             public bool AllowGeno { get; set; } = false;
 
-            public bool SpawnRandomFlags { get; set; } = true;
+            public bool SpawnRandomFlags { get; set; } = false;
 
             public class RandomFlagSpawnInfo
             {

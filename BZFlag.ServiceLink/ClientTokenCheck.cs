@@ -23,7 +23,7 @@ namespace BZFlag.Services
         public event EventHandler RequestCompleted = null;
         public event EventHandler RequestErrored = null;
 
-        public void CheckToken(string callsign, string token, string address, List<string> groups)
+        public void CheckToken(string callsign, string token, string address, string[] groups)
         {
             string tCheck = string.Format("{0}@{1}={2}", HttpUtility.UrlEncode(callsign), address, HttpUtility.UrlEncode(token));
 
