@@ -31,6 +31,7 @@ namespace BZFlag.Game.Host.Players
         public event EventHandler<Peer> Exited = null;
 
         public bool NeedStartupInfo = true;
+        public bool HasValidEnter = false;
 
         public MsgNegotiateFlags ClientFlagList = null;
 

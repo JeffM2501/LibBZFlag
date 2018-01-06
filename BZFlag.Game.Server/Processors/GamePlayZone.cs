@@ -99,7 +99,7 @@ namespace BZFlag.Game.Host.Processors
 
             if (!Players.AddPlayer(player))
             {
-                SendReject(player, MsgReject.RejectionCodes.RejectTeamFull, "The team " + player.DesiredTeam.ToString() + " is full");
+                SendReject(player, MsgReject.RejectionCodes.RejectTeamFull, Resources.TeamFullMessage.Replace("%T",player.DesiredTeam.ToString()));
                 return;
             }
             player.NeedStartupInfo = false;

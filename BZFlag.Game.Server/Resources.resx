@@ -117,7 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="APIRejectMessage" xml:space="preserve">
+    <value>Rejected</value>
+  </data>
+  <data name="BadAuthMessage" xml:space="preserve">
+    <value>Authentication Failed</value>
+  </data>
+  <data name="BadCallsignMessage" xml:space="preserve">
+    <value>Invalid callsign</value>
+  </data>
+  <data name="NameTakenMessagae" xml:space="preserve">
+    <value>Callsign is registered</value>
+  </data>
+  <data name="NoRobotsMessage" xml:space="preserve">
+    <value>This server does not support client side robot players</value>
+  </data>
+  <data name="NoUnregMessage" xml:space="preserve">
+    <value>Registered Users Only</value>
+  </data>
   <data name="ObserverModeNotificatioMessage" xml:space="preserve">
     <value>You are in observer mode</value>
+  </data>
+  <data name="TeamFullMessage" xml:space="preserve">
+    <value>The team %T is full</value>
   </data>
 </root>

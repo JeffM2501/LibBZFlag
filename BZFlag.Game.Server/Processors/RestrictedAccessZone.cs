@@ -87,15 +87,21 @@ namespace BZFlag.Game.Host.Processors
             if (enter == null)
                 return;
 
-            if (enter.Callsign == string.Empty || enter.Callsign.Length < 3)
+            if (enter.PlayerType == Data.Players.PlayerTypes.ComputerPlayer)
             {
-                SendReject(player, MsgReject.RejectionCodes.RejectBadCallsign, "Invalid callsign");
+                if (player.HasValidEnter)   // keep the one valid connection
+                {
+                    Logger.Log1("Reject Solo bot on  " + player.PlayerID + " connection");
+                    player.SendMessage(new MsgReject(MsgReject.RejectionCodes.RejectBadType, Resources.NoRobotsMessage));
+                }
+                else
+                    SendReject(player, MsgReject.RejectionCodes.RejectBadType, Resources.NoRobotsMessage);
                 return;
             }
 
-            if (enter.PlayerType == Data.Players.PlayerTypes.ComputerPlayer)
+            if (enter.Callsign == string.Empty || enter.Callsign.Length < 3)
             {
-                SendReject(player, MsgReject.RejectionCodes.RejectBadType, "This server does not support client side robot players");
+                SendReject(player, MsgReject.RejectionCodes.RejectBadCallsign, Resources.BadCallsignMessage);
                 return;
             }
 
@@ -109,15 +115,16 @@ namespace BZFlag.Game.Host.Processors
 
             if (!args.Result)
             {
-                SendReject(player, MsgReject.RejectionCodes.RejectUnknown, "API Reject");
+                SendReject(player, MsgReject.RejectionCodes.RejectUnknown, Resources.APIRejectMessage);
                 return;
             }
 
+            player.HasValidEnter = true;
             if (player.Token == string.Empty && !Config.ProtectRegisteredNames)
             {
                 player.AuthStatus = ServerPlayer.AuthStatuses.NoneProvided;
                 if (!Config.AllowAnonUsers)
-                    SendReject(player, MsgReject.RejectionCodes.RejectBadCallsign, "Registered Users Only");
+                    SendReject(player, MsgReject.RejectionCodes.RejectBadCallsign, Resources.NoUnregMessage);
                 else
                     SendAccept(player);
             }
@@ -150,7 +157,7 @@ namespace BZFlag.Game.Host.Processors
 
             player.AuthStatus = ServerPlayer.AuthStatuses.Failed;
             if (!Config.AllowAnonUsers)
-                SendReject(player, MsgReject.RejectionCodes.RejectBadCallsign, "Authentication Failed");
+                SendReject(player, MsgReject.RejectionCodes.RejectBadCallsign, Resources.BadAuthMessage);
             else
                 SendAccept(player);
         }
@@ -188,11 +195,11 @@ namespace BZFlag.Game.Host.Processors
                     SendAccept(player);
             }
             else if (checker.NameRegistered && Config.ProtectRegisteredNames)
-                SendReject(player, MsgReject.RejectionCodes.RejectBadCallsign, "Callsign is registered");
+                SendReject(player, MsgReject.RejectionCodes.RejectBadCallsign, Resources.NameTakenMessagae);
             else
             {
                 if (!Config.AllowAnonUsers)
-                    SendReject(player, MsgReject.RejectionCodes.RejectBadCallsign, "Callsign must be registered");
+                    SendReject(player, MsgReject.RejectionCodes.RejectBadCallsign, Resources.NoUnregMessage);
                 else
                     SendAccept(player);
             }
@@ -221,8 +228,8 @@ namespace BZFlag.Game.Host.Processors
 
             PlayerRejected?.Invoke(this, player);
 
-            player.Disconnect();
             RemovePlayer(player);
+            player.Disconnect();
         }
 
         private void HandleWantWorldHash(ServerPlayer player, NetworkMessage msg)

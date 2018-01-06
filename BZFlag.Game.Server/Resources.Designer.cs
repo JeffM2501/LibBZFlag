@@ -61,11 +61,74 @@ namespace BZFlag.Game.Host {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rejected.
+        /// </summary>
+        internal static string APIRejectMessage {
+            get {
+                return ResourceManager.GetString("APIRejectMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Authentication Failed.
+        /// </summary>
+        internal static string BadAuthMessage {
+            get {
+                return ResourceManager.GetString("BadAuthMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid callsign.
+        /// </summary>
+        internal static string BadCallsignMessage {
+            get {
+                return ResourceManager.GetString("BadCallsignMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Callsign is registered.
+        /// </summary>
+        internal static string NameTakenMessagae {
+            get {
+                return ResourceManager.GetString("NameTakenMessagae", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This server does not support client side robot players.
+        /// </summary>
+        internal static string NoRobotsMessage {
+            get {
+                return ResourceManager.GetString("NoRobotsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registered Users Only.
+        /// </summary>
+        internal static string NoUnregMessage {
+            get {
+                return ResourceManager.GetString("NoUnregMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You are in observer mode.
         /// </summary>
         internal static string ObserverModeNotificatioMessage {
             get {
                 return ResourceManager.GetString("ObserverModeNotificatioMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The team %T is full.
+        /// </summary>
+        internal static string TeamFullMessage {
+            get {
+                return ResourceManager.GetString("TeamFullMessage", resourceCulture);
             }
         }
     }
