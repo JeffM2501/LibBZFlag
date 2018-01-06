@@ -335,6 +335,9 @@ namespace BZFlag.Networking.Common
 
         public void FlushTCP()
         {
+            if (TCP == null)
+                return;
+
             var stream = TCP.GetStream();
             if (stream.CanWrite)
             {
