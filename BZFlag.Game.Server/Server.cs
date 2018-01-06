@@ -41,20 +41,36 @@ namespace BZFlag.Game.Host
         {
             public bool IsPublic = false;
 
-            public Clock GameTime = new Clock();
+            public Clock GameTime;
 
-            public Database BZDatabase = new Database();
+            public Database BZDatabase;
             public BZDBCache Cache = null;
 
-            public GameWorld World = new GameWorld();
-            public FlagManager Flags = new FlagManager();
+            public GameWorld World = null;
+            public FlagManager Flags = null;
 
-            public PlayerManager Players = new PlayerManager();
-            public ChatManager Chat = new ChatManager();
+            public PlayerManager Players = null;
+            public ChatManager Chat = null;
 
-            public ShotManager Shots = new ShotManager();
+            public ShotManager Shots = null;
 
             public ServerConfig ConfigData = null;
+
+            public void Create()
+            {
+                GameTime = new Clock();
+
+                BZDatabase = new Database();
+                Cache = null;
+
+                World = new GameWorld();
+                Flags = new FlagManager();
+
+                Players = new PlayerManager();
+                Chat = new ChatManager();
+
+                Shots = new ShotManager();
+            }
 
             internal void Set(GameState state)
             {
@@ -77,6 +93,7 @@ namespace BZFlag.Game.Host
 
             public void Init(ServerConfig config)
             {
+                Create();
                 ConfigData = config;
 
                 Cache = BZDatabase.Cache;
