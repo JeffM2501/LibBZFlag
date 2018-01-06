@@ -18,11 +18,11 @@ using BZFlag.Game.Host.World;
 
 namespace BZFlag.Game.Host.Players
 {
-    public class PlayerManager
+    public class PlayerManager  : Server.GameState
     {
         public Server ServerHost = null;
 
-        public List<ServerPlayer> Players = new List<ServerPlayer>();
+        public List<ServerPlayer> PlayerList = new List<ServerPlayer>();
 
         public class TeamInfo : EventArgs
         {
@@ -183,8 +183,8 @@ namespace BZFlag.Game.Host.Players
 
             player.Info = new PlayerInfo();
 
-            lock (Players)
-                Players.Add(player);
+            lock (PlayerList)
+                PlayerList.Add(player);
 
             Logger.Log2("Player " + player.Callsign + " assigned to team " + player.ActualTeam.ToString());
 
@@ -204,13 +204,13 @@ namespace BZFlag.Game.Host.Players
                     TeamInited?.Invoke(this, Teams[player.ActualTeam]);
             }
 
-            ServerHost.State.Flags.SendInitialFlagUpdate(player);
+            Flags.SendInitialFlagUpdate(player);
 
             // tell them about everyone except them
             ServerPlayer[] locals = null;
 
-            lock (Players)
-                locals = Players.ToArray();
+            lock (PlayerList)
+                locals = PlayerList.ToArray();
 
             MsgPlayerInfo info = new MsgPlayerInfo();
             foreach (ServerPlayer peer in locals)
@@ -253,7 +253,7 @@ namespace BZFlag.Game.Host.Players
             ServerHost.PostAddPlayer(player);
 
             if (player.ActualTeam == TeamColors.ObserverTeam)
-                ServerHost.State.Chat.SendChatToUser(null, player, Resources.ObserverModeNotificatioMessage, false);
+                Chat.SendChatToUser(null, player, Resources.ObserverModeNotificatioMessage, false);
 
             return true;
         }
@@ -267,7 +267,7 @@ namespace BZFlag.Game.Host.Players
             msgKilled.VictimID = player.PlayerID;
             args.Victim = player;
             args.Killer = GetPlayerByID(msgKilled.KillerID);
-            args.Shot = ServerHost.State.Shots.FindKillableShot(msgKilled.KillerID, msgKilled.ShotID);
+            args.Shot = Shots.FindKillableShot(msgKilled.KillerID, msgKilled.ShotID);
             args.KillInfo = msgKilled;
 
             KillPlayer(player, args);
@@ -295,10 +295,10 @@ namespace BZFlag.Game.Host.Players
 
                 case BlowedUpReasons.GotShot:
                     wasFromAFlag = true;
-                    ServerHost.State.Shots.RemoveShotForDeath(player, args.KillInfo.KillerID, args.KillInfo.ShotID);
+                    Shots.RemoveShotForDeath(player, args.KillInfo.KillerID, args.KillInfo.ShotID);
 
                     if (args.Shot != null)// tell the flag it took a hit
-                        ServerHost.State.Flags.HandlePlayerTakeHit(player, args.Killer, args.Shot);
+                        Flags.HandlePlayerTakeHit(player, args.Killer, args.Shot);
                     break;
 
                 case BlowedUpReasons.GotRunOver:
@@ -327,7 +327,7 @@ namespace BZFlag.Game.Host.Players
             }
 
             if (wasFromAFlag)   // tell the flag it killed
-                ServerHost.State.Flags.HandlePlayerDoDamage(player, args.Killer, FlagTypeList.GetFromAbriv(args.KillInfo.FlagAbreviation));
+                Flags.HandlePlayerDoDamage(player, args.Killer, FlagTypeList.GetFromAbriv(args.KillInfo.FlagAbreviation));
 
             // process any scores
             PlayerInfo.ScoreInfo vicScores = new PlayerInfo.ScoreInfo();
@@ -402,11 +402,11 @@ namespace BZFlag.Game.Host.Players
         private void Player_Exited(object sender, Networking.Common.Peer e)
         {
             ServerPlayer sp = e as ServerPlayer;
-            if (sp == null || !Players.Contains(sp))
+            if (sp == null || !PlayerList.Contains(sp))
                 return;
 
-            lock (Players)
-                Players.Remove(sp);
+            lock (PlayerList)
+                PlayerList.Remove(sp);
 
             MsgRemovePlayer exit = new MsgRemovePlayer();
             exit.PlayerID = sp.PlayerID;
@@ -429,7 +429,7 @@ namespace BZFlag.Game.Host.Players
             // TODO, run a thread task to find a spawn.
             bool ret = false;
             if (ComputeSpawn != null)
-                ret = ComputeSpawn(player, ServerHost.State.World, ref player.Info.LastSpawnState.Position, ref player.Info.LastSpawnState.Azimuth);
+                ret = ComputeSpawn(player, World, ref player.Info.LastSpawnState.Position, ref player.Info.LastSpawnState.Azimuth);
 
             if (ret)
             {
@@ -554,24 +554,24 @@ namespace BZFlag.Game.Host.Players
 
         public virtual ServerPlayer GetPlayerByID(int playerID)
         {
-            lock (Players)
-                return Players.Find((x) => x.PlayerID == playerID);
+            lock (PlayerList)
+                return PlayerList.Find((x) => x.PlayerID == playerID);
         }
 
         public virtual ServerPlayer GetPlayerByCallsign(string callsign)
         {
             string c = callsign.ToUpperInvariant();
 
-            lock (Players)
-                return Players.Find((x) => x.Callsign.ToUpperInvariant() == c);
+            lock (PlayerList)
+                return PlayerList.Find((x) => x.Callsign.ToUpperInvariant() == c);
         }
 
         public virtual void SendToAll(NetworkMessage message, bool useUDP)
         {
             ServerPlayer[] locals = null;
 
-            lock (Players)
-                locals = Players.ToArray();
+            lock (PlayerList)
+                locals = PlayerList.ToArray();
 
             foreach (ServerPlayer player in locals)
                 player.SendMessage(!useUDP, message);

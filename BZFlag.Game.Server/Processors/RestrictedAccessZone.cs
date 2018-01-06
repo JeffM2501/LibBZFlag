@@ -19,9 +19,6 @@ namespace BZFlag.Game.Host.Processors
 {
     internal class RestrictedAccessZone : PlayerProcessor
     {
-        public FlagManager Flags = new FlagManager();
-        public GameWorld World = new GameWorld();
-
         protected MsgGameSettings SettingsCache = null;
         protected MsgWantWHash HashCache = null;
         protected MsgCacheURL URLCache = null;

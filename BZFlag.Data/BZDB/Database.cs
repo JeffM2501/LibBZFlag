@@ -13,7 +13,7 @@ namespace BZFlag.Data.BZDB
     {
         private Database DB = null;
 
-        public string VarName { get; protected set; }  = string.Empty;
+        public string VarName { get; protected set; } = string.Empty;
 
         private float _Value = float.MinValue;
 
@@ -48,6 +48,8 @@ namespace BZFlag.Data.BZDB
 
             _Value = (float)DB.GetValueD(VarName);
         }
+
+        public static implicit operator float(BZDBCacheFloat v) { return v.Value; }
     }
 
     public class BZDBCache
@@ -55,22 +57,50 @@ namespace BZFlag.Data.BZDB
         public static class VarNames
         {
             public static readonly string Gravity = "_gravity";
-            public static readonly string FlagRadius = "_flagRadius";
+
             public static readonly string TankRadius = "_tankRadius";
+            public static readonly string TankHeight = "_tankHeight";
             public static readonly string TankSpeed = "_tankSpeed";
+
+            public static readonly string FlagRadius = "_flagRadius";
+            public static readonly string FlagAltitude = "_flagAltitude";
+            public static readonly string FlagEffectTime = "_flagEffectTime";
+            public static readonly string FlagHeight = "_flagHeight";
+            public static readonly string FlagPoleWidth = "_flagPoleWidth";
+            public static readonly string FlagPoleSize = "_flagPoleSize";
+            public static readonly string ShieldFlight = "_shieldFlight";
         }
 
         public BZDBCacheFloat Gravity = null;
-        public BZDBCacheFloat FlagRadius = null;
+
         public BZDBCacheFloat TankRadius = null;
         public BZDBCacheFloat TankSpeed = null;
+        public BZDBCacheFloat TankHeight = null;
+
+        public BZDBCacheFloat FlagRadius = null;
+        public BZDBCacheFloat FlagAltitude = null;
+        public BZDBCacheFloat FlagEffectTime = null;
+        public BZDBCacheFloat FlagHeight = null;
+        public BZDBCacheFloat FlagPoleWidth = null;
+        public BZDBCacheFloat FlagPoleSize = null;
+
+        public BZDBCacheFloat ShieldFlight = null;
 
         public BZDBCache(Database db)
         {
             Gravity = new BZDBCacheFloat(db, VarNames.Gravity);
-            FlagRadius = new BZDBCacheFloat(db, VarNames.FlagRadius);
+
             TankRadius = new BZDBCacheFloat(db, VarNames.TankRadius);
             TankSpeed = new BZDBCacheFloat(db, VarNames.TankSpeed);
+            TankHeight = new BZDBCacheFloat(db, VarNames.TankHeight);
+
+            FlagRadius = new BZDBCacheFloat(db, VarNames.FlagRadius);
+            FlagAltitude = new BZDBCacheFloat(db, VarNames.FlagAltitude);
+            FlagEffectTime = new BZDBCacheFloat(db, VarNames.FlagEffectTime);
+            FlagHeight = new BZDBCacheFloat(db, VarNames.FlagHeight);
+            FlagPoleWidth = new BZDBCacheFloat(db, VarNames.FlagPoleWidth);
+            FlagPoleSize = new BZDBCacheFloat(db, VarNames.FlagPoleSize);
+            ShieldFlight = new BZDBCacheFloat(db, VarNames.ShieldFlight);
         }
     }
 
@@ -136,7 +166,7 @@ namespace BZFlag.Data.BZDB
                 {
                     SetupValue(db);
                     ResolveValue();
-                }    
+                }
             }
 
             internal void SetupValue(Database db)
@@ -225,7 +255,7 @@ namespace BZFlag.Data.BZDB
 
             private void ResolveAddition()
             {
-                if (Arguments.Count != 2 )
+                if (Arguments.Count != 2)
                     return;
 
                 DoubleValue = ResolveArgumentValue(Arguments[0]) + ResolveArgumentValue(Arguments[1]);
@@ -342,12 +372,12 @@ namespace BZFlag.Data.BZDB
             {
                 ResolveValue();
                 Changed?.Invoke(this, this);
-            }   
+            }
         }
 
         internal Dictionary<string, DatabaseItem> RawBZDBVariables = new Dictionary<string, DatabaseItem>();
 
-        public DatabaseItem[] GetVars() { lock(RawBZDBVariables) return RawBZDBVariables.Values.ToArray(); }
+        public DatabaseItem[] GetVars() { lock (RawBZDBVariables) return RawBZDBVariables.Values.ToArray(); }
 
         internal DatabaseItem FindItem(string name)
         {
@@ -356,7 +386,7 @@ namespace BZFlag.Data.BZDB
 
             return null;
         }
-    
+
         public event EventHandler<DatabaseItem> ValueChanged = null;
         public event EventHandler InitalLoadCompleted = null;
 
@@ -405,7 +435,7 @@ namespace BZFlag.Data.BZDB
         {
             DatabaseItem item = new DatabaseItem(key, value);
             item.Changed += DBItem_Changed;
-            RawBZDBVariables.Add(key,item);
+            RawBZDBVariables.Add(key, item);
         }
 
         private void DBItem_Changed(object sender, DatabaseItem item)

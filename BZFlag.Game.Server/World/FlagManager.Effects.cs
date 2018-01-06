@@ -28,7 +28,6 @@ namespace BZFlag.Game.Host.World
         public delegate void FlagKilledPlayerCallback(ServerPlayer victim, ServerPlayer assaliant, FlagType damageFlagType);
         public FlagKilledPlayerCallback OnFlagKilledPlayer = null;
 
-
         public void HandlePlayerTakeHit(ServerPlayer victim, ServerPlayer assilant, ShotManager.ShotInfo shot)
         {
             OnPlayerHitWhileHoldingFlag?.Invoke(victim, assilant, shot);

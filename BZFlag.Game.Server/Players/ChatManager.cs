@@ -14,10 +14,8 @@ using BZFlag.Networking.Messages.BZFS;
 
 namespace BZFlag.Game.Host.Players
 {
-    public class ChatManager
+    public class ChatManager : Server.GameState
     {
-        public Server ServerHost = null;
-
         public class ChatMessageEventArgs : EventArgs
         {
             public enum ChatMessageTypes
@@ -176,7 +174,7 @@ namespace BZFlag.Game.Host.Players
 
             if (message.To <= PlayerConstants.MaxUseablePlayerID)
             {
-                inChat.To = ServerHost.State.Players.GetPlayerByID(message.To);
+                inChat.To = Players.GetPlayerByID(message.To);
                 if (inChat.To == null)
                     return;
                 inChat.ToTeam = inChat.To.ActualTeam;
@@ -188,7 +186,7 @@ namespace BZFlag.Game.Host.Players
             {
                 TeamColors toTeam = PlayerConstants.GetTeamColorFromID(message.To);
 
-                if (toTeam != sender.ActualTeam || ServerHost.State.Players.GetTeamPlayerCount(toTeam) == 0)
+                if (toTeam != sender.ActualTeam || Players.GetTeamPlayerCount(toTeam) == 0)
                     return;
 
                 inChat.ToTeam = toTeam;
@@ -359,7 +357,7 @@ namespace BZFlag.Game.Host.Players
 
             msg.MessageType = action ? MsgMessage.MessageTypes.ActionMessage : MsgMessage.MessageTypes.ChatMessage;
 
-            ServerHost.State.Players.SendToAll(msg, false);
+            Players.SendToAll(msg, false);
 
             MessageSent?.Invoke(this, args);
         }
@@ -388,7 +386,7 @@ namespace BZFlag.Game.Host.Players
 
             msg.MessageType = action ? MsgMessage.MessageTypes.ActionMessage : MsgMessage.MessageTypes.ChatMessage;
 
-            ServerHost.State.Players.SendToTeam(msg, to, false);
+            Players.SendToTeam(msg, to, false);
 
             MessageSent?.Invoke(this, args);
         }

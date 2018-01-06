@@ -18,9 +18,6 @@ namespace BZFlag.Game.Host.Processors
 {
     internal class StagingZone : PlayerProcessor
     {
-        public GameWorld World = new GameWorld();
-        public BZFlag.Data.BZDB.Database DB = null;
-
         public StagingZone(ServerConfig cfg) : base(cfg)
         {
             MessageProcessor = SecurityJailMessageFacotry.Factory;
@@ -41,7 +38,7 @@ namespace BZFlag.Game.Host.Processors
             bool sentOne = false;
 
             Dictionary<string, string> currentList = new Dictionary<string, string>();
-            foreach (var item in DB.GetVars())
+            foreach (var item in BZDatabase.GetVars())
             {
                 int thisSize = item.Key.Length + item.RawValue.Length + 2;
                 if ( thisSize + size >= 512)

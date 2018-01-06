@@ -13,10 +13,8 @@ using BZFlag.Networking.Messages.BZFS.Flags;
 
 namespace BZFlag.Game.Host.World
 {
-    public partial class FlagManager
+    public partial class FlagManager : Server.GameState
     {
-        public Server ServerHost = null;
-
         public class FlagInstance : FlagUpdateData
         {
             public FlagType Flag = FlagTypeList.None;
@@ -58,6 +56,12 @@ namespace BZFlag.Game.Host.World
 
         public delegate void SpawnFlagCallback(FlagManager manager, GameWorld map, FlagType flag,  ref Vector3F postion);
         public SpawnFlagCallback ComputeFlagSpawnPoint = SimpleSpawn;
+
+        public FlagManager()
+        {
+            ComputeFlagDrop = StandardDrop;
+            ComputeFlagAdd = StandardDrop;
+        }
 
         protected int GetNewFlagID()
         {
@@ -143,7 +147,7 @@ namespace BZFlag.Game.Host.World
 
             MsgFlagUpdate upd = new MsgFlagUpdate();
             upd.FlagUpdates.Add(inst);
-            ServerHost.State.Players.SendToAll(upd, false);
+            Players.SendToAll(upd, false);
 
             Logger.Log2("Added new flag " + inst.FlagID.ToString() + " of type " + flag.FlagAbbv);
 
@@ -188,7 +192,7 @@ namespace BZFlag.Game.Host.World
 
             MsgFlagUpdate upd = new MsgFlagUpdate();
             upd.FlagUpdates.Add(flag);
-            ServerHost.State.Players.SendToAll(upd, false);
+            Players.SendToAll(upd, false);
 
             lock (EmptyFlagIDs)
                 EmptyFlagIDs.Add(flag.FlagID);
@@ -236,23 +240,51 @@ namespace BZFlag.Game.Host.World
 
         public void Update(Data.Time.Clock gameTime)
         {
+            foreach (var flag in GetActiveFlags())
+            {
+                if (flag.Status == FlagStatuses.FlagNoExist)
+                    RemoveFlag(flag);
 
+                if (flag.Owner != null)
+                {
+                    // check shot limts?
+                }
+                else
+                {
+                    switch(flag.Status)
+                    {
+                        case FlagStatuses.FlagGoing:
+                                // flag is being despawned
+                            break;
+
+                        case FlagStatuses.FlagComing:
+                            break;
+
+                        case FlagStatuses.FlagInAir:
+                            break;
+
+                        case FlagStatuses.FlagOnGround:
+                            break;
+                    }
+                }
+
+            }
         }
 
         public void SetupIniitalFlags()
         {
-            if (ServerHost.ConfigData.Flags.SpawnRandomFlags)
-                BuildRandomFlags?.Invoke(this, ServerHost.ConfigData.Flags);
+            if (ConfigData.Flags.SpawnRandomFlags)
+                BuildRandomFlags?.Invoke(this, ConfigData.Flags);
 
-            if (ServerHost.ConfigData.Flags.SpawnRandomFlags && !ServerHost.ConfigData.Flags.RandomFlags.OverrideMapFlags && false) // repolace with check for map flags object
-                BuildMapFlags?.Invoke(this, ServerHost.State.World);
+            if (ConfigData.Flags.SpawnRandomFlags && !ConfigData.Flags.RandomFlags.OverrideMapFlags && false) // repolace with check for map flags object
+                BuildMapFlags?.Invoke(this, World);
         }
 
         public Vector3F GetFlagSpawn(FlagType flag)
         {
             Vector3F pos = new Vector3F(0, 0, 0);
 
-            ComputeFlagSpawnPoint?.Invoke(this, ServerHost.State.World, flag, ref pos);
+            ComputeFlagSpawnPoint?.Invoke(this, World, flag, ref pos);
             return pos;
         }
 

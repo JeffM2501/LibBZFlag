@@ -12,10 +12,10 @@ using BZFlag.Networking.Messages.BZFS.UDP;
 
 namespace BZFlag.Game.Host
 {
-    public class PlayerProcessor
+    public class PlayerProcessor : Server.GameState
     {
         protected Thread WorkerThread = null;
-        private List<ServerPlayer> Players = new List<ServerPlayer>();
+        private List<ServerPlayer> PlayerList = new List<ServerPlayer>();
 
         private List<ServerPlayer> NewPlayers = new List<ServerPlayer>();
 
@@ -80,8 +80,8 @@ namespace BZFlag.Game.Host
 
         protected void RemovePlayer(ServerPlayer sp)
         {
-            lock (Players)
-                Players.Remove(sp);
+            lock (PlayerList)
+                PlayerList.Remove(sp);
             sp.Disconnected -= Player_Disconnected;
 
             sp.SetExit();
@@ -92,8 +92,8 @@ namespace BZFlag.Game.Host
 
         private void Player_Disconnected(object sender, Networking.Common.Peer e)
         {
-            lock (Players)
-                Players.Remove(e as ServerPlayer);
+            lock (PlayerList)
+                PlayerList.Remove(e as ServerPlayer);
         }
 
         protected virtual void UpdatePlayer(ServerPlayer player)
@@ -129,8 +129,8 @@ namespace BZFlag.Game.Host
                 ServerPlayer newPlayer = PopNewPlayer();
                 while (newPlayer != null)
                 {
-                    lock (Players)
-                        Players.Add(newPlayer);
+                    lock (PlayerList)
+                        PlayerList.Add(newPlayer);
 
                     PlayerAdded(newPlayer);
                     newPlayer = PopNewPlayer();
@@ -138,18 +138,18 @@ namespace BZFlag.Game.Host
 
                 ServerPlayer[] locals = null;
 
-                lock (Players)
+                lock (PlayerList)
                 {
                     lock(NewPlayers)
                     {
-                        if (Players.Count == 0 && NewPlayers.Count == 0)
+                        if (PlayerList.Count == 0 && NewPlayers.Count == 0)
                         {
                             done = true;
                             break;
                         }
                     }
 
-                    locals = Players.ToArray();
+                    locals = PlayerList.ToArray();
                 }
                 foreach (ServerPlayer player in locals)
                 {
@@ -168,8 +168,8 @@ namespace BZFlag.Game.Host
 
                         ProcessClientMessage(player, msg);
 
-                        lock (Players)
-                            keep = Players.Contains(player);
+                        lock (PlayerList)
+                            keep = PlayerList.Contains(player);
 
                         if (!keep)
                             break;
@@ -189,8 +189,8 @@ namespace BZFlag.Game.Host
 
                         ProcessClientMessage(player, msg);
 
-                        lock (Players)
-                            keep = Players.Contains(player);
+                        lock (PlayerList)
+                            keep = PlayerList.Contains(player);
 
                         if (!keep)
                             break;
@@ -275,8 +275,8 @@ namespace BZFlag.Game.Host
         {
             ServerPlayer[] locals = null;
 
-            lock (Players)
-                locals = Players.ToArray();
+            lock (PlayerList)
+                locals = PlayerList.ToArray();
 
             foreach (ServerPlayer player in locals)
                 player.SendMessage(!useUDP, message);

@@ -44,6 +44,7 @@ namespace BZFlag.Game.Host
             public Clock GameTime = new Clock();
 
             public Database BZDatabase = new Database();
+            public BZDBCache Cache = null;
 
             public GameWorld World = new GameWorld();
             public FlagManager Flags = new FlagManager();
@@ -52,6 +53,38 @@ namespace BZFlag.Game.Host
             public ChatManager Chat = new ChatManager();
 
             public ShotManager Shots = new ShotManager();
+
+            public ServerConfig ConfigData = null;
+
+            internal void Set(GameState state)
+            {
+                IsPublic = state.IsPublic;
+                GameTime = state.GameTime;
+
+                BZDatabase = state.BZDatabase;
+                Cache = BZDatabase.Cache;
+
+                World = state.World;
+                Flags = state.Flags;
+
+                Players = state.Players;
+                Chat = state.Chat;
+
+                Shots = state.Shots;
+
+                ConfigData = state.ConfigData;
+            }
+
+            public void Init(ServerConfig config)
+            {
+                ConfigData = config;
+
+                Cache = BZDatabase.Cache;
+
+                Flags.Set(this);
+                Shots.Set(this);
+                Chat.Set(this);
+            }
         }
         public GameState State = new GameState();
         // World Contents
@@ -70,10 +103,9 @@ namespace BZFlag.Game.Host
 
             ConfigData = cfg;
 
+            State.Init(ConfigData);
+
             State.Players.ServerHost = this;
-            State.Flags.ServerHost = this;
-            State.Chat.ServerHost = this;
-            State.Shots.ServerHost = this;
 
             SetTeamSelector(null);
 
@@ -85,16 +117,15 @@ namespace BZFlag.Game.Host
 
             SecurityArea = new RestrictedAccessZone(ConfigData);
             SecurityArea.PromotePlayer += SecurityArea_PromotePlayer;
-
-            SecurityArea.Flags = State.Flags;
-            SecurityArea.World = State.World;
+            SecurityArea.Set(State);
 
             StagingArea = new StagingZone(ConfigData);
-            StagingArea.DB = State.BZDatabase;
             StagingArea.PromotePlayer += this.StagingArea_PromotePlayer;
+            StagingArea.Set(State);
 
             GameZone = new GamePlayZone(this);
             GameZone.UpdatePublicListServer += new EventHandler((s, e) => UpdatePublicListServer());
+            GameZone.Set(State);
 
             RegisterProcessorEvents();
         }

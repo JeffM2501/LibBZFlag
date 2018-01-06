@@ -64,7 +64,7 @@ namespace BZFlag.Game.Host.Processors
         {
             base.PlayerRemoved(player);
 
-            ServerHost.State.Players.RemovePlayer(player);
+            Players.RemovePlayer(player);
 
             // tell everyone they went away
 
@@ -74,10 +74,10 @@ namespace BZFlag.Game.Host.Processors
 
         protected override void Update()
         {
-            ServerHost.State.GameTime.Update();
-            ServerHost.State.Flags.Update(ServerHost.State.GameTime);
-            ServerHost.State.Shots.Update(ServerHost.State.GameTime);
-            ServerHost.State.Players.Update(ServerHost.State.GameTime);
+            GameTime.Update();
+            Flags.Update(GameTime);
+            Shots.Update(GameTime);
+            Players.Update(GameTime);
         }
 
         protected override void UpdatePlayer(ServerPlayer player)
@@ -97,7 +97,7 @@ namespace BZFlag.Game.Host.Processors
         {
             player.ActualTeam = ServerHost.GetPlayerTeam(player);
 
-            if (!ServerHost.State.Players.AddPlayer(player))
+            if (!Players.AddPlayer(player))
             {
                 SendReject(player, MsgReject.RejectionCodes.RejectTeamFull, "The team " + player.DesiredTeam.ToString() + " is full");
                 return;
@@ -112,12 +112,12 @@ namespace BZFlag.Game.Host.Processors
             if (!player.Allowances.AllowPlay)
                 return;
 
-            ServerHost.State.Players.StartSpawn(player, msg as MsgAlive);
+            Players.StartSpawn(player, msg as MsgAlive);
         }
 
         private void HandlePlayerUpdate(ServerPlayer player, NetworkMessage msg)
         {
-            ServerHost.State.Players.PlayerUpdate(player, msg as MsgPlayerUpdateBase);
+            Players.PlayerUpdate(player, msg as MsgPlayerUpdateBase);
         }
 
         private void BZDatabase_ValueChanged(object sender, Data.BZDB.Database.DatabaseItem e)

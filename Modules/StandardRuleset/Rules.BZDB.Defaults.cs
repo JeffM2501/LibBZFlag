@@ -60,12 +60,12 @@ namespace BZFS.StandardRuleset
             SetInitalBZDB("_enableDistanceCheck", "0", false, StateDBPermission.Locked);
             SetInitalBZDB("_endShotDetection", "5", false, StateDBPermission.Locked);
             SetInitalBZDB("_explodeTime", "5.0", false, StateDBPermission.Locked);
-            SetInitalBZDB("_flagAltitude", "11.0", false, StateDBPermission.Locked);
-            SetInitalBZDB("_flagEffectTime", "0.64", false, StateDBPermission.Locked);
+            SetInitalBZDB("_flagAltitude", "11.0", false, StateDBPermission.Locked, true);
+            SetInitalBZDB("_flagEffectTime", "0.64", false, StateDBPermission.Locked, true);
             SetInitalBZDB("_flagHeight", "10.0", false, StateDBPermission.Locked, true);
             SetInitalBZDB("_flagPoleWidth", "0.025", false, StateDBPermission.Locked, true);
             SetInitalBZDB("_flagPoleSize", "0.8", false, StateDBPermission.Locked, true);
-            SetInitalBZDB("_flagRadius", "2.5", false, StateDBPermission.Locked,true);
+            SetInitalBZDB("_flagRadius", "2.5", false, StateDBPermission.Locked, true);
             SetInitalBZDB("_friction", "0", false, StateDBPermission.Locked);
             SetInitalBZDB("_forbidMarkers", "0", false, StateDBPermission.Locked);
             SetInitalBZDB("_fogMode", "none", false, StateDBPermission.Locked);
@@ -141,7 +141,7 @@ namespace BZFS.StandardRuleset
             SetInitalBZDB("_rFireAdLife", "1.0 / _rFireAdRate", false, StateDBPermission.Locked);
             SetInitalBZDB("_rFireAdRate", "2.0", false, StateDBPermission.Locked);
             SetInitalBZDB("_rFireAdVel", "1.5", false, StateDBPermission.Locked);
-            SetInitalBZDB("_shieldFlight", "2.7", false, StateDBPermission.Locked);
+            SetInitalBZDB("_shieldFlight", "2.7", false, StateDBPermission.Locked,true);
             SetInitalBZDB("_shockAdLife", "0.2", false, StateDBPermission.Locked);
             SetInitalBZDB("_shockInRadius", "_tankLength", false, StateDBPermission.Locked);
             SetInitalBZDB("_shockOutRadius", "60.0", false, StateDBPermission.Locked);
