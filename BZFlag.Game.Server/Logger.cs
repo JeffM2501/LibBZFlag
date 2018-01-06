@@ -67,38 +67,40 @@ namespace BZFlag.Game.Host
                 LogWriter.Start();
             }
         }
-
         private static void WriteLog()
         {
             if (LogFile != null)
             {
-                var fs = new FileStream(LogFile.FullName, FileMode.Append);
-                StreamWriter sw = new StreamWriter(fs);
-
-                bool done = false;
-                while (!done)
+                lock (LogFile)
                 {
-                    string line = string.Empty;
-                    lock (PendingLogUpdates)
+                    var fs = new FileStream(LogFile.FullName, FileMode.Append);
+                    StreamWriter sw = new StreamWriter(fs);
+
+                    bool done = false;
+                    while (!done)
                     {
-                        if (PendingLogUpdates.Count == 0)
-                            done = true;
-                        else
+                        string line = string.Empty;
+                        lock (PendingLogUpdates)
                         {
-                            line = PendingLogUpdates[0];
-                            PendingLogUpdates.RemoveAt(0);
+                            if (PendingLogUpdates.Count == 0)
+                                done = true;
+                            else
+                            {
+                                line = PendingLogUpdates[0];
+                                PendingLogUpdates.RemoveAt(0);
+                            }
+                        }
+
+                        if (line != string.Empty)
+                        {
+                            sw.WriteLine(line);
                         }
                     }
 
-                    if (line != string.Empty)
-                    {
-                        sw.WriteLine(line);
-                    }
+                    sw.Flush();
+                    sw.Close();
+                    fs.Close();
                 }
-
-                sw.Flush();
-                sw.Close();
-                fs.Close();
             }
 
             LogWriter = null;
