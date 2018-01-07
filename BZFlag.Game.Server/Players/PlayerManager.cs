@@ -498,7 +498,7 @@ namespace BZFlag.Game.Host.Players
                     TeamEmpty?.Invoke(this, Teams[player.ActualTeam]);
             }
 
-            Flags.DropFlag(player.Info.CariedFlag);
+            Flags.DropFlag(player);
         }
 
         public int GetTeamPlayerCount(TeamColors team)

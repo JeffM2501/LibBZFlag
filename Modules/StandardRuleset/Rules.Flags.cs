@@ -21,6 +21,7 @@ namespace BZFS.StandardRuleset
                 if (victim.Info.ShotImmunities == 0)
                 {
                     // drop flag?
+                    State.Flags.DropFlag(victim);
                 }
             }
         }

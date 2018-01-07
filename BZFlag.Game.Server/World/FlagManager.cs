@@ -187,7 +187,7 @@ namespace BZFlag.Game.Host.World
 
         public void RemoveFlag(FlagInstance flag)
         {
-            DropFlag(flag);
+            DropFlag(flag.Owner);
 
             flag.Status = FlagStatuses.FlagNoExist;
             lock (ActiveFlags)

@@ -109,7 +109,7 @@ namespace BZFlag.Game.Host.World
 
             player.Info.CariedFlag.Postion = message.Postion;
 
-            DropFlag(player.Info.CariedFlag);
+            DropFlag(player);
         }
 
         public void StandardDrop(ServerPlayer player, FlagInstance flag)
@@ -156,19 +156,21 @@ namespace BZFlag.Game.Host.World
             flag.DropStarted = GameTime.Now;
         }
 
-        public void DropFlag(FlagInstance flag)
+        public void DropFlag(ServerPlayer player)
         {
-            if (flag == null || flag.Owner == null)
+            if (player == null || player.Info.CariedFlag == null)
                 return;
 
-            ComputeFlagDrop?.Invoke(flag.Owner, flag);
+            FlagInstance flag = player.Info.CariedFlag;
+
+            ComputeFlagDrop?.Invoke(player, flag);
 
             MsgDropFlag drop = new MsgDropFlag();
             drop.FlagID = flag.FlagID;
-            drop.PlayerID = flag.Owner.PlayerID;
+            drop.PlayerID = player.PlayerID;
             drop.Data = flag;
 
-            flag.Owner.Info.CariedFlag = null;
+            player.Info.CariedFlag = null;
             flag.Owner = null;
 
             Players.SendToAll(drop, false);
