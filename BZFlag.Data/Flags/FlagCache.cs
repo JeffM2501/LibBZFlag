@@ -23,6 +23,8 @@ namespace BZFlag.Data.Flags
         public static FlagType Shield { get; private set; } = null;
         public static FlagType GuidedMissile { get; private set; } = null;
         public static FlagType Thief { get; private set; } = null;
+        public static FlagType Jumping { get; private set; } = null;
+        public static FlagType Ricochet { get; private set; } = null;
 
         public static FlagType Genocide { get; private set; } = null;
 
@@ -48,7 +50,7 @@ namespace BZFlag.Data.Flags
             Add(new FlagType(FlagStrings.MachineGunName, "MG", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.MachineGunDescription));
             GuidedMissile = Add(new FlagType(FlagStrings.GMName, "GM", FlagEndurances.FlagUnstable, ShotTypes.GuidedShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.GMDescription));
             Add(new FlagType(FlagStrings.LaserName, "L", FlagEndurances.FlagUnstable, ShotTypes.Laser, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.LaserDescription));
-            Add(new FlagType(FlagStrings.RiccoName, "R", FlagEndurances.FlagUnstable, ShotTypes.RicochetShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.RiccoDescription));
+            Ricochet = Add(new FlagType(FlagStrings.RiccoName, "R", FlagEndurances.FlagUnstable, ShotTypes.RicochetShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.RiccoDescription));
             Add(new FlagType(FlagStrings.SBName, "SB", FlagEndurances.FlagUnstable, ShotTypes.SuperShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.SBDescription));
             Add(new FlagType(FlagStrings.IBName, "IB", FlagEndurances.FlagUnstable, ShotTypes.InvisibleShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.IBDescription));
             Add(new FlagType(FlagStrings.StealthName, "ST", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.StealthDescription));
@@ -58,7 +60,7 @@ namespace BZFlag.Data.Flags
             Add(new FlagType(FlagStrings.SteamrollerName, "SR", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.SteamrollerDescription));
             Add(new FlagType(FlagStrings.ShockWaveName, "SW", FlagEndurances.FlagUnstable, ShotTypes.Shockwave, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.ShieldDescription));
             Add(new FlagType(FlagStrings.PZName, "PZ", FlagEndurances.FlagUnstable, ShotTypes.PhantomShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.PZDescription));
-            Add(new FlagType(FlagStrings.JumpingName, "JP", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.JumpingDescription));
+            Jumping = Add(new FlagType(FlagStrings.JumpingName, "JP", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.JumpingDescription));
             Add(new FlagType(FlagStrings.IdentifyName, "ID", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.IdentifyDescription));
             Add(new FlagType(FlagStrings.CloakingName, "CL", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.CloakingDescription));
             Add(new FlagType(FlagStrings.UselessName, "US", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.UselessDescription));

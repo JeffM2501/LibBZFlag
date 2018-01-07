@@ -17,8 +17,24 @@ namespace BZFlag.Game.Host.World
     {
         public class FlagInstance : FlagUpdateData
         {
-            public FlagType Flag = FlagTypeList.None;
+            private FlagType _Flag = FlagTypeList.None;
+            public FlagType Flag
+            {
+                get
+                {
+                    return _Flag;
+                }
+                set
+                {
+                    _Flag = value;
+                    if (_Flag != null)
+                        Abreviation = _Flag.FlagAbbv;
+                }
+            }
+
             public ServerPlayer Owner = null;
+
+            public double DropStarted = double.MinValue;
 
             public bool Grabable()
             {
@@ -115,7 +131,7 @@ namespace BZFlag.Game.Host.World
             if (spawnInAir)
             {
                 inst.Status = FlagStatuses.FlagComing;
-                inst.LaunchPosition = location;
+                inst.LaunchPosition = location + new Vector3F(0,0,Cache.FlagAltitude);
                 inst.LandingPostion = new Vector3F(location.X, location.Y, 0); // TODO, project ray into octree
                 inst.FlightEnd = 1;
             }
@@ -240,6 +256,8 @@ namespace BZFlag.Game.Host.World
 
         public void Update(Data.Time.Clock gameTime)
         {
+            MsgFlagUpdate update = new MsgFlagUpdate();
+
             foreach (var flag in GetActiveFlags())
             {
                 if (flag.Status == FlagStatuses.FlagNoExist)
@@ -251,25 +269,50 @@ namespace BZFlag.Game.Host.World
                 }
                 else
                 {
-                    switch(flag.Status)
+                    switch (flag.Status)
                     {
                         case FlagStatuses.FlagGoing:
-                                // flag is being despawned
+                            if (flag.DropStarted + flag.FlightEnd <= gameTime.Now)
+                            {
+                                flag.Status = FlagStatuses.FlagNoExist;
+                                RemoveFlag(flag);
+                            }
                             break;
 
                         case FlagStatuses.FlagComing:
-                            break;
-
                         case FlagStatuses.FlagInAir:
+                            if (flag.DropStarted + flag.FlightEnd <= gameTime.Now)
+                            {
+                                flag.Status = FlagStatuses.FlagOnGround;
+                                flag.Postion = flag.LandingPostion;
+                                flag.LaunchPosition = flag.LandingPostion;
+                                flag.InitalVelocity = 0;
+
+                                if (update.FlagUpdates.Count > 10)
+                                {
+                                    Players.SendToAll(update, false);
+                                    update = new MsgFlagUpdate();
+                                }
+                                update.FlagUpdates.Add(flag);
+
+                                flag.DropStarted = double.MinValue;
+                            }
+                            else
+                            {
+                                // TODO, track the flight of the flag
+                            }
+
                             break;
 
                         case FlagStatuses.FlagOnGround:
                             break;
                     }
                 }
-
             }
-        }
+
+            if (update.FlagUpdates.Count > 0)
+                Players.SendToAll(update, false);
+         }
 
         public void SetupIniitalFlags()
         {

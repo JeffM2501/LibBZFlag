@@ -19,7 +19,7 @@ namespace BZFlag.Game.Host.World
         public event EventHandler<FlagEventArgs> FlagPreGrab;
 
 
-        public delegate void FlagCallback( ServerPlayer player, FlagInstance flag );
+        public delegate void FlagCallback(ServerPlayer player, FlagInstance flag);
         public FlagCallback OnGrantFlag = null;
         public FlagCallback ComputeFlagDrop = null;
         public FlagCallback ComputeFlagAdd = null;
@@ -37,17 +37,17 @@ namespace BZFlag.Game.Host.World
                 return;
 
             float dist = Vector3F.Distance(player.Info.LastSentUpdate.Position, candidateFlag.Postion);
-            if (dist > GetFlagGrabDistance(player))
+            if (false && dist > GetFlagGrabDistance(player))
                 return;
 
-            Logger.Log4("Player " + player.Callsign + " wans to grab flag " + candidateFlag.FlagID.ToString() + " " + candidateFlag.ToString());
+            Logger.Log4("Player " + player.Callsign + " wants to grab flag " + candidateFlag.FlagID.ToString() + " " + candidateFlag.ToString());
 
             GrantFlag(player, candidateFlag);
         }
 
         protected float GetFlagGrabDistance(ServerPlayer player)
         {
-            float grabRadius = Cache.FlagRadius + Cache.TankRadius;
+            float grabRadius = Cache.FlagRadius.Value + Cache.TankRadius.Value;
 
             float speedDeviation = (float)((GameTime.Now - player.Info.LastSentUpdate.TimeStamp) * Cache.TankSpeed);
 
@@ -108,41 +108,49 @@ namespace BZFlag.Game.Host.World
             if (player.Info.CariedFlag == null)
                 return;
 
-            float dropFudge = 1.0f;
-
-            if (Vector3F.Distance(player.Info.LastSentUpdate.Position, message.Postion) > GetFlagGrabDistance(player) * dropFudge)
-                player.Info.CariedFlag.Postion = player.Info.LastSentUpdate.Position + new Vector3F(0, 0, Cache.TankHeight.Value * 1.1f);
-            else
-                player.Info.CariedFlag.Postion = message.Postion;
+            player.Info.CariedFlag.Postion = message.Postion;
 
             DropFlag(player.Info.CariedFlag);
         }
 
         public void StandardDrop(ServerPlayer player, FlagInstance flag)
         {
-            Vector3F endPos = Vector3F.FromAngle((float)(World.RNG.NextDouble() * 360)) * Cache.TankRadius;
+            flag.LaunchPosition = flag.Postion + new Vector3F(0,0,Cache.TankHeight);
 
-            float distanceUp = Cache.FlagAltitude;
-            if (flag.Flag == FlagTypeList.Shield)
-                distanceUp *= Cache.ShieldFlight;
-
-            float distanceDown = flag.Postion.Z + distanceUp;
             // TODO, compute the intersection point
+            flag.FlightTime = 0;
 
-            // compute the height
             if (player == null)
             {
-                /// i9t's an add
+                flag.FlightEnd = 2.0f * (float)Math.Sqrt(-2.0f * Cache.FlagAltitude / Cache.Gravity);
+
+                flag.InitalVelocity = -0.5f * Cache.Gravity * flag.FlightEnd;
+                flag.Status = FlagStatuses.FlagComing;
             }
             else
             {
+                float thrownAltitude = Cache.FlagAltitude;
+                if (flag.Flag == FlagTypeList.Shield)
+                    thrownAltitude *= Cache.ShieldFlight;
 
+                float maxAltitude = flag.Postion.Z + thrownAltitude;
+
+                float upTime = (float)Math.Sqrt(-2.0f * thrownAltitude / Cache.Gravity);
+                float downTime = (float)Math.Sqrt(-2.0f * (maxAltitude - flag.Postion.Z) / Cache.Gravity);
+                flag.FlightEnd = upTime + downTime;
+                flag.InitalVelocity = -Cache.Gravity * upTime;
+
+                flag.Status = FlagStatuses.FlagInAir;
             }
+
+            flag.DropStarted = GameTime.Now;
+
+            flag.LandingPostion = new Vector3F(flag.Postion.X, flag.Postion.Y, 0);
         }
 
         public void DropFlag(FlagInstance flag)
         {
-            if (flag.Owner == null)
+            if (flag == null || flag.Owner == null)
                 return;
 
             ComputeFlagDrop?.Invoke(flag.Owner, flag);
@@ -150,17 +158,17 @@ namespace BZFlag.Game.Host.World
             MsgDropFlag drop = new MsgDropFlag();
             drop.FlagID = flag.FlagID;
             drop.PlayerID = flag.Owner.PlayerID;
+            drop.Data = flag;
+
+            flag.Owner.Info.CariedFlag = null;
+            flag.Owner = null;
 
             Players.SendToAll(drop, false);
 
-            flag.Postion = flag.Owner.Info.LastSentUpdate.Position;
-            flag.Status = FlagStatuses.FlagOnGround; // TODO properly handle the landing time
-            flag.Owner = null;
-
             lock (CarriedFlags)
             {
-                if (WorldFlags.ContainsKey(flag.FlagID))
-                    WorldFlags.Remove(flag.FlagID);
+                if (CarriedFlags.ContainsKey(flag.FlagID))
+                    CarriedFlags.Remove(flag.FlagID);
             }
 
             lock (WorldFlags)

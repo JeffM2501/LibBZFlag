@@ -29,8 +29,7 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
             if (IsServer())
             {
                 buffer.WriteByte(PlayerID);
-                buffer.WriteUInt16((UInt16)FlagID);
-                buffer.WriteFlagUpdateData(Data,false);
+                buffer.WriteFlagUpdateData(Data,true);
             }
             else
                 buffer.WriteVector3F(Postion);

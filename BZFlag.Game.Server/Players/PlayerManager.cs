@@ -465,8 +465,16 @@ namespace BZFlag.Game.Host.Players
 
         public void PlayerUpdate(ServerPlayer player, MsgPlayerUpdateBase updMessage)
         {
-            if (updMessage != null)
-                SendToAll(updMessage, updMessage.FromUDP);
+            if (updMessage == null)
+                return;
+
+            player.Info.LastSentUpdate.TimeStamp = GameTime.Now;
+            player.Info.LastSentUpdate.Position = updMessage.Position;
+            player.Info.LastSentUpdate.Azimuth = updMessage.Azimuth;
+            player.Info.LastSentUpdate.AngularVelocity = updMessage.AngularVelocity;
+            player.Info.LastSentUpdate.Velocity = updMessage.Velocity;
+
+            SendToAll(updMessage, updMessage.FromUDP);
         }
 
         private void Team_PlayerRemoved(object sender, TeamInfo e)
@@ -489,6 +497,8 @@ namespace BZFlag.Game.Host.Players
                 if (Teams[player.ActualTeam].Members.Count == 0)
                     TeamEmpty?.Invoke(this, Teams[player.ActualTeam]);
             }
+
+            Flags.DropFlag(player.Info.CariedFlag);
         }
 
         public int GetTeamPlayerCount(TeamColors team)

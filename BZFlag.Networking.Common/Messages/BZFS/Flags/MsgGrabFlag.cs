@@ -26,12 +26,12 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
 
             if (IsServer())
             {
-                buffer.WriteUInt16(FlagData.FlagID);
+                buffer.WriteByte(PlayerID);
+                buffer.WriteFlagUpdateData(FlagData, false);
             }
             else
             {
-                buffer.WriteByte(PlayerID);
-                buffer.WriteFlagUpdateData(FlagData, false);
+                buffer.WriteUInt16(FlagData.FlagID);
             }
 
             return buffer.GetMessageBuffer();
