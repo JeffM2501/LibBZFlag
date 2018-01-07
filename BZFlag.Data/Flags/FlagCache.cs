@@ -25,6 +25,8 @@ namespace BZFlag.Data.Flags
         public static FlagType Thief { get; private set; } = null;
         public static FlagType Jumping { get; private set; } = null;
         public static FlagType Ricochet { get; private set; } = null;
+        public static FlagType RapidFire { get; private set; } = null;
+        public static FlagType MachineGun { get; private set; } = null;
 
         public static FlagType Genocide { get; private set; } = null;
 
@@ -46,8 +48,8 @@ namespace BZFlag.Data.Flags
             Add(new FlagType(FlagStrings.HighSpeedName, "V", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.HighSpeedDescription));
             Add(new FlagType(FlagStrings.QuickTurnName, "QT", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.QuickTurnDescription));
             Add(new FlagType(FlagStrings.OOName, "OO", FlagEndurances.FlagUnstable, ShotTypes.NormalShot, FlagQualities.FlagGood, TeamColors.NoTeam,FlagStrings.OODescription));
-            Add(new FlagType(FlagStrings.RapidFireName, "F", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.RapidFireDescription));
-            Add(new FlagType(FlagStrings.MachineGunName, "MG", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.MachineGunDescription));
+            RapidFire = Add(new FlagType(FlagStrings.RapidFireName, "F", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.RapidFireDescription));
+            MachineGun = Add(new FlagType(FlagStrings.MachineGunName, "MG", FlagEndurances.FlagUnstable, ShotTypes.SpecialShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.MachineGunDescription));
             GuidedMissile = Add(new FlagType(FlagStrings.GMName, "GM", FlagEndurances.FlagUnstable, ShotTypes.GuidedShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.GMDescription));
             Add(new FlagType(FlagStrings.LaserName, "L", FlagEndurances.FlagUnstable, ShotTypes.Laser, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.LaserDescription));
             Ricochet = Add(new FlagType(FlagStrings.RiccoName, "R", FlagEndurances.FlagUnstable, ShotTypes.RicochetShot, FlagQualities.FlagGood, TeamColors.NoTeam, FlagStrings.RiccoDescription));

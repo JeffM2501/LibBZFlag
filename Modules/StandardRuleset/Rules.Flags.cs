@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+using BZFlag.Data.Game;
 using BZFlag.Data.Flags;
 using BZFlag.Game.Host;
 using BZFlag.Game.Host.Players;
@@ -55,9 +56,17 @@ namespace BZFS.StandardRuleset
             return SpawnableFlags[Instance.State.World.RNG.Next(DesiredFlagCount)];
         }
 
-
         protected bool FlagValidForGameType(FlagType flag)
         {
+            if (flag == FlagTypeList.Jumping && Instance.State.ConfigData.GameData.GameOptions.HasFlag(GameOptionFlags.JumpingGameStyle))
+                return false;
+
+            if (flag == FlagTypeList.Ricochet && Instance.State.ConfigData.GameData.GameOptions.HasFlag(GameOptionFlags.RicochetGameStyle))
+                return false;
+
+            if (Instance.State.ConfigData.GameData.MaxShots == 1 && (flag == FlagTypeList.MachineGun || flag == FlagTypeList.RapidFire))
+                return false;
+
             return true;
         }
 
