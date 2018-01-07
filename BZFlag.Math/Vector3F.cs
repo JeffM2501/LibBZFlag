@@ -166,7 +166,7 @@ namespace BZFlag.LinearMath
 
         public static Vector3F FromAngle(float angle)
         {
-            return new Vector3F((float)System.Math.Cos(angle.ToRad()), (float)System.Math.Sin(angle.ToRad()), 0);
+            return new Vector3F((float)System.Math.Cos(TrigTools.ToRad(angle)), (float)System.Math.Sin(TrigTools.ToRad(angle)), 0);
         }
 
         public Vector3F() { }
@@ -276,12 +276,12 @@ namespace BZFlag.LinearMath
         public static double RadCon = System.Math.PI / 180.0;
         public static double DegCon = 180.0 / System.Math.PI;
 
-        public static float ToDeg(this float rad)
+        public static float ToDeg ( float rad)
         {
             return rad * (float)DegCon;
         }
 
-        public static float ToRad(this float deg)
+        public static float ToRad ( float deg)
         {
             return deg * (float)RadCon;
         }
