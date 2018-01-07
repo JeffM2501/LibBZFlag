@@ -35,15 +35,16 @@ namespace BZFlag.Game.Host.Processors
             MessageDispatch.Add(new MsgPlayerUpdateSmall(), HandlePlayerUpdate);
             MessageDispatch.Add(new MsgPlayerUpdate(), HandlePlayerUpdate);
 
-            MessageDispatch.Add(new MsgMessage(), new ServerMessageDispatcher.MessageHandler((x, y) => ServerHost.State.Chat.HandleChatMessage(x, y as MsgMessage)));
+            MessageDispatch.Add(new MsgMessage(), new ServerMessageDispatcher.MessageHandler((x, y) => Chat.HandleChatMessage(x, y as MsgMessage)));
 
-            MessageDispatch.Add(new MsgShotBegin(), new ServerMessageDispatcher.MessageHandler((x, y) => ServerHost.State.Shots.HandleShotBegin(x, y as MsgShotBegin)));
-            MessageDispatch.Add(new MsgShotEnd(), new ServerMessageDispatcher.MessageHandler((x, y) => ServerHost.State.Shots.HandleShotEnd(x, y as MsgShotEnd)));
-            MessageDispatch.Add(new MsgKilled(), new ServerMessageDispatcher.MessageHandler((x, y) => ServerHost.State.Players.HandleKilled(x, y as MsgKilled)));
+            MessageDispatch.Add(new MsgShotBegin(), new ServerMessageDispatcher.MessageHandler((x, y) => Shots.HandleShotBegin(x, y as MsgShotBegin)));
+            MessageDispatch.Add(new MsgShotEnd(), new ServerMessageDispatcher.MessageHandler((x, y) => Shots.HandleShotEnd(x, y as MsgShotEnd)));
+            MessageDispatch.Add(new MsgGMUpdate(), new ServerMessageDispatcher.MessageHandler((x, y) => Shots.HandleGMUpdate(x, y as MsgGMUpdate)));
+            MessageDispatch.Add(new MsgKilled(), new ServerMessageDispatcher.MessageHandler((x, y) => Players.HandleKilled(x, y as MsgKilled)));
 
-            MessageDispatch.Add(new MsgGrabFlag(), new ServerMessageDispatcher.MessageHandler((x, y) => ServerHost.State.Flags.HandleFlagGrab(x, y as MsgGrabFlag)));
-            MessageDispatch.Add(new MsgDropFlag(), new ServerMessageDispatcher.MessageHandler((x, y) => ServerHost.State.Flags.HandleDropFlag(x, y as MsgDropFlag)));
-            MessageDispatch.Add(new MsgTransferFlag(), new ServerMessageDispatcher.MessageHandler((x, y) => ServerHost.State.Flags.HandleFlagTransfer(x, y as MsgTransferFlag)));
+            MessageDispatch.Add(new MsgGrabFlag(), new ServerMessageDispatcher.MessageHandler((x, y) => Flags.HandleFlagGrab(x, y as MsgGrabFlag)));
+            MessageDispatch.Add(new MsgDropFlag(), new ServerMessageDispatcher.MessageHandler((x, y) => Flags.HandleDropFlag(x, y as MsgDropFlag)));
+            MessageDispatch.Add(new MsgTransferFlag(), new ServerMessageDispatcher.MessageHandler((x, y) => Flags.HandleFlagTransfer(x, y as MsgTransferFlag)));
         }
 
         protected override void HandleUnknownMessage(ServerPlayer player, NetworkMessage msg)

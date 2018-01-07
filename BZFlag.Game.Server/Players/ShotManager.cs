@@ -31,6 +31,11 @@ namespace BZFlag.Game.Host.Players
             public double CreateTimeStamp = double.MinValue;
             public double Lifetime = 0;
 
+
+            public Vector3F UpdatePostion = Vector3F.Zero;
+            public Vector3F UpdateVector = Vector3F.Zero;
+            public double UpdateTimestamp = double.MinValue;
+
             public bool Allow = false;
         }
 
@@ -49,6 +54,14 @@ namespace BZFlag.Game.Host.Players
         public event EventHandler<ShotInfo> ShotExpired;
         public event EventHandler<ShotInfo> ShotDied;
         public event EventHandler<ShotInfo> ShotHit;
+
+        public class ShotUpdatedEventArgs : EventArgs
+        {
+            public ShotInfo Shot = null;
+            public ServerPlayer Target = null;
+        }
+        public event EventHandler<ShotUpdatedEventArgs> ShotPreUpdate;
+        public event EventHandler<ShotInfo> ShotUpdated;
 
         public class ShotHitArgs : EventArgs
         {
@@ -257,6 +270,53 @@ namespace BZFlag.Game.Host.Players
 
             ShotHit?.Invoke(this, shot);
             ShotKilled?.Invoke(this, new ShotHitArgs(shot, player));
+        }
+
+        internal void HandleGMUpdate(ServerPlayer player, MsgGMUpdate message)
+        {
+            if (message == null && player == null || !player.CanDoPlayActions())
+                return;
+
+            ShotInfo shot = FindShot(player.PlayerID, message.ShotID);
+            ServerPlayer target = Players.GetPlayerByID(message.TargetID);
+
+            if (target == null || shot == null || !target.CanDoPlayActions() || shot.ShotType != ShotTypes.GuidedShot)
+                return;
+
+            UpdateShot(shot, message.Position, message.Velocity, message.DeltaTime, target);
+        }
+
+        public void UpdateShot(ShotInfo shot, Vector3F postion, Vector3F velocity, float delta, ServerPlayer target)
+        {
+            if (shot == null || target == null)
+                return;
+
+            shot.UpdateTimestamp = GameTime.Now;
+            shot.UpdatePostion = postion;
+            shot.UpdateVector = velocity;
+
+            ShotUpdatedEventArgs args = new ShotUpdatedEventArgs();
+            args.Shot = shot;
+            args.Target = target;
+
+            ShotPreUpdate?.Invoke(this, args);
+
+            MsgGMUpdate update = new MsgGMUpdate();
+
+            if (shot.Owner != null)
+                update.PlayerID = shot.Owner.PlayerID;
+            else
+                update.PlayerID = PlayerConstants.ServerPlayerID;
+
+            update.ShotID = shot.PlayerShotID;
+            update.TargetID = args.Target.PlayerID;
+            update.Position = shot.UpdatePostion;
+            update.Velocity = shot.UpdateVector;
+            update.DeltaTime = delta;
+            update.Team = shot.TeamColor;
+
+            Players.SendToAll(update, false);
+            ShotUpdated?.Invoke(this, shot);
         }
     }
 }
