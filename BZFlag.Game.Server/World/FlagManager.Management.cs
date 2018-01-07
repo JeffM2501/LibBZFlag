@@ -35,7 +35,7 @@ namespace BZFlag.Game.Host.World
             if (candidateFlag == null || !candidateFlag.Grabable())
                 return;
 
-            float dist = Vector3F.Distance(player.Info.LastSentUpdate.Position, candidateFlag.Postion);
+            float dist = Vector3F.Distance(player.Info.LastSentUpdate.Position, candidateFlag.Position);
             if (false && dist > GetFlagGrabDistance(player))
                 return;
 
@@ -107,14 +107,14 @@ namespace BZFlag.Game.Host.World
             if (player.Info.CariedFlag == null)
                 return;
 
-            player.Info.CariedFlag.Postion = message.Postion;
+            player.Info.CariedFlag.Position = message.Postion;
 
             DropFlag(player);
         }
 
         public void StandardDrop(ServerPlayer player, FlagInstance flag)
         {
-            flag.LaunchPosition = flag.Postion + new Vector3F(0,0,Cache.TankHeight);
+            flag.LaunchPosition = flag.Position + new Vector3F(0,0,Cache.TankHeight);
 
             float thrownAltitude = Cache.FlagAltitude;
             if (flag.Flag == FlagTypeList.Shield)
@@ -129,7 +129,7 @@ namespace BZFlag.Game.Host.World
 
                 flag.InitalVelocity = -0.5f * Cache.Gravity * flag.FlightEnd;
                 flag.Status = FlagStatuses.FlagComing;
-                flag.LandingPostion = new Vector3F(flag.Postion.X, flag.Postion.Y, 0);
+                flag.LandingPostion = new Vector3F(flag.Position.X, flag.Position.Y, 0);
             }
             else if (flag.Endurance == FlagEndurances.FlagUnstable)
             {
@@ -138,19 +138,19 @@ namespace BZFlag.Game.Host.World
                 flag.InitalVelocity = -0.5f * Cache.Gravity * flag.FlightEnd;
                 flag.Status =FlagStatuses.FlagGoing;
 
-                flag.LandingPostion = new Vector3F(flag.Postion.X, flag.Postion.Y, flag.Postion.Z + thrownAltitude);
+                flag.LandingPostion = new Vector3F(flag.Position.X, flag.Position.Y, flag.Position.Z + thrownAltitude);
             }
             else
             {
-                float maxAltitude = flag.Postion.Z + thrownAltitude;
+                float maxAltitude = flag.Position.Z + thrownAltitude;
 
                 float upTime = (float)Math.Sqrt(-2.0f * thrownAltitude / Cache.Gravity);
-                float downTime = (float)Math.Sqrt(-2.0f * (maxAltitude - flag.Postion.Z) / Cache.Gravity);
+                float downTime = (float)Math.Sqrt(-2.0f * (maxAltitude - flag.Position.Z) / Cache.Gravity);
                 flag.FlightEnd = upTime + downTime;
                 flag.InitalVelocity = -Cache.Gravity * upTime;
 
                 flag.Status = FlagStatuses.FlagInAir;
-                flag.LandingPostion = new Vector3F(flag.Postion.X, flag.Postion.Y, 0);
+                flag.LandingPostion = new Vector3F(flag.Position.X, flag.Position.Y, 0);
             }
 
             flag.DropStarted = GameTime.Now;
@@ -160,6 +160,9 @@ namespace BZFlag.Game.Host.World
         {
             if (player == null || player.Info.CariedFlag == null)
                 return;
+
+            if (player.Info.CariedFlag.Flag == FlagTypeList.Identify)
+                player.SendMessage(new MsgNearFlag());  // send them an empty ID message to clear out the display
 
             FlagInstance flag = player.Info.CariedFlag;
 

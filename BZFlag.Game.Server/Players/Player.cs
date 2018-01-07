@@ -90,14 +90,14 @@ namespace BZFlag.Game.Host.Players
             }
         }
 
-        public T GetTag<T>(string name) where T : class
+        public T GetTag<T>(string name) where T : class, new()
         {
             lock(Tags)
             {
-                if (Tags.ContainsKey(name))
-                    return Tags[name] as T;
+                if (!Tags.ContainsKey(name))
+                    Tags.Add(name, new T());
 
-                return null;
+                return Tags[name] as T;
             }
         }
 

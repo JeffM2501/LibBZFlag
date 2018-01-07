@@ -396,7 +396,7 @@ namespace BZFlag.Data.Utils
             WriteUInt16((UInt16)flag.Status);
             WriteUInt16((UInt16)flag.Endurance);
             WriteByte(flag.OwnerID);
-            WriteVector3F(flag.Postion);
+            WriteVector3F(flag.Position);
             WriteVector3F(flag.LaunchPosition);
             WriteVector3F(flag.LandingPostion);
             WriteFloat(flag.FlightTime);

@@ -68,7 +68,7 @@ namespace BZFS.StandardRuleset
             if (State.ConfigData.GameData.MaxShots == 1 && (flag == FlagTypeList.MachineGun || flag == FlagTypeList.RapidFire))
                 return false;
 
-            if (flag == FlagTypeList.GuidedMissile || flag == FlagTypeList.Identify || flag == FlagTypeList.Thief)
+            if (flag == FlagTypeList.GuidedMissile || flag == FlagTypeList.Thief)
                 return false; // for now these flags are unsupported
 
             return true;

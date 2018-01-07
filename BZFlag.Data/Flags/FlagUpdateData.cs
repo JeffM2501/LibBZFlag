@@ -15,7 +15,7 @@ namespace BZFlag.Data.Flags
         public FlagStatuses Status = FlagStatuses.FlagNoExist;
         public FlagEndurances Endurance = FlagEndurances.FlagNormal;
         public int OwnerID = -1;
-        public Vector3F Postion = Vector3F.Zero;
+        public Vector3F Position = Vector3F.Zero;
         public Vector3F LaunchPosition = Vector3F.Zero;
         public Vector3F LandingPostion = Vector3F.Zero;
         public float FlightTime = 0;

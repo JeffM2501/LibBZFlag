@@ -58,6 +58,12 @@ namespace BZFlag.Game.Host.World
                 return ActiveFlags.Values.ToArray();
         }
 
+        public FlagInstance[] GetGroundFlags()
+        {
+            lock (ActiveFlags)
+                return WorldFlags.Values.ToArray();
+        }
+
         public event EventHandler<FlagInstance> FlagAdded = null;
         public event EventHandler<FlagInstance> FlagRemoved = null;
 
@@ -126,7 +132,7 @@ namespace BZFlag.Game.Host.World
         {
             FlagInstance inst = new FlagInstance();
             inst.Flag = flag;
-            inst.Postion = location;
+            inst.Position = location;
             inst.Owner = null;
             inst.OwnerID = -1;
 
@@ -254,6 +260,30 @@ namespace BZFlag.Game.Host.World
                 player.SendMessage(msg);
         }
 
+        public void GroundFlag(FlagInstance flag, MsgFlagUpdate update = null)
+        {
+            bool send = update == null;
+            if (send)
+                update = new MsgFlagUpdate();
+
+            flag.Status = FlagStatuses.FlagOnGround;
+            flag.Position = flag.LandingPostion;
+            flag.LaunchPosition = flag.LandingPostion;
+            flag.InitalVelocity = 0;
+
+            if (update.FlagUpdates.Count > 10)
+            {
+                Players.SendToAll(update, false);
+                update = new MsgFlagUpdate();
+            }
+            update.FlagUpdates.Add(flag);
+
+            flag.DropStarted = double.MinValue;
+
+            if (send)
+                Players.SendToAll(update, false);
+        }
+
         public void Update(Data.Time.Clock gameTime)
         {
             MsgFlagUpdate update = new MsgFlagUpdate();
@@ -279,31 +309,44 @@ namespace BZFlag.Game.Host.World
 
                                 FlagGone?.Invoke(this, flag);
                             }
+                            else
+                            {
+                                flag.FlightTime += GameTime.DeltaF;
+                                if (flag.FlightTime < 0.5f * flag.FlightEnd) // rising
+                                    flag.Position.Z = flag.FlightTime * (flag.InitalVelocity + 0.5f * Cache.Gravity * flag.FlightTime) + flag.LandingPostion.Z;
+                                else                                        // hovering
+                                    flag.Position.Z = 0.5f * flag.FlightEnd * (flag.InitalVelocity + 0.25f * Cache.Gravity * flag.FlightEnd) + flag.LandingPostion.Z;
+                            }
                             break;
 
                         case FlagStatuses.FlagComing:
-                        case FlagStatuses.FlagInAir:
                             if (flag.DropStarted + flag.FlightEnd <= gameTime.Now)
-                            {
-                                flag.Status = FlagStatuses.FlagOnGround;
-                                flag.Postion = flag.LandingPostion;
-                                flag.LaunchPosition = flag.LandingPostion;
-                                flag.InitalVelocity = 0;
-
-                                if (update.FlagUpdates.Count > 10)
-                                {
-                                    Players.SendToAll(update, false);
-                                    update = new MsgFlagUpdate();
-                                }
-                                update.FlagUpdates.Add(flag);
-
-                                flag.DropStarted = double.MinValue;
-                            }
+                                GroundFlag(flag, update);
                             else
                             {
-                                // TODO, track the flight of the flag
+                                flag.FlightTime += GameTime.DeltaF;
+                                if (flag.FlightTime >= 0.5f * flag.FlightEnd)       // falling
+                                    flag.Position.Z = flag.FlightTime * (flag.InitalVelocity + 0.5f * Cache.Gravity * flag.FlightEnd) + flag.LandingPostion.Z;
+                                else                                                // hovering
+                                    flag.Position.Z = 0.5f * flag.FlightEnd * (flag.InitalVelocity + 0.25f * Cache.Gravity * flag.FlightEnd) + flag.LandingPostion.Z;
                             }
+                            break;
 
+                        case FlagStatuses.FlagInAir:
+                            if (flag.DropStarted + flag.FlightEnd <= gameTime.Now)
+                                GroundFlag(flag, update);
+                            else
+                            {
+                                flag.FlightTime += GameTime.DeltaF;
+                                if (flag.FlightTime < flag.FlightEnd)
+                                {
+                                    // still flying
+                                    float t = flag.FlightTime / flag.FlightTime;
+                                    float alt = flag.FlightTime * (flag.InitalVelocity + 0.5f * Cache.Gravity * flag.FlightTime);
+
+                                    flag.Position = Interpolatation.LinInterp3DEX(flag.LaunchPosition, flag.LandingPostion, alt, t);
+                                }
+                            }
                             break;
 
                         case FlagStatuses.FlagOnGround:

@@ -475,6 +475,8 @@ namespace BZFlag.Game.Host.Players
             player.Info.LastSentUpdate.Velocity = updMessage.Velocity;
 
             SendToAll(updMessage, updMessage.FromUDP);
+
+            Flags.DoPlayerFlagChecks(player);
         }
 
         private void Team_PlayerRemoved(object sender, TeamInfo e)

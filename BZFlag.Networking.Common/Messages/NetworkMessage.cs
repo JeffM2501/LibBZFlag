@@ -83,7 +83,7 @@ namespace BZFlag.Networking.Messages
             flag.Status = (FlagStatuses)ReadUInt16();
             flag.Endurance = (FlagEndurances)ReadUInt16();
             flag.OwnerID = ReadByte();
-            flag.Postion = ReadVector3F();
+            flag.Position = ReadVector3F();
             flag.LaunchPosition = ReadVector3F();
             flag.LandingPostion = ReadVector3F();
             flag.FlightTime = ReadFloat();
