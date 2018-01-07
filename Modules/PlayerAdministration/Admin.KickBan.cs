@@ -177,7 +177,11 @@ namespace BZFS.PlayerAdministration
             }
             else if (text.Contains("D"))
             {
-              
+                int day = 0;
+                if (!int.TryParse(text.Substring(1), out day))
+                    return int.MinValue;
+
+                return day * 24 * 60;
             }
             else if (text.Contains("M"))
             {
