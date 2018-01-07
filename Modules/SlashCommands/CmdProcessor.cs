@@ -42,9 +42,7 @@ namespace BZFS.SlashCommands
 
         public override void Startup(Server serverInstance)
         {
-            Instance = serverInstance;
-
-            Instance.State.Chat.AcceptTextCommand = TextCommandCallback;
+            State.Chat.AcceptTextCommand = TextCommandCallback;
 
             RegisterStandardCommands();
         }

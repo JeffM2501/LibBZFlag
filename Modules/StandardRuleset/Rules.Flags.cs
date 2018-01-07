@@ -32,10 +32,10 @@ namespace BZFS.StandardRuleset
         protected int GetRandomFlagCount()
         {
             int val = 0;
-            if (Instance.ConfigData.Flags.RandomFlags.MinFlagCount == Instance.ConfigData.Flags.RandomFlags.MaxFlagCount)
-                val = Instance.ConfigData.Flags.RandomFlags.MaxFlagCount;
+            if (State.ConfigData.Flags.RandomFlags.MinFlagCount == State.ConfigData.Flags.RandomFlags.MaxFlagCount)
+                val = State.ConfigData.Flags.RandomFlags.MaxFlagCount;
             else
-                val = Instance.State.World.RNG.Next(Instance.ConfigData.Flags.RandomFlags.MinFlagCount, Instance.ConfigData.Flags.RandomFlags.MaxFlagCount + 1);
+                val = State.World.RNG.Next(State.ConfigData.Flags.RandomFlags.MinFlagCount, State.ConfigData.Flags.RandomFlags.MaxFlagCount + 1);
 
             if (val < 0)
                 val = 0;

@@ -128,7 +128,7 @@ namespace BZFlag.Game.Host.World
                 flag.FlightEnd = 2.0f * (float)Math.Sqrt(-2.0f * Cache.FlagAltitude / Cache.Gravity);
 
                 flag.InitalVelocity = -0.5f * Cache.Gravity * flag.FlightEnd;
-                flag.Status = player == null ? FlagStatuses.FlagComing;
+                flag.Status = FlagStatuses.FlagComing;
                 flag.LandingPostion = new Vector3F(flag.Postion.X, flag.Postion.Y, 0);
             }
             else if (flag.Endurance == FlagEndurances.FlagUnstable)
