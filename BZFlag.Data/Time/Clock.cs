@@ -15,6 +15,8 @@ namespace BZFlag.Data.Time
         public double Now { get; protected set; }
         public double Delta { get; protected set; }
 
+        public float DeltaF { get { return (float)Delta; } }
+
         public event EventHandler Updated;
 
         public Clock()
