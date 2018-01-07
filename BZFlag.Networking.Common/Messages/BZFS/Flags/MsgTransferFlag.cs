@@ -25,7 +25,9 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
 
             buffer.WriteByte(FromID);
             buffer.WriteByte(ToID);
-            buffer.WriteUInt16((UInt16)FlagID);
+
+            if (IsServer())
+                buffer.WriteUInt16((UInt16)FlagID);
 
             return buffer.GetMessageBuffer();
         }
@@ -35,7 +37,8 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
             Reset(data);
             FromID = ReadByte();
             ToID = ReadByte();
-            FlagID = ReadUInt16();
+            if (!IsServer())
+                FlagID = ReadUInt16();
         }
     }
 }

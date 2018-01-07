@@ -23,9 +23,59 @@ namespace BZFlag.Game.Host.World
         public FlagCallback ComputeFlagDrop = null;
         public FlagCallback ComputeFlagAdd = null;
 
-        public void HandleFlagGrab(ServerPlayer player, MsgGrabFlag message)
+        internal void HandleFlagTransfer(ServerPlayer player, MsgTransferFlag message)
         {
             if (message == null)
+                return;
+
+            if (player.PlayerID != message.ToID)
+                return;
+
+            ServerPlayer target = Players.GetPlayerByID(message.FromID);
+
+            if (target.Info.CariedFlag == null)
+                return;
+
+            Logger.Log4("Player " + player.Callsign + " wants to grab flag " + target.Info.CariedFlag.Abreviation + " from " + target.Callsign);
+
+            TransferFlag(target, player);
+        }
+
+        public void TransferFlag(ServerPlayer from, ServerPlayer to)
+        {
+            if (from == null || !from.CanDoPlayActions() || from.Info.CariedFlag == null)
+                return;
+            if (to == null || !to.CanDoPlayActions())
+                return;
+
+            FlagTransferEventArgs args = new FlagTransferEventArgs();
+            args.From = from;
+            args.To = to;
+            args.Flag = from.Info.CariedFlag;
+
+            FlagPreTransfer?.Invoke(this, args);
+            if (!args.Allow)
+                return;
+
+            DropFlag(to);
+            from.Info.CariedFlag = null;
+            to.Info.CariedFlag = args.Flag;
+
+            MsgTransferFlag transfer = new MsgTransferFlag();
+            transfer.FromID = from.PlayerID;
+            transfer.ToID = to.PlayerID;
+            transfer.FlagID = to.Info.CariedFlag.FlagID;
+
+            Players.SendToAll(transfer, false);
+
+            FlagTransfered?.Invoke(this, args);
+
+            Logger.Log2("Flag transfered from  " + from.Callsign + " to " + to.Callsign );
+        }
+
+        internal void HandleFlagGrab(ServerPlayer player, MsgGrabFlag message)
+        {
+            if (message == null || !player.CanDoPlayActions())
                 return;
 
             int flagID = message.FlagData.FlagID;
@@ -99,7 +149,7 @@ namespace BZFlag.Game.Host.World
             return true;
         }
 
-        public void HandleDropFlag(ServerPlayer player, MsgDropFlag message)
+        internal void HandleDropFlag(ServerPlayer player, MsgDropFlag message)
         {
             if (message == null)
                 return;

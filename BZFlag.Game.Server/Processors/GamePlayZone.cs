@@ -43,6 +43,7 @@ namespace BZFlag.Game.Host.Processors
 
             MessageDispatch.Add(new MsgGrabFlag(), new ServerMessageDispatcher.MessageHandler((x, y) => ServerHost.State.Flags.HandleFlagGrab(x, y as MsgGrabFlag)));
             MessageDispatch.Add(new MsgDropFlag(), new ServerMessageDispatcher.MessageHandler((x, y) => ServerHost.State.Flags.HandleDropFlag(x, y as MsgDropFlag)));
+            MessageDispatch.Add(new MsgTransferFlag(), new ServerMessageDispatcher.MessageHandler((x, y) => ServerHost.State.Flags.HandleFlagTransfer(x, y as MsgTransferFlag)));
         }
 
         protected override void HandleUnknownMessage(ServerPlayer player, NetworkMessage msg)

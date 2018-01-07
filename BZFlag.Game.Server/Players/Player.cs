@@ -111,5 +111,10 @@ namespace BZFlag.Game.Host.Players
             msg.FromUDP = true;
             InboundMessageProcessor.CompleteMessage(msg);
         }
+
+        public bool CanDoPlayActions()
+        {
+            return Accepted && Active && Info.Alive && Allowances.AllowPlay  && ActualTeam != TeamColors.ObserverTeam;
+        }
     }
 }

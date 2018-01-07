@@ -70,6 +70,17 @@ namespace BZFlag.Game.Host.World
         public event EventHandler<FlagInstance> FlagGrabbed = null;
         public event EventHandler<FlagInstance> FlagDropped = null;
 
+        public class FlagTransferEventArgs : EventArgs
+        {
+            public ServerPlayer From = null;
+            public ServerPlayer To = null;
+            public FlagInstance Flag = null;
+
+            public bool Allow = true;
+        }
+        public event EventHandler<FlagTransferEventArgs> FlagPreTransfer = null;
+        public event EventHandler<FlagTransferEventArgs> FlagTransfered = null;
+
         public event EventHandler<FlagInstance> FlagGone = null;
 
         public delegate void BuildRandomFlagsCallback(FlagManager manager, ServerConfig.FlagInfo flagInfo);
