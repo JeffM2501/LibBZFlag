@@ -3,28 +3,26 @@ using System.Collections.Generic;
 
 using BZFlag.Game.Host;
 using BZFlag.Game.Host.API;
+using BZFlag.Game.Host.World;
 
 namespace BZFS.StandardRuleset
 {
     public partial class Rules : PlugIn
     {
-        public string Name => "StandardRuleset";
+        public override string Name => "StandardRuleset";
 
-        public string Description => "Implements the BZFlag Standard Ruleset";
+        public override string Description => "Implements the BZFlag Standard Ruleset";
 
-        public void Shutdown(Server serverInstance)
+        public override void Shutdown(Server serverInstance)
         {
         }
 
-        protected Server Instance = null;
-
-        public void Startup(Server serverInstance)
+        public override void Startup(Server serverInstance)
         {
-            Instance = serverInstance;
-
-            serverInstance.State.Players.ComputeScores = DoPlayerScore;
-            serverInstance.State.Flags.OnPlayerHitWhileHoldingFlag = OnPlayerHitWhileHoldingFlag;
-            serverInstance.State.Flags.BuildRandomFlags = BuildRandomFlags;
+            State.Players.ComputeScores = DoPlayerScore;
+            State.Flags.OnPlayerHitWhileHoldingFlag = OnPlayerHitWhileHoldingFlag;
+            State.Flags.BuildRandomFlags = BuildRandomFlags;
+            State.Flags.FlagGone += Flags_FlagGone;
 
             serverInstance.GetBZDBDefaults = LoadBZDBDefaults;
 
@@ -34,7 +32,7 @@ namespace BZFS.StandardRuleset
         private void ServerInstance_PlayerPostAdd(object sender, BZFlag.Game.Host.Players.ServerPlayer e)
         {
             foreach (string line in Resources.PreReleaseWarning.Split("\r\n".ToCharArray()))
-                Instance.State.Chat.SendChatToUser(null, e, line, false);
+                State.Chat.SendChatToUser(null, e, line, false);
 
             e.FlushTCP();
         }

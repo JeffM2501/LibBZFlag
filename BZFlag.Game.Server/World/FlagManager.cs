@@ -64,6 +64,8 @@ namespace BZFlag.Game.Host.World
         public event EventHandler<FlagInstance> FlagGrabbed = null;
         public event EventHandler<FlagInstance> FlagDropped = null;
 
+        public event EventHandler<FlagInstance> FlagGone = null;
+
         public delegate void BuildRandomFlagsCallback(FlagManager manager, ServerConfig.FlagInfo flagInfo);
         public BuildRandomFlagsCallback BuildRandomFlags = null;
 
@@ -131,9 +133,7 @@ namespace BZFlag.Game.Host.World
             if (spawnInAir)
             {
                 inst.Status = FlagStatuses.FlagComing;
-                inst.LaunchPosition = location + new Vector3F(0,0,Cache.FlagAltitude);
-                inst.LandingPostion = new Vector3F(location.X, location.Y, 0); // TODO, project ray into octree
-                inst.FlightEnd = 1;
+                ComputeFlagAdd?.Invoke(null, inst);
             }
             else
             {
@@ -155,7 +155,7 @@ namespace BZFlag.Game.Host.World
             return inst;
         }
 
-        public bool AddFlag(FlagType flag, Vector3F location, bool spawnInAir)
+        public FlagInstance AddFlag(FlagType flag, Vector3F location, bool spawnInAir)
         {
             FlagInstance inst = SetupNewFlag(flag,location,spawnInAir);
             if (inst != null)
@@ -167,10 +167,10 @@ namespace BZFlag.Game.Host.World
 
             Logger.Log2("Added new flag " + inst.FlagID.ToString() + " of type " + flag.FlagAbbv);
 
-            return inst != null;
+            return inst;
         }
 
-        public bool AddFlag(FlagType flag)
+        public FlagInstance AddFlag(FlagType flag)
         {
             return AddFlag(flag, GetFlagSpawn(flag), true);
         }
@@ -276,6 +276,8 @@ namespace BZFlag.Game.Host.World
                             {
                                 flag.Status = FlagStatuses.FlagNoExist;
                                 RemoveFlag(flag);
+
+                                FlagGone?.Invoke(this, flag);
                             }
                             break;
 

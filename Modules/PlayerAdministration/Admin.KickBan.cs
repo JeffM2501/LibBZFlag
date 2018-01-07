@@ -15,7 +15,7 @@ namespace BZFS.PlayerAdministration
         {
             if (!PermissionProcessor.PlayerHasPermision(caller, PermissionNames.Kick))
             {
-                Instance.State.Chat.SendChatToUser(null, caller, Resources.KickNonAuthMessage, false);
+                State.Chat.SendChatToUser(null, caller, Resources.KickNonAuthMessage, false);
                 return;
             }
 
@@ -24,43 +24,43 @@ namespace BZFS.PlayerAdministration
 
             if (target == null)
             {
-                Instance.State.Chat.SendChatToUser(null, caller, Resources.ArgumentNoUserMessage + targetCallsign, false);
+                State.Chat.SendChatToUser(null, caller, Resources.ArgumentNoUserMessage + targetCallsign, false);
                 return;
             }
 
             if (target == caller)
             {
-                Instance.State.Chat.SendChatToUser(null, caller, Resources.KickSelfMessage, false);
+                State.Chat.SendChatToUser(null, caller, Resources.KickSelfMessage, false);
                 return;
             }
 
             if (!PermissionProcessor.PlayerHasPermision(target, PermissionNames.KickImmunity))
             {
-                Instance.State.Chat.SendChatToUser(null, caller, Resources.KickImmunityMessage + targetCallsign, false);
+                State.Chat.SendChatToUser(null, caller, Resources.KickImmunityMessage + targetCallsign, false);
                 return;
             }
 
             string logMessage = "Player " + caller.Callsign + " kicking target " + target.Callsign;
             Logger.Log1(logMessage);
-            Instance.State.Chat.SendChatToGroup(null, Instance.State.Chat.AdminGroup, logMessage, false);
+            State.Chat.SendChatToGroup(null, State.Chat.AdminGroup, logMessage, false);
 
             string[] parts = arguments.Split(" ".ToCharArray(), 2);
             string reason = "Kicked";
             if (parts.Length > 1 && parts[1] != string.Empty)
                 reason = parts[1];
 
-            Instance.State.Chat.SendChatToUser(null, target, Resources.KickTargetMessagePrefix + reason, false);
+            State.Chat.SendChatToUser(null, target, Resources.KickTargetMessagePrefix + reason, false);
             target.FlushTCP();
 
             API.KickUser(target);
-            Instance.State.Chat.SendChatToUser(null, caller, Resources.KickCompleteMessage + targetCallsign, false);
+            State.Chat.SendChatToUser(null, caller, Resources.KickCompleteMessage + targetCallsign, false);
         }
 
         protected void Ban(string command, string arguments, ServerPlayer caller)
         {
             if (!PermissionProcessor.PlayerHasPermision(caller, PermissionNames.Ban))
             {
-                Instance.State.Chat.SendChatToUser(null, caller, Resources.BanNonAuthMessage, false);
+                State.Chat.SendChatToUser(null, caller, Resources.BanNonAuthMessage, false);
                 return;
             }
 
@@ -69,19 +69,19 @@ namespace BZFS.PlayerAdministration
 
             if (target == null)
             {
-                Instance.State.Chat.SendChatToUser(null, caller, Resources.ArgumentNoUserMessage + targetCallsign, false);
+                State.Chat.SendChatToUser(null, caller, Resources.ArgumentNoUserMessage + targetCallsign, false);
                 return;
             }
 
             if (target == caller)
             {
-                Instance.State.Chat.SendChatToUser(null, caller, Resources.BanSelfMessage, false);
+                State.Chat.SendChatToUser(null, caller, Resources.BanSelfMessage, false);
                 return;
             }
 
             if (!PermissionProcessor.PlayerHasPermision(target, PermissionNames.BanImmunity))
             {
-                Instance.State.Chat.SendChatToUser(null, caller, Resources.BanImmunityMessage + targetCallsign, false);
+                State.Chat.SendChatToUser(null, caller, Resources.BanImmunityMessage + targetCallsign, false);
                 return;
             }
 
@@ -116,13 +116,13 @@ namespace BZFS.PlayerAdministration
 
             if (!validArgs)
             {
-                Instance.State.Chat.SendChatToUser(null, caller, Resources.BanMalformedMessage, false);
+                State.Chat.SendChatToUser(null, caller, Resources.BanMalformedMessage, false);
                 return;
             }
 
             string logMessage = "Player " + caller.Callsign + " kick/baning target " + target.Callsign;
             Logger.Log1(logMessage);
-            Instance.State.Chat.SendChatToGroup(null, Instance.State.Chat.AdminGroup, logMessage, false);
+            State.Chat.SendChatToGroup(null, State.Chat.AdminGroup, logMessage, false);
 
             // build up the ban
 
@@ -134,16 +134,16 @@ namespace BZFS.PlayerAdministration
                 if (target.ConnectionData.GetIPAddress().AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
                 {
                     string[] addressParts = address.Split(":".ToCharArray());
-                    if (addressParts.Length > Instance.ConfigData.Security.IPV6SubnetBanRange)
-                        Array.Resize(ref addressParts, addressParts.Length - Instance.ConfigData.Security.IPV6SubnetBanRange);
+                    if (addressParts.Length > State.ConfigData.Security.IPV6SubnetBanRange)
+                        Array.Resize(ref addressParts, addressParts.Length - State.ConfigData.Security.IPV6SubnetBanRange);
 
                     address = String.Join(":", addressParts);
                 }
                 else
                 {
                     string[] addressParts = address.Split(".".ToCharArray());
-                    if (addressParts.Length > Instance.ConfigData.Security.IPV4SubnetBanRange)
-                        Array.Resize(ref addressParts, addressParts.Length - Instance.ConfigData.Security.IPV4SubnetBanRange);
+                    if (addressParts.Length > State.ConfigData.Security.IPV4SubnetBanRange)
+                        Array.Resize(ref addressParts, addressParts.Length - State.ConfigData.Security.IPV4SubnetBanRange);
 
                     address = String.Join(".", addressParts);
                 }
@@ -153,12 +153,12 @@ namespace BZFS.PlayerAdministration
 
             if (reason != string.Empty)
             {
-                Instance.State.Chat.SendChatToUser(null, target, Resources.KickTargetMessagePrefix + parts[1], false);
+                State.Chat.SendChatToUser(null, target, Resources.KickTargetMessagePrefix + parts[1], false);
                 target.FlushTCP();
             }
 
             API.KickUser(target);
-            Instance.State.Chat.SendChatToUser(null, caller, Resources.BanCompleteMessage + targetCallsign, false);
+            State.Chat.SendChatToUser(null, caller, Resources.BanCompleteMessage + targetCallsign, false);
         }
 
         int ParseBanTime(string text)
@@ -217,7 +217,7 @@ namespace BZFS.PlayerAdministration
             string[] parts = args.Split(" ".ToCharArray(), 2);
             callsign = parts[0];
 
-            return Instance.State.Players.GetPlayerByCallsign(callsign);
+            return State.Players.GetPlayerByCallsign(callsign);
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace BZFlag.Game.Host.API
 {
-    public interface PlugIn
+    public interface IPlugIn
     {
         string Name { get; }
         string Description { get; }
@@ -16,13 +16,30 @@ namespace BZFlag.Game.Host.API
         void Shutdown(Server serverInstance);
     }
 
+    public class PlugIn : IPlugIn
+    {
+        public Server.GameState State { get; set; } = null;
+
+        public virtual string Name => string.Empty;
+
+        public virtual string Description => string.Empty;
+
+        public virtual void Shutdown(Server serverInstance)
+        {
+        }
+
+        public virtual void Startup(Server serverInstance)
+        {
+        }
+    }
+
     internal static class PluginLoader
     {
-        private static string PluginTypeName = typeof(PlugIn).Name;
+        private static string PluginTypeName = typeof(IPlugIn).Name;
 
         private class PluginInfo
         {
-            public PlugIn Module = null;
+            public IPlugIn Module = null;
             public bool Loaded = false;
             public bool IsPlugin = false;
         }
@@ -38,7 +55,7 @@ namespace BZFlag.Game.Host.API
                 {
                     PluginInfo info = new PluginInfo();
                     info.IsPlugin = isPlugin;
-                    info.Module = Activator.CreateInstance(t) as PlugIn;
+                    info.Module = Activator.CreateInstance(t) as IPlugIn;
                     Plugins.Add(info);
                     Logger.Log3("Loaded Class " + t.Name + " from " + Path.GetFileName(ass.Location));
                 }
@@ -51,6 +68,11 @@ namespace BZFlag.Game.Host.API
             {
                 if (!p.Loaded)
                 {
+                    PlugIn pl = p.Module as PlugIn;
+
+                    if (pl != null)
+                        pl.State = servInstance.State;
+
                     p.Module.Startup(servInstance);
                     p.Loaded = true;
                 }

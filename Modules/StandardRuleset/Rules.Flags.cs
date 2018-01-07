@@ -53,21 +53,43 @@ namespace BZFS.StandardRuleset
             if (SpawnableFlags.Count == 1)
                 return SpawnableFlags[0];
 
-            return SpawnableFlags[Instance.State.World.RNG.Next(DesiredFlagCount)];
+            return SpawnableFlags[State.World.RNG.Next(DesiredFlagCount)];
         }
 
         protected bool FlagValidForGameType(FlagType flag)
         {
-            if (flag == FlagTypeList.Jumping && Instance.State.ConfigData.GameData.GameOptions.HasFlag(GameOptionFlags.JumpingGameStyle))
+            if (flag == FlagTypeList.Jumping && State.ConfigData.GameData.GameOptions.HasFlag(GameOptionFlags.JumpingGameStyle))
                 return false;
 
-            if (flag == FlagTypeList.Ricochet && Instance.State.ConfigData.GameData.GameOptions.HasFlag(GameOptionFlags.RicochetGameStyle))
+            if (flag == FlagTypeList.Ricochet && State.ConfigData.GameData.GameOptions.HasFlag(GameOptionFlags.RicochetGameStyle))
                 return false;
 
-            if (Instance.State.ConfigData.GameData.MaxShots == 1 && (flag == FlagTypeList.MachineGun || flag == FlagTypeList.RapidFire))
+            if (State.ConfigData.GameData.MaxShots == 1 && (flag == FlagTypeList.MachineGun || flag == FlagTypeList.RapidFire))
                 return false;
 
             return true;
+        }
+
+        private void Flags_FlagGone(object sender, FlagManager.FlagInstance e)
+        {
+            if (!State.ConfigData.Flags.SpawnRandomFlags || SpawnableFlags.Count < 2)
+                State.Flags.AddFlag(e.Flag);    // just replace it somewhere
+            else
+            {
+                int count = State.Flags.GetActiveFlags().Length;
+                if (count < State.ConfigData.Flags.RandomFlags.MinFlagCount)
+                {
+                    DesiredFlagCount = GetRandomFlagCount();
+                    for (int i = count; i < DesiredFlagCount; i++)
+                    {
+                        var ft = GetRandomFlag();
+                        while (FlagValidForGameType(ft))
+                            ft = GetRandomFlag();
+
+                        State.Flags.AddFlag(ft);
+                    }
+                }
+            }
         }
 
         protected void BuildRandomFlags(FlagManager manager, ServerConfig.FlagInfo flagInfo)
@@ -110,7 +132,7 @@ namespace BZFS.StandardRuleset
             List<FlagType> randoFlags = new List<FlagType>();
             for (int i = 0; i < count; i++)
             {
-                FlagType t = SpawnableFlags[Instance.State.World.RNG.Next(SpawnableFlags.Count)];
+                FlagType t = SpawnableFlags[State.World.RNG.Next(SpawnableFlags.Count)];
                 SpawnableFlags.Remove(t);
                 randoFlags.Add(t);
             }

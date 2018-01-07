@@ -13,9 +13,9 @@ namespace BZFS.SlashCommands
 {
     public class CmdProcessor : PlugIn
     {
-        public string Name => "CmdProcessor";
+        public override string Name => "CmdProcessor";
 
-        public string Description => "Processes Slash Commands";
+        public override string Description => "Processes Slash Commands";
 
 
         protected class PendingCommand
@@ -28,9 +28,7 @@ namespace BZFS.SlashCommands
 
         protected Thread Worker = null;
 
-        protected Server Instance = null;
-
-        public void Shutdown(Server serverInstance)
+        public override void Shutdown(Server serverInstance)
         {
             lock (PendingCommands)
             {
@@ -42,7 +40,7 @@ namespace BZFS.SlashCommands
             }
         }
 
-        public void Startup(Server serverInstance)
+        public override void Startup(Server serverInstance)
         {
             Instance = serverInstance;
 
@@ -124,7 +122,7 @@ namespace BZFS.SlashCommands
 
         protected void DateTimeCommand(string command, string arguments, ServerPlayer caller)
         {
-            Instance.State.Chat.SendChatToUser(null, caller, DateTime.Now.ToString(), false);
+            State.Chat.SendChatToUser(null, caller, DateTime.Now.ToString(), false);
         }
     }
 }

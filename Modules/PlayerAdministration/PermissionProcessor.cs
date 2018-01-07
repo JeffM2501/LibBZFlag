@@ -21,11 +21,12 @@ namespace BZFS.PlayerAdministration
         }
 
         public static readonly string PermsTagName = "BZFS.PlayerAdministration.Permissions";
-        private Server ServerHost = null;
+
+        public Server.GameState State = null;
 
         public void Init(Server serverHost, ServerConfig.SecurityInfo info)
         {
-            ServerHost = serverHost;
+            State = serverHost.State;
             serverHost.PlayerPreAdd += ServerHost_PlayerPreAdd;
             serverHost.PlayerAccepted += ServerHost_PlayerAccepted;
         }
@@ -33,7 +34,7 @@ namespace BZFS.PlayerAdministration
         private void ServerHost_PlayerAccepted(object sender, ServerPlayer player)
         {
             if (GetPlayerPermissions(player).HasPerm(PermissionNames.AdminChannelReceive))
-                ServerHost.State.Chat.AdminGroup.AddPlayer(player);
+                State.Chat.AdminGroup.AddPlayer(player);
         }
 
         private void ServerHost_PlayerPreAdd(object sender, ServerPlayer player)
@@ -51,7 +52,7 @@ namespace BZFS.PlayerAdministration
             lock (perms.Perms)
             {
                 foreach (var group in player.GroupMemberships)
-                    perms.Perms.AddRange(ServerHost.ConfigData.Security.GetGroupPerms(group));
+                    perms.Perms.AddRange(State.ConfigData.Security.GetGroupPerms(group));
             }
         }
 

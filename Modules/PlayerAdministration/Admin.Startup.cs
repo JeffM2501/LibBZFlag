@@ -14,19 +14,18 @@ namespace BZFS.PlayerAdministration
 {
     public partial class Admin : PlugIn
     {
-        public string Name => "PlayerAdmin";
+        public override string Name => "PlayerAdmin";
 
-        public string Description => "Handles player administration functions";
+        public override string Description => "Handles player administration functions";
 
         private PermissionProcessor Permissions = new PermissionProcessor();
 
-        private Server Instance = null;
         Thread ExpireCheck = null;
 
         private Server.AddressBanCallback OrigonalAddressBan = null;
         private Server.PlayerBanCallback OrigonaPlayerBan = null;
 
-        public void Shutdown(Server serverInstance)
+        public override void Shutdown(Server serverInstance)
         {
             if (ExpireCheck != null)
                 ExpireCheck.Abort();
@@ -35,22 +34,20 @@ namespace BZFS.PlayerAdministration
             Permissions.Shutdown();
         }
 
-        void PlugIn.Startup(Server serverInstance)
+        public override void Startup(Server serverInstance)
         {
-            Instance = serverInstance;
+            Permissions.Init(serverInstance, State.ConfigData.Security);
+            BanDatabase.Init(State.ConfigData.Security);
 
-            Permissions.Init(Instance, Instance.ConfigData.Security);
-            BanDatabase.Init(Instance.ConfigData.Security);
+            serverInstance.APILoadComplete += ServerInstance_APILoadComplete;
 
-            Instance.APILoadComplete += ServerInstance_APILoadComplete;
+            serverInstance.CheckPlayerAcceptance += ServerInstance_CheckPlayerAcceptance;
 
-            Instance.CheckPlayerAcceptance += ServerInstance_CheckPlayerAcceptance;
+            OrigonalAddressBan = serverInstance.IsAddressBanned;
+            OrigonaPlayerBan = serverInstance.IsPlayerBanned;
 
-            OrigonalAddressBan = Instance.IsAddressBanned;
-            OrigonaPlayerBan = Instance.IsPlayerBanned;
-
-            Instance.IsAddressBanned = ServerInstance_CheckAddressBan;
-            Instance.IsPlayerBanned = ServerInstance_CheckIDBan;
+            serverInstance.IsAddressBanned = ServerInstance_CheckAddressBan;
+            serverInstance.IsPlayerBanned = ServerInstance_CheckIDBan;
 
             ExpireCheck = new Thread(new ThreadStart(CheckExpired));
             ExpireCheck.Start();
@@ -104,7 +101,7 @@ namespace BZFS.PlayerAdministration
 
         private void ServerInstance_APILoadComplete(object sender, EventArgs e)
         {
-            BanDatabase.Init(Instance.ConfigData.Security);
+            BanDatabase.Init(State.ConfigData.Security);
         }
     }
 }

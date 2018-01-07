@@ -9,21 +9,21 @@ namespace BadWordFilter
 {
     public class Filter : PlugIn
     {
-        public string Name => "BadWords";
+        public override string Name => "BadWords";
 
-        public string Description => "Default bad word filter";
+        public override string Description => "Default bad word filter";
 
         protected List<string> BadWords = new List<string>();
 
-        public void Shutdown(Server serverInstance)
+        public override void Shutdown(Server serverInstance)
         {
-            serverInstance.State.Chat.DefaultFilter = null;
+            State.Chat.DefaultFilter = null;
         }
 
-        public void Startup(Server serverInstance)
+        public override void Startup(Server serverInstance)
         {
             LoadDatabase(serverInstance.ConfigData.GetCustomConfigData("BadWordsFile"));
-            serverInstance.State.Chat.DefaultFilter = FilterChat;
+            State.Chat.DefaultFilter = FilterChat;
         }
 
         public void LoadDatabase(string path)

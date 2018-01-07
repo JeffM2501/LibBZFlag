@@ -18,7 +18,6 @@ namespace BZFlag.Game.Host.World
         }
         public event EventHandler<FlagEventArgs> FlagPreGrab;
 
-
         public delegate void FlagCallback(ServerPlayer player, FlagInstance flag);
         public FlagCallback OnGrantFlag = null;
         public FlagCallback ComputeFlagDrop = null;
@@ -117,6 +116,10 @@ namespace BZFlag.Game.Host.World
         {
             flag.LaunchPosition = flag.Postion + new Vector3F(0,0,Cache.TankHeight);
 
+            float thrownAltitude = Cache.FlagAltitude;
+            if (flag.Flag == FlagTypeList.Shield)
+                thrownAltitude *= Cache.ShieldFlight;
+
             // TODO, compute the intersection point
             flag.FlightTime = 0;
 
@@ -125,14 +128,20 @@ namespace BZFlag.Game.Host.World
                 flag.FlightEnd = 2.0f * (float)Math.Sqrt(-2.0f * Cache.FlagAltitude / Cache.Gravity);
 
                 flag.InitalVelocity = -0.5f * Cache.Gravity * flag.FlightEnd;
-                flag.Status = FlagStatuses.FlagComing;
+                flag.Status = player == null ? FlagStatuses.FlagComing;
+                flag.LandingPostion = new Vector3F(flag.Postion.X, flag.Postion.Y, 0);
+            }
+            else if (flag.Endurance == FlagEndurances.FlagUnstable)
+            {
+                flag.FlightEnd = 2.0f * (float)Math.Sqrt(-2.0f * Cache.FlagAltitude / Cache.Gravity);
+
+                flag.InitalVelocity = -0.5f * Cache.Gravity * flag.FlightEnd;
+                flag.Status =FlagStatuses.FlagGoing;
+
+                flag.LandingPostion = new Vector3F(flag.Postion.X, flag.Postion.Y, flag.Postion.Z + thrownAltitude);
             }
             else
             {
-                float thrownAltitude = Cache.FlagAltitude;
-                if (flag.Flag == FlagTypeList.Shield)
-                    thrownAltitude *= Cache.ShieldFlight;
-
                 float maxAltitude = flag.Postion.Z + thrownAltitude;
 
                 float upTime = (float)Math.Sqrt(-2.0f * thrownAltitude / Cache.Gravity);
@@ -141,11 +150,10 @@ namespace BZFlag.Game.Host.World
                 flag.InitalVelocity = -Cache.Gravity * upTime;
 
                 flag.Status = FlagStatuses.FlagInAir;
+                flag.LandingPostion = new Vector3F(flag.Postion.X, flag.Postion.Y, 0);
             }
 
             flag.DropStarted = GameTime.Now;
-
-            flag.LandingPostion = new Vector3F(flag.Postion.X, flag.Postion.Y, 0);
         }
 
         public void DropFlag(FlagInstance flag)

@@ -134,7 +134,7 @@ namespace BZFlag.Game.Host
         {
             public bool AllowGeno { get; set; } = false;
 
-            public bool SpawnRandomFlags { get; set; } = false;
+            public bool SpawnRandomFlags { get; set; } = true;
 
             public class RandomFlagSpawnInfo
             {
