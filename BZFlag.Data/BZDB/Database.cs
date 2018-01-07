@@ -35,7 +35,7 @@ namespace BZFlag.Data.BZDB
         {
             get
             {
-                if (_Value == double.MinValue)
+                if (_Value == float.MinValue)
                     Update();
                 return _Value;
             }
@@ -45,8 +45,9 @@ namespace BZFlag.Data.BZDB
         {
             if (DB == null)
                 return;
-
-            _Value = (float)DB.GetValueD(VarName);
+            double val = DB.GetValueD(VarName);
+            if (val != double.MinValue)
+                _Value = (float)val;
         }
 
         public static implicit operator float(BZDBCacheFloat v) { return v.Value; }
