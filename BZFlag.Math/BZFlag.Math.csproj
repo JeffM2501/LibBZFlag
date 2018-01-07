@@ -52,6 +52,7 @@
     <Compile Include="Geometry\Plane.cs" />
     <Compile Include="Geometry\Ray.cs" />
     <Compile Include="Geometry\Sphere.cs" />
+    <Compile Include="Interpolatation.cs" />
     <Compile Include="Matrix4F.cs" />
     <Compile Include="MatrixHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
