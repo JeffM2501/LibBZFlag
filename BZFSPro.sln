@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayerAdministration", "Mod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandardRuleset", "Modules\StandardRuleset\StandardRuleset.csproj", "{037C7267-4027-43E5-9CE1-954C7DE1E3E0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LatancyManagement", "Modules\LatancyManagement\LatancyManagement.csproj", "{88626C30-AA36-4B89-9564-B3116AAC3A2C}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Compression\Zlib.Shared\Zlib.Shared.projitems*{9816ba86-9250-4c00-a912-25f07f8677d1}*SharedItemsImports = 4
@@ -91,6 +93,10 @@ Global
 		{037C7267-4027-43E5-9CE1-954C7DE1E3E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{037C7267-4027-43E5-9CE1-954C7DE1E3E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{037C7267-4027-43E5-9CE1-954C7DE1E3E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88626C30-AA36-4B89-9564-B3116AAC3A2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88626C30-AA36-4B89-9564-B3116AAC3A2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88626C30-AA36-4B89-9564-B3116AAC3A2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88626C30-AA36-4B89-9564-B3116AAC3A2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,6 +108,7 @@ Global
 		{F9CE7698-94C4-4994-B40F-35C260CA91B6} = {03D52218-A7AC-4B0E-ACC0-8BEF4EEB1545}
 		{51EFBC2B-EDAF-410F-9E7A-57706B128A05} = {03D52218-A7AC-4B0E-ACC0-8BEF4EEB1545}
 		{037C7267-4027-43E5-9CE1-954C7DE1E3E0} = {03D52218-A7AC-4B0E-ACC0-8BEF4EEB1545}
+		{88626C30-AA36-4B89-9564-B3116AAC3A2C} = {03D52218-A7AC-4B0E-ACC0-8BEF4EEB1545}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E030BA98-F96B-4F52-AAF6-D48B6CE52364}

@@ -155,7 +155,6 @@ namespace BZFlag.Networking.Messages
             Factory.RegisterMessageType(new MsgShotEnd());
             Factory.RegisterMessageType(new MsgGMUpdate());
 
-       //     Factory.RegisterMessageType(new MsgFlagType());
             Factory.RegisterMessageType(new MsgGrabFlag());
             Factory.RegisterMessageType(new MsgDropFlag());
             Factory.RegisterMessageType(new MsgTransferFlag());
@@ -232,6 +231,5 @@ namespace BZFlag.Networking.Messages
             msg.FromUDP = udp;
             return msg;
         }
-
     }
 }
