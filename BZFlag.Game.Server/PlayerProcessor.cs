@@ -9,6 +9,7 @@ using BZFlag.Networking;
 using BZFlag.Game.Host.Players;
 using BZFlag.Networking.Messages.BZFS.Player;
 using BZFlag.Networking.Messages.BZFS.UDP;
+using BZFlag.Networking.Messages.BZFS.Info;
 
 namespace BZFlag.Game.Host
 {
@@ -209,6 +210,19 @@ namespace BZFlag.Game.Host
             WorkerThread = null;
         }
 
+        public static readonly double PingTime = 10.0;
+        protected void CheckLagPings(ServerPlayer player)
+        {
+            if (player.Lag.LastPingSent + PingTime < GameTime.Now)
+            {
+                player.Lag.LastPingSent = GameTime.Now;
+
+                MsgLagPing ping = new MsgLagPing();
+                ping.SequenceNumber = player.Lag.GetPing(GameTime.Now);
+                player.SendMessage(false, ping);
+            }
+        }
+
         // basic message dispatch
         protected ServerMessageDispatcher MessageDispatch = new ServerMessageDispatcher();
 
@@ -218,6 +232,8 @@ namespace BZFlag.Game.Host
 
             MessageDispatch.Add(new MsgUDPLinkRequest(), HandleUDPLinkRequest);
             MessageDispatch.Add(new MsgUDPLinkEstablished(), HandleUDPLinkEstablished);
+
+            MessageDispatch.Add(new MsgLagPing(), new ServerMessageDispatcher.MessageHandler((x, y) => Players.HandleMsgLagPing(x, y as MsgLagPing)));
         }
 
         public virtual void ProcessClientMessage(ServerPlayer player, NetworkMessage msg)

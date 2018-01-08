@@ -93,6 +93,8 @@ namespace BZFlag.Networking.Messages
 
             Factory.RegisterMessageType(new MsgUDPLinkRequest());
             Factory.RegisterMessageType(new MsgUDPLinkEstablished());
+
+            Factory.RegisterMessageType(new MsgLagPing());
         }
     }
 
@@ -115,6 +117,8 @@ namespace BZFlag.Networking.Messages
 
             Factory.RegisterMessageType(new MsgUDPLinkRequest());
             Factory.RegisterMessageType(new MsgUDPLinkEstablished());
+
+            Factory.RegisterMessageType(new MsgLagPing());
         }
     }
 

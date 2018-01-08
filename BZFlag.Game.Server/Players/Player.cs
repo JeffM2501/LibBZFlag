@@ -35,7 +35,94 @@ namespace BZFlag.Game.Host.Players
 
         public MsgNegotiateFlags ClientFlagList = null;
 
-        public PlayerManager.PlayerInfo Info = null; 
+        public PlayerManager.PlayerInfo Info = null;
+
+        public class LagInfo
+        {
+            public Dictionary<UInt16, double> OutstandingPings = new Dictionary<UInt16, double>();
+
+            protected UInt64 SentPings = 0;
+            protected UInt64 ReceivedPings = 0;
+
+            public double InstantLagTime { get; protected set; } = 0;
+            public double InstantJitter { get; protected set; } = 0;
+
+            public double AverageLag { get; protected set; } = 0;
+            public double AverageJitter { get; protected set; } = 0;
+
+            public double TotalPacketLoss { get; protected set; } = 0;
+
+            protected List<double> LagLog = new List<double>();
+
+            protected UInt16 LastPing = 1;
+
+            public double LastPingSent = double.MinValue;
+
+            public static readonly int MaxLagHistory = 20;
+
+            public void ReceivePing(UInt16 id, double now)
+            {
+                if (OutstandingPings.ContainsKey(id))
+                {
+                    ReceivedPings++;
+
+                    if (ReceivedPings == 0)
+                        TotalPacketLoss = 1.0;
+                    else
+                        TotalPacketLoss = (double)SentPings / (double)ReceivedPings;
+
+                    double sendTime = OutstandingPings[id];
+                    OutstandingPings.Remove(id);
+
+                    double lag = now - sendTime;
+
+                    InstantJitter = InstantLagTime - lag;
+                    InstantLagTime = lag;
+                    LagLog.Add(lag);
+
+                    while (LagLog.Count > MaxLagHistory)
+                        LagLog.RemoveAt(0);
+
+                    double lagTotal = 0;
+                    double jitterTotal = 0;
+                    for (int i = 0; i < LagLog.Count; i++)
+                    {
+                        lagTotal += LagLog[i];
+                        if (i > 0)
+                            jitterTotal += LagLog[i] - LagLog[i - 1];
+                    }
+
+                    AverageLag = lagTotal / LagLog.Count;
+                    if (LagLog.Count > 2)
+                        AverageJitter = jitterTotal / (LagLog.Count - 1);
+                    else
+                        AverageJitter = InstantJitter;
+                }
+            }
+
+            protected void GetNextPingID()
+            {
+                if(LastPing == UInt16.MaxValue - 1)
+                    LastPing = 0;
+                else
+                    LastPing++;
+            }
+
+            public UInt16 GetPing(double now)
+            {
+                GetNextPingID();
+
+                while (!OutstandingPings.ContainsKey(LastPing))
+                    GetNextPingID();
+
+                OutstandingPings.Add(LastPing, now);
+
+                SentPings++;
+
+                return LastPing;
+            }
+        }
+        public LagInfo Lag = new LagInfo();
 
         public enum AuthStatuses
         {

@@ -156,6 +156,8 @@ namespace BZFlag.Game.Host.Players
 
         public event EventHandler<ServerPlayer> PlayerSpawned = null;
 
+        public event EventHandler<ServerPlayer> PlayerLagUpdated = null;
+
         public class KilledEventArgs : EventArgs
         {
             public ServerPlayer Victim = null;
@@ -602,6 +604,15 @@ namespace BZFlag.Game.Host.Players
                 return;
 
             player.SendMessage(!useUDP, message);
+        }
+
+        internal void HandleMsgLagPing(ServerPlayer player, MsgLagPing ping)
+        {
+            if (ping == null)
+                return;
+
+            player.Lag.ReceivePing(ping.SequenceNumber, GameTime.Now);
+            PlayerLagUpdated?.Invoke(this, player);
         }
     }
 }
