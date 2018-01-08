@@ -61,11 +61,29 @@ namespace LatancyManagement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You do not have the required permissions to use the JitterStats command.
+        /// </summary>
+        internal static string JitterStatsNoAuthMessage {
+            get {
+                return ResourceManager.GetString("JitterStatsNoAuthMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your Lag or Packetloss is too high, you will be removed.
         /// </summary>
         internal static string KickMessage {
             get {
                 return ResourceManager.GetString("KickMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You do not have the required permissions to use the LagStats command.
+        /// </summary>
+        internal static string LagStatsNoAuthMessage {
+            get {
+                return ResourceManager.GetString("LagStatsNoAuthMessage", resourceCulture);
             }
         }
         

@@ -8,6 +8,9 @@ using BZFlag.Game.Host.Players;
 using BZFlag.Game.Host;
 using BZFlag.Game.Host.API;
 
+using BZFS.SlashCommands;
+using BZFS.PlayerAdministration;
+
 namespace LatancyManagement
 {
     public class Module : PlugIn
@@ -18,6 +21,41 @@ namespace LatancyManagement
         public override void Startup(Server serverInstance)
         {
             State.Players.PlayerLagUpdated += Players_PlayerLagUpdated;
+
+            Commands.RegisterHandler("lagstats", LagStats);
+            Commands.RegisterHandler("jitterstats", JitterStats);
+        }
+
+        public override void Shutdown(Server serverInstance)
+        {
+            Commands.RemoveHandler("lagstats", LagStats);
+            Commands.RemoveHandler("jitterstats", JitterStats);
+        }
+
+        void LagStats(string command, string arguments, ServerPlayer caller)
+        {
+            if (!PermissionProcessor.PlayerHasPermision(caller, PermissionNames.LagStats))
+            {
+                State.Chat.SendChatToUser(null, caller, Resources.LagStatsNoAuthMessage, false);
+                return;
+            }
+
+            State.Chat.SendChatToUser(null, caller, "Lag Statistics", false);
+            foreach (var player in State.Players.PlayerList.ToArray())
+                State.Chat.SendChatToUser(null, caller, player.Callsign + ":" + player.Lag.AverageLag.ToString() + "(" + player.Lag.InstantLagTime.ToString() + ")", false);
+        }
+
+        void JitterStats(string command, string arguments, ServerPlayer caller)
+        {
+            if (!PermissionProcessor.PlayerHasPermision(caller, PermissionNames.JitterStats))
+            {
+                State.Chat.SendChatToUser(null, caller, Resources.JitterStatsNoAuthMessage, false);
+                return;
+            }
+
+            State.Chat.SendChatToUser(null, caller, "Jitter Statistics", false);
+            foreach (var player in State.Players.PlayerList.ToArray())
+                State.Chat.SendChatToUser(null, caller, player.Callsign + ":" + player.Lag.AverageJitter.ToString() + "(" + player.Lag.InstantJitter.ToString() + ")", false);
         }
 
         public class LatencyInfo

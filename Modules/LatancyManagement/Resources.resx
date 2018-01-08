@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="JitterStatsNoAuthMessage" xml:space="preserve">
+    <value>You do not have the required permissions to use the JitterStats command</value>
+  </data>
   <data name="KickMessage" xml:space="preserve">
     <value>Your Lag or Packetloss is too high, you will be removed</value>
+  </data>
+  <data name="LagStatsNoAuthMessage" xml:space="preserve">
+    <value>You do not have the required permissions to use the LagStats command</value>
   </data>
   <data name="WarnMessage" xml:space="preserve">
     <value>Your Lag or Packetloss is too high, if it continues you will be removed.</value>

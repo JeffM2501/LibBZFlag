@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Module.cs" />
+    <Compile Include="PermissionNames.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -60,6 +61,10 @@
     <ProjectReference Include="..\..\BZFlag.Networking.Common\BZFlag.Networking.Common.csproj">
       <Project>{8594acfd-a708-4076-8940-a4536f3eeda2}</Project>
       <Name>BZFlag.Networking.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PlayerAdministration\PlayerAdministration.csproj">
+      <Project>{51efbc2b-edaf-410f-9e7a-57706b128a05}</Project>
+      <Name>PlayerAdministration</Name>
     </ProjectReference>
     <ProjectReference Include="..\SlashCommands\SlashCommands.csproj">
       <Project>{f9ce7698-94c4-4994-b40f-35c260ca91b6}</Project>
