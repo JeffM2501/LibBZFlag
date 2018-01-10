@@ -73,11 +73,11 @@ namespace BZFlag.Networking.Messages
         }
     }
 
-    public static class SecurityJailMessageFacotry
+    public static class SecurityJailMessageFactory
     {
         public static MessageManager Factory = new MessageManager();
 
-        static SecurityJailMessageFacotry()
+        static SecurityJailMessageFactory()
         {
             Factory.RegisterMessageType(new MsgEnter());
             Factory.RegisterMessageType(new MsgExit());

@@ -20,7 +20,7 @@ namespace BZFlag.Game.Host.Processors
     {
         public StagingZone(ServerConfig cfg) : base(cfg)
         {
-            MessageProcessor = SecurityJailMessageFacotry.Factory;
+            MessageProcessor = SecurityJailMessageFactory.Factory;
 
             RegisterCommonHandlers();
         }

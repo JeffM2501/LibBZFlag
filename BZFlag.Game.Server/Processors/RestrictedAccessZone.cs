@@ -35,7 +35,7 @@ namespace BZFlag.Game.Host.Processors
 
         public RestrictedAccessZone(ServerConfig cfg) : base(cfg)
         {
-            MessageProcessor = SecurityJailMessageFacotry.Factory;
+            MessageProcessor = SecurityJailMessageFactory.Factory;
 
             RegisterCommonHandlers();
 

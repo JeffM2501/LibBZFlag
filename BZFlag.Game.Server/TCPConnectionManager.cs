@@ -268,15 +268,22 @@ namespace BZFlag.Game.Host
 
         protected void DNSLookupCompleted(IAsyncResult ar)
         {
-            var results = Dns.EndGetHostEntry(ar);
             PendingClient c = ar.AsyncState as PendingClient;
             if (c == null)
                 return;
 
-            c.HostEntry = results;
+            try
+            {
+                var results = Dns.EndGetHostEntry(ar);
+ 
+                c.HostEntry = results;
 
-            Logger.Log3("DNS Lookup completed for " + c.HostEntry.HostName);
+                Logger.Log3("DNS Lookup completed for " + c.HostEntry.HostName);
+            }
+            catch (Exception)
+            {
+                c.HostEntry = new IPHostEntry();
+            }
         }
-
     }
 }
