@@ -18,7 +18,7 @@ using BZFlag.Game.Host.World;
 
 namespace BZFlag.Game.Host.Players
 {
-    public class PlayerManager  : Server.GameState
+    public class PlayerManager  : GameState
     {
         public Server ServerHost = null;
 

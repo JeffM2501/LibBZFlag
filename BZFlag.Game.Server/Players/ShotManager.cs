@@ -13,7 +13,7 @@ using BZFlag.Data.Time;
 
 namespace BZFlag.Game.Host.Players
 {
-    public class ShotManager : Server.GameState
+    public class ShotManager : GameState
     {
         public class ShotInfo : EventArgs
         {

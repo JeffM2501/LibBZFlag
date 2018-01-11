@@ -22,7 +22,7 @@ namespace BZFS.PlayerAdministration
 
         public static readonly string PermsTagName = "BZFS.PlayerAdministration.Permissions";
 
-        public Server.GameState State = null;
+        public GameState State = null;
 
         public void Init(Server serverHost, ServerConfig.SecurityInfo info)
         {

@@ -18,7 +18,7 @@ namespace BZFlag.Game.Host.API
 
     public class PlugIn : IPlugIn
     {
-        public Server.GameState State { get; set; } = null;
+        public GameState State { get; set; } = null;
 
         public virtual string Name => string.Empty;
 

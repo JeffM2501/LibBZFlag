@@ -13,7 +13,7 @@ using BZFlag.Networking.Messages.BZFS.Info;
 
 namespace BZFlag.Game.Host
 {
-    public class PlayerProcessor : Server.GameState
+    public class PlayerProcessor : GameState
     {
         protected Thread WorkerThread = null;
         private List<ServerPlayer> PlayerList = new List<ServerPlayer>();

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFlag.Data", "BZFlag.Data\BZFlag.Data.csproj", "{E20FC2B8-A7D1-4AD7-9B04-7F7D2E1C6056}"
 EndProject
@@ -34,6 +34,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandardRuleset", "Modules\StandardRuleset\StandardRuleset.csproj", "{037C7267-4027-43E5-9CE1-954C7DE1E3E0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LatancyManagement", "Modules\LatancyManagement\LatancyManagement.csproj", "{88626C30-AA36-4B89-9564-B3116AAC3A2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZFSPro", "BZFSPro\BZFSPro.csproj", "{C370643A-0CEF-41D4-A9C4-A04D7396E928}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -97,6 +99,10 @@ Global
 		{88626C30-AA36-4B89-9564-B3116AAC3A2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88626C30-AA36-4B89-9564-B3116AAC3A2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88626C30-AA36-4B89-9564-B3116AAC3A2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C370643A-0CEF-41D4-A9C4-A04D7396E928}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C370643A-0CEF-41D4-A9C4-A04D7396E928}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C370643A-0CEF-41D4-A9C4-A04D7396E928}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C370643A-0CEF-41D4-A9C4-A04D7396E928}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

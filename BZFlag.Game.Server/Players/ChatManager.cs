@@ -14,7 +14,7 @@ using BZFlag.Networking.Messages.BZFS;
 
 namespace BZFlag.Game.Host.Players
 {
-    public class ChatManager : Server.GameState
+    public class ChatManager : GameState
     {
         public class ChatMessageEventArgs : EventArgs
         {

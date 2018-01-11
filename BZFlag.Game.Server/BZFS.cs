@@ -8,7 +8,7 @@ using BZFlag.Data.Teams;
 
 namespace BZFlag.Game.Host
 {
-    class Program
+    public static class BZFS
     {
         static void Main(string[] args)
         {
@@ -58,13 +58,13 @@ namespace BZFlag.Game.Host
             new Server(cfg).Run();
         }
 
-        private static void Useage()
+        public static void Useage()
         {
             Console.WriteLine(Resources.UseageText);
             Environment.Exit(0);
         }
 
-        private static ServerConfig BuildSaveableConfig()
+        public static ServerConfig BuildSaveableConfig()
         {
             ServerConfig config = new ServerConfig();
 
