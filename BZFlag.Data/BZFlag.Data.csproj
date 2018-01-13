@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BZFlag.Data</RootNamespace>
     <AssemblyName>BZFlag.Data</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -22,6 +22,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -43,6 +45,11 @@
   <ItemGroup>
     <Compile Include="BZDB\Database.cs" />
     <Compile Include="Flags\FlagCache.cs" />
+    <Compile Include="Flags\FlagStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FlagStrings.resx</DependentUpon>
+    </Compile>
     <Compile Include="Flags\FlagType.cs" />
     <Compile Include="Flags\FlagUpdateData.cs" />
     <Compile Include="Game\GameAttributes.cs" />
@@ -50,14 +57,25 @@
     <Compile Include="Players\PlayerConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Teams\TeamColors.cs" />
+    <Compile Include="Time\Clock.cs" />
     <Compile Include="Types\Color4F.cs" />
     <Compile Include="Types\Constants.cs" />
-    <Compile Include="Types\Vector2F.cs" />
-    <Compile Include="Types\Vector3F.cs" />
-    <Compile Include="Types\Vector4f.cs" />
     <Compile Include="Utils\BufferUtils.cs" />
+    <Compile Include="Utils\Cryptography.cs" />
     <Compile Include="Utils\DynamicBufferReader.cs" />
     <Compile Include="Utils\DynamicOutputBuffer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BZFlag.Math\BZFlag.Math.csproj">
+      <Project>{f295bd89-0662-49e1-acd9-860bb6cd1c29}</Project>
+      <Name>BZFlag.Math</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Flags\FlagStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FlagStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

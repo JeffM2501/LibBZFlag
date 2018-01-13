@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,7 +26,16 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 
         public override byte[] Pack()
         {
-            throw new NotImplementedException();
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
+
+            buffer.WriteByte(PlayerUpdates.Count);
+            foreach (var p in PlayerUpdates)
+            {
+                buffer.WriteByte(p.PlayerID);
+                buffer.WriteByte((int)p.Attributes);
+            }
+
+            return buffer.GetMessageBuffer();
         }
 
         public override void Unpack(byte[] data)

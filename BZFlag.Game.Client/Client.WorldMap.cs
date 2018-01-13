@@ -14,12 +14,15 @@ using BZFlag.Game.Players;
 using BZFlag.Map.Elements.Shapes;
 using BZFlag.Map;
 using BZFlag.Data.BZDB;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Game
 {
     public partial class Client
     {
         private WorldUnpacker Unpacker = null;
+
+        private MsgGameSettings GameSettings = new MsgGameSettings();
 
         private string WorldURL = string.Empty;
 

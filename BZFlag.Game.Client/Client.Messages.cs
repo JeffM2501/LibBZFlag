@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +15,7 @@ using BZFlag.Networking.Messages.BZFS.Flags;
 using BZFlag.Networking.Messages.BZFS.Shots;
 using BZFlag.Networking.Messages.BZFS.Control;
 using BZFlag.Networking;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Game
 {
@@ -119,6 +120,10 @@ namespace BZFlag.Game
             Handler.Add(new MsgLagPing(), HandleLagPing);
 
             Handler.Add(new MsgSuperKill(), HandleSuperKill);
+
+            // server data
+            Handler.Add(new MsgGameSettings(), HandleGameSettings);
+            Handler.Add(new MsgNegotiateFlags(), HandleNegotiateFlags);
 
             // world data
             Handler.Add(new MsgWantWHash(), HandleWorldHash);
@@ -282,5 +287,25 @@ namespace BZFlag.Game
             if (TimedGameEnded != null)
                 TimedGameEnded.Invoke(this, EventArgs.Empty);
         }
+
+        private void HandleGameSettings(NetworkMessage msg)
+        {
+            MsgGameSettings st = msg as MsgGameSettings;
+            if (st == null)
+                return;
+
+            GameSettings = st;
+
+            SendMessage(new MsgWantWHash());
+        }
+
+        private void HandleNegotiateFlags(NetworkMessage msg)
+        {
+            MsgNegotiateFlags nf = msg as MsgNegotiateFlags;
+
+            if (nf != null)
+                SendMessage(new MsgWantSettings());
+        }
+
     }
 }

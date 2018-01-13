@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using BZFlag.Data.Types;
+using BZFlag.LinearMath;
 using BZFlag.Map.Elements.Shapes;
 
 namespace BZFlag.IO.BZW.Parsers

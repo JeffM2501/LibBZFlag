@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BZFlag.Services</RootNamespace>
     <AssemblyName>BZFlag.ServiceLink</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientToken.cs" />
+    <Compile Include="ClientTokenCheck.cs" />
     <Compile Include="GameInfo.cs" />
     <Compile Include="Hosts.cs" />
     <Compile Include="GameList.cs" />

@@ -1,20 +1,24 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using BZFlag.Networking;
-using BZFlag.Game.Security;
 
 namespace BZFlag.Game.Host
 {
     public class TCPConnectionManager
     {
         public int Port = 5154;
-        public TcpListener Listener = null;
+        public TcpListener ListenerV4 = null;
+        public TcpListener ListenerV6 = null;
 
-        public BanList Bans = new BanList();
+
+        public delegate bool BanCallback(PendingClient player, ref string reason);
+
+        public BanCallback CheckIPBan;
+        public BanCallback CheckHostBan;
 
         public class PendingClient : EventArgs
         {
@@ -33,6 +37,22 @@ namespace BZFlag.Game.Host
             public bool VersionPassed = false;
 
             public byte[] PendingData = new byte[0];
+
+            public string GetIPAsString()
+            {
+                if (ClientConnection == null)
+                    return string.Empty;
+
+                return ((IPEndPoint)ClientConnection.Client.RemoteEndPoint).Address.ToString();
+            }
+
+            public IPAddress GetIPAddress()
+            {
+                if (ClientConnection == null)
+                    return IPAddress.None;
+
+                return ((IPEndPoint)ClientConnection.Client.RemoteEndPoint).Address;
+            }
         }
 
         protected List<PendingClient> PendingClients = new List<PendingClient>();
@@ -47,14 +67,31 @@ namespace BZFlag.Game.Host
         {
             Host = server;
             Port = port;
-            Listener = new TcpListener(IPAddress.Any, port);
+            ListenerV4 = new TcpListener(IPAddress.Any, port);
+            try
+            {
+                ListenerV6 = new TcpListener(IPAddress.IPv6Any, port);
+            }
+            catch (Exception)
+            {
+                ListenerV6 = null;
+            }
         }
 
         public void StartUp()
         {
-            Listener.Start();
+            ListenerV4.Start();
+            ListenerV4.BeginAcceptTcpClient(TCPClientAcceptedV4, null);
 
-            Listener.BeginAcceptTcpClient(TCPClientAccepted, null);
+            try
+            {
+                ListenerV6.Start();
+                ListenerV6.BeginAcceptTcpClient(TCPClientAcceptedV6, null);
+            }
+            catch (Exception)
+            {
+                ListenerV6 = null;
+            }
         }
 
         public void Shutdown()
@@ -63,23 +100,49 @@ namespace BZFlag.Game.Host
                 WorkerThread.Abort();
 
             WorkerThread = null;
+
+            ListenerV4.Stop();
+            if (ListenerV6 != null)
+                ListenerV6.Stop();
         }
 
-        protected void TCPClientAccepted(IAsyncResult ar)
+        protected void TCPClientAcceptedV4(IAsyncResult ar)
         {
-
             PendingClient c = new PendingClient();
-            c.ClientConnection = Listener.EndAcceptTcpClient(ar);
+            c.ClientConnection = ListenerV4.EndAcceptTcpClient(ar);
             c.NetStream = c.ClientConnection.GetStream();
 
+            Logger.Log2("IPV4 Connection accepted from " + c.ClientConnection.Client.RemoteEndPoint.ToString());
+            AcceptClient(c);
+
+            ListenerV4.BeginAcceptTcpClient(TCPClientAcceptedV4, null);
+        }
+
+        protected void TCPClientAcceptedV6(IAsyncResult ar)
+        {
+            if (ListenerV6 == null)
+                return;
+
+            PendingClient c = new PendingClient();
+            c.ClientConnection = ListenerV6.EndAcceptTcpClient(ar);
+            c.NetStream = c.ClientConnection.GetStream();
+
+            Logger.Log2("IPV6 Connection accepted from " + c.ClientConnection.Client.RemoteEndPoint.ToString());
+            AcceptClient(c);
+
+            ListenerV6.BeginAcceptTcpClient(TCPClientAcceptedV4, null);
+        }
+
+        protected void AcceptClient(PendingClient c)
+        {
             Logger.Log2("TCP Connection accepted from " + c.ClientConnection.Client.RemoteEndPoint.ToString());
 
-            Listener.BeginAcceptTcpClient(TCPClientAccepted, null);
+            bool ban = false;
+            string reason = string.Empty;
+            if (CheckIPBan != null)
+                ban = CheckIPBan(c, ref reason);
 
-            var address = ((IPEndPoint)c.ClientConnection.Client.RemoteEndPoint).Address.ToString();
-
-            var ban = Bans.FindIPBan(address);
-            if (ban != null)
+            if (ban)
             {
                 c.ClientConnection.Close();
                 return;
@@ -130,10 +193,15 @@ namespace BZFlag.Game.Host
                     {
                         if (c.HostEntry != null)
                         {
-                            Logger.Log3("Ban-List Lookup started for " + c.HostEntry.HostName);
+                            Logger.Log3("Ban check started for " + c.HostEntry.HostName);
                             // lookup the host in the ban list
-                            var ban = Bans.FindHostBan(c.HostEntry.HostName);
-                            if (ban == null)
+
+                            bool ban = false;
+                            string reason = string.Empty;
+                            if (CheckHostBan != null)
+                                ban = CheckHostBan(c, ref reason);
+
+                            if (!ban)
                                 c.DNSPassed = true;
                             else
                             {
@@ -200,15 +268,22 @@ namespace BZFlag.Game.Host
 
         protected void DNSLookupCompleted(IAsyncResult ar)
         {
-            var results = Dns.EndGetHostEntry(ar);
             PendingClient c = ar.AsyncState as PendingClient;
             if (c == null)
                 return;
 
-            c.HostEntry = results;
+            try
+            {
+                var results = Dns.EndGetHostEntry(ar);
+ 
+                c.HostEntry = results;
 
-            Logger.Log3("DNS Lookup completed for " + c.HostEntry.HostName);
+                Logger.Log3("DNS Lookup completed for " + c.HostEntry.HostName);
+            }
+            catch (Exception)
+            {
+                c.HostEntry = new IPHostEntry();
+            }
         }
-
     }
 }

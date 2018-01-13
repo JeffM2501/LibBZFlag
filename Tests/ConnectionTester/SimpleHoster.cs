@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Text;
@@ -20,7 +20,7 @@ namespace ConnectionTester
 
         public static void Run(string[] args)
         {
-            UDPConnectionManager udp = new UDPConnectionManager();
+            UDPConnectionManager udp = new UDPConnectionManager(null);
 
             tcp = new TcpListener(IPAddress.Any, 5154);
             tcp.Start();

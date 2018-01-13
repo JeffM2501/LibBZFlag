@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,10 +29,11 @@ namespace BZFlag.Data.Flags
     {
         FlagGood = 0,
         FlagBad = 1,
+        FlagUnknown = 2,
         NumQualities
     };
 
-    public class FlagType
+    public class FlagType : EventArgs
     {
         public string FlagName = string.Empty;
         public string FlagAbbv = string.Empty;
@@ -42,6 +43,11 @@ namespace BZFlag.Data.Flags
         public ShotTypes FlagShot = ShotTypes.NormalShot;
         public TeamColors FlagTeam = TeamColors.AutomaticTeam;
         public bool Custom = false;
+
+        public override string ToString()
+        {
+            return FlagAbbv;
+        }
 
         public FlagType(string name, string abbv, FlagEndurances _endurance, ShotTypes sType, FlagQualities quality, TeamColors team, string help, bool _custom)
         {

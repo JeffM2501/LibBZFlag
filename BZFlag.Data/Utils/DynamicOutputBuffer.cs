@@ -1,29 +1,96 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 using BZFlag.Data.Types;
+using BZFlag.LinearMath;
 using BZFlag.Data.Flags;
 
 namespace BZFlag.Data.Utils
 {
     public class DynamicOutputBuffer
     {
+        public static DynamicOutputBuffer Get( int code )
+        {
+            lock(BufferCache)
+            {
+                foreach(var db in BufferCache)
+                {
+                    if (!db.Used())
+                    {
+                        db.Reset(code);
+                        return db;
+                    }
+                }
+
+                DynamicOutputBuffer b = new DynamicOutputBuffer(code);
+                b.Reset(code);
+                BufferCache.Add(b);
+                return b;
+            }
+        }
+
+        public static DynamicOutputBuffer GetTempBuffer( int size)
+        {
+            return new DynamicOutputBuffer(false, size);
+        }
+
+        private static List<DynamicOutputBuffer> BufferCache = new List<DynamicOutputBuffer>();
+
         protected UInt16 Code = 0;
 
-        private static byte[] GlobalBuffer = new byte[2048];
+        private byte[] GlobalBuffer = new byte[2048];
         protected int BytesUsed = 0;
 
         protected byte[] Buffer = null;
 
-        public DynamicOutputBuffer()
+
+        protected bool InUse = false;
+        public object Locker = new object();
+
+
+        public int GetBytesUsed()
+        {
+            return BytesUsed;
+        }
+
+        public byte[] GetRawBuffer()
+        {
+            return Buffer;
+        }
+
+        public bool Used ()
+        {
+            lock (Locker)
+                return InUse;
+        }
+
+        protected void SetUnused()
+        {
+            lock (Locker)
+                InUse = false;
+        }
+
+        protected void Reset(int code)
+        {
+            lock (Locker)
+                InUse = true;
+
+            BytesUsed = 4;
+            Buffer = GlobalBuffer;
+            Code = (UInt16)code;
+            WriteUInt16(0, 0);
+            WriteUInt16(Code, 2);
+        }
+
+        protected DynamicOutputBuffer()
         {
             BytesUsed = 4;
             Buffer = GlobalBuffer;
         }
 
-        public DynamicOutputBuffer(int code)
+        protected DynamicOutputBuffer(int code)
         {
             BytesUsed = 4;
             Buffer = GlobalBuffer;
@@ -32,15 +99,15 @@ namespace BZFlag.Data.Utils
             WriteUInt16(Code, 2);
         }
 
-        public DynamicOutputBuffer(bool useGlobal, int size)
-        {
-            BytesUsed = 0;
-
-            if (useGlobal)
-                Buffer = GlobalBuffer;
-            else
-                Buffer = new byte[size];
-        }
+         protected DynamicOutputBuffer(bool useGlobal, int size)
+         {
+             BytesUsed = 0;
+ 
+             if (useGlobal)
+                 Buffer = GlobalBuffer;
+             else
+                 Buffer = new byte[size];
+         }
 
 
         public void SetCode(int code)
@@ -54,6 +121,8 @@ namespace BZFlag.Data.Utils
             WriteUInt16((UInt16)(BytesUsed - 4), 0);
             byte[] outbuffer = new byte[BytesUsed];
             Array.Copy(Buffer, outbuffer, BytesUsed);
+
+            SetUnused();
             return outbuffer;
         }
 
@@ -61,6 +130,8 @@ namespace BZFlag.Data.Utils
         {
             byte[] outbuffer = new byte[BytesUsed];
             Array.Copy(Buffer, outbuffer, BytesUsed);
+
+            SetUnused();
             return outbuffer;
         }
 
@@ -95,6 +166,11 @@ namespace BZFlag.Data.Utils
         {
             WriteUInt16(value, BytesUsed);
             BytesUsed += 2;
+        }
+
+        public void WriteUInt16(int value)
+        {
+            WriteUInt16((UInt16)value);
         }
 
         protected void WriteUInt16(UInt16 value, int offset)
@@ -210,12 +286,27 @@ namespace BZFlag.Data.Utils
             WriteFloat(value.Y);
             WriteFloat(value.Z);
         }
+
         public void WriteColor4F(Color4F value)
         {
             WriteFloat(value.R);
             WriteFloat(value.G);
             WriteFloat(value.B);
             WriteFloat(value.A);
+        }
+
+        public void WriteSmallVector3F(Vector3F value)
+        {
+            WriteSmallDist(value.X);
+            WriteSmallDist(value.Y);
+            WriteSmallDist(value.Z);
+        }
+
+        public void WriteSmallVelVector3F(Vector3F value)
+        {
+            WriteSmallVel(value.X);
+            WriteSmallVel(value.Y);
+            WriteSmallVel(value.Z);
         }
 
         public void WriteDouble(double value)
@@ -232,23 +323,16 @@ namespace BZFlag.Data.Utils
 
         public void WriteFixedSizeString(string value, int size)
         {
-            CheckBuffer(size);
-
             int i = value.Length;
             if (i > size)
                 i = size;
 
-            Encoding.UTF8.GetBytes(value, 0, i, Buffer, BytesUsed);
+            byte[] textBuffer = new byte[size];
+            for (int a = 0; a < size; a++)
+                textBuffer[a] = byte.MinValue;
 
-            if (i < size)
-            {
-                while (i < size)
-                {
-                    Buffer[BytesUsed + i] = 0;
-                    i++;
-                }
-            }
-            BytesUsed += size;
+            Encoding.UTF8.GetBytes(value, 0, i, textBuffer, 0);
+            WriteBytes(textBuffer);
         }
 
         public void WritePascalString(string value)
@@ -292,7 +376,7 @@ namespace BZFlag.Data.Utils
             Encoding.UTF8.GetBytes(value, 0, actualSize, Buffer, BytesUsed);
             BytesUsed += actualSize;
         }
-
+    
         public void WriteNullTermString(string value)
         {
             CheckBuffer(value.Length + 1);
@@ -301,19 +385,33 @@ namespace BZFlag.Data.Utils
             WriteByte(byte.MinValue);
         }
 
-        public void WriteFlagUpdateData(FlagUpdateData flag)
+        public void WriteFlagUpdateData(FlagUpdateData flag, bool useFakeFlag)
         {
             WriteInt16(flag.FlagID);
-            WriteFixedSizeString(flag.Abreviation, 2);
+            if (useFakeFlag)
+                WriteFixedSizeString("PZ", 2);
+            else
+                WriteFixedSizeString(flag.Abreviation, 2);
+
             WriteUInt16((UInt16)flag.Status);
             WriteUInt16((UInt16)flag.Endurance);
-            WriteByte(flag.Owner);
-            WriteVector3F(flag.Postion);
+            WriteByte(flag.OwnerID);
+            WriteVector3F(flag.Position);
             WriteVector3F(flag.LaunchPosition);
             WriteVector3F(flag.LandingPostion);
             WriteFloat(flag.FlightTime);
             WriteFloat(flag.FlightEnd);
             WriteFloat(flag.InitalVelocity);
+        }
+
+        public void WriteSmallDist(float val)
+        {
+            WriteInt16((Int16)((val * Constants.SmallScale) / Constants.SmallMaxDist));
+        }
+
+        public void WriteSmallAngle(float val)
+        {
+            WriteInt16((Int16)((val * Constants.SmallScale) / System.Math.PI));
         }
 
         public void WriteSmallScale(float val)

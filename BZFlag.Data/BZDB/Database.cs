@@ -1,57 +1,406 @@
-﻿using BZFlag.Data.Types;
+using BZFlag.Data.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+
+using BZFlag.LinearMath;
+
 namespace BZFlag.Data.BZDB
 {
-    public static class BZDBVarNames
+    public class BZDBCacheFloat
     {
-        public static readonly string Gravity = "_gravity";
+        private Database DB = null;
+
+        public string VarName { get; protected set; } = string.Empty;
+
+        private float _Value = float.MinValue;
+
+        public BZDBCacheFloat(Database db, string name)
+        {
+            DB = db;
+            VarName = name;
+
+            db.ValueChanged += Db_ValueChanged;
+        }
+
+        private void Db_ValueChanged(object sender, Database.DatabaseItem e)
+        {
+            if (e.Key == VarName)
+                Update();
+        }
+
+        public float Value
+        {
+            get
+            {
+                if (_Value == float.MinValue)
+                    Update();
+                return _Value;
+            }
+        }
+
+        protected void Update()
+        {
+            if (DB == null)
+                return;
+            double val = DB.GetValueD(VarName);
+            if (val != double.MinValue)
+                _Value = (float)val;
+        }
+
+        public static implicit operator float(BZDBCacheFloat v) { return v.Value; }
+    }
+
+    public class BZDBCache
+    {
+        public static class VarNames
+        {
+            public static readonly string Gravity = "_gravity";
+
+            public static readonly string TankRadius = "_tankRadius";
+            public static readonly string TankHeight = "_tankHeight";
+            public static readonly string TankSpeed = "_tankSpeed";
+
+            public static readonly string FlagRadius = "_flagRadius";
+            public static readonly string FlagAltitude = "_flagAltitude";
+            public static readonly string FlagEffectTime = "_flagEffectTime";
+            public static readonly string FlagHeight = "_flagHeight";
+            public static readonly string FlagPoleWidth = "_flagPoleWidth";
+            public static readonly string FlagPoleSize = "_flagPoleSize";
+            public static readonly string ShieldFlight = "_shieldFlight";
+        }
+
+        public BZDBCacheFloat Gravity = null;
+
+        public BZDBCacheFloat TankRadius = null;
+        public BZDBCacheFloat TankSpeed = null;
+        public BZDBCacheFloat TankHeight = null;
+
+        public BZDBCacheFloat FlagRadius = null;
+        public BZDBCacheFloat FlagAltitude = null;
+        public BZDBCacheFloat FlagEffectTime = null;
+        public BZDBCacheFloat FlagHeight = null;
+        public BZDBCacheFloat FlagPoleWidth = null;
+        public BZDBCacheFloat FlagPoleSize = null;
+
+        public BZDBCacheFloat ShieldFlight = null;
+
+        public BZDBCache(Database db)
+        {
+            Gravity = new BZDBCacheFloat(db, VarNames.Gravity);
+
+            TankRadius = new BZDBCacheFloat(db, VarNames.TankRadius);
+            TankSpeed = new BZDBCacheFloat(db, VarNames.TankSpeed);
+            TankHeight = new BZDBCacheFloat(db, VarNames.TankHeight);
+
+            FlagRadius = new BZDBCacheFloat(db, VarNames.FlagRadius);
+            FlagAltitude = new BZDBCacheFloat(db, VarNames.FlagAltitude);
+            FlagEffectTime = new BZDBCacheFloat(db, VarNames.FlagEffectTime);
+            FlagHeight = new BZDBCacheFloat(db, VarNames.FlagHeight);
+            FlagPoleWidth = new BZDBCacheFloat(db, VarNames.FlagPoleWidth);
+            FlagPoleSize = new BZDBCacheFloat(db, VarNames.FlagPoleSize);
+            ShieldFlight = new BZDBCacheFloat(db, VarNames.ShieldFlight);
+        }
     }
 
     public class Database
     {
-        public class DatabaseItem
+        public class DatabaseItem : EventArgs
         {
-            public string Key = string.Empty;
-            public string Value = string.Empty;
+            public string Key { get; internal set; }
+            public string Value { get; internal set; }
 
-            public double DoubleValue = double.MinValue;
-            public Vector3F VectorValue = Vector3F.Zero;
-            public bool IsComputation = false;
+            public string RawValue { get; internal set; }
+            public string DefaultValue { get; internal set; }
 
-            public List<DatabaseItem> DependentItems = new List<DatabaseItem>();
-            public event EventHandler Changed = null;
+            public double DoubleValue { get; internal set; }
+            public Vector3F VectorValue { get; internal set; }
+
+            public enum ComputationTypes
+            {
+                None,
+                Assignment,
+                Addition,
+                Subtraction,
+                Multiplication,
+                Division,
+            }
+            public ComputationTypes Computation = ComputationTypes.None;
+
+            public class ComputationArgument
+            {
+                public bool IsContant = false;
+                public double Constant = 0;
+                public DatabaseItem ItemReference = null;
+            }
+
+            public List<ComputationArgument> Arguments = new List<ComputationArgument>();
+
+            public event EventHandler<DatabaseItem> Changed = null;
 
             public bool Trasmit = true;
 
-            public DatabaseItem() { }
+            public bool Locked = false;
+
+            public DatabaseItem() { Key = string.Empty; Value = string.Empty; }
             public DatabaseItem(string k, string v) { Key = k; Value = v; }
 
             public void CallChanged()
             {
-                Changed?.Invoke(this, EventArgs.Empty);
+                Changed?.Invoke(this, this);
+            }
+
+            internal void InitValue(string value)
+            {
+                RawValue = value;
+                DefaultValue = value;
+                Value = value;
+            }
+
+            internal void SetValue(string value, Database db)
+            {
+                Value = value;
+                RawValue = value;
+                if (db != null)
+                {
+                    SetupValue(db);
+                    ResolveValue();
+                }
+            }
+
+            internal void SetupValue(Database db)
+            {
+                foreach (var arg in Arguments)
+                {
+                    if (arg.ItemReference != null)
+                        arg.ItemReference.Changed -= DependentItem_Changed;
+
+                }
+                Arguments.Clear();
+
+                Value = RawValue;
+                VectorValue = Vector3F.Zero;
+                DoubleValue = double.MinValue;
+                Computation = ComputationTypes.None;
+
+                double v = double.MinValue;
+                if (double.TryParse(Value, out v))
+                {
+                    DoubleValue = v;
+                    return;
+                }
+
+                if (Value.Contains("+"))
+                    SetupAdd(db);
+                else if (Value.Contains("-"))
+                    SetupSubtract(db);
+                else if (Value.Contains("*"))
+                    SetupMultiply(db);
+                else if (Value.Contains("/"))
+                    SetupDivide(db);
+                else if (Value != string.Empty && Value[0] == '_')
+                    SetupAssignment(db);
+            }
+
+            private void SetupDualArguments(Database db, string operatorSign)
+            {
+                string[] parts = Value.Split(operatorSign.ToCharArray());
+                if (parts.Length != 2)
+                {
+                    Computation = ComputationTypes.None;
+                    return;
+                }
+
+                foreach (string p in parts)
+                {
+                    string text = p.Trim();
+
+                    ComputationArgument arg = new ComputationArgument();
+
+                    if (double.TryParse(text, out arg.Constant))
+                        arg.IsContant = true;
+                    else
+                    {
+                        arg.IsContant = false;
+                        arg.ItemReference = db.FindItem(text);
+                        if (arg.ItemReference == null)
+                        {
+                            Computation = ComputationTypes.None;
+                            return;
+                        }
+
+                        arg.ItemReference.Changed += DependentItem_Changed;
+                    }
+                    Arguments.Add(arg);
+                }
+            }
+
+            private double ResolveArgumentValue(ComputationArgument arg)
+            {
+                if (arg.IsContant)
+                    return arg.Constant;
+
+                if (arg.ItemReference != null)
+                    return arg.ItemReference.DoubleValue;
+
+                return 0;
+            }
+
+            private void SetupAdd(Database db)
+            {
+                Computation = ComputationTypes.Addition;
+                SetupDualArguments(db, "+");
+            }
+
+            private void ResolveAddition()
+            {
+                if (Arguments.Count != 2)
+                    return;
+
+                DoubleValue = ResolveArgumentValue(Arguments[0]) + ResolveArgumentValue(Arguments[1]);
+                Value = DoubleValue.ToString();
+            }
+
+            private void SetupSubtract(Database db)
+            {
+                Computation = ComputationTypes.Subtraction;
+                SetupDualArguments(db, "-");
+            }
+
+            private void ResolveSubtraction()
+            {
+                if (Arguments.Count != 2)
+                    return;
+
+                DoubleValue = ResolveArgumentValue(Arguments[0]) - ResolveArgumentValue(Arguments[1]);
+                Value = DoubleValue.ToString();
+            }
+
+            private void SetupDivide(Database db)
+            {
+                Computation = ComputationTypes.Division;
+
+                SetupDualArguments(db, "/");
+            }
+
+            private void ResolveDivide()
+            {
+                if (Arguments.Count != 2)
+                    return;
+
+                double v = ResolveArgumentValue(Arguments[1]);
+                if (v == 0)
+                    DoubleValue = 0;
+                else
+                    DoubleValue = ResolveArgumentValue(Arguments[0]) / v;
+
+                Value = DoubleValue.ToString();
+            }
+
+            private void SetupMultiply(Database db)
+            {
+                Computation = ComputationTypes.Multiplication;
+                SetupDualArguments(db, "*");
+            }
+
+            private void ResolveMultipy()
+            {
+                if (Arguments.Count != 2)
+                    return;
+
+                DoubleValue = ResolveArgumentValue(Arguments[0]) * ResolveArgumentValue(Arguments[1]);
+                Value = DoubleValue.ToString();
+            }
+
+            private void ResolveAssignment()
+            {
+                if (Arguments.Count == 0 || Arguments[0].IsContant || Arguments[0].ItemReference == null)
+                    return;
+
+                Value = Arguments[0].ItemReference.Value;
+                DoubleValue = Arguments[0].ItemReference.DoubleValue;
+                VectorValue = Arguments[0].ItemReference.VectorValue;
+            }
+
+            private void SetupAssignment(Database db)
+            {
+                Computation = ComputationTypes.Assignment;
+
+                ComputationArgument arg = new ComputationArgument();
+
+                arg.IsContant = false;
+                arg.ItemReference = db.FindItem(Value);
+                if (arg.ItemReference == null)
+                    return;
+                arg.ItemReference.Changed += DependentItem_Changed;
+                Arguments.Add(arg);
+            }
+
+            public void ResolveValue()
+            {
+                if (Arguments.Count == 0 || Computation == ComputationTypes.None)
+                    return;
+
+                VectorValue = Vector3F.Zero;
+
+                switch (Computation)
+                {
+                    case ComputationTypes.Assignment:
+                        ResolveAssignment();
+                        return;
+
+                    case ComputationTypes.Addition:
+                        ResolveAddition();
+                        return;
+
+                    case ComputationTypes.Subtraction:
+                        ResolveSubtraction();
+                        return;
+
+                    case ComputationTypes.Division:
+                        ResolveDivide();
+                        return;
+
+                    case ComputationTypes.Multiplication:
+                        ResolveMultipy();
+                        return;
+                }
+            }
+
+            private void DependentItem_Changed(object sender, DatabaseItem e)
+            {
+                ResolveValue();
+                Changed?.Invoke(this, this);
             }
         }
 
-        protected Dictionary<string, DatabaseItem> RawBZDBVariables = new Dictionary<string, DatabaseItem>();
+        internal Dictionary<string, DatabaseItem> RawBZDBVariables = new Dictionary<string, DatabaseItem>();
 
+        public DatabaseItem[] GetVars() { lock (RawBZDBVariables) return RawBZDBVariables.Values.ToArray(); }
 
-        public class DatabaseChangedEventArgs : EventArgs
+        internal DatabaseItem FindItem(string name)
         {
-            public string Key = string.Empty;
-            public string NewValue = string.Empty;
-            public string OldValue = string.Empty;
+            if (RawBZDBVariables.ContainsKey(name))
+                return RawBZDBVariables[name];
+
+            return null;
         }
 
-        public event EventHandler<DatabaseChangedEventArgs> ValueChanged = null;
+        public event EventHandler<DatabaseItem> ValueChanged = null;
         public event EventHandler InitalLoadCompleted = null;
 
-        public Dictionary<string, EventHandler> NotificationEvents = new Dictionary<string, EventHandler>();
+        public Dictionary<string, EventHandler<DatabaseItem>> NotificationEvents = new Dictionary<string, EventHandler<DatabaseItem>>();
 
-        public void RegisterVariableChangeNotifiacation(string name, EventHandler handler)
+        public BZDBCache Cache = null;
+
+        public Database()
+        {
+            Cache = new BZDBCache(this);
+        }
+
+        public void RegisterVariableChangeNotifiacation(string name, EventHandler<DatabaseItem> handler)
         {
             if (NotificationEvents.ContainsKey(name))
                 NotificationEvents[name] += handler;
@@ -83,31 +432,55 @@ namespace BZFlag.Data.BZDB
             return GetValueS(key) == "1";
         }
 
+        internal void AddItem(string key, string value)
+        {
+            DatabaseItem item = new DatabaseItem(key, value);
+            item.Changed += DBItem_Changed;
+            RawBZDBVariables.Add(key, item);
+        }
+
+        private void DBItem_Changed(object sender, DatabaseItem item)
+        {
+            if (item == null)
+                return;
+
+            ValueChanged?.Invoke(this, item);
+
+            if (NotificationEvents.ContainsKey(item.Key))
+                NotificationEvents[item.Key].Invoke(this, item);
+        }
+
         internal bool ChangeValue(string key, string value)
         {
-            DatabaseChangedEventArgs args = new DatabaseChangedEventArgs();
-            args.NewValue = value;
+            if (!RawBZDBVariables.ContainsKey(key))
+                AddItem(key, value);
 
-            if (RawBZDBVariables.ContainsKey(key))
-            {
-                args.OldValue = RawBZDBVariables[key].Value;
-                RawBZDBVariables[key].Value = value;
-                RawBZDBVariables[key].CallChanged();
-            }
-            else
-                RawBZDBVariables.Add(key, new DatabaseItem(key, value));
+            var item = RawBZDBVariables[key];
 
-            ValueChanged?.Invoke(this, args);
+            if (item.Locked)
+                return false;
 
-            if (NotificationEvents.ContainsKey(key))
-                NotificationEvents[key].Invoke(this, args);
+            item.RawValue = value;
 
+            item.SetupValue(this);
+            item.ResolveValue();
+
+            item.CallChanged();
             return true;
         }
 
         public void SetValue(string key, string value)
         {
             ChangeValue(key, value);
+        }
+
+        public void InitValues(string key, string value, bool locked)
+        {
+            if (!RawBZDBVariables.ContainsKey(key))
+                AddItem(key, value);
+
+            RawBZDBVariables[key].InitValue(value);
+            RawBZDBVariables[key].Locked = locked;
         }
 
         public void SetValues(Dictionary<string, string> values, bool callEvents)
@@ -118,6 +491,30 @@ namespace BZFlag.Data.BZDB
 
         public void FinishLoading()
         {
+            foreach (var item in RawBZDBVariables.Values)
+                item.SetupValue(this);
+
+            // resolve all the constants
+            foreach (var item in RawBZDBVariables.Values)
+            {
+                if (item.Computation == DatabaseItem.ComputationTypes.None)
+                    item.ResolveValue();
+            }
+
+            // resolve all the Assignments
+            foreach (var item in RawBZDBVariables.Values)
+            {
+                if (item.Computation == DatabaseItem.ComputationTypes.Assignment)
+                    item.ResolveValue();
+            }
+
+            // resolve all the math
+            foreach (var item in RawBZDBVariables.Values)
+            {
+                if (item.Computation != DatabaseItem.ComputationTypes.None && item.Computation != DatabaseItem.ComputationTypes.Assignment)
+                    item.ResolveValue();
+            }
+
             if (InitalLoadCompleted != null)
                 InitalLoadCompleted.Invoke(this, EventArgs.Empty);
         }

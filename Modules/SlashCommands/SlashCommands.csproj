@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F9CE7698-94C4-4994-B40F-35C260CA91B6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BZFS.SlashCommands</RootNamespace>
+    <AssemblyName>BZFS.SlashCommands</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CmdProcessor.cs" />
+    <Compile Include="Commands.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\BZFlag.Data\BZFlag.Data.csproj">
+      <Project>{e20fc2b8-a7d1-4ad7-9b04-7f7d2e1c6056}</Project>
+      <Name>BZFlag.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\BZFlag.Game.Server\BZFlag.Game.Server.csproj">
+      <Project>{6a69803e-a03f-4351-a8b5-14de5dadcc41}</Project>
+      <Name>BZFlag.Game.Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\BZFlag.Networking.Common\BZFlag.Networking.Common.csproj">
+      <Project>{8594ACFD-A708-4076-8940-A4536F3EEDA2}</Project>
+      <Name>BZFlag.Networking.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if not exist $(SolutionDir)_test mkdir $(SolutionDir)_test
+if not exist $(SolutionDir)_test\Modules mkdir $(SolutionDir)_test\Modules
+copy $(TargetPath) $(SolutionDir)_test\Modules</PostBuildEvent>
+  </PropertyGroup>
+</Project>

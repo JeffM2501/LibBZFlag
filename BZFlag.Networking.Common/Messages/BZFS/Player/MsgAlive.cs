@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 using BZFlag.Data.Types;
 using BZFlag.Data.Utils;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Networking.Messages.BZFS.Player
 {
@@ -23,7 +24,7 @@ namespace BZFlag.Networking.Messages.BZFS.Player
 
         public override byte[] Pack()
         {
-            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
             if (!IsSpawn)
             {
                 buffer.WriteByte(PlayerID);

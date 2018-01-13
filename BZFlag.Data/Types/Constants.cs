@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +12,8 @@ namespace BZFlag.Data.Types
         public static readonly int MottoLen = 128;
         public static readonly int TokenLen = 22;
         public static readonly int VersionLen = 60;
+
+        public static readonly int ChatMessageLenght = 128;
 
         // update compression constants
         public static readonly float SmallScale = 32766.0f; // the full scale of a int16_t  (less 1.0 for safety)

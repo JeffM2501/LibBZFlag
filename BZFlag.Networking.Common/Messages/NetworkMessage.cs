@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using BZFlag.Data.Types;
+using BZFlag.LinearMath;
 using BZFlag.Data.Flags;
 using BZFlag.Data.Utils;
 
@@ -47,7 +48,7 @@ namespace BZFlag.Networking.Messages
 
         protected float ReadSmallAngle()
         {
-            return ((float)(ReadInt16() * Math.PI)) / Constants.SmallScale;
+            return ((float)(ReadInt16() * System.Math.PI)) / Constants.SmallScale;
         }
 
         protected float ReadSmallScale()
@@ -81,8 +82,8 @@ namespace BZFlag.Networking.Messages
             flag.Abreviation = ReadFixedSizeString(2);
             flag.Status = (FlagStatuses)ReadUInt16();
             flag.Endurance = (FlagEndurances)ReadUInt16();
-            flag.Owner = ReadByte();
-            flag.Postion = ReadVector3F();
+            flag.OwnerID = ReadByte();
+            flag.Position = ReadVector3F();
             flag.LaunchPosition = ReadVector3F();
             flag.LandingPostion = ReadVector3F();
             flag.FlightTime = ReadFloat();

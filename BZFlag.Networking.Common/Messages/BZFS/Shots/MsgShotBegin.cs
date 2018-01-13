@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +6,7 @@ using System.Text;
 using BZFlag.Data.Types;
 using BZFlag.Data.Teams;
 using BZFlag.Data.Utils;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Networking.Messages.BZFS.Shots
 {
@@ -32,12 +33,15 @@ namespace BZFlag.Networking.Messages.BZFS.Shots
 
         public override byte[] Pack()
         {
-            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
+
             buffer.WriteFloat(TimeSent);
             buffer.WriteByte(PlayerID);
             buffer.WriteInt16(ShotID);
+
             buffer.WriteVector3F(Position);
             buffer.WriteVector3F(Velocity);
+
             buffer.WriteFloat(DeltaTime);
 
             buffer.WriteInt16((UInt16)Team);

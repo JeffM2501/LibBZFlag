@@ -1,14 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using BZFlag.Map.Elements;
 using BZFlag.Map.Elements.Shapes;
-
-using Jitter;
-using Jitter.Collision;
-using Jitter.Dynamics;
-using Jitter.Collision.Shapes;
-using Jitter.LinearMath;
 
 namespace BZFlag.Map
 {
@@ -27,7 +21,6 @@ namespace BZFlag.Map
         public World WorldInfo = new World();
         public Options WorldOptions = new Options();
 
-        public JitterWorld PhysicsWorld = null;
 
         public void IntForLoad()
         {
@@ -51,24 +44,42 @@ namespace BZFlag.Map
                 if (tp.Name == string.Empty)
                     tp.Name = "teleporter_" + tp.Index.ToString();
             }
+        }
 
-            PhysicsWorld = new JitterWorld(new CollisionSystemPersistentSAP());
-            PhysicsWorld.Gravity = new JVector(0,0,-9.81f);
+        public void Validate()
+        {
+            if (Objects.FindIndex((x) => x as WallObstacle != null) > 0 || WorldInfo.NoWalls)
+                return;
 
-            foreach (BasicObject obj in Objects)
-            {
-                PositionableObject po = obj as PositionableObject;
-                if (po == null)
-                    continue;
+            float wallHeight = 6.5f; // TODO, get from BZDB
 
-                RigidBody body = new RigidBody(new BoxShape(new JVector(po.Size.X + 2,po.Size.Y + 2,po.Size.Z)));
-                body.IsStatic = true;
-                body.Position = new JVector(po.Position.X, po.Position.Y, po.Position.Z + (po.Size.Z * 0.5f));
-                body.Orientation = JMatrix.CreateRotationZ(po.Rotation * ((float)Math.PI/180.0f));
-                body.Tag = po;
+            WallObstacle wall = new WallObstacle();
+            wall.Position = new LinearMath.Vector3F(0, WorldInfo.Size, 0);
+            wall.Rotation = LinearMath.TrigTools.ToRad(270);
+            wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, wallHeight);
+            wall.Ricochet = false;
+            Objects.Add(wall);
 
-                PhysicsWorld.AddBody(body);
-            }
+            wall = new WallObstacle();
+            wall.Position = new LinearMath.Vector3F(WorldInfo.Size, 0, 0);
+            wall.Rotation = LinearMath.TrigTools.ToRad(180);
+            wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, wallHeight);
+            wall.Ricochet = false;
+            Objects.Add(wall);
+
+            wall = new WallObstacle();
+            wall.Position = new LinearMath.Vector3F(0,- WorldInfo.Size, 0);
+            wall.Rotation = LinearMath.TrigTools.ToRad(90);
+            wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, wallHeight);
+            wall.Ricochet = false;
+            Objects.Add(wall);
+
+            wall = new WallObstacle();
+            wall.Position = new LinearMath.Vector3F(-WorldInfo.Size, 0 , 0);
+            wall.Rotation = LinearMath.TrigTools.ToRad(0);
+            wall.Size = new LinearMath.Vector3F(0, WorldInfo.Size, wallHeight);
+            wall.Ricochet = false;
+            Objects.Add(wall);
         }
 
         public void CacheRuntimeObjects()

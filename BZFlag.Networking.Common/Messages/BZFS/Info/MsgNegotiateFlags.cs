@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,9 +29,14 @@ namespace BZFlag.Networking.Messages.BZFS.Info
                 FlagAbrevs.Add(f);
         }
 
+        public bool Contains(string abriv)
+        {
+            return FlagAbrevs.Contains(abriv);
+        }
+
         public override byte[] Pack()
         {
-            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
             foreach (var f in FlagAbrevs)
                 buffer.WriteFixedSizeString(f, 2);
 

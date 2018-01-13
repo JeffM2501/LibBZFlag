@@ -1,4 +1,4 @@
-﻿using BZFlag.Data.Utils;
+using BZFlag.Data.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ namespace BZFlag.Networking.Messages.BZFS.World
 {
     public class MsgWantWHash : NetworkMessage
     {
-        public bool IsRandomMap = false;
+        public bool IsRandomMap = true;
 
         public string WorldHash = string.Empty;
 
@@ -19,11 +19,11 @@ namespace BZFlag.Networking.Messages.BZFS.World
 
         public override byte[] Pack()
         {
-            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
 
             if (NetworkMessage.IsOnServer)
-                buffer.WriteNullTermString(WorldHash);
-
+                buffer.WriteNullTermString((IsRandomMap ? "t" : string.Empty) + WorldHash);
+                
             return buffer.GetMessageBuffer();
         }
 

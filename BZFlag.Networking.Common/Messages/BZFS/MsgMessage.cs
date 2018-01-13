@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,21 +27,38 @@ namespace BZFlag.Networking.Messages.BZFS
 
         public override byte[] Pack()
         {
-            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
-            buffer.WriteByte((byte)To);
-            buffer.WriteNullTermString(MessageText);
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
 
+            if (!IsServer())
+            {
+                buffer.WriteByte((byte)To);
+                buffer.WriteFixedSizeString(MessageText, BZFlag.Data.Types.Constants.ChatMessageLenght);
+            }
+            else
+            {
+                buffer.WriteByte((byte)From);
+                buffer.WriteByte((byte)To);
+                buffer.WriteByte((byte)MessageType);
+            }
+
+            buffer.WriteFixedSizeString(MessageText, BZFlag.Data.Types.Constants.ChatMessageLenght);
             return buffer.GetMessageBuffer();
         }
 
         public override void Unpack(byte[] data)
         {
             Reset(data);
-            From = ReadByte();
-            To = ReadByte();
-            MessageType = (MessageTypes)ReadByte();
+            if (IsServer())
+                To = ReadByte();
+            else
+            {
+                Reset(data);
+                From = ReadByte();
+                To = ReadByte();
+                MessageType = (MessageTypes)ReadByte();
+            }
 
-            MessageText = ReadNullTermString(true);
+            MessageText = ReadFixedSizeString(BZFlag.Data.Types.Constants.ChatMessageLenght);
         }
     }
 }

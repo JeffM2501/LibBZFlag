@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 using BZFlag.Data.Utils;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Networking.Messages.BZFS.Flags
 {
@@ -20,11 +21,13 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
 
         public override byte[] Pack()
         {
-            DynamicOutputBuffer buffer = new DynamicOutputBuffer(Code);
+            DynamicOutputBuffer buffer = DynamicOutputBuffer.Get(Code);
 
             buffer.WriteByte(FromID);
             buffer.WriteByte(ToID);
-            buffer.WriteUInt16((UInt16)FlagID);
+
+            if (IsServer())
+                buffer.WriteUInt16((UInt16)FlagID);
 
             return buffer.GetMessageBuffer();
         }
@@ -34,7 +37,8 @@ namespace BZFlag.Networking.Messages.BZFS.Flags
             Reset(data);
             FromID = ReadByte();
             ToID = ReadByte();
-            FlagID = ReadUInt16();
+            if (!IsServer())
+                FlagID = ReadUInt16();
         }
     }
 }

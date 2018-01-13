@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +11,8 @@ using BZFlag.Game.Shots;
 using BZFlag.Game.Players;
 using BZFlag.Data.Flags;
 using BZFlag.Networking.Messages.BZFS.Player;
+using BZFlag.LinearMath;
+using BZFlag.Networking.Messages.BZFS.Info;
 
 namespace BZFlag.Game
 {
@@ -37,7 +39,6 @@ namespace BZFlag.Game
         public BZFlag.Map.WorldMap Map = null;
         public ChatSystem Chat = new ChatSystem();
 
-        public FlagTypeList FlagTypes = new FlagTypeList();
         public PlayerManager PlayerList = new PlayerManager();
         public ShotManager ShotMan = null;
 
@@ -54,7 +55,6 @@ namespace BZFlag.Game
             TimeLeftInGame = -1;
 
             PlayerList.Clock = Clock;
-            PlayerList.FlagTypes = FlagTypes;
 
             ShotMan = new ShotManager(PlayerList, Map);
 
@@ -95,9 +95,8 @@ namespace BZFlag.Game
 
         private void NetClient_TCPConnected(object sender, EventArgs e)
         {
-            //SendMessage(new MsgNegotiateFlags(BZFlag.Networking.Flags.FlagCache.FlagList.Keys));
-            // SendMessage(new MsgQueryGame());
-            NetClient.SendMessage(new MsgWantWHash());
+            // start the connection process
+            SendMessage(new MsgNegotiateFlags(BZFlag.Data.Flags.FlagTypeList.Names));
 
             if (TCPConnected != null)
                 TCPConnected.Invoke(this, e);

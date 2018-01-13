@@ -9,6 +9,7 @@ using BZFlag.Data.Teams;
 using BZFlag.Game.Players;
 using BZFlag.Networking.Messages.BZFS.Player;
 using BZFlag.Data.Types;
+using BZFlag.LinearMath;
 
 namespace ConnectionTester
 {

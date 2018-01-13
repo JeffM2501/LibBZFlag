@@ -7,6 +7,7 @@ using System.Text;
 using BZFlag.Data.Types;
 using BZFlag.Game.Players;
 using BZFlag.Map;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Game.Shots
 {

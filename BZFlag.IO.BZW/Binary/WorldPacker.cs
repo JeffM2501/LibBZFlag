@@ -1,4 +1,4 @@
-﻿using BZFlag.Map;
+using BZFlag.Map;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +10,17 @@ using BZFlag.Data.Utils;
 using BZFlag.Map.Elements;
 using BZFlag.Map.Elements.Shapes;
 
+using Ionic.Zlib;
+
 namespace BZFlag.IO.BZW.Binary
 {
-    public class WorldPacker : DynamicOutputBuffer
+    public class WorldPacker
     {
         WorldMap MapData = null;
 
-        public WorldPacker(WorldMap map) : base(false, 64)
+        private DynamicOutputBuffer DynaBuffer = DynamicOutputBuffer.GetTempBuffer(64);
+
+        public WorldPacker(WorldMap map)
         {
             MapData = map;
         }
@@ -24,6 +28,7 @@ namespace BZFlag.IO.BZW.Binary
 
         public byte[] Pack()
         {
+            
             WriteDynamicColors();
             WriteTextureMatricies();
             WriteMaterials();
@@ -32,35 +37,38 @@ namespace BZFlag.IO.BZW.Binary
             WriteObstacles();
             WriteLinks();
 
-            WriteFloat(0); // water level
-            WriteUInt32(0); // world weapons
-            WriteUInt32(0); // zones
+            DynaBuffer.WriteFloat(-1); // water level
+            DynaBuffer.WriteUInt32(0); // world weapons
+            DynaBuffer.WriteUInt32(0); // zones
 
             return CompressMap();
         }
 
-
         protected byte[] CompressMap()
         {
-            int uncompressedSize = BytesUsed;
+            int uncompressedSize = DynaBuffer.GetBytesUsed();
 
             MemoryStream ms = new MemoryStream();
-            DeflateStream ws = new DeflateStream(ms, CompressionMode.Compress);
-            ws.Write(Buffer, 0, uncompressedSize);
+            Ionic.Zlib.ZlibStream ws = new Ionic.Zlib.ZlibStream(ms,Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.BestCompression, true);
+
+            ws.Write(DynaBuffer.GetRawBuffer(), 0, uncompressedSize);
             ws.Flush();
+
             ws.Close();
 
-            byte[] compressedData = ms.GetBuffer();
+            int len = (int)ms.Length;
 
-            DynamicOutputBuffer header = new DynamicOutputBuffer(false, 64);
+            byte[] compressedData = ms.GetBuffer();
+           // ms.Length();
+            Array.Resize(ref compressedData, (int)ms.Length);
+
+            DynamicOutputBuffer header = DynamicOutputBuffer.GetTempBuffer(64);
             header.WriteUInt16(Constants.WorldCodeHeaderSize);
             header.WriteUInt16(Constants.WorldCodeHeader);
             header.WriteUInt16(1);
 
             header.WriteUInt32(uncompressedSize);
             header.WriteUInt32(compressedData.Length);
-
-            header.WriteUInt16(0);
 
             header.WriteBytes(compressedData);
             header.WriteUInt16(Constants.WorldCodeEndSize);
@@ -73,12 +81,12 @@ namespace BZFlag.IO.BZW.Binary
         {
             List<Link> items = FindAllObjectsOfType<Link>();
 
-            WriteUInt32(items.Count);
+            DynaBuffer.WriteUInt32(items.Count);
 
             foreach (var link in items)
             {
-                WriteULongPascalString(link.From.TargetName);
-                WriteULongPascalString(link.To.TargetName);
+                DynaBuffer.WriteULongPascalString(link.From.TargetName);
+                DynaBuffer.WriteULongPascalString(link.To.TargetName);
             }
         }
 
@@ -91,29 +99,29 @@ namespace BZFlag.IO.BZW.Binary
             WritePyramids(FindAllObjectsOfType<Pyramid>());
             WriteBases(FindAllObjectsOfType<Base>());
 
-            WriteInt32(0); // teleType,
-            WriteInt32(0); // meshType,
-            WriteInt32(0); // arcType,
-            WriteInt32(0); // coneType,
-            WriteInt32(0); // sphereType,
-            WriteInt32(0); // tetraType,
+            DynaBuffer.WriteUInt32(0); // teleType,
+            DynaBuffer.WriteUInt32(0); // meshType,
+            DynaBuffer.WriteUInt32(0); // arcType,
+            DynaBuffer.WriteUInt32(0); // coneType,
+            DynaBuffer.WriteUInt32(0); // sphereType,
+            DynaBuffer.WriteUInt32(0); // tetraType,
 
-            WriteInt32(0); // groups
+            DynaBuffer.WriteUInt32(0); // groups
 
-            WriteInt32(0); // group instances
+            DynaBuffer.WriteUInt32(0); // group instances
 
         }
 
         protected void WriteBases(List<Base> items)
         {
-            WriteInt32(items.Count);
+            DynaBuffer.WriteInt32(items.Count);
 
             foreach (var o in items)
             {
-                WriteUInt16((UInt16)o.TeamColor);
-                WriteVector3F(o.Position);
-                WriteFloat(o.Rotation);
-                WriteVector3F(o.Size);
+                DynaBuffer.WriteUInt16((UInt16)o.TeamColor);
+                DynaBuffer.WriteVector3F(o.Position);
+                DynaBuffer.WriteFloat(o.Rotation);
+                DynaBuffer.WriteVector3F(o.Size);
 
                 byte state = 0;
 
@@ -123,19 +131,19 @@ namespace BZFlag.IO.BZW.Binary
                     state |= Constants.SHOOT_THRU;
                 if (o.Ricochet)
                     state |= Constants.RICOCHET;
-                WriteByte(state);
+                DynaBuffer.WriteByte(state);
             }
         }
 
         protected void WritePyramids(List<Pyramid> items)
         {
-            WriteInt32(items.Count);
+            DynaBuffer.WriteInt32(items.Count);
 
             foreach (var o in items)
             {
-                WriteVector3F(o.Position);
-                WriteFloat(o.Rotation);
-                WriteVector3F(o.Size);
+                DynaBuffer.WriteVector3F(o.Position);
+                DynaBuffer.WriteFloat(o.Rotation);
+                DynaBuffer.WriteVector3F(o.Size);
 
                 byte state = 0;
 
@@ -147,19 +155,19 @@ namespace BZFlag.IO.BZW.Binary
                     state |= Constants.RICOCHET;
                 if (o.FlipZ)
                     state |= Constants.FLIP_Z;
-                WriteByte(state);
+                DynaBuffer.WriteByte(state);
             }
         }
 
         protected void WriteBoxes(List<Box> items)
         {
-            WriteInt32(items.Count);
+            DynaBuffer.WriteInt32(items.Count);
 
             foreach (var box in items)
             {
-                WriteVector3F(box.Position);
-                WriteFloat(box.Rotation);
-                WriteVector3F(box.Size);
+                DynaBuffer.WriteVector3F(box.Position);
+                DynaBuffer.WriteFloat(box.Rotation);
+                DynaBuffer.WriteVector3F(box.Size);
 
                 byte state = 0;
 
@@ -169,33 +177,33 @@ namespace BZFlag.IO.BZW.Binary
                     state |= Constants.SHOOT_THRU;
                 if (box.Ricochet)
                     state |= Constants.RICOCHET;
-                WriteByte(state);
+                DynaBuffer.WriteByte(state);
             }
         }
 
         protected void WriteWalls(List<WallObstacle> walls)
         {
-            WriteInt32(walls.Count);
+            DynaBuffer.WriteInt32(walls.Count);
 
             foreach (var wall in walls)
             {
-                WriteVector3F(wall.Position);
-                WriteFloat(wall.Rotation);
-                WriteFloat(wall.Size.Y);
-                WriteFloat(wall.Size.Z);
-                WriteByte(wall.Ricochet ? Constants.RICOCHET : 0);
+                DynaBuffer.WriteVector3F(wall.Position);
+                DynaBuffer.WriteFloat(wall.Rotation);
+                DynaBuffer.WriteFloat(wall.Size.Y);
+                DynaBuffer.WriteFloat(wall.Size.Z);
+                DynaBuffer.WriteByte(wall.Ricochet ? Constants.RICOCHET : 0);
             }
         }
 
         protected void WriteWorldObject()
         {
-            WriteULongPascalString(MapData.WorldInfo.Name);
+            DynaBuffer.WriteULongPascalString(string.Empty);// MapData.WorldInfo.Name);
         }
 
         protected void WriteTransforms()
         {
             List<MeshTransform> items = FindAllObjectsOfType<MeshTransform>();
-            WriteInt32(items.Count);
+            DynaBuffer.WriteUInt32(items.Count);
 
             foreach (var xform in items)
                 WriteMeshTransform(xform);
@@ -203,23 +211,23 @@ namespace BZFlag.IO.BZW.Binary
 
         protected void WriteMeshTransform(MeshTransform t)
         {
-            WriteULongPascalString(t.Name);
-            WriteInt32(t.Transforms.Count);
+            DynaBuffer.WriteULongPascalString(t.Name);
+            DynaBuffer.WriteUInt32(t.Transforms.Count);
 
             foreach (var data in t.Transforms)
             {
-                WriteByte((byte)data.XFormType);
+                DynaBuffer.WriteByte((byte)data.XFormType);
 
                 if (data.XFormType == MeshTransform.TransformType.IndexTransform)
-                    WriteInt32(data.Index);
+                    DynaBuffer.WriteInt32(data.Index);
                 else
                 {
-                    WriteFloat(data.Data.X);
-                    WriteFloat(data.Data.Y);
-                    WriteFloat(data.Data.Z);
+                    DynaBuffer.WriteFloat(data.Data.X);
+                    DynaBuffer.WriteFloat(data.Data.Y);
+                    DynaBuffer.WriteFloat(data.Data.Z);
 
                     if (data.XFormType == MeshTransform.TransformType.SpinTransform)
-                        WriteFloat(data.Data.A);
+                        DynaBuffer.WriteFloat(data.Data.A);
                 }
             }
         }
@@ -227,29 +235,29 @@ namespace BZFlag.IO.BZW.Binary
         protected void WritePhysicsDrivers()
         {
             List<Physics> items = FindAllObjectsOfType<Physics>();
-            WriteInt32(items.Count);
+            DynaBuffer.WriteUInt32(items.Count);
 
             foreach (var phy in items)
             {
-                WriteULongPascalString(phy.Name);
+                DynaBuffer.WriteULongPascalString(phy.Name);
 
-                WriteVector3F(phy.Linear);
-                WriteVector3F(phy.Angular);
-                WriteVector3F(phy.Radial);
+                DynaBuffer.WriteVector3F(phy.Linear);
+                DynaBuffer.WriteVector3F(phy.Angular);
+                DynaBuffer.WriteVector3F(phy.Radial);
 
-                WriteFloat(phy.Slide);
-                WriteULongPascalString(phy.Death);
+                DynaBuffer.WriteFloat(phy.Slide);
+                DynaBuffer.WriteULongPascalString(phy.Death);
             }
         }
 
         protected void WriteMaterials()
         {
             List<Material> items = FindAllObjectsOfType<Material>();
-            WriteInt32(items.Count);
+            DynaBuffer.WriteUInt32(items.Count);
 
             foreach (var mat in items)
             {
-                WriteULongPascalString(mat.Name);
+                DynaBuffer.WriteULongPascalString(mat.Name);
 
                 byte modeByte = 0;
                 if (mat.NoCulling)
@@ -266,24 +274,24 @@ namespace BZFlag.IO.BZW.Binary
                     modeByte |= (1 << 5);
                 if (mat.NoLighting)
                     modeByte |= (1 << 6);
-                WriteByte(modeByte);
+                DynaBuffer.WriteByte(modeByte);
 
-                WriteInt32(mat.DynamicColorRefrence);
-                WriteColor4F(mat.Ambient);
-                WriteColor4F(mat.Diffuse);
-                WriteColor4F(mat.Specular);
-                WriteColor4F(mat.Emission);
-                WriteFloat(mat.Shininess);
-                WriteFloat(mat.AlphaThreshold);
+                DynaBuffer.WriteInt32(mat.DynamicColorRefrence);
+                DynaBuffer.WriteColor4F(mat.Ambient);
+                DynaBuffer.WriteColor4F(mat.Diffuse);
+                DynaBuffer.WriteColor4F(mat.Specular);
+                DynaBuffer.WriteColor4F(mat.Emission);
+                DynaBuffer.WriteFloat(mat.Shininess);
+                DynaBuffer.WriteFloat(mat.AlphaThreshold);
 
-                WriteByte((byte)mat.Textures.Count);
+                DynaBuffer.WriteByte((byte)mat.Textures.Count);
 
                 foreach (var tx in mat.Textures)
                 {
-                    WriteULongPascalString(tx.Name);
-                    WriteInt32(tx.MatrixID);
+                    DynaBuffer.WriteULongPascalString(tx.Name);
+                    DynaBuffer.WriteInt32(tx.MatrixID);
 
-                    WriteInt32((Int32)tx.CombineMode);
+                    DynaBuffer.WriteInt32((Int32)tx.CombineMode);
 
                     byte stateByte = 0;
 
@@ -294,24 +302,24 @@ namespace BZFlag.IO.BZW.Binary
                     if (tx.UseSphereMap)
                         stateByte |= (1 << 2);
 
-                    WriteByte(stateByte);
+                    DynaBuffer.WriteByte(stateByte);
                 }
 
-                WriteByte((byte)mat.Shaders.Count);
+                DynaBuffer.WriteByte((byte)mat.Shaders.Count);
 
                 foreach (var s in mat.Shaders)
-                    WriteULongPascalString(s);
+                    DynaBuffer.WriteULongPascalString(s);
             }
         }
 
         protected void WriteTextureMatricies()
         {
             List<TextureMatrix> items = FindAllObjectsOfType<TextureMatrix>();
-            WriteInt32(items.Count);
+            DynaBuffer.WriteUInt32(items.Count);
 
             foreach (var tx in items)
             {
-                WriteULongPascalString(tx.Name);
+                DynaBuffer.WriteULongPascalString(tx.Name);
 
                 byte state = 0;
                 if (tx.UseStatic && tx.UseDynamic)
@@ -321,23 +329,23 @@ namespace BZFlag.IO.BZW.Binary
                 else if (tx.UseDynamic)
                     state = 2;
 
-                WriteByte(state);
+                DynaBuffer.WriteByte(state);
 
                 if (tx.UseStatic)
                 {
-                    WriteFloat(tx.Rotation);
-                    WriteVector2F(tx.FixedShift);
-                    WriteVector2F(tx.FixedScale);
-                    WriteVector2F(tx.FixedCenter);
+                    DynaBuffer.WriteFloat(tx.Rotation);
+                    DynaBuffer.WriteVector2F(tx.FixedShift);
+                    DynaBuffer.WriteVector2F(tx.FixedScale);
+                    DynaBuffer.WriteVector2F(tx.FixedCenter);
                 }
 
                 if (tx.UseDynamic)
                 {
-                    WriteFloat(tx.SpinFreq);
-                    WriteVector2F(tx.ShiftFreq);
-                    WriteVector2F(tx.ScaleFreq);
-                    WriteVector2F(tx.Scale);
-                    WriteVector2F(tx.Center);
+                    DynaBuffer.WriteFloat(tx.SpinFreq);
+                    DynaBuffer.WriteVector2F(tx.ShiftFreq);
+                    DynaBuffer.WriteVector2F(tx.ScaleFreq);
+                    DynaBuffer.WriteVector2F(tx.Scale);
+                    DynaBuffer.WriteVector2F(tx.Center);
                 }
             }
         }
@@ -346,53 +354,53 @@ namespace BZFlag.IO.BZW.Binary
         {
             List<DynamicColor> colors = FindAllObjectsOfType<DynamicColor>();
 
-            WriteInt32(colors.Count);
+            DynaBuffer.WriteUInt32(colors.Count);
             foreach (DynamicColor color in colors)
             {
-                WriteULongPascalString(color.Name);
+                DynaBuffer.WriteULongPascalString(color.Name);
 
                 for (int c = 0; c < 4; c++)
                 {
                     DynamicColor.ChannelParams chan = color.Channels[c];
 
 
-                    WriteFloat(chan.MinValue);
-                    WriteFloat(chan.MinValue);
+                    DynaBuffer.WriteFloat(chan.MinValue);
+                    DynaBuffer.WriteFloat(chan.MinValue);
 
-                    WriteUInt32(chan.Sinusoids.Count);
+                    DynaBuffer.WriteUInt32(chan.Sinusoids.Count);
 
                     foreach (var p in chan.Sinusoids)
                     {
-                        WriteFloat(p.Period);
-                        WriteFloat(p.Offset);
-                        WriteFloat(p.Weight);
+                        DynaBuffer.WriteFloat(p.Period);
+                        DynaBuffer.WriteFloat(p.Offset);
+                        DynaBuffer.WriteFloat(p.Weight);
                     }
 
 
-                    WriteUInt32(chan.ClampUps.Count);
+                    DynaBuffer.WriteUInt32(chan.ClampUps.Count);
                     foreach (var p in chan.ClampUps)
                     {
-                        WriteFloat(p.Period);
-                        WriteFloat(p.Offset);
-                        WriteFloat(p.Width);
+                        DynaBuffer.WriteFloat(p.Period);
+                        DynaBuffer.WriteFloat(p.Offset);
+                        DynaBuffer.WriteFloat(p.Width);
                     }
 
-                    WriteUInt32(chan.ClampDowns.Count);
+                    DynaBuffer.WriteUInt32(chan.ClampDowns.Count);
                     foreach (var p in chan.ClampDowns)
                     {
-                        WriteFloat(p.Period);
-                        WriteFloat(p.Offset);
-                        WriteFloat(p.Width);
+                        DynaBuffer.WriteFloat(p.Period);
+                        DynaBuffer.WriteFloat(p.Offset);
+                        DynaBuffer.WriteFloat(p.Width);
                     }
 
-                    WriteUInt32(chan.Sequence.Values.Count);
+                    DynaBuffer.WriteUInt32(chan.Sequence.Values.Count);
                     if (chan.Sequence.Values.Count > 0)
                     {
-                        WriteFloat(chan.Sequence.Period);
-                        WriteFloat(chan.Sequence.Offset);
+                        DynaBuffer.WriteFloat(chan.Sequence.Period);
+                        DynaBuffer.WriteFloat(chan.Sequence.Offset);
 
                         foreach (var p in chan.Sequence.Values)
-                            WriteByte(p);
+                            DynaBuffer.WriteByte(p);
                     }
                 }
             }

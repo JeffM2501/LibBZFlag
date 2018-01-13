@@ -6,6 +6,7 @@ using BZFlag.Networking.Messages.BZFS.Shots;
 using BZFlag.Game.Players;
 using BZFlag.Data.Types;
 using BZFlag.Map;
+using BZFlag.LinearMath;
 
 namespace BZFlag.Game.Shots
 {

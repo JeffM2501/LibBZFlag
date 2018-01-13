@@ -1,0 +1,402 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BlueTeamDescription" xml:space="preserve">
+    <value>If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!</value>
+  </data>
+  <data name="BlueTeamName" xml:space="preserve">
+    <value>Blue Team</value>
+  </data>
+  <data name="GenoName" xml:space="preserve">
+    <value>Genocide</value>
+  </data>
+  <data name="GMName" xml:space="preserve">
+    <value>Guided Missile</value>
+  </data>
+  <data name="GreenTeamDescription" xml:space="preserve">
+    <value>If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!</value>
+  </data>
+  <data name="GreenTeamName" xml:space="preserve">
+    <value>Green Team</value>
+  </data>
+  <data name="HighSpeedDescription" xml:space="preserve">
+    <value>Tank moves faster.  Outrun bad guys.</value>
+  </data>
+  <data name="HighSpeedName" xml:space="preserve">
+    <value>High Speed</value>
+  </data>
+  <data name="IBName" xml:space="preserve">
+    <value>Invisible Bullet</value>
+  </data>
+  <data name="LaserName" xml:space="preserve">
+    <value>Laser</value>
+  </data>
+  <data name="MachineGunName" xml:space="preserve">
+    <value>Machine Gun</value>
+  </data>
+  <data name="NarrowName" xml:space="preserve">
+    <value>Narrow</value>
+  </data>
+  <data name="NullFlagDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NullFlagName" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OODescription" xml:space="preserve">
+    <value>Can drive through buildings.  Can't backup or shoot while inside.</value>
+  </data>
+  <data name="OOName" xml:space="preserve">
+    <value>Oscillation Overthruster</value>
+  </data>
+  <data name="PurpleTeamDescription" xml:space="preserve">
+    <value>If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!</value>
+  </data>
+  <data name="PurpleTeamName" xml:space="preserve">
+    <value>Purple Team</value>
+  </data>
+  <data name="PZName" xml:space="preserve">
+    <value>Phantom Zone</value>
+  </data>
+  <data name="QuickTurnDescription" xml:space="preserve">
+    <value>Tank turns faster.  Good for dodging.</value>
+  </data>
+  <data name="QuickTurnName" xml:space="preserve">
+    <value>Quick Turn</value>
+  </data>
+  <data name="RapidFireName" xml:space="preserve">
+    <value>Rapid Fire</value>
+  </data>
+  <data name="RedTeamDescription" xml:space="preserve">
+    <value>If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!</value>
+  </data>
+  <data name="RedTeamName" xml:space="preserve">
+    <value>Red Team</value>
+  </data>
+  <data name="RiccoName" xml:space="preserve">
+    <value>Riccochet</value>
+  </data>
+  <data name="SBName" xml:space="preserve">
+    <value>Super Bullet</value>
+  </data>
+  <data name="ShieldName" xml:space="preserve">
+    <value>Shield</value>
+  </data>
+  <data name="ShockWaveName" xml:space="preserve">
+    <value>Shock Wave</value>
+  </data>
+  <data name="StealthName" xml:space="preserve">
+    <value>Stealth</value>
+  </data>
+  <data name="SteamrollerName" xml:space="preserve">
+    <value>Steamroller</value>
+  </data>
+  <data name="TinyName" xml:space="preserve">
+    <value>Tiny</value>
+  </data>
+  <data name="AgilityDescription" xml:space="preserve">
+    <value>Tank is quick and nimble making it easier to dodge.</value>
+  </data>
+  <data name="AgilityName" xml:space="preserve">
+    <value>Agility</value>
+  </data>
+  <data name="BurrowDescription" xml:space="preserve">
+    <value>Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!</value>
+  </data>
+  <data name="BurrowName" xml:space="preserve">
+    <value>Burrow</value>
+  </data>
+  <data name="CloakingDescription" xml:space="preserve">
+    <value>Makes your tank invisible out-the-window.  Still visible on radar.</value>
+  </data>
+  <data name="CloakingName" xml:space="preserve">
+    <value>Cloaking</value>
+  </data>
+  <data name="GenoDescription" xml:space="preserve">
+    <value>Killing one tank kills that tank's whole team.</value>
+  </data>
+  <data name="GMDescription" xml:space="preserve">
+    <value>Shots track a target.  Lock on with right button.  Can lock on or retarget after firing.</value>
+  </data>
+  <data name="IBDescription" xml:space="preserve">
+    <value>Your shots don't appear on other radars.  Can still see them out window.</value>
+  </data>
+  <data name="IdentifyDescription" xml:space="preserve">
+    <value>Identifies type of nearest flag.</value>
+  </data>
+  <data name="IdentifyName" xml:space="preserve">
+    <value>Identify</value>
+  </data>
+  <data name="JumpingDescription" xml:space="preserve">
+    <value>Tank can jump.  Use Tab key.  Can't steer in the air.</value>
+  </data>
+  <data name="JumpingName" xml:space="preserve">
+    <value>Jumping</value>
+  </data>
+  <data name="LaserDescription" xml:space="preserve">
+    <value>Shoots a laser.  Infinite speed and range but long reload time.</value>
+  </data>
+  <data name="MachineGunDescription" xml:space="preserve">
+    <value>Very fast reload but very short range.</value>
+  </data>
+  <data name="MasqueradeDescription" xml:space="preserve">
+    <value>In opponent's hud, you appear as a teammate.</value>
+  </data>
+  <data name="MasqueradeName" xml:space="preserve">
+    <value>Masquerade</value>
+  </data>
+  <data name="NarrowDescription" xml:space="preserve">
+    <value>Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings.</value>
+  </data>
+  <data name="PZDescription" xml:space="preserve">
+    <value>Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank shoots Zoned bullets and can't be shot (except by superbullet, shock wave, and other Zoned tanks).</value>
+  </data>
+  <data name="RapidFireDescription" xml:space="preserve">
+    <value>Shoots more often.  Shells go faster but not as far.</value>
+  </data>
+  <data name="RiccoDescription" xml:space="preserve">
+    <value>Shots bounce off walls.  Don't shoot yourself!</value>
+  </data>
+  <data name="SBDescription" xml:space="preserve">
+    <value>Shoots through buildings.  Can kill Phantom Zone.</value>
+  </data>
+  <data name="SeerDescription" xml:space="preserve">
+    <value>See stealthed, cloaked and masquerading tanks as normal.</value>
+  </data>
+  <data name="SeerName" xml:space="preserve">
+    <value>Seer</value>
+  </data>
+  <data name="ShieldDescription" xml:space="preserve">
+    <value>Getting hit only drops flag.  Flag flies an extra-long time.</value>
+  </data>
+  <data name="ShockwaveDescription" xml:space="preserve">
+    <value>Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings.</value>
+  </data>
+  <data name="StealthDescription" xml:space="preserve">
+    <value>Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!</value>
+  </data>
+  <data name="SteamrollerDescription" xml:space="preserve">
+    <value>Destroys tanks you touch but you have to get really close.</value>
+  </data>
+  <data name="ThiefDescription" xml:space="preserve">
+    <value>Steal flags.  Small and fast but can't kill.</value>
+  </data>
+  <data name="ThiefName" xml:space="preserve">
+    <value>Thief</value>
+  </data>
+  <data name="TinyDescription" xml:space="preserve">
+    <value>Tank is small and can get through small openings.  Very hard to hit.</value>
+  </data>
+  <data name="UselessDescription" xml:space="preserve">
+    <value>You have found the useless flag. Use it wisely.</value>
+  </data>
+  <data name="UselessName" xml:space="preserve">
+    <value>Useless</value>
+  </data>
+  <data name="WingsDescription" xml:space="preserve">
+    <value>Tank can drive in air.</value>
+  </data>
+  <data name="WingsName" xml:space="preserve">
+    <value>Wings</value>
+  </data>
+  <data name="BlindnessDescription" xml:space="preserve">
+    <value>Can't see out window.  Radar still works.</value>
+  </data>
+  <data name="BlindnessName" xml:space="preserve">
+    <value>Blindness</value>
+  </data>
+  <data name="BouncyDescription" xml:space="preserve">
+    <value>Tank can't stop bouncing.</value>
+  </data>
+  <data name="BouncyName" xml:space="preserve">
+    <value>Bouncy</value>
+  </data>
+  <data name="CBDescription" xml:space="preserve">
+    <value>Can't tell team colors.  Don't shoot teammates!</value>
+  </data>
+  <data name="CBName" xml:space="preserve">
+    <value>Colorblindness</value>
+  </data>
+  <data name="FODescription" xml:space="preserve">
+    <value>Can't drive in reverse.</value>
+  </data>
+  <data name="FOName" xml:space="preserve">
+    <value>Forward Only</value>
+  </data>
+  <data name="JammingDescription" xml:space="preserve">
+    <value>Radar doesn't work.  Can still see.</value>
+  </data>
+  <data name="JammingName" xml:space="preserve">
+    <value>Jamming</value>
+  </data>
+  <data name="LTDescription" xml:space="preserve">
+    <value>Can't turn right.</value>
+  </data>
+  <data name="LTName" xml:space="preserve">
+    <value>Left Turn Only</value>
+  </data>
+  <data name="MomentumDescription" xml:space="preserve">
+    <value>Tank has inertia.  Acceleration is limited.</value>
+  </data>
+  <data name="MomentumName" xml:space="preserve">
+    <value>Momentum</value>
+  </data>
+  <data name="NoJumpDescription" xml:space="preserve">
+    <value>Tank can't jump.</value>
+  </data>
+  <data name="NoJumpName" xml:space="preserve">
+    <value>No Jumping</value>
+  </data>
+  <data name="ObesityDescription" xml:space="preserve">
+    <value>Tank becomes very large.  Can't fit through teleporters.</value>
+  </data>
+  <data name="ObesityName" xml:space="preserve">
+    <value>Obesity</value>
+  </data>
+  <data name="RCDescription" xml:space="preserve">
+    <value>Tank driving controls are reversed.</value>
+  </data>
+  <data name="RCName" xml:space="preserve">
+    <value>Reverse Controls</value>
+  </data>
+  <data name="RODescription" xml:space="preserve">
+    <value>Can't drive forward.</value>
+  </data>
+  <data name="ROName" xml:space="preserve">
+    <value>ReverseOnly</value>
+  </data>
+  <data name="RTDescription" xml:space="preserve">
+    <value>Can't turn left.</value>
+  </data>
+  <data name="RTName" xml:space="preserve">
+    <value>Right Turn Only</value>
+  </data>
+  <data name="TRDescription" xml:space="preserve">
+    <value>Tank can't stop firing.</value>
+  </data>
+  <data name="TRName" xml:space="preserve">
+    <value>Trigger Happy</value>
+  </data>
+  <data name="WADescription" xml:space="preserve">
+    <value>Fish-eye lens distorts view.</value>
+  </data>
+  <data name="WAName" xml:space="preserve">
+    <value>Wide Angle</value>
+  </data>
+</root>

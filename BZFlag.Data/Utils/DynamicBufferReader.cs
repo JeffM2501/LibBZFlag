@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using BZFlag.LinearMath;
 using BZFlag.Data.Types;
 
 namespace BZFlag.Data.Utils
@@ -230,7 +231,7 @@ namespace BZFlag.Data.Utils
                 int end = Array.FindIndex(Buffer, BufferOffset, x => x == byte.MinValue);
                 if (end == -1)
                     return string.Empty;
-                string ret = Encoding.UTF8.GetString(Buffer, BufferOffset, BufferOffset - end);
+                string ret = Encoding.UTF8.GetString(Buffer, BufferOffset, BufferOffset - end).Substring(0,BufferOffset-end);
                 BufferOffset = end + 1;
                 return ret;
             }

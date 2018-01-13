@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -16,9 +16,18 @@ namespace BZFlag.Game.Host
 
         public static int LogLevel = 1;
 
+        public class LogEventArgs : EventArgs
+        {
+            public int Level = 0;
+            public string Timestamp = string.Empty;
+            public string Text = string.Empty;
+        }
+
+        public static event EventHandler<LogEventArgs> LineLogged;
+
         public static void SetLogFilePath(string filePath)
         {
-            if (filePath != string.Empty && File.Exists(filePath))
+            if (filePath != string.Empty && Directory.Exists(Path.GetDirectoryName(filePath)))
                 LogFile = new FileInfo(filePath);
             else
                 LogFile = null;
@@ -29,9 +38,16 @@ namespace BZFlag.Game.Host
             if (level > LogLevel)
                 return;
 
+            LogEventArgs args = new LogEventArgs();
+            args.Timestamp = DateTime.Now.ToShortDateString() + "-" + DateTime.Now.ToShortTimeString();
+            args.Text = data;
+            args.Level = level;
+
+            LineLogged?.Invoke(null, args);
+
             string line = "Level " + level.ToString() + " ";
             if (ShowDateTime)
-                line += DateTime.Now.ToShortDateString() + "-" + DateTime.Now.ToShortTimeString() + " ";
+                line += args.Timestamp  + " ";
             line += data;
 
             Console.WriteLine(line);
@@ -45,45 +61,46 @@ namespace BZFlag.Game.Host
             lock (PendingLogUpdates)
                 PendingLogUpdates.Add(text);
 
-
             if (LogWriter == null)
             {
                 LogWriter = new Thread(new ThreadStart(WriteLog));
                 LogWriter.Start();
             }
         }
-
         private static void WriteLog()
         {
             if (LogFile != null)
             {
-                var fs = new FileStream(LogFile.FullName, FileMode.Append);
-                StreamWriter sw = new StreamWriter(fs);
-
-                bool done = false;
-                while (!done)
+                lock (LogFile)
                 {
-                    string line = string.Empty;
-                    lock (PendingLogUpdates)
+                    var fs = new FileStream(LogFile.FullName, FileMode.Append);
+                    StreamWriter sw = new StreamWriter(fs);
+
+                    bool done = false;
+                    while (!done)
                     {
-                        if (PendingLogUpdates.Count == 0)
-                            done = true;
-                        else
+                        string line = string.Empty;
+                        lock (PendingLogUpdates)
                         {
-                            line = PendingLogUpdates[0];
-                            PendingLogUpdates.RemoveAt(0);
+                            if (PendingLogUpdates.Count == 0)
+                                done = true;
+                            else
+                            {
+                                line = PendingLogUpdates[0];
+                                PendingLogUpdates.RemoveAt(0);
+                            }
+                        }
+
+                        if (line != string.Empty)
+                        {
+                            sw.WriteLine(line);
                         }
                     }
 
-                    if (line != string.Empty)
-                    {
-                        sw.WriteLine(line);
-                    }
+                    sw.Flush();
+                    sw.Close();
+                    fs.Close();
                 }
-
-                sw.Flush();
-                sw.Close();
-                fs.Close();
             }
 
             LogWriter = null;

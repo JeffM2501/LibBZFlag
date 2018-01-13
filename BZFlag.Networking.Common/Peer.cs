@@ -23,10 +23,17 @@ namespace BZFlag.Networking.Common
 
         protected TcpClient TCP = null;
 
+        public delegate void WriteUDPFunction(byte[] buffer, IPEndPoint address);
+
+        public WriteUDPFunction WriteUDP = null;
+
         /// <summary>
         /// Only used by client connections, server connections have to share a single UDP with all users and do prefi
         /// </summary>
         protected UdpClient UDP = null;
+
+        protected bool SendUDPInTCPThread = false;
+        public IPEndPoint UDPEndpoint = null;
 
         protected Thread TCPNetworkPollThread = null;
         protected Thread UDPNetworkPollThread = null;
@@ -155,6 +162,9 @@ namespace BZFlag.Networking.Common
             TCP = client;
             Connected = true;
             OutboundTCP.Start();
+
+            SendUDPInTCPThread = true;
+
             OutboundUDP.Start();
 
             if (InboundTCP == null)
@@ -169,8 +179,12 @@ namespace BZFlag.Networking.Common
             TCPNetworkPollThread.Start();
         }
 
+        public string GetTCPRemoteAddresString()
+        {
+            return TCP != null ? TCP.Client.RemoteEndPoint.ToString() : string.Empty;
+        }
 
-        IPEndPoint ServerUDPEndoint = null;
+        IPEndPoint RemoteUDPEndpoint = null;
 
         public void ConnectToUDP()
         {
@@ -180,7 +194,7 @@ namespace BZFlag.Networking.Common
             UDP = new UdpClient(HostName, HostPort);
 
 
-            ServerUDPEndoint = TCP.Client.RemoteEndPoint as IPEndPoint;
+            RemoteUDPEndpoint = TCP.Client.RemoteEndPoint as IPEndPoint;
 
             UDPNetworkPollThread = new Thread(new ThreadStart(PollUDP));
             UDPNetworkPollThread.Start();
@@ -222,7 +236,6 @@ namespace BZFlag.Networking.Common
             OutboundUDP.Clear();
 
             Active = false;
-
         }
 
         public void SendMessage(NetworkMessage msg)
@@ -238,12 +251,31 @@ namespace BZFlag.Networking.Common
                 OutboundUDP.Push(msg);
         }
 
+        /// <summary>
+        /// sends a message RIGHT NOW
+        /// </summary>
+        /// <param name="viaTCP"></param>
+        /// <param name="msg"></param>
         public void SendDirectMessage(bool viaTCP, byte[] msg)
         {
             if (viaTCP)
-                OutboundTCP.PushDirectMessage(msg);
+            {
+                var st = TCP.GetStream();
+                if (st != null && st.CanWrite)
+                {
+                    st.Write(msg, 0, msg.Length);
+                    st.Flush();
+                }
+                else
+                    OutboundTCP.PushDirectMessage(msg);
+            }
             else
-                OutboundUDP.PushDirectMessage(msg);
+            {
+                if (WriteUDP != null)
+                    WriteUDP(msg, UDPEndpoint);
+                else
+                    UDPSendingsocket.SendTo(msg, UDPEndpoint);
+            }
         }
 
         public event EventHandler TCPConnected = null;
@@ -269,6 +301,7 @@ namespace BZFlag.Networking.Common
                         break;
 
                     case NetworkPushMessages.TCPHostDisconnect:
+                        Active = false;
                         if (TCPHostDisconnect != null)
                             TCPHostDisconnect.Invoke(this, EventArgs.Empty);
                         break;
@@ -300,19 +333,84 @@ namespace BZFlag.Networking.Common
         protected bool Connected = false;
         private string HostProtoVersion = string.Empty;
 
+        public void FlushTCP()
+        {
+            if (TCP == null)
+                return;
+
+            var stream = TCP.GetStream();
+            if (stream.CanWrite)
+            {
+                lock (OutboundTCP)
+                {
+                    byte[] outbound = OutboundTCP.Pop();
+                    while (stream.CanWrite && outbound != null)
+                    {
+                        try
+                        {
+                            stream.Write(outbound, 0, outbound.Length);
+                            stream.Flush();
+                        }
+                        catch (Exception)
+                        {
+                            outbound = null;
+                        }
+                        outbound = OutboundTCP.Pop();
+                    }
+                }
+            }
+        }
+
         protected virtual void PollTCP()
         {
             var stream = TCP.GetStream();
             while (true)
             {
-                byte[] outbound = OutboundTCP.Pop();
-                while (outbound != null)
+              
+                if (stream.CanWrite)
                 {
-                    stream.Write(outbound, 0, outbound.Length);
-                    outbound = OutboundTCP.Pop();
-                }
-                stream.Flush();
+                    byte[] outbound = null;
 
+                    lock(OutboundTCP)
+                        outbound = OutboundTCP.Pop();
+
+                    while (stream.CanWrite && outbound != null)
+                    {
+                        try
+                        {
+                            if (outbound.Length < 4)
+                                stream.Write(outbound, 0, outbound.Length);
+                            else
+                                stream.Write(outbound, 0, outbound.Length);
+                            lock (OutboundTCP)
+                                outbound = OutboundTCP.Pop();
+                        }
+                        catch (Exception)
+                        {
+
+                            outbound = null;
+                        }
+                        
+                    }
+                    stream.Flush();
+                }
+
+                if (SendUDPInTCPThread)
+                {
+                    int udpCount = 0;
+                    while (udpCount < 10)
+                    {
+                        byte[] outbound = OutboundUDP.Pop();
+                        if (outbound == null)
+                            break;
+
+                        if (WriteUDP != null)
+                            WriteUDP(outbound, UDPEndpoint);
+                        else
+                            UDPSendingsocket.SendTo(outbound, UDPEndpoint);
+                    }
+                }
+                
                 if (!Connected)
                 {
                     if (TCP.Available >= 9)
@@ -345,6 +443,19 @@ namespace BZFlag.Networking.Common
                     if (RaiseDataMessages)
                         PushNetworkNotificatioin(NetworkPushMessages.HostHasData);
                 }
+                else if (Connected)
+                {
+                    if (!TCP.Connected)
+                    {
+                        Connected = false;
+                        PushNetworkNotificatioin(NetworkPushMessages.TCPHostDisconnect);
+                        {
+                            Disconnect();
+                            Active = false;
+                            return;
+                        }
+                    }
+                }
                 Thread.Sleep(10);
             }
         }
@@ -360,7 +471,7 @@ namespace BZFlag.Networking.Common
                 while (outbound != null)
                 {
 
-                    UDPSendingsocket.SendTo(outbound, ServerUDPEndoint);
+                    UDPSendingsocket.SendTo(outbound, RemoteUDPEndpoint);
                    // UDP.Send(outbound, outbound.Length);
                     outbound = OutboundUDP.Pop();
                 }

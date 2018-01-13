@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BZFlag.IO.BZW</RootNamespace>
     <AssemblyName>BZFlag.IO.BZW</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -72,6 +72,14 @@
     <ProjectReference Include="..\BZFlag.Map\BZFlag.Map.csproj">
       <Project>{4c5393f4-0040-41c3-a7ef-a6692bda7e59}</Project>
       <Name>BZFlag.Map</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BZFlag.Math\BZFlag.Math.csproj">
+      <Project>{f295bd89-0662-49e1-acd9-860bb6cd1c29}</Project>
+      <Name>BZFlag.Math</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Compression\Zlib\Zlib DLL.csproj">
+      <Project>{9816ba86-9250-4c00-a912-25f07f8677d1}</Project>
+      <Name>Zlib DLL</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

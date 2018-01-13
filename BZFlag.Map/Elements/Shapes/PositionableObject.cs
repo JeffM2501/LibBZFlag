@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 
 using BZFlag.Data.Types;
+using BZFlag.LinearMath;
+
 
 namespace BZFlag.Map.Elements.Shapes
 {

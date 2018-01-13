@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -8,7 +8,7 @@ namespace BZFlag.Services
 {
     public class ClientToken
     {
-        public WebClient Client = null;
+        protected WebClient Client = null;
 
         public string LastCallsign = string.Empty;
         public string LastToken = string.Empty;

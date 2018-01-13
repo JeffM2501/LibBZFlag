@@ -4,7 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 
-using BZFlag.Data.Types;
+using BZFlag.LinearMath;
 using BZFlag.Data.Utils;
 using BZFlag.Data.Teams;
 using BZFlag.Map;

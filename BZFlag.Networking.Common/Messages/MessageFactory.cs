@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -73,11 +73,11 @@ namespace BZFlag.Networking.Messages
         }
     }
 
-    public static class SecurityJailMessageFacotry
+    public static class SecurityJailMessageFactory
     {
         public static MessageManager Factory = new MessageManager();
 
-        static SecurityJailMessageFacotry()
+        static SecurityJailMessageFactory()
         {
             Factory.RegisterMessageType(new MsgEnter());
             Factory.RegisterMessageType(new MsgExit());
@@ -93,6 +93,92 @@ namespace BZFlag.Networking.Messages
 
             Factory.RegisterMessageType(new MsgUDPLinkRequest());
             Factory.RegisterMessageType(new MsgUDPLinkEstablished());
+
+            Factory.RegisterMessageType(new MsgLagPing());
+        }
+    }
+
+    public static class StagingMessageFacotry
+    {
+        public static MessageManager Factory = new MessageManager();
+
+        static StagingMessageFacotry()
+        {
+            Factory.RegisterMessageType(new MsgExit());
+
+            Factory.RegisterMessageType(new MsgQueryGame());
+            Factory.RegisterMessageType(new MsgQueryPlayers());
+
+            Factory.RegisterMessageType(new MsgWantWHash());
+            Factory.RegisterMessageType(new MsgGetWorld());
+
+            Factory.RegisterMessageType(new MsgWantSettings());
+            Factory.RegisterMessageType(new MsgNegotiateFlags());
+
+            Factory.RegisterMessageType(new MsgUDPLinkRequest());
+            Factory.RegisterMessageType(new MsgUDPLinkEstablished());
+
+            Factory.RegisterMessageType(new MsgLagPing());
+        }
+    }
+
+    public static class GameServerMessageFacotry
+    {
+        public static MessageManager Factory = new MessageManager();
+
+        static GameServerMessageFacotry()
+        {
+            Factory.RegisterMessageType(new MsgExit());
+
+            Factory.RegisterMessageType(new MsgGameTime());
+            Factory.RegisterMessageType(new MsgLagPing());
+
+            Factory.RegisterMessageType(new MsgUDPLinkRequest());
+            Factory.RegisterMessageType(new MsgUDPLinkEstablished());
+
+            Factory.RegisterMessageType(new MsgMessage());
+
+            Factory.RegisterMessageType(new MsgQueryPlayers());
+
+            Factory.RegisterMessageType(new MsgAutoPilot());
+            Factory.RegisterMessageType(new MsgPlayerUpdateSmall());
+            Factory.RegisterMessageType(new MsgPlayerUpdate());
+            Factory.RegisterMessageType(new MsgAlive());
+            Factory.RegisterMessageType(new MsgKilled());
+            Factory.RegisterMessageType(new MsgTeleport());
+            Factory.RegisterMessageType(new MsgPause());
+
+            Factory.RegisterMessageType(new MsgScore());
+            Factory.RegisterMessageType(new MsgTimeUpdate());
+
+            Factory.RegisterMessageType(new MsgShotBegin());
+            Factory.RegisterMessageType(new MsgShotEnd());
+            Factory.RegisterMessageType(new MsgGMUpdate());
+
+            Factory.RegisterMessageType(new MsgGrabFlag());
+            Factory.RegisterMessageType(new MsgDropFlag());
+            Factory.RegisterMessageType(new MsgTransferFlag());
+        }
+    }
+
+    public static class UDPServerMessageFactory
+    {
+        public static MessageManager Factory = new MessageManager();
+
+        static UDPServerMessageFactory()
+        {
+            Factory.RegisterMessageType(new MsgUDPLinkRequest());
+            Factory.RegisterMessageType(new MsgUDPLinkEstablished());
+
+            Factory.RegisterMessageType(new MsgPlayerUpdateSmall());
+            Factory.RegisterMessageType(new MsgPlayerUpdate());
+    
+            Factory.RegisterMessageType(new MsgScore());
+            Factory.RegisterMessageType(new MsgTimeUpdate());
+
+            Factory.RegisterMessageType(new MsgShotBegin());
+            Factory.RegisterMessageType(new MsgShotEnd());
+            Factory.RegisterMessageType(new MsgGMUpdate());
         }
     }
 
@@ -110,6 +196,12 @@ namespace BZFlag.Networking.Messages
                 if (!MessageTypes.ContainsKey(code))
                     MessageTypes.Add(code, t);
             }
+        }
+
+        public Type[] GetMessageTypes()
+        {
+            lock (MessageTypes)
+                return MessageTypes.Values.ToArray();
         }
 
         public void RegisterMessageType(NetworkMessage m)
@@ -139,6 +231,5 @@ namespace BZFlag.Networking.Messages
             msg.FromUDP = udp;
             return msg;
         }
-
     }
 }
