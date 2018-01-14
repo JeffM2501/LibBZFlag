@@ -43,7 +43,7 @@ namespace BZFlag.Game.Host
             Shots = new ShotManager();
         }
 
-        internal void Set(GameState state)
+        public void Set(GameState state)
         {
             IsPublic = state.IsPublic;
             GameTime = state.GameTime;

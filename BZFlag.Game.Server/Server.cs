@@ -351,7 +351,7 @@ namespace BZFlag.Game.Host
             Logger.Log3("Socket " + e.GetTCPRemoteAddresString() + " disconnected ");
         }
 
-        protected virtual ServerPlayer NewPlayerRecord(TCPConnectionManager.PendingClient client) { return new ServerPlayer(client); }
+        protected virtual ServerPlayer NewPlayerRecord(TCPConnectionManager.PendingClient client) { return new ServerPlayer(client.ClientConnection); }
 
         public void Listen()
         {

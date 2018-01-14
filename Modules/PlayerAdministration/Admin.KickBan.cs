@@ -126,12 +126,12 @@ namespace BZFS.PlayerAdministration
 
             // build up the ban
 
-            string address = target.ConnectionData.GetIPAsString();
-            string host = target.ConnectionData.HostEntry.ToString();
+            string address = target.GetIPAsString();
+            string host = target.HostEntry.ToString();
 
             if (!strongBan)
             {
-                if (target.ConnectionData.GetIPAddress().AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+                if (target.GetIPAddress().AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
                 {
                     string[] addressParts = address.Split(":".ToCharArray());
                     if (addressParts.Length > State.ConfigData.Security.IPV6SubnetBanRange)
