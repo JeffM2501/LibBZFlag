@@ -136,7 +136,7 @@ namespace BZFlag.Game.Host
 
         public void RemovedPlayer(ServerPlayer p)
         {
-            UDPConnections.RemoveAcceptablePlayer(p.ConnectionData.GetIPAddress(),p);
+            UDPConnections.RemoveAcceptablePlayer(p.GetIPAddress(),p);
 
             PlayerRemoved?.Invoke(this, p);
         }

@@ -17,7 +17,7 @@ using System.Security.Cryptography;
 
 namespace BZFlag.Game.Host.Processors
 {
-    internal class RestrictedAccessZone : PlayerProcessor
+    public class RestrictedAccessZone : PlayerProcessor
     {
         protected MsgGameSettings SettingsCache = null;
         protected MsgWantWHash HashCache = null;
@@ -139,7 +139,7 @@ namespace BZFlag.Game.Host.Processors
                 checker.RequestCompleted += this.Checker_RequestCompleted;
                 checker.RequestErrored += this.Checker_RequestErrored;
 
-                checker.CheckToken(player.Callsign, player.Token, player.ConnectionData.GetIPAsString(), Config.Security.GetGroupNames());
+                checker.CheckToken(player.Callsign, player.Token, player.GetIPAsString(), Config.Security.GetGroupNames());
             }
         }
 

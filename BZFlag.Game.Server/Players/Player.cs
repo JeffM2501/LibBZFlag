@@ -8,6 +8,7 @@ using BZFlag.Networking.Common;
 using BZFlag.Networking.Messages.BZFS.Info;
 using BZFlag.Data.Teams;
 using BZFlag.Game.Host.World;
+using System.Net;
 
 namespace BZFlag.Game.Host.Players
 {
@@ -36,6 +37,7 @@ namespace BZFlag.Game.Host.Players
         public MsgNegotiateFlags ClientFlagList = null;
 
         public PlayerManager.PlayerInfo Info = null;
+        public IPHostEntry HostEntry = new IPHostEntry();
 
         public class LagInfo
         {
@@ -148,7 +150,6 @@ namespace BZFlag.Game.Host.Players
 
         protected NetworkStream NetStream = null;
 
-        public TCPConnectionManager.PendingClient ConnectionData = null;
 
         public enum UDPConenctionStatuses
         {
@@ -160,10 +161,25 @@ namespace BZFlag.Game.Host.Players
 
         public bool SentSettings = false;
 
-        public ServerPlayer(TCPConnectionManager.PendingClient pc)
+        public ServerPlayer(TcpClient pc)
         {
-            ConnectionData = pc;
-            Link(ConnectionData.ClientConnection);
+            Link(pc);
+        }
+
+        public string GetIPAsString()
+        {
+            if (TCP == null)
+                return string.Empty;
+
+            return ((IPEndPoint)TCP.Client.RemoteEndPoint).Address.ToString();
+        }
+
+        public IPAddress GetIPAddress()
+        {
+            if (TCP == null)
+                return IPAddress.None;
+
+            return ((IPEndPoint)TCP.Client.RemoteEndPoint).Address;
         }
 
         public void SetTag(string name, object value, bool force)

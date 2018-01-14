@@ -16,7 +16,7 @@ using BZFlag.Networking.Messages.BZFS.BZDB;
 
 namespace BZFlag.Game.Host.Processors
 {
-    internal class StagingZone : PlayerProcessor
+    public class StagingZone : PlayerProcessor
     {
         public StagingZone(ServerConfig cfg) : base(cfg)
         {

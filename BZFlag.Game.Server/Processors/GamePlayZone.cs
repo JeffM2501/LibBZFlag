@@ -15,7 +15,7 @@ using BZFlag.Networking.Messages.BZFS.Flags;
 
 namespace BZFlag.Game.Host.Processors
 {
-    internal class GamePlayZone : PlayerProcessor
+    public class GamePlayZone : PlayerProcessor
     {
         public Server ServerHost = null;
 
