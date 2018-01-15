@@ -15,7 +15,6 @@ namespace BZFlag.Game.Host
 {
     public class PlayerProcessor : GameState
     {
-        protected Thread WorkerThread = null;
         private List<ServerPlayer> PlayerList = new List<ServerPlayer>();
 
         private List<ServerPlayer> NewPlayers = new List<ServerPlayer>();
@@ -49,10 +48,6 @@ namespace BZFlag.Game.Host
 
         public void Shutdown()
         {
-            if (WorkerThread != null)
-                WorkerThread.Abort();
-
-            WorkerThread = null;
         }
 
         protected virtual void PlayerAdded(ServerPlayer player)
@@ -71,12 +66,6 @@ namespace BZFlag.Game.Host
                 NewPlayers.Add(player);
 
             player.Disconnected += Player_Disconnected;
-
-            if (WorkerThread == null)
-            {
-                WorkerThread = new Thread(new ThreadStart(ProcessPendingPlayers));
-                WorkerThread.Start();
-            }
         }
 
         protected void RemovePlayer(ServerPlayer sp)
@@ -120,7 +109,7 @@ namespace BZFlag.Game.Host
             }
         }
 
-        protected void ProcessPendingPlayers()
+        public void Public()
         {
             bool done = false;
             while (!done)
@@ -206,8 +195,6 @@ namespace BZFlag.Game.Host
                 }
                 Thread.Sleep(SleepTime);
             }
-
-            WorkerThread = null;
         }
 
         public static readonly double PingTime = 10.0;
