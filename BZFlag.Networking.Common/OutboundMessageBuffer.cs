@@ -9,66 +9,23 @@ namespace BZFlag.Networking
 {
     public class OutboundMessageBuffer
     {
+        public static int MaxToProcess = 10;
+
         private List<byte[]> Outbound = new List<byte[]>();
 
         private List<NetworkMessage> UnprocessedOutbound = new List<NetworkMessage>();
 
-        private Thread Worker = null;
-
-        private List<Type> AcceptableMessageTypes = new List<Type>();
-
-        public void AddAcceptableMessageType(Type t)
+        public virtual void Process()
         {
-            lock (AcceptableMessageTypes)
-                AcceptableMessageTypes.Add(t);
-        }
-
-        public void Start()
-        {
-            Stop();
-
-            Worker = new Thread(new ThreadStart(Process));
-            Worker.Start();
-        }
-
-        public void Stop()
-        {
-            if (Worker != null && Worker.IsAlive)
-                Worker.Abort();
-
-            Worker = null;
-        }
-
-        protected virtual void Process()
-        {
-            while (true)
+            for (int i = 0; i< MaxToProcess; i++)
             {
                 NetworkMessage msg = GetNextUnprocessedMessage();
-                while (msg != null)
-                {
-                    bool process = true;
+                if (msg == null)
+                    return;
 
-                    lock (AcceptableMessageTypes)
-                    { 
-                        if (AcceptableMessageTypes.Count > 0)
-                            process = AcceptableMessageTypes.Contains(msg.GetType());
-                    }
-
-                    if (process)
-                    {
-                        byte[] buffer = msg.Pack();
-                        if (buffer != null)
-                            PushDirectMessage(buffer);
-                    }
-                    else
-                    {
-                        // WTF?
-                    }
-                  
-                    msg = GetNextUnprocessedMessage();
-
-                }
-                Thread.Sleep(10);
+                byte[] buffer = msg.Pack();
+                if (buffer != null)
+                    PushDirectMessage(buffer);
             }
         }
 
@@ -82,6 +39,19 @@ namespace BZFlag.Networking
 
                 byte[] b = Outbound[0];
                 Outbound.RemoveAt(0);
+                return b;
+            }
+        }
+
+        public byte[][] PopAll()
+        {
+            lock (Outbound)
+            {
+                if (Outbound.Count == 0)
+                    return null;
+
+                byte[][] b = Outbound.ToArray();
+                Outbound.Clear();
                 return b;
             }
         }

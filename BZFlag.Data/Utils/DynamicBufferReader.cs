@@ -8,7 +8,7 @@ using BZFlag.Data.Types;
 
 namespace BZFlag.Data.Utils
 {
-    public abstract class DynamicBufferReader
+    public class DynamicBufferReader
     {
         protected byte[] Buffer = new byte[0];
         protected int BufferOffset = 0;

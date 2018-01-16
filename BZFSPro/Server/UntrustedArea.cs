@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 using BZFlag.Game.Host;
 using BZFlag.Game.Host.Players;
@@ -18,6 +18,8 @@ namespace BZFSPro.Server
 
         public event EventHandler<ServerPlayer> ReleasePlayer;
 
+        protected Thread ProcessingThread = null;
+
         public void Setup(GameState state)
         {
             SecurityArea = new RestrictedAccessZone(state.ConfigData);
@@ -32,6 +34,15 @@ namespace BZFSPro.Server
         public void AddConnection(ServerPlayer player)
         {
             SecurityArea.AddPendingConnection(player);
+
+            lock(this)
+            {
+                if (ProcessingThread == null)
+                    return;
+
+                ProcessingThread = new Thread(new ThreadStart(ProcessUpdates));
+                ProcessingThread.Start();
+            }
         }
 
         private void SecurityArea_PromotePlayer(object sender, ServerPlayer e)
@@ -44,6 +55,15 @@ namespace BZFSPro.Server
         {
             // they are ready to join the game, they have BZDB
             ReleasePlayer?.Invoke(this, e);
+        }
+
+        protected void ProcessUpdates()
+        {
+            bool done = false;
+            while (!done)
+            {
+                if (!SecurityArea.ProcessUpdate() && )
+            }
         }
     }
 }

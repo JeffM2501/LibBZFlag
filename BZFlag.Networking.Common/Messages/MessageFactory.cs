@@ -73,11 +73,11 @@ namespace BZFlag.Networking.Messages
         }
     }
 
-    public static class SecurityJailMessageFactory
+    public static class ServerMessageFactory
     {
         public static MessageManager Factory = new MessageManager();
 
-        static SecurityJailMessageFactory()
+        static ServerMessageFactory()
         {
             Factory.RegisterMessageType(new MsgEnter());
             Factory.RegisterMessageType(new MsgExit());
@@ -95,46 +95,6 @@ namespace BZFlag.Networking.Messages
             Factory.RegisterMessageType(new MsgUDPLinkEstablished());
 
             Factory.RegisterMessageType(new MsgLagPing());
-        }
-    }
-
-    public static class StagingMessageFacotry
-    {
-        public static MessageManager Factory = new MessageManager();
-
-        static StagingMessageFacotry()
-        {
-            Factory.RegisterMessageType(new MsgExit());
-
-            Factory.RegisterMessageType(new MsgQueryGame());
-            Factory.RegisterMessageType(new MsgQueryPlayers());
-
-            Factory.RegisterMessageType(new MsgWantWHash());
-            Factory.RegisterMessageType(new MsgGetWorld());
-
-            Factory.RegisterMessageType(new MsgWantSettings());
-            Factory.RegisterMessageType(new MsgNegotiateFlags());
-
-            Factory.RegisterMessageType(new MsgUDPLinkRequest());
-            Factory.RegisterMessageType(new MsgUDPLinkEstablished());
-
-            Factory.RegisterMessageType(new MsgLagPing());
-        }
-    }
-
-    public static class GameServerMessageFacotry
-    {
-        public static MessageManager Factory = new MessageManager();
-
-        static GameServerMessageFacotry()
-        {
-            Factory.RegisterMessageType(new MsgExit());
-
-            Factory.RegisterMessageType(new MsgGameTime());
-            Factory.RegisterMessageType(new MsgLagPing());
-
-            Factory.RegisterMessageType(new MsgUDPLinkRequest());
-            Factory.RegisterMessageType(new MsgUDPLinkEstablished());
 
             Factory.RegisterMessageType(new MsgMessage());
 
@@ -158,15 +118,7 @@ namespace BZFlag.Networking.Messages
             Factory.RegisterMessageType(new MsgGrabFlag());
             Factory.RegisterMessageType(new MsgDropFlag());
             Factory.RegisterMessageType(new MsgTransferFlag());
-        }
-    }
 
-    public static class UDPServerMessageFactory
-    {
-        public static MessageManager Factory = new MessageManager();
-
-        static UDPServerMessageFactory()
-        {
             Factory.RegisterMessageType(new MsgUDPLinkRequest());
             Factory.RegisterMessageType(new MsgUDPLinkEstablished());
 

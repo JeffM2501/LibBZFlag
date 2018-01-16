@@ -65,6 +65,8 @@ namespace BZFlag.Game.Host
             lock (NewPlayers)
                 NewPlayers.Add(player);
 
+            player.MessageReceived += Player_HostHasData;
+
             player.Disconnected += Player_Disconnected;
         }
 
@@ -72,6 +74,8 @@ namespace BZFlag.Game.Host
         {
             lock (PlayerList)
                 PlayerList.Remove(sp);
+
+            sp.MessageReceived -= Player_HostHasData;
             sp.Disconnected -= Player_Disconnected;
 
             sp.SetExit();
@@ -109,92 +113,46 @@ namespace BZFlag.Game.Host
             }
         }
 
-        public void Public()
+
+        private void Player_HostHasData(object sender, Networking.Common.Peer.MessageReceivedEventArgs e)
         {
-            bool done = false;
-            while (!done)
+            ProcessClientMessage(e.Recipient as ServerPlayer, e.Message);
+        }
+
+        public bool ProcessUpdate()
+        {
+            Update();
+
+            ServerPlayer newPlayer = PopNewPlayer();
+            while (newPlayer != null)
             {
-                Update();
-
-                ServerPlayer newPlayer = PopNewPlayer();
-                while (newPlayer != null)
-                {
-                    lock (PlayerList)
-                        PlayerList.Add(newPlayer);
-
-                    PlayerAdded(newPlayer);
-                    newPlayer = PopNewPlayer();
-                }
-
-                ServerPlayer[] locals = null;
-
                 lock (PlayerList)
-                {
-                    lock(NewPlayers)
-                    {
-                        if (PlayerList.Count == 0 && NewPlayers.Count == 0)
-                        {
-                            done = true;
-                            break;
-                        }
-                    }
+                    PlayerList.Add(newPlayer);
 
-                    locals = PlayerList.ToArray();
-                }
-                foreach (ServerPlayer player in locals)
-                {
-                    bool keep = true;
-
-                    int count = 0;
-                    while (count < MaxMessagesPerClientCycle)
-                    {
-                        InboundMessageBuffer.CompletedMessage buffer = player.InboundTCP.GetMessage();
-                        if (buffer == null)
-                            break;
-
-                        NetworkMessage msg = MessageProcessor.Unpack(buffer.ID, buffer.Data);
-                        msg.Tag = player;
-                        msg.FromUDP = false;
-
-                        ProcessClientMessage(player, msg);
-
-                        lock (PlayerList)
-                            keep = PlayerList.Contains(player);
-
-                        if (!keep)
-                            break;
-
-                        count++;
-                    }
-
-                    if (!keep)
-                        break;
-
-                    count = 0;
-                    while (count < MaxMessagesPerClientCycle)
-                    {
-                        var msg = player.InboundMessageProcessor.Pop();
-                        if (msg == null)
-                            break;
-
-                        ProcessClientMessage(player, msg);
-
-                        lock (PlayerList)
-                            keep = PlayerList.Contains(player);
-
-                        if (!keep)
-                            break;
-
-                        count++;
-                    }
-
-                    if (!keep)
-                        break;
-
-                    UpdatePlayer(player);
-                }
-                Thread.Sleep(SleepTime);
+                PlayerAdded(newPlayer);
+                newPlayer = PopNewPlayer();
             }
+
+            ServerPlayer[] locals = null;
+
+            lock (PlayerList)
+            {
+                lock (NewPlayers)
+                {
+                    if (PlayerList.Count == 0 && NewPlayers.Count == 0)
+                        return false;
+                }
+
+                locals = PlayerList.ToArray();
+            }
+            foreach (ServerPlayer player in locals)
+            {
+                player.Update();
+
+                UpdatePlayer(player);
+            }
+
+            return true;
         }
 
         public static readonly double PingTime = 10.0;
