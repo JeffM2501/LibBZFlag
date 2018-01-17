@@ -412,7 +412,7 @@ namespace BZFlag.IO.BZW.Binary
 
             foreach (var i in MapData.Objects)
             {
-                if (i.GetType() == typeof(T))
+                if (i.PackAs() == typeof(T))
                     objects.Add(i as T);
             }
             return objects;
