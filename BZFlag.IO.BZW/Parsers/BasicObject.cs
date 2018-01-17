@@ -1,4 +1,4 @@
-﻿using BZFlag.Data.Types;
+using BZFlag.Data.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,6 +60,8 @@ namespace BZFlag.IO.BZW.Parsers
             if (Object.TypeParams != null)
                 t += " " + Object.TypeParams;
 
+            if (Object.GetType() == typeof(BasicObject))    // serializing an unknown object, just dump it;
+                Code.AddRange(Object.Attributes.ToArray());
             return t;
         }
 
