@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +13,7 @@ namespace BZFlag.IO.BZW
     {
         private static Dictionary<string, Type> ObjectFactories = new Dictionary<string, Type>();
 
-        private static void AddFactory(string name, Type type)
+        public static void AddFactory(string name, Type type)
         {
             name = name.ToUpperInvariant();
             if (ObjectFactories.ContainsKey(name))
