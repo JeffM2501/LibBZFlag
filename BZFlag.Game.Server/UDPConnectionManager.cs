@@ -30,7 +30,7 @@ namespace BZFlag.Game.Host
         protected UdpClient UDPSocketV6 = null;
         protected int UDPInPort = 5154;
 
-        protected MessageManager AcceptableMessages = null;
+        protected MessageManager AcceptableMessages = ServerMessageFactory.Factory;
 
         public UDPConnectionManager(MessageManager unpacker)
         {
@@ -243,7 +243,7 @@ namespace BZFlag.Game.Host
 
             ServerPlayer player = GetPlayerForAddress(unpacked as MsgUDPLinkRequest, clientAddress);
             if (player != null)
-                player.ProcessUDPMessage(unpacked);
+                player.InboundUDP.AddData(msg.Data);
             else
                 Logger.Log3("Unknown UDP Player Msg" + unpacked.CodeAbreviation);
         }

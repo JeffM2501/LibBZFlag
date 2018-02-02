@@ -209,12 +209,6 @@ namespace BZFlag.Game.Host.Players
             Exited?.Invoke(this, this);
         }
 
-        public void ProcessUDPMessage(NetworkMessage msg)
-        {
-            msg.FromUDP = true;
-            InboundMessageProcessor.CompleteMessage(msg);
-        }
-
         public bool CanDoPlayActions()
         {
             return Accepted && Active && Info.Alive && Allowances.AllowPlay  && ActualTeam != TeamColors.ObserverTeam;

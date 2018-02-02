@@ -25,7 +25,6 @@ namespace BZFlag.Game.Host.Processors
         public GamePlayZone(Server server) : base(server.ConfigData)
         {
             ServerHost = server;
-            MessageProcessor = GameServerMessageFacotry.Factory;
 
             ServerHost.State.BZDatabase.ValueChanged += this.BZDatabase_ValueChanged;
 

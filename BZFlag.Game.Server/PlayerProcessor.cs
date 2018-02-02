@@ -19,8 +19,6 @@ namespace BZFlag.Game.Host
 
         private List<ServerPlayer> NewPlayers = new List<ServerPlayer>();
 
-        protected MessageManager MessageProcessor = null;
-
         public int SleepTime = 100;
         public static int MaxMessagesPerClientCycle = 10;
 

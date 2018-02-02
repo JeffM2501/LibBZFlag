@@ -62,7 +62,13 @@ namespace BZFSPro.Server
             bool done = false;
             while (!done)
             {
-                if (!SecurityArea.ProcessUpdate() && )
+                if (!SecurityArea.ProcessUpdate() && !StagingArea.ProcessUpdate())
+                {
+                    lock (this)
+                        ProcessingThread = null;
+                    return;
+                }
+                Thread.Sleep(50);
             }
         }
     }

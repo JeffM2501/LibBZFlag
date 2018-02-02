@@ -331,8 +331,6 @@ namespace BZFlag.Game.Host
             Logger.Log3("Socket " + p.GetTCPRemoteAddresString() + " Connected ");
 
             p.Disconnected += P_Disconnected;
-            foreach (var m in UDPServerMessageFactory.Factory.GetMessageTypes())
-                p.OutboundUDP.AddAcceptableMessageType(m);
 
             p.PlayerID = FindPlayerID();
             if (p.PlayerID < 0)
