@@ -1,5 +1,5 @@
 # LibBZFlag
-A C# implementaiton of bzflag features in componentised format.
+A C# implementation of BZFlag features in component format.
 
 ## Applications
 
@@ -10,31 +10,31 @@ It's main goals are:
 1. Maximize resources for active players
 2. Maintainable code/messages
 3. Maintain a logical game state
-4. Fix as many security isues as posible
+4. Fix as many security issues as possible
 5. Disconnect networking from state
 6. Fully integrated API
 
 BZFSPro is not designed to be 100% compatible with the legacy BZFS server, 
-but is desgined to interact with legacy BZFlag clients.
+but is designed to interact with legacy BZFlag clients.
 
-#### Useage
+#### Usage
 BZFSPro only takes a single command line argument, the config file to load. 
 The config file can be in XML, JSON, or YAML format.
 
-On windows the server is run as a normal execuutable
+On windows the server is run as a normal executable
 BZFSPro.exe /path/to/the/config.yaml
 
 On other OSs, the exe must be prefixed with the mono runtime command.
 mono BZFSPro.exe /the/config/path.yaml
 
 Please note that mono is NOT WINE, there is no emulation. C# is a bytecode
-langauge and needs a runtime. 
-The same exe runs on all suported platforms.
+language and needs a runtime. 
+The same exe runs on all sported platforms.
 
 ## Libraries
 
 ### BZFlag.ServiceLink
-Access to the global list server and authetnticaiton systems.
+Access to the global list server and authentication systems.
 
 ### BZFlag.Data
 Common shared data structures
@@ -74,11 +74,14 @@ Network connection class for the bzflag protocol
 ## Tests
 
 ### ConnectionTester
-Command line app that conencts to a bzfs server (the one with the most players) and logs all received messages
+Command line app that connects to a bzfs server (the one with the most players) and logs all received messages
 
 ### TestClient
 WinForms GUI client that authenticates, connects to a bzfs server and logs a number of messages. Also allows user to send chat as observer.
 
 ### ReaderTest
-Command line app that reads a bzw file into the libraries internal representation and then exports it back to bzw format for comparision.
-File may not be idenitcal but should read into bzfs/editors the same as the origonal.
+Command line app that reads a bzw file into the libraries internal representation and then exports it back to bzw format for comparison.
+File may not be identical but should read into bzfs/editors the same as the original.
+
+
+Copyright 2018 BZFlag and Associates
