@@ -1,4 +1,4 @@
-﻿using BZFlag.Data.Types;
+using BZFlag.Data.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +18,8 @@ namespace BZFlag.Map.Elements
         public List<string> Attributes = new List<string>();
 
         private static Random RNG = new Random();
+
+        public Type PackAs() { return this.GetType(); }
 
         public BasicObject()
         {

@@ -376,7 +376,6 @@ namespace BZFlag.IO.BZW.Binary
                         DynaBuffer.WriteFloat(p.Weight);
                     }
 
-
                     DynaBuffer.WriteUInt32(chan.ClampUps.Count);
                     foreach (var p in chan.ClampUps)
                     {
