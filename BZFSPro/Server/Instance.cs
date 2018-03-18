@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
+using BZFlag.Game.Host.Processors;
 using BZFlag.Game.Host;
 using BZFlag.Game.Host.Players;
 using BZFSPro.Net;
@@ -47,6 +48,7 @@ namespace BZFSPro.Server
         public GameState State = new GameState();
 
         public UntrustedArea Jail = new UntrustedArea();
+        public GamePlayZone GameState = null;
 
         public void Run( ServerConfig config )
         {
@@ -73,6 +75,14 @@ namespace BZFSPro.Server
             SetupListeners();
             Jail.ReleasePlayer += Jail_ReleasePlayer;
             Jail.Setup(State);
+
+            GameState = new GamePlayZone(State);
+            GameState.PlayerPreAdd += GameState_PlayerPreAdd;
+        }
+
+        private void GameState_PlayerPreAdd(object sender, ServerPlayer e)
+        {
+            throw new NotImplementedException();
         }
 
         private void Jail_ReleasePlayer(object sender, BZFlag.Game.Host.Players.ServerPlayer e)

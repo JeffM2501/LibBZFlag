@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\Common.cs" />
+    <Compile Include="API\Instance.cs" />
     <Compile Include="API\Plugins.cs" />
     <Compile Include="BZFS.cs" />
     <Compile Include="GameState.cs" />

@@ -360,7 +360,7 @@ namespace BZFlag.Game.Host
             TCPConnections = new TCPConnectionManager(port, this);
 
             TCPConnections.BZFSProtocolConnectionAccepted += BZFSProtocolConnectionAccepted;
-            UDPConnections = new UDPConnectionManager(UDPServerMessageFactory.Factory);
+            UDPConnections = new UDPConnectionManager(ServerMessageFactory.Factory);
 
             TCPConnections.CheckIPBan = CheckTCPIPBan;
             TCPConnections.CheckHostBan = CheckTCPHostBan;

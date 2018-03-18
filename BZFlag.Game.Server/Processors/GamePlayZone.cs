@@ -17,16 +17,22 @@ namespace BZFlag.Game.Host.Processors
 {
     public class GamePlayZone : PlayerProcessor
     {
-        public Server ServerHost = null;
+        public GameState State = null;
 
         public event EventHandler UpdatePublicListServer = null;
         public event EventHandler<ServerPlayer> PlayerRejected;
 
-        public GamePlayZone(Server server) : base(server.ConfigData)
-        {
-            ServerHost = server;
 
-            ServerHost.State.BZDatabase.ValueChanged += this.BZDatabase_ValueChanged;
+        public event EventHandler<ServerPlayer> PlayerPreAdd;
+
+
+        public event EventHandler<ServerPlayer> RemovedPlayer;
+
+        public GamePlayZone(GameState state) : base(state.ConfigData)
+        {
+            State = state;
+
+            State.BZDatabase.ValueChanged += this.BZDatabase_ValueChanged;
 
             RegisterCommonHandlers();
 
@@ -69,7 +75,7 @@ namespace BZFlag.Game.Host.Processors
 
             // tell everyone they went away
 
-            ServerHost.RemovedPlayer(player);
+            RemovedPlayer?.Invoke(this,player);
             UpdatePublicListServer?.Invoke(this, EventArgs.Empty);
         }
 
@@ -96,7 +102,8 @@ namespace BZFlag.Game.Host.Processors
 
         protected void DoPlayerAdd(ServerPlayer player)
         {
-            player.ActualTeam = ServerHost.GetPlayerTeam(player);
+            player.ActualTeam = TeamColors.ObserverTeam;
+            PlayerPreAdd?.Invoke(this, player); // let someone set the team
 
             if (!Players.AddPlayer(player))
             {

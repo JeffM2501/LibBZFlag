@@ -11,9 +11,9 @@ namespace BZFlag.Game.Host.API
         string Name { get; }
         string Description { get; }
 
-        void Startup(Server serverInstance);
+        void Startup(GameState state);
 
-        void Shutdown(Server serverInstance);
+        void Shutdown(GameState state);
     }
 
     public class PlugIn : IPlugIn
@@ -24,11 +24,11 @@ namespace BZFlag.Game.Host.API
 
         public virtual string Description => string.Empty;
 
-        public virtual void Shutdown(Server serverInstance)
+        public virtual void Shutdown(GameState state)
         {
         }
 
-        public virtual void Startup(Server serverInstance)
+        public virtual void Startup(GameState state)
         {
         }
     }
@@ -62,7 +62,7 @@ namespace BZFlag.Game.Host.API
             }
         }
 
-        public static void Startup(Server servInstance)
+        public static void Startup(GameState state)
         {
             foreach (var p in Plugins)
             {
@@ -71,23 +71,23 @@ namespace BZFlag.Game.Host.API
                     PlugIn pl = p.Module as PlugIn;
 
                     if (pl != null)
-                        pl.State = servInstance.State;
+                        pl.State = state;
 
-                    p.Module.Startup(servInstance);
+                    p.Module.Startup(state);
                     p.Loaded = true;
                 }
             }
                
         }
 
-        public static void Shutdown(Server servInstance)
+        public static void Shutdown(GameState state)
         {
             Logger.Log2("API Shutdown");
             foreach (var p in Plugins)
             {
                 if (p.Loaded)
                 {
-                    p.Module.Shutdown(servInstance);
+                    p.Module.Shutdown(state);
                     p.Loaded = false;
                 }
             }

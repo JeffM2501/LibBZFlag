@@ -7,6 +7,6 @@ namespace BZFlag.Game.Host.API
 {
     public static class Common
     {
-        public static Server ServerInstnace = null;
+        public static GameState ServerState = null;
     }
 }
